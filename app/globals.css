@@ -1,0 +1,347 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a;
+}
+
+.dark:root {
+  --background: #0f172a;
+  --foreground: #f8fafc;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-slate-200 dark:border-surface-700/50;
+  }
+  body {
+    @apply bg-slate-50 dark:bg-surface-900 text-slate-900 dark:text-surface-50 antialiased;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary-600 dark:outline-accent-500;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight text-slate-900 dark:text-white;
+  }
+}
+
+@layer utilities {
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .focus\:not-sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: inherit;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+}
+
+@layer components {
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-brand;
+    background-size: 200% auto;
+    animation: gradient 8s linear infinite;
+  }
+
+  .fashion-gradient {
+    background: linear-gradient(135deg, #0284c7 0%, #c026d3 100%);
+    background-size: 200% auto;
+  }
+
+  .glass-effect {
+    @apply backdrop-blur-xl border shadow-lg;
+    background: rgba(255, 255, 255, 0.7);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow:
+      0 8px 32px 0 rgba(0, 0, 0, 0.1),
+      0 0 0 1px rgba(0, 0, 0, 0.05) inset;
+  }
+
+  .dark .glass-effect {
+    background: rgba(15, 23, 42, 0.4);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 8px 32px 0 rgba(0, 0, 0, 0.37),
+      0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  }
+
+  .glass-card {
+    @apply backdrop-blur-md border rounded-2xl transition-all duration-300;
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow:
+      0 10px 40px -10px rgba(0, 0, 0, 0.15),
+      0 0 0 1px rgba(0, 0, 0, 0.05);
+  }
+
+  .glass-card:hover {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow:
+      0 20px 60px -10px rgba(0, 0, 0, 0.2),
+      0 0 0 1px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 10px 40px -10px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+
+  .dark .glass-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow:
+      0 20px 60px -10px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.15),
+      0 0 50px rgba(192, 38, 211, 0.1);
+  }
+
+  .neon-border {
+    @apply border border-accent-500 shadow-glow;
+  }
+
+  .btn-primary {
+    @apply relative overflow-hidden rounded-xl bg-primary-600 px-8 py-4 font-bold text-white shadow-lg transition-all hover:bg-primary-500 hover:shadow-glow-primary active:scale-95;
+  }
+
+  .btn-accent {
+    @apply relative overflow-hidden rounded-xl bg-accent-600 px-8 py-4 font-bold text-white shadow-lg transition-all hover:bg-accent-500 hover:shadow-glow active:scale-95;
+  }
+
+  /* Professional shadow utilities */
+  .shadow-premium {
+    box-shadow:
+      0 10px 40px -10px rgba(0, 0, 0, 0.15),
+      0 0 0 1px rgba(0, 0, 0, 0.05);
+  }
+
+  .dark .shadow-premium {
+    box-shadow:
+      0 10px 40px -10px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+
+  .shadow-premium-hover {
+    box-shadow:
+      0 20px 60px -10px rgba(0, 0, 0, 0.2),
+      0 0 0 1px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .shadow-premium-hover {
+    box-shadow:
+      0 20px 60px -10px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.15);
+  }
+
+  /* Subtle texture overlay for depth */
+  .texture-overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-in;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.6s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes gradient {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .text-glow {
+    text-shadow: 0 0 20px rgba(192, 38, 211, 0.5);
+  }
+
+  .text-glow-subtle {
+    text-shadow: 0 2px 10px rgba(192, 38, 211, 0.3);
+  }
+
+  /* Smooth scroll behavior */
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Enhanced Prose Styling for Blog Articles */
+@layer components {
+  .prose-article {
+    @apply max-w-none;
+  }
+
+  .prose-article h1 {
+    @apply text-4xl md:text-5xl font-display font-bold text-slate-900 dark:text-white mt-12 mb-6 leading-tight tracking-tight;
+  }
+
+  .prose-article h2 {
+    @apply text-3xl md:text-4xl font-display font-bold text-slate-900 dark:text-white mt-10 mb-5 leading-tight tracking-tight pt-8 border-t border-slate-200 dark:border-surface-700;
+  }
+
+  .prose-article h3 {
+    @apply text-2xl md:text-3xl font-display font-semibold text-slate-900 dark:text-white mt-8 mb-4 leading-snug tracking-tight;
+  }
+
+  .prose-article h4 {
+    @apply text-xl md:text-2xl font-display font-semibold text-slate-800 dark:text-surface-100 mt-6 mb-3 leading-snug;
+  }
+
+  .prose-article p {
+    @apply text-base md:text-lg text-slate-700 dark:text-surface-300 leading-relaxed mb-6;
+  }
+
+  .prose-article strong {
+    @apply font-bold text-slate-900 dark:text-white;
+  }
+
+  .prose-article a {
+    @apply text-primary-600 dark:text-primary-400 font-medium underline decoration-2 underline-offset-2 hover:text-primary-700 dark:hover:text-primary-300 transition-colors;
+  }
+
+  .prose-article ul,
+  .prose-article ol {
+    @apply my-6 space-y-3;
+  }
+
+  .prose-article li {
+    @apply text-base md:text-lg text-slate-700 dark:text-surface-300 leading-relaxed pl-2;
+  }
+
+  .prose-article ul li {
+    @apply list-disc list-outside ml-6;
+  }
+
+  .prose-article ol li {
+    @apply list-decimal list-outside ml-6;
+  }
+
+  .prose-article blockquote {
+    @apply border-l-4 border-primary-500 dark:border-primary-400 pl-6 py-4 my-8 bg-slate-50 dark:bg-surface-800/50 rounded-r-lg italic text-slate-700 dark:text-surface-300;
+  }
+
+  .prose-article code {
+    @apply text-sm font-mono bg-slate-100 dark:bg-surface-800 px-2 py-1 rounded text-primary-600 dark:text-primary-400;
+  }
+
+  .prose-article pre {
+    @apply bg-slate-900 dark:bg-surface-950 rounded-xl p-6 my-8 overflow-x-auto border border-slate-800 dark:border-surface-700;
+  }
+
+  .prose-article pre code {
+    @apply bg-transparent p-0 text-slate-100 dark:text-surface-200;
+  }
+
+  .prose-article img {
+    @apply rounded-xl my-8 shadow-lg border border-slate-200 dark:border-surface-700;
+  }
+
+  .prose-article hr {
+    @apply my-12 border-slate-200 dark:border-surface-700;
+  }
+
+  .prose-article table {
+    @apply w-full my-8 border-collapse;
+  }
+
+  .prose-article th {
+    @apply bg-slate-100 dark:bg-surface-800 px-4 py-3 text-left font-semibold text-slate-900 dark:text-white border border-slate-200 dark:border-surface-700;
+  }
+
+  .prose-article td {
+    @apply px-4 py-3 border border-slate-200 dark:border-surface-700 text-slate-700 dark:text-surface-300;
+  }
+
+  .reading-progress {
+    @apply fixed top-0 left-0 h-1 bg-gradient-to-r from-primary-600 to-accent-600 z-50 transition-all duration-150;
+  }
+}
+
