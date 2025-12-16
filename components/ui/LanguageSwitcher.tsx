@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
@@ -105,7 +105,7 @@ export const LanguageSwitcher = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full mt-2 w-36 bg-white dark:bg-surface-800 rounded-xl shadow-lg border border-slate-200 dark:border-white/10 overflow-hidden z-50 ltr:right-0 rtl:left-0"
+            className="absolute top-full mt-2 w-36 bg-white dark:bg-surface-800 rounded-xl shadow-lg border border-slate-200 dark:border-white/10 overflow-hidden z-50 end-0"
           >
             <div className="p-1">
                 <button

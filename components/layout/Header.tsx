@@ -105,7 +105,7 @@ export const Header: React.FC = () => {
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -10 }}
-                          className="absolute top-full rtl:right-0 ltr:left-0 mt-2 w-64 glass-card border border-white/10 py-2 shadow-premium"
+                          className="absolute top-full start-0 mt-2 w-64 glass-card border border-white/10 py-2 shadow-premium"
                           role="menu"
                         >
                           {item.submenu.map((subItem, index) => (

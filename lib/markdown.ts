@@ -3,7 +3,7 @@ import path from "path";
 import matter from "gray-matter";
 import { remark } from "remark";
 import html from "remark-html";
-import { unstable_cache } from "next/cache";
+
 import { sanitizeHtml } from "@/lib/sanitize";
 import { logError } from "@/lib/error-handler";
 
@@ -85,33 +85,26 @@ export function getPostSlugs(): string[] {
 }
 
 export async function getAllPosts(): Promise<BlogPost[]> {
-  return getCachedAllPosts();
+  const slugs = getPostSlugs();
+  const posts = await Promise.all(
+    slugs.map(async (slug) => {
+      const post = await getPostBySlug(slug);
+      return post;
+    })
+  );
+
+  return posts
+    .filter((post): post is BlogPost => post !== null)
+    .sort((a, b) => {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
 }
 
 
 
-const getCachedAllPosts = unstable_cache(
-  async () => {
-    const slugs = getPostSlugs();
-    const posts = await Promise.all(
-      slugs.map(async (slug) => {
-        const post = await getPostBySlug(slug);
-        return post;
-      })
-    );
-
-    return posts
-      .filter((post): post is BlogPost => post !== null)
-      .sort((a, b) => {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-      });
-  },
-  ["all-blog-posts"],
-  { revalidate: 3600 }
-);
 
 export async function getCategories(): Promise<string[]> {
-  const posts = await getCachedAllPosts();
+  const posts = await getAllPosts();
   const categories = new Set<string>();
 
   posts.forEach((post) => {

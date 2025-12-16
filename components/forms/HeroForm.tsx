@@ -115,21 +115,21 @@ export const HeroForm: React.FC = () => {
           </div>
 
           <div>
-            <label htmlFor="interest" className="block text-sm font-semibold text-surface-300 mb-2">
+            <label htmlFor="interest" className="block text-sm font-semibold text-slate-700 dark:text-surface-300 mb-2">
               {t("heroForm.fields.interest") as string}
             </label>
             <select
               id="interest"
               {...register("interest", { required: t("heroForm.fields.interestRequired") as string })}
-              className="w-full px-4 py-3 glass-effect rounded-xl text-white focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all bg-surface-900/50"
+              className="w-full px-4 py-3 glass-effect rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all bg-white/50 dark:bg-surface-900/50"
               aria-required="true"
               aria-invalid={errors.interest ? "true" : "false"}
               aria-describedby={errors.interest ? "interest-error" : undefined}
             >
-              <option value="" className="bg-surface-900">{t("heroForm.fields.selectOption") as string}</option>
-              <option value="shopify" className="bg-surface-900">{t("heroForm.fields.options.shopify") as string}</option>
-              <option value="wordpress" className="bg-surface-900">{t("heroForm.fields.options.wordpress") as string}</option>
-              <option value="consultation" className="bg-surface-900">{t("heroForm.fields.options.consultation") as string}</option>
+              <option value="" className="bg-white dark:bg-surface-900 text-slate-900 dark:text-white">{t("heroForm.fields.selectOption") as string}</option>
+              <option value="shopify" className="bg-white dark:bg-surface-900 text-slate-900 dark:text-white">{t("heroForm.fields.options.shopify") as string}</option>
+              <option value="wordpress" className="bg-white dark:bg-surface-900 text-slate-900 dark:text-white">{t("heroForm.fields.options.wordpress") as string}</option>
+              <option value="consultation" className="bg-white dark:bg-surface-900 text-slate-900 dark:text-white">{t("heroForm.fields.options.consultation") as string}</option>
             </select>
             {errors.interest && (
               <p id="interest-error" className="mt-2 text-sm text-error font-semibold" role="alert">

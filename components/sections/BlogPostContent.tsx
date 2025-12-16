@@ -158,7 +158,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                           key={heading.id}
                           type="button"
                           onClick={() => scrollToHeading(heading.id)}
-                          className="w-full text-left block text-sm text-slate-600 dark:text-surface-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors py-1.5 pl-2 border-l-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400"
+                          className="w-full text-start block text-sm text-slate-600 dark:text-surface-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors py-1.5 ps-2 border-s-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400"
                         >
                           {heading.text}
                         </button>
@@ -199,7 +199,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                               setMobileTocOpen(false);
                               scrollToHeading(heading.id);
                             }}
-                            className="w-full text-left block text-sm text-slate-600 dark:text-surface-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors py-1.5"
+                            className="w-full text-start block text-sm text-slate-600 dark:text-surface-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors py-1.5"
                           >
                             {heading.text}
                           </button>
