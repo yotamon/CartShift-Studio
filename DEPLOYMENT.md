@@ -77,27 +77,45 @@ firebase functions:config:set contact.email="hello@cartshiftstudio.com"
 
 ## Deployment Steps
 
-### 1. Build and Export Next.js Application
+### ⚠️ IMPORTANT: Upgrade to Blaze Plan
+**Cloud Functions require the Blaze (pay-as-you-go) plan.**
+- Visit: https://console.firebase.google.com/project/cartshiftstudio/usage/details
+- Upgrade your project to enable Cloud Functions
+- The free Spark plan only supports Hosting, not Functions
+
+### 1. Enable Firestore Database
+```bash
+firebase firestore:databases:create --location us-central1
+```
+
+### 2. Deploy Functions First (to get the function URL)
+```bash
+firebase deploy --only functions
+```
+After deployment, note the function URL (e.g., `https://us-central1-cartshiftstudio.cloudfunctions.net/contactForm`)
+
+### 3. Set Environment Variables
+Create a `.env.local` file in the root directory:
+```env
+NEXT_PUBLIC_SITE_URL=https://cartshiftstudio.web.app
+FIREBASE_FUNCTION_URL=https://us-central1-cartshiftstudio.cloudfunctions.net/contactForm
+NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
+```
+Replace the function URL with your actual deployed function URL.
+
+### 4. Build and Export Next.js Application
 Next.js is configured to export as static site for Firebase Hosting:
 ```bash
 npm run export
 ```
 This runs `next build` which exports to the `out` directory (configured in `next.config.mjs`).
 
-### 3. Deploy Functions
-```bash
-cd functions
-npm install
-cd ..
-firebase deploy --only functions
-```
-
-### 4. Deploy Hosting
+### 5. Deploy Hosting
 ```bash
 firebase deploy --only hosting
 ```
 
-### 5. Deploy Everything
+### 6. Deploy Everything (after functions are deployed)
 ```bash
 firebase deploy
 ```

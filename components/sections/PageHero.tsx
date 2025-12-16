@@ -8,6 +8,7 @@ interface PageHeroProps {
   subtitle: string;
   description: string;
   badge?: string;
+  highlightLastWord?: boolean;
 }
 
 export const PageHero: React.FC<PageHeroProps> = ({
@@ -15,10 +16,8 @@ export const PageHero: React.FC<PageHeroProps> = ({
   subtitle,
   description,
   badge,
+  highlightLastWord = true,
 }) => {
-  const titleWords = title.split(' ');
-  const lastWord = titleWords.pop();
-
   return (
     <section className="relative min-h-[70vh] flex items-center justify-center py-20 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-50 dark:bg-surface-950">
       <div className="absolute inset-0 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-surface-950 dark:to-surface-900 opacity-50 dark:opacity-40"></div>
@@ -49,7 +48,11 @@ export const PageHero: React.FC<PageHeroProps> = ({
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight tracking-tight mb-6 text-slate-900 dark:text-white"
           >
-            {titleWords.join(' ')} {lastWord && <span className="gradient-text text-glow-subtle">{lastWord}</span>}
+            {highlightLastWord ? (() => {
+              const titleWords = title.split(' ');
+              const lastWord = titleWords.pop();
+              return <>{titleWords.join(' ')} {lastWord && <span className="gradient-text text-glow-subtle">{lastWord}</span>}</>;
+            })() : title}
           </motion.h1>
 
           <motion.p

@@ -1,4 +1,3 @@
-
 export type Language = 'en' | 'he';
 
 export type TranslationStructure = typeof translations.en;
@@ -13,318 +12,405 @@ export const translations = {
       contact: "Contact",
     },
     heroForm: {
-        title: "Get a Free Consultation",
-        subtitle: "Fill out the form and we'll get back to you within 24 hours",
-        successTitle: "Thank you!",
-        successText: "We'll be in touch within 24 hours.",
-        fields: {
-            name: "Name",
-            namePlaceholder: "Your name",
-            nameRequired: "Name is required",
-            email: "Email",
-            emailPlaceholder: "your@email.com",
-            emailRequired: "Email is required",
-            emailInvalid: "Invalid email address",
-            interest: "What do you need help with?",
-            interestRequired: "Please select an option",
-            selectOption: "Select an option",
-            options: {
-                shopify: "Shopify Store",
-                wordpress: "WordPress Website",
-                consultation: "General Consultation"
-            }
+      title: "Get a Free Consultation",
+      subtitle: "Tell us a little about your project — we’ll reply within 24 hours.",
+      successTitle: "Thanks!",
+      successText: "We’ll be in touch within 24 hours.",
+      fields: {
+        name: "Name",
+        namePlaceholder: "Your name",
+        nameRequired: "Name is required",
+        email: "Email",
+        emailPlaceholder: "your@email.com",
+        emailRequired: "Email is required",
+        emailInvalid: "Invalid email address",
+        interest: "What are you looking to build?",
+        interestRequired: "Please select an option",
+        selectOption: "Select an option",
+        options: {
+          shopify: "Shopify Store (new or growth)",
+          wordpress: "WordPress Website (marketing or WooCommerce)",
+          consultation: "Not sure yet — need advice",
         },
-        submit: "Let's Talk",
-        submitting: "Submitting...",
-        error: "Something went wrong. Please try again or contact us directly."
+      },
+      submit: "Request a Free Consult",
+      submitting: "Sending...",
+      error: "Something went wrong. Please try again, or contact us directly.",
     },
     hero: {
-      tag: "Building Digital Experiences That Last",
-      titleLine1: "We Build Websites",
-      titleLine2: "That Actually Sell",
-      description: "Forget the tech headaches. We design and build stunning online stores that capture attention and turn visitors into loyal customers. Simple, powerful, and built just for you.",
-      primaryCta: "Let's Talk Ideas",
+      tag: "Shopify & WordPress builds, designed to convert",
+      titleLine1: "Websites & Stores",
+      titleLine2: "Built to Convert",
+      description:
+        "No tech drama. We design and build fast, beautiful websites that guide visitors to buy, book, or reach out — and we keep improving after launch.",
+      primaryCta: "Get a Free Consultation",
       secondaryCta: "See Our Work",
       scrollIndicator: "Scroll to explore",
       stats: {
         clients: {
           value: "50+",
-          label: "Happy Clients"
+          label: "Projects Delivered",
         },
         dedication: {
-            value: "100%",
-            label: "Dedication"
-        }
-      }
+          value: "100%",
+          label: "Hands-on",
+        },
+      },
     },
     blog: {
       hero: {
-          title: "Our Blog",
-          subtitle: "Insights, tips, and guides to help you grow your online store",
-          badge: "Latest Insights"
+        title: "Our Blog",
+        subtitle: "Practical insights to help you grow your online business",
+        badge: "Fresh Posts",
       },
       categories: "Categories:",
-      noPosts: "No blog posts yet. Check back soon!",
+      noPosts: "No posts yet — check back soon!",
       readMore: "Read more",
       relatedPosts: {
-          title: "Related ",
-          span: "Posts"
-      }
+        title: "Related",
+        span: "Posts",
+      },
     },
     blogPost: {
-        cta: {
-             title: "Need help with your ",
-             titleSpan: "e-commerce store?",
-             description: "We're here to help you build and optimize your online store. Get in touch for a free consultation.",
-             button: "Contact Us"
-        }
+      cta: {
+        title: "Need help with your ",
+        titleSpan: "online store?",
+        description:
+          "From strategy to build to optimization — we’ve got you. Reach out for a free consultation.",
+        button: "Get in touch",
+      },
     },
     blogTeaser: {
-        title: "Latest Insights",
-        subtitle: "Tips, trends, and growth strategies",
-        readMore: "Read more",
-        viewAll: "View all posts",
-        posts: [
-          {
-            title: "How to Make Your Store Fly",
-            excerpt: "Slow stores lose sales. Here are the practical steps we take to make sure your customers never have to wait.",
-            href: "/blog/speed-up-shopify-store",
-            date: "2024-12-01"
-          },
-          {
-            title: "Shopify or WordPress? The Honest Answer.",
-            excerpt: "Two giants. One big decision. We break down the pros and cons to help you decide which platform fits your goals.",
-            href: "/blog/shopify-vs-woocommerce",
-            date: "2024-11-15"
-          }
-        ]
+      title: "Latest Insights",
+      subtitle: "Tips, trends, and growth playbooks",
+      readMore: "Read more",
+      viewAll: "View all posts",
+      posts: [
+        {
+          title: "Speed Up Your Shopify Store (Without Breaking Your Theme)",
+          excerpt:
+            "Slow sites bleed revenue. Here are the practical fixes we use to cut load times and lift conversions.",
+          href: "/blog/speed-up-shopify-store",
+          date: "2024-12-01",
+        },
+        {
+          title: "Shopify vs. WordPress: The Real Tradeoffs",
+          excerpt:
+            "Two great platforms, different jobs. We’ll help you choose based on goals, budget, and how you plan to grow.",
+          href: "/blog/shopify-vs-woocommerce",
+          date: "2024-11-15",
+        },
+      ],
     },
     about: {
-        hero: {
-            title: "About CartShift Studio",
-            subtitle: "Technical expertise. Human connection.",
-            badge: "Our Story"
-        },
-        story: {
-            title: "Our Story",
-            content: [
-                "It started with a simple idea. Two friends. One obsessed with code, the other obsessed with customer experience. We joined forces to build an agency that feels different.",
-                "We wanted to create a place that blends technical excellence with a human touch. Our mission is simple. To empower you to thrive online with a beautiful, high-performing website, while making the process enjoyable and collaborative.",
-                "We don't believe in one size fits all. We listen first. Then we build. Your business is unique, and your website should reflect that. No cookie-cutter templates. Just custom solutions that work."
-            ]
-        },
-        team: {
-            title: "Who We Are",
-            subtitle: "Meet the team behind CartShift Studio",
-            expertiseLabel: "Expertise:",
-            members: [
-              {
-                name: "Technical Lead",
-                role: "Co-Founder & Developer",
-                bio: "A seasoned developer with expertise in Shopify and WordPress, passionate about clean code and continuously learning the latest e-commerce technologies. Believes in building solutions that are both powerful and maintainable.",
-                expertise: "Shopify, WordPress, Custom Development, Performance Optimization",
-              },
-              {
-                name: "Customer-Facing Lead",
-                role: "Co-Founder & Strategist",
-                bio: "A customer-focused strategist passionate about understanding clients' stories and helping them grow. Brings experience in digital marketing and project management, ensuring every project aligns with business goals.",
-                expertise: "Client Relations, Strategy, Project Management, Digital Marketing",
-              },
-            ]
-        },
-        values: {
-            title: "Our Values",
-            subtitle: "What drives everything we do",
-            items: [
-              {
-                title: "Clients Are Family",
-                description: "We listen actively and communicate openly. You'll always know what's happening. No jargon, no surprises. Your success is our priority.",
-              },
-              {
-                title: "Beautiful & Functional",
-                description: "Every project is crafted with care. We aim for solutions that are robust, reliable, and visually stunning.",
-              },
-              {
-                title: "Partners For Life",
-                description: "We don't consider a project done at launch. We're here to support and adjust as your business evolves.",
-              },
-              {
-                title: "Honesty First",
-                description: "If something isn't needed, we'll tell you. If something is beyond scope, we'll discuss it. Trust is everything.",
-              },
-            ]
-        },
-        expect: {
-            title: "What to Expect When ",
-            titleSpan: "Working With Us",
-            content: [
-              "Expect questions! We dive deep into your goals because we want to build the right solution. We're friendly, flexible, and engaged.",
-              "We keep you in the loop. Through regular check-ins and demos, you'll always know what's happening. No black boxes here.",
-              "We're in it for the long haul. Launch is just the beginning. We'll continue to support you, optimize your site, and help you grow as your business evolves."
-            ]
-        },
-        cta: {
-            title: "Let's build something ",
-            titleSpan: "amazing",
-            description: "If you have an idea, we want to hear it. Reach out and let's start the conversation.",
-            button: "Get in Touch"
-        }
+      hero: {
+        title: "About CartShift Studio",
+        subtitle: "Technical expertise. Human connection.",
+        badge: "Our Story",
+      },
+      story: {
+        title: "Our Story",
+        content: [
+          "It started with a simple idea: build sites that feel premium and perform like machines. One of us is obsessed with clean code. The other is obsessed with customer experience. Together, we bridge both.",
+          "We blend technical depth with a collaborative process. That means fewer surprises, faster decisions, and a launch you actually enjoy.",
+          "No one-size-fits-all templates. We listen first, then build what your business truly needs — and we keep iterating as you grow.",
+        ],
+      },
+      team: {
+        title: "Who We Are",
+        subtitle: "Meet the team behind CartShift Studio",
+        expertiseLabel: "Expertise:",
+        members: [
+          {
+            name: "Technical Lead",
+            role: "Co-Founder & Developer",
+            bio: "A senior developer specializing in Shopify and WordPress. Focused on clean architecture, performance, and building features that stay maintainable as your business grows.",
+            expertise:
+              "Shopify, WordPress, Custom Development, Performance Optimization",
+          },
+          {
+            name: "Customer-Facing Lead",
+            role: "Co-Founder & Strategist",
+            bio: "A growth-minded strategist who turns messy ideas into clear plans. Keeps projects moving, aligns everything to business goals, and makes sure the process feels smooth and human.",
+            expertise:
+              "Client Relations, Strategy, Project Management, Digital Marketing",
+          },
+        ],
+      },
+      values: {
+        title: "Our Values",
+        subtitle: "What drives everything we do",
+        items: [
+          {
+            title: "Clear Communication",
+            description:
+              "You’ll always know what’s happening and why. Simple language, honest recommendations, and zero surprises.",
+          },
+          {
+            title: "Design That Converts",
+            description:
+              "We sweat the details that move numbers: hierarchy, clarity, speed, and a buying journey that feels effortless.",
+          },
+          {
+            title: "Partners After Launch",
+            description:
+              "Launch isn’t the finish line. We stay close for improvements, experiments, fixes, and new features.",
+          },
+          {
+            title: "Honesty First",
+            description:
+              "If you don’t need something, we’ll tell you. If something is out of scope, we’ll plan it properly.",
+          },
+        ],
+      },
+      expect: {
+        title: "What to Expect When",
+        titleSpan: "Working With Us",
+        content: [
+          "Expect thoughtful questions. We dig into your goals, customers, and constraints so we can build the right thing — not just the thing you asked for.",
+          "Expect visibility. You’ll get check-ins, demos, and clear next steps. No black boxes.",
+          "Expect momentum after launch. We’ll help you optimize, iterate, and scale as your business evolves.",
+        ],
+      },
+      cta: {
+        title: "Let’s build something",
+        titleSpan: "great",
+        description:
+          "Have an idea (or a mess of notes)? We’ll help turn it into a site that sells.",
+        button: "Get in Touch",
+      },
     },
     shopify: {
-        hero: {
-            title: "Shopify Experts",
-            subtitle: "Sell More. Stress Less.",
-            description: "Launch or grow your store with a partner who handles the hard stuff.",
-            badge: "Shopify Growth Partners"
-        },
-        services: {
-            title: "Our Shopify Services",
-            subtitle: "Comprehensive solutions for every stage of your e-commerce journey",
-            items: [
-                { title: "Strategy & Advice", description: "We help you pick the right plan and apps. No guessing games. Just expert advice." },
-                { title: "Store Design", description: "Your brand, looking its best. We create a look that fits you perfectly, not just a generic template." },
-                { title: "Custom Features", description: "Need something special? We build custom tools and features just for your store." },
-                { title: "Speed & SEO", description: "Fast stores sell more. We make sure your site loads instantly and Google loves it." },
-                { title: "Ongoing Support", description: "We don't just launch and leave. We're here for updates, fixes, and new ideas." },
-                { title: "Store Tune-Up", description: "Already have a store? We'll find ways to make it work better and sell more." }
-            ]
-        },
-        why: {
-            title: "Why Build With ",
-            titleSpan: "Us?",
-            items: [
-                "We Build for Sales: A pretty website is nice, but a profitable one is better. We design stores specifically to turn your visitors into happy customers.",
-                "Zero Stress: We handle the code, the apps, the settings, and the confusing parts. You just get the keys to a finished, polished store.",
-                "Growth Ready: We set you up for success from day one. Whether you're listing your first product or your thousandth, your store will be ready to handle it."
-            ]
-        },
-        cta: {
-            title: "Ready to start ",
-            titleSpan: "selling more?",
-            description: "Let's talk about your business and how we can help it grow.",
-            button: "Let's Talk Shop"
-        }
+      hero: {
+        title: "Shopify Experts",
+        subtitle: "Sell more. Stress less.",
+        description:
+          "Launch, rebuild, or optimize your Shopify store with a partner who cares about conversion and performance.",
+        badge: "Shopify Growth Partners",
+      },
+      services: {
+        title: "Our Shopify Services",
+        subtitle: "From first build to ongoing growth",
+        items: [
+          {
+            title: "Strategy & Roadmap",
+            description:
+              "Clear priorities, the right plan, and the right apps — based on your goals (not hype).",
+          },
+          {
+            title: "Store Design",
+            description:
+              "A premium look that fits your brand and makes it easy for customers to buy.",
+          },
+          {
+            title: "Custom Features",
+            description:
+              "Bundles, subscriptions, upsells, custom sections, automations — built clean and maintainable.",
+          },
+          {
+            title: "Speed & SEO",
+            description:
+              "Faster load times, better Core Web Vitals, clean structure, and SEO fundamentals that compound.",
+          },
+          {
+            title: "Ongoing Support",
+            description:
+              "Fixes, improvements, experiments, and new features — without the agency chaos.",
+          },
+          {
+            title: "Store Tune-Up",
+            description:
+              "Already live? We’ll audit your store and ship the highest-impact improvements first.",
+          },
+        ],
+      },
+      why: {
+        title: "Why Build With",
+        titleSpan: "Us?",
+        items: [
+          "Conversion-first: We design for clarity and action, so more visitors turn into customers.",
+          "Less friction: We handle the code, apps, settings, and edge cases. You get a polished store and a clean handoff.",
+          "Built to scale: Whether you’re launching your first product or managing a large catalog, we keep your setup fast, stable, and growth-ready.",
+        ],
+      },
+      cta: {
+        title: "Ready to",
+        titleSpan: "grow sales?",
+        description:
+          "Tell us where you are today — we’ll map the fastest path forward.",
+        button: "Talk Shopify",
+      },
     },
     wordpress: {
-        hero: {
-            title: "WordPress Made Easy",
-            subtitle: "Robust Websites. Zero Headache.",
-            description: "We design and develop fast, secure websites that you can actually manage yourself.",
-            badge: "Web Development Experts"
-        },
-        services: {
-            title: "Our WordPress Services",
-            subtitle: "End-to-end website development from design to deployment",
-            items: [
-                { title: "Custom Websites", description: "We build from scratch or redesign. Exactly what you need, looking exactly how you want it." },
-                { title: "Theme Tweaks", description: "Have a theme you like? We'll customize it to match your brand perfectly." },
-                { title: "Custom Features", description: "Need something unique? Forms, memberships, or languages. We build it securely." },
-                { title: "WooCommerce", description: "Sell on WordPress. We set up easy-to-manage stores that convert visitors into buyers." },
-                { title: "Speed & Security", description: "We make your site fast and keep it safe depending on your needs." },
-                { title: "Peace of Mind", description: "We handle the backups, updates, and fixes so you don't have to." }
-            ]
-        },
-        why: {
-            title: "Websites That Work ",
-            titleSpan: "For You",
-            items: [
-              { strong: "Design + Performance:", text: "We mix creative design with solid code. You get a site that looks great and runs fast." },
-              { strong: "Total Freedom:", text: "We build sites you can manage yourself. Update text, change images, and add new pages without calling a developer." },
-              { strong: "Built to be Found:", text: "We build with Google in mind. Proper structure and clean code mean your site is ready to rank from day one." },
-              { strong: "Flexible & Scalable:", text: "Whether you need a simple portfolio or a complex corporate site, we build solutions that can grow with you." }
-            ]
-        },
-        cta: {
-            title: "Need a website that ",
-            titleSpan: "just works?",
-            description: "Beautiful, functional, and easy to manage. Let's make it happen.",
-            button: "Let's Build It"
-        }
+      hero: {
+        title: "WordPress Made Easy",
+        subtitle: "Fast, secure websites you can manage",
+        description:
+          "We design and develop WordPress sites that load quickly, rank well, and stay easy to update.",
+        badge: "Web Development Experts",
+      },
+      services: {
+        title: "Our WordPress Services",
+        subtitle: "End-to-end development from design to deployment",
+        items: [
+          {
+            title: "Custom Websites",
+            description:
+              "From scratch or redesign — built around your brand, your content, and your goals.",
+          },
+          {
+            title: "Theme Customization",
+            description:
+              "Love a theme? We’ll tailor it properly so it looks unique and stays maintainable.",
+          },
+          {
+            title: "Custom Features",
+            description:
+              "Forms, memberships, multilingual setups, integrations — built securely and cleanly.",
+          },
+          {
+            title: "WooCommerce",
+            description:
+              "Sell on WordPress with a store that’s easy to manage and built to convert.",
+          },
+          {
+            title: "Speed & Security",
+            description:
+              "Performance improvements plus sensible security — matched to your needs.",
+          },
+          {
+            title: "Peace of Mind",
+            description:
+              "We handle updates, backups, and fixes so your site stays healthy.",
+          },
+        ],
+      },
+      why: {
+        title: "Websites That Work",
+        titleSpan: "For You",
+        items: [
+          {
+            strong: "Design + Performance:",
+            text: "Beautiful visuals backed by solid engineering — fast, accessible, and reliable.",
+          },
+          {
+            strong: "Total Freedom:",
+            text: "Update content, swap images, add pages — without calling a developer.",
+          },
+          {
+            strong: "Built to Be Found:",
+            text: "Clean structure and best-practice foundations so your site is ready to rank.",
+          },
+          {
+            strong: "Flexible & Scalable:",
+            text: "From simple portfolios to complex sites — built to grow with you.",
+          },
+        ],
+      },
+      cta: {
+        title: "Need a website that",
+        titleSpan: "just works?",
+        description:
+          "Beautiful, functional, and easy to manage. Let’s make it happen.",
+        button: "Let’s Build It",
+      },
     },
     ctaBanner: {
       titlePart1: "Ready to take your business to the",
       titlePart2: "next level?",
-      description: "You have the vision. We have the tools to make it real. Let's build something you'll be proud to show off.",
-      button: "Start the Conversation"
+      description:
+        "Bring the vision — we’ll build the engine. Clear process, clean code, measurable results.",
+      button: "Start the Conversation",
     },
     testimonials: {
       title: "Success Stories",
-      subtitle: "Don't just take our word for it",
+      subtitle: "Don’t just take our word for it",
       items: [
         {
-          quote: "CartShift Studio transformed our online store. We saw a 50% increase in conversions within 3 months! Their attention to detail was exceptional.",
+          quote:
+            "CartShift Studio rebuilt our store experience end-to-end. Conversions improved quickly, and the site finally feels premium.",
           author: "Sarah Johnson",
           company: "Artisan Creations",
           rating: 5,
         },
         {
-          quote: "Working with CartShift was a game-changer. They migrated our entire store seamlessly and improved our speed by 60%. Our customers noticed the difference immediately.",
+          quote:
+            "They handled our migration flawlessly and made the store noticeably faster. Customers felt the difference immediately.",
           author: "Michael Chen",
           company: "TechGear Pro",
           rating: 5,
         },
         {
-          quote: "The team at CartShift doesn't just build websites. They build partnerships. They've been our go-to for ongoing optimization, and our sales have grown consistently.",
+          quote:
+            "They don’t just ship a site — they stick around, iterate, and help us grow month after month.",
           author: "Emily Rodriguez",
           company: "Boutique Fashion Co",
           rating: 5,
         },
-      ]
+      ],
     },
     whyChoose: {
       title: "Why Work With Us?",
-      subtitle: "We're not just coders. We're your partners.",
+      subtitle: "Not just builders — real partners.",
       items: [
         {
-          title: "Made Just For You",
-          description: "Your business isn't generic, so your site shouldn't be either. We design everything to match your specific goals.",
+          title: "Made for Your Business",
+          description:
+            "No cookie-cutter templates. We design around your goals, customers, and products.",
           icon: "target",
         },
         {
-          title: "We're In It Together",
-          description: "We care about your success as much as you do. Consider us an extension of your own team.",
+          title: "Senior-Led Delivery",
+          description:
+            "You work directly with experienced specialists — fewer handoffs, faster progress.",
           icon: "handshake",
         },
         {
           title: "Tech Made Simple",
-          description: "We speak the complicated tech language so you don't have to. You get a powerful site that's easy to use.",
+          description:
+            "We handle the complexity and explain choices in plain language.",
           icon: "bolt",
         },
         {
           title: "Growth Focused",
-          description: "Launching is just step one. We stay by your side to help you grow, adapt, and improve over time.",
+          description:
+            "We build with the next step in mind: speed, SEO, analytics, and iteration.",
           icon: "chart-up",
         },
-      ]
+      ],
     },
     servicesOverview: {
       title: "Our Core Solutions",
-      subtitle: "End-to-end e-commerce expertise across two powerful platforms",
+      subtitle: "E-commerce expertise across Shopify and WordPress",
       shopify: {
         title: "E-Commerce Growth",
-        description: "Everything you need to sell online. We handle the design, setup, and details so you can focus on what matters — your products.",
+        description:
+          "Everything you need to sell online. We handle design, setup, and performance so you can focus on your products.",
         features: ["Store Setup & Design", "Custom Features", "Speed Optimization", "Growth Support"],
       },
       wordpress: {
         title: "Custom Web Design",
-        description: "A website as unique as your brand. We create flexible, easy-to-manage sites that help you stand out and get found.",
+        description:
+          "A website as unique as your brand. Flexible, easy to manage, and built to stand out.",
         features: ["Custom Design", "Easy to Edit", "Online Store Ready", "SEO Optimized"],
-      }
+      },
     },
     contact: {
       hero: {
-          title: "Get in Touch",
-          subtitle: "Have an idea? Let's make it real.",
-          description: "Tell us what you need. We'll handle the rest.",
-          badge: "Let's Talk"
+        title: "Get in Touch",
+        subtitle: "Have a project in mind? Let’s make it real.",
+        description: "Tell us what you’re building — we’ll reply within 24 hours.",
+        badge: "Let’s Talk",
       },
       title: "Contact Information",
       emailLabel: "Email",
-      quickResponseTitle: "We're Quick",
+      quickResponseTitle: "Quick reply",
       quickResponseText: "We usually get back to you within 24 hours.",
-      scheduleTitle: "Prefer to Schedule a Call?",
-      scheduleText1: "We're happy to set up a 30-minute consultation call to discuss your project.",
-      scheduleText2: "Just mention it in your message, and we'll coordinate a time that works for you.",
+      scheduleTitle: "Want to hop on a call?",
+      scheduleText1:
+        "We can do a free 30-minute discovery call to discuss goals, scope, and next steps.",
+      scheduleText2:
+        "Mention it in your message, and we’ll coordinate a time that works for you.",
       form: {
         title: "Send us a message",
         nameLabel: "Name",
@@ -333,7 +419,7 @@ export const translations = {
         emailPlaceholder: "your@email.com",
         companyLabel: "Company/Website (optional)",
         companyPlaceholder: "Your company or website",
-        projectTypeLabel: "How can we help?",
+        projectTypeLabel: "What do you need help with?",
         selectOption: "Select an option",
         options: {
           shopify: "Shopify Store",
@@ -342,36 +428,37 @@ export const translations = {
           other: "Other",
         },
         messageLabel: "Tell us about your project",
-        messagePlaceholder: "Tell us about your project...",
+        messagePlaceholder: "Share a few details about your project...",
         submitButton: "Send Message",
-        submitting: "Submitting...",
-        privacy: "We'll never share your information. It's only used to contact you about your inquiry.",
+        submitting: "Sending...",
+        privacy: "We’ll only use your information to respond to your inquiry.",
         successTitle: "Thank you!",
-        successText: "We've received your message and will get back to you within 24 hours.",
+        successText: "Got it — we’ll reply within 24 hours.",
         sendAnother: "Send Another Message",
-      }
+      },
     },
     footer: {
-      description: "Bold eCommerce solutions built for your unique vision. We design, develop, and optimize Shopify and WordPress websites that stand out and sell more.",
+      description:
+        "Bold e-commerce builds for artists, makers, and brands. Shopify and WordPress websites that look great, load fast, and sell more.",
       solutions: "Solutions",
       company: "Company",
       rights: "All rights reserved.",
       links: {
-          shopify: "Shopify Solutions",
-          wordpress: "WordPress Solutions",
-          about: "About Us",
-          blog: "Blog",
-          contact: "Contact",
-          privacy: "Privacy Policy",
-          terms: "Terms of Service"
-      }
+        shopify: "Shopify Solutions",
+        wordpress: "WordPress Solutions",
+        about: "About Us",
+        blog: "Blog",
+        contact: "Contact",
+        privacy: "Privacy Policy",
+        terms: "Terms of Service",
+      },
     },
     common: {
       learnMore: "Learn More",
       contactUs: "Contact Us",
       getStarted: "Get Started",
       viewWork: "View Our Work",
-    }
+    },
   },
   he: {
     nav: {
@@ -382,318 +469,401 @@ export const translations = {
       contact: "צור קשר",
     },
     heroForm: {
-        title: "קבלו שיחת ייעוץ חינם",
-        subtitle: "מלאו את הטופס ונחזור אליכם תוך 24 שעות",
-        successTitle: "תודה!",
-        successText: "נהיה בקשר תוך 24 שעות.",
-        fields: {
-            name: "שם מלא",
-            namePlaceholder: "השם שלך",
-            nameRequired: "שם הוא שדה חובה",
-            email: "אימייל",
-            emailPlaceholder: "your@email.com",
-            emailRequired: "אימייל הוא שדה חובה",
-            emailInvalid: "כתובת אימייל לא תקינה",
-            interest: "במה נוכל לעזור?",
-            interestRequired: "אנא בחר אפשרות",
-            selectOption: "בחר אפשרות",
-            options: {
-                shopify: "חנות שופיפיי",
-                wordpress: "אתר וורדפרס",
-                consultation: "ייעוץ כללי"
-            }
+      title: "שיחת ייעוץ ללא עלות",
+      subtitle: "מלאו כמה פרטים ונחזור אליכם תוך 24 שעות.",
+      successTitle: "תודה!",
+      successText: "נחזור אליכם תוך 24 שעות.",
+      fields: {
+        name: "שם מלא",
+        namePlaceholder: "השם שלך",
+        nameRequired: "שם הוא שדה חובה",
+        email: "אימייל",
+        emailPlaceholder: "your@email.com",
+        emailRequired: "אימייל הוא שדה חובה",
+        emailInvalid: "כתובת אימייל לא תקינה",
+        interest: "מה אתם רוצים לבנות?",
+        interestRequired: "אנא בחרו אפשרות",
+        selectOption: "בחרו אפשרות",
+        options: {
+          shopify: "חנות שופיפיי (הקמה או צמיחה)",
+          wordpress: "אתר וורדפרס (תדמית או WooCommerce)",
+          consultation: "עדיין לא בטוחים — צריך ייעוץ",
         },
-        submit: "בואו נדבר",
-        submitting: "שולח...",
-        error: "משהו השתבש. אנא נסו שוב או צרו איתנו קשר ישירות."
+      },
+      submit: "קבלו ייעוץ חינם",
+      submitting: "שולח...",
+      error: "משהו השתבש. נסו שוב או צרו איתנו קשר ישירות.",
     },
     hero: {
-      tag: "בונים חוויות דיגיטליות שנשארות",
+      tag: "בונים חנויות ואתרים שממירים",
       titleLine1: "אנחנו בונים אתרים",
-      titleLine2: "שבאמת מוכרים",
-      description: "תשכחו מכאבי הראש הטכנולוגיים. אנחנו מעצבים ובונים חנויות אונליין מרהיבות שלוכדות תשומת לב והופכות מבקרים ללקוחות נאמנים. פשוט, עוצמתי, ונבנה במיוחד בשבילכם.",
-      primaryCta: "בואו נדבר על רעיונות",
-      secondaryCta: "ראו עבודות שלנו",
+      titleLine2: "שמייצרים מכירות",
+      description:
+        "בלי דרמות טכניות. אנחנו מעצבים ובונים אתרים מהירים ויפים שמובילים מבקרים לקנות, להשאיר פרטים או ליצור קשר — וממשיכים לשפר גם אחרי ההשקה.",
+      primaryCta: "קבלו ייעוץ חינם",
+      secondaryCta: "לתיק העבודות",
       scrollIndicator: "גללו כדי לגלות",
       stats: {
         clients: {
           value: "50+",
-          label: "לקוחות מרוצים"
+          label: "פרויקטים שהושקו",
         },
         dedication: {
-            value: "100%",
-            label: "מסירות"
-        }
-      }
+          value: "100%",
+          label: "ליווי צמוד",
+        },
+      },
     },
     blog: {
       hero: {
-          title: "הבלוג שלנו",
-          subtitle: "תובנות, טיפים ומדריכים שיעזרו לכם להצמיח את החנות שלכם",
-          badge: "תובנות אחרונות"
+        title: "הבלוג שלנו",
+        subtitle: "תובנות פרקטיות שיעזרו לכם לצמוח באונליין",
+        badge: "המאמרים החדשים",
       },
       categories: "קטגוריות:",
-      noPosts: "אין עדיין מאמרים. חזרו בקרוב!",
+      noPosts: "אין עדיין מאמרים — חזרו בקרוב!",
       readMore: "קרא עוד",
       relatedPosts: {
-          title: "מאמרים ",
-          span: "נוספים"
-      }
+        title: "מאמרים",
+        span: "נוספים",
+      },
     },
     blogPost: {
-        cta: {
-             title: "צריכים עזרה עם ",
-             titleSpan: "חנות האיקומרס שלכם?",
-             description: "אנחנו כאן כדי לעזור לכם לבנות ולבצע אופטימיזציה לחנות האונליין שלכם. צרו קשר לייעוץ חינם.",
-             button: "צרו קשר"
-        }
+      cta: {
+        title: "צריכים עזרה עם ",
+        titleSpan: "החנות שלכם?",
+        description:
+          "מאסטרטגיה ועד פיתוח ואופטימיזציה — אנחנו כאן. דברו איתנו לייעוץ ללא עלות.",
+        button: "דברו איתנו",
+      },
     },
     blogTeaser: {
-        title: "תובנות אחרונות",
-        subtitle: "טיפים, מגמות ואסטרטגיות צמיחה",
-        readMore: "קרא עוד",
-        viewAll: "לכל המאמרים",
-        posts: [
-          {
-            title: "איך לגרום לחנות שלכם לטוס",
-            excerpt: "חנויות איטיות מפסידות מכירות. הנה הצעדים המעשיים שאנחנו נוקטים כדי להבטיח שהלקוחות שלכם לעולם לא יחכו.",
-            href: "/blog/speed-up-shopify-store",
-            date: "2024-12-01"
-          },
-          {
-            title: "שופיפיי או וורדפרס? התשובה האמיתית.",
-            excerpt: "שני ענקים. החלטה אחת גדולה. אנחנו מפרקים את היתרונות והחסרונות כדי לעזור לכם להחליט איזו פלטפורמה מתאימה למטרות שלכם.",
-            href: "/blog/shopify-vs-woocommerce",
-            date: "2024-11-15"
-          }
-        ]
+      title: "תובנות אחרונות",
+      subtitle: "טיפים, מגמות ותוכניות צמיחה",
+      readMore: "קרא עוד",
+      viewAll: "לכל המאמרים",
+      posts: [
+        {
+          title: "איך להאיץ חנות שופיפיי (בלי לשבור את התבנית)",
+          excerpt:
+            "חנות איטית שווה פחות מכירות. הנה השיפורים המעשיים שאנחנו עושים כדי לקצר זמני טעינה ולהעלות המרות.",
+          href: "/blog/speed-up-shopify-store",
+          date: "2024-12-01",
+        },
+        {
+          title: "שופיפיי או וורדפרס: מה באמת מתאים לכם?",
+          excerpt:
+            "שתי פלטפורמות מצוינות — שימושים שונים. נעזור לכם לבחור לפי מטרות, תקציב ואיך אתם מתכננים לצמוח.",
+          href: "/blog/shopify-vs-woocommerce",
+          date: "2024-11-15",
+        },
+      ],
     },
     about: {
-        hero: {
-            title: "אודות CartShift Studio",
-            subtitle: "מומחיות טכנולוגית. חיבור אנושי.",
-            badge: "הסיפור שלנו"
-        },
-        story: {
-            title: "הסיפור שלנו",
-            content: [
-                "זה התחיל מרעיון פשוט. שני חברים. אחד אובססיבי לקוד, השני אובססיבי לחוויית לקוח. איחדנו כוחות כדי לבנות סוכנות שמרגישה אחרת.",
-                "רצינו ליצור מקום המשלב מצוינות טכנית עם מגע אנושי. המשימה שלנו פשוטה: להעצים אתכם להצליח אונליין עם אתר יפהפה וביצועי, תוך הפיכת התהליך למהנה ומשותף.",
-                "אנחנו לא מאמינים בפתרון אחד לכולם. אנחנו מקשיבים קודם. ואז בונים. העסק שלכם ייחודי, והאתר שלכם צריך לשקף זאת. ללא תבניות גנריות. פשוט פתרונות מותאמים אישית שעובדים."
-            ]
-        },
-        team: {
-            title: "מי אנחנו",
-            subtitle: "הכירו את הצוות מאחורי CartShift Studio",
-            expertiseLabel: "תחומי התמחות:",
-            members: [
-              {
-                name: "מוביל טכני",
-                role: "מייסד שותף ומפתח",
-                bio: "מפתח מנוסה עם מומחיות בשופיפיי ובוורדפרס, נלהב מקוד נקי ומלימוד מתמיד של טכנולוגיות האיקומרס החדשות ביותר. מאמין בבניית פתרונות שהם גם עוצמתיים וגם קלים לתחזוקה.",
-                expertise: "שופיפיי, וורדפרס, פיתוח Custom, אופטימיזציית ביצועים",
-              },
-              {
-                name: "מוביל חווית לקוח",
-                role: "מייסד שותף ואסטרטג",
-                bio: "אסטרטג ממוקד לקוח הנלהב מהבנת סיפורי הלקוחות ועזרה להם לצמוח. מביא ניסיון בשיווק דיגיטלי וניהול פרויקטים, ומבטיח שכל פרויקט תואם את היעדים העסקיים.",
-                expertise: "קשרי לקוחות, אסטרטגיה, ניהול פרויקטים, שיווק דיגיטלי",
-              },
-            ]
-        },
-        values: {
-            title: "הערכים שלנו",
-            subtitle: "מה שמניע את כל מה שאנחנו עושים",
-            items: [
-              {
-                title: "לקוחות הם משפחה",
-                description: "אנחנו מקשיבים ומקיימים תקשורת פתוחה. תמיד תדעו מה קורה. בלי ז'רגון מיותר, בלי הפתעות. ההצלחה שלכם היא בראש סדר העדיפויות שלנו.",
-              },
-              {
-                title: "יפה ופונקציונלי",
-                description: "כל פרויקט מעוצב בקפידה. אנחנו שואפים לפתרונות שהם חזקים, אמינים ומרהיבים ויזואלית.",
-              },
-              {
-                title: "שותפים לדרך",
-                description: "אנחנו לא רואים בפרויקט כסגור בהשקה. אנחנו כאן כדי לתמוך ולהתאים ככל שהעסק שלכם מתפתח.",
-              },
-              {
-                title: "כנות לפני הכל",
-                description: "אם משהו לא נחוץ, נגיד לכם. אם משהו הוא מעבר להיקף, נדון בזה. אמון הוא הכל.",
-              },
-            ]
-        },
-        expect: {
-            title: "למה לצפות כש-",
-            titleSpan: "עובדים איתנו",
-            content: [
-              "צפו לשאלות! אנחנו צוללים לעומק המטרות שלכם כי אנחנו רוצים לבנות את הפתרון הנכון. אנחנו חברותיים, גמישים ומעורבים.",
-              "אנחנו משאירים אתכם בעניינים. באמצעות עדכונים שוטפים והדגמות, תמיד תדעו מה אנחנו בונים ולמה. אין כאן קופסאות שחורות.",
-              "אנחנו כאן לטווח הארוך. ההשקה היא רק ההתחלה. נמשיך לתמוך בכם, לבצע אופטימיזציה לאתר ולעזור לכם לצמוח ככל שהעסק יגדל."
-            ]
-        },
-        cta: {
-            title: "בואו נבנה משהו ",
-            titleSpan: "מדהים",
-            description: "אם יש לכם רעיון, אנחנו רוצים לשמוע אותו. צרו קשר ובואו נתחיל את השיחה.",
-            button: "דברו איתנו"
-        }
+      hero: {
+        title: "אודות CartShift Studio",
+        subtitle: "מומחיות טכנולוגית. חיבור אנושי.",
+        badge: "הסיפור שלנו",
+      },
+      story: {
+        title: "הסיפור שלנו",
+        content: [
+          "זה התחיל מרעיון פשוט: לבנות אתרים שנראים פרימיום ומתפקדים כמו מכונה. אחד מאיתנו אובססיבי לקוד נקי. השני אובססיבי לחוויית לקוח. ביחד אנחנו מחברים את שני העולמות.",
+          "אנחנו משלבים עומק טכני עם תהליך עבודה שיתופי. זה אומר פחות הפתעות, החלטות מהירות יותר, והשקה שבאמת כיף לעבור.",
+          "אין אצלנו תבניות “אחד לכולם”. קודם מקשיבים, אחר כך בונים את מה שהעסק שלכם באמת צריך — וממשיכים לאטום ולשפר ככל שאתם גדלים.",
+        ],
+      },
+      team: {
+        title: "מי אנחנו",
+        subtitle: "הכירו את הצוות מאחורי CartShift Studio",
+        expertiseLabel: "תחומי התמחות:",
+        members: [
+          {
+            name: "מוביל טכני",
+            role: "מייסד שותף ומפתח",
+            bio: "מפתח בכיר המתמחה בשופיפיי ובוורדפרס. מתמקד בארכיטקטורה נקייה, ביצועים, ופיצ׳רים שנשארים קלים לתחזוקה גם כשהעסק גדל.",
+            expertise: "שופיפיי, וורדפרס, פיתוח Custom, אופטימיזציית ביצועים",
+          },
+          {
+            name: "מוביל חווית לקוח",
+            role: "מייסד שותף ואסטרטג",
+            bio: "אסטרטג ממוקד צמיחה שמתרגם רעיונות מבולגנים לתוכנית ברורה. דואג שהפרויקט יתקדם, שהכול יתיישר ליעדים העסקיים, ושהתהליך ירגיש נעים ושקוף.",
+            expertise: "קשרי לקוחות, אסטרטגיה, ניהול פרויקטים, שיווק דיגיטלי",
+          },
+        ],
+      },
+      values: {
+        title: "הערכים שלנו",
+        subtitle: "מה שמניע את כל מה שאנחנו עושים",
+        items: [
+          {
+            title: "תקשורת ברורה",
+            description:
+              "תמיד תדעו מה קורה ולמה. עברית פשוטה, המלצות כנות, ואפס הפתעות.",
+          },
+          {
+            title: "עיצוב שממיר",
+            description:
+              "אנחנו יורדים לפרטים שמזיזים מספרים: היררכיה, בהירות, מהירות, ומסע קנייה שמרגיש קל.",
+          },
+          {
+            title: "שותפים גם אחרי ההשקה",
+            description:
+              "השקה היא לא סוף הדרך. נשארים קרובים לשיפורים, ניסויים, תיקונים ופיצ׳רים חדשים.",
+          },
+          {
+            title: "כנות לפני הכול",
+            description:
+              "אם משהו לא נחוץ — נגיד. אם משהו מעבר להיקף — נתכנן נכון ובשקיפות.",
+          },
+        ],
+      },
+      expect: {
+        title: "למה לצפות כש",
+        titleSpan: "עובדים איתנו",
+        content: [
+          "צפו לשאלות טובות. אנחנו צוללים למטרות, לקהל ולמגבלות כדי לבנות את הדבר הנכון — לא רק את מה שביקשתם.",
+          "צפו לשקיפות. תקבלו צ׳ק-אינים, דמואים ושלבים ברורים. אין קופסאות שחורות.",
+          "צפו למומנטום אחרי ההשקה. נמשיך לאופטימיזציה, שיפורים וסקייל ככל שהעסק מתפתח.",
+        ],
+      },
+      cta: {
+        title: "בואו נבנה משהו",
+        titleSpan: "מעולה",
+        description:
+          "יש לכם רעיון (או בלגן של הערות)? נעזור להפוך את זה לאתר שמוכר.",
+        button: "דברו איתנו",
+      },
     },
     shopify: {
-        hero: {
-            title: "מומחי שופיפיי",
-            subtitle: "למכור יותר. עם פחות לחץ.",
-            description: "להשיק או להצמיח את החנות שלכם עם שותף שלוקח על עצמו את העבודה הקשה.",
-            badge: "שותפים לצמיחה בשופיפיי"
-        },
-        services: {
-            title: "שירותי השופיפיי שלנו",
-            subtitle: "פתרונות מקצה לקצה לכל שלב במסע האיקומרס שלכם",
-            items: [
-                { title: "אסטרטגיה וייעוץ", description: "אנחנו עוזרים לכם לבחור את התוכנית והאפליקציות הנכונות. בלי ניחושים. רק ייעוץ מומחה." },
-                { title: "עיצוב חנות", description: "המותג שלכם, נראה במיטבו. אנחנו יוצרים מראה שמתאים לכם בול, לא רק תבנית גנרית." },
-                { title: "פיצ'רים מותאמים אישית", description: "צריכים משהו מיוחד? אנחנו בונים כלים ופיצ'רים מותאמים אישית לחנות שלכם." },
-                { title: "מהירות ו-SEO", description: "חנויות מהירות מוכרות יותר. אנחנו דואגים שהאתר ייטען מיידית וגוגל יאהב אותו." },
-                { title: "תמיכה שוטפת", description: "אנחנו לא רק משיקים ועוזבים. אנחנו כאן לעדכונים, תיקונים ורעיונות חדשים." },
-                { title: "שדרוג חנות", description: "כבר יש לכם חנות? נמצא דרכים לגרום לה לעבוד טוב יותר ולמכור יותר." }
-            ]
-        },
-        why: {
-            title: "למה לבנות ",
-            titleSpan: "איתנו?",
-            items: [
-                "בונים למכירות: אתר יפה זה נחמד, אבל אתר רווחי זה מעולה. אנחנו מעצבים חנויות במיוחד כדי להפוך מבקרים ללקוחות מרוצים.",
-                "אפס לחץ: אנחנו דואגים לקוד, לאפליקציות, להגדרות ולחלקים המבלבלים. אתם מקבלים מפתח לחנות גמורה ומלוטשת.",
-                "מוכנים לצמיחה: אנחנו מכינים אתכם להצלחה מהיום הראשון. בין אם אתם מעלים מוצר ראשון או את האלף, החנות שלכם תהיה מוכנה לזה."
-            ]
-        },
-        cta: {
-            title: "מוכנים להתחיל ",
-            titleSpan: "למכור יותר?",
-            description: "בואו נדבר על העסק שלכם ואיך אנחנו יכולים לעזור לו לצמוח.",
-            button: "בואו נדבר ביזנס"
-        }
+      hero: {
+        title: "מומחי שופיפיי",
+        subtitle: "למכור יותר. פחות לחץ.",
+        description:
+          "להשיק, לשדרג או לבצע אופטימיזציה לחנות שופיפיי עם שותף שממוקד המרות וביצועים.",
+        badge: "שותפים לצמיחה בשופיפיי",
+      },
+      services: {
+        title: "שירותי השופיפיי שלנו",
+        subtitle: "מהקמה ראשונית ועד צמיחה שוטפת",
+        items: [
+          {
+            title: "אסטרטגיה ותוכנית עבודה",
+            description:
+              "סדר עדיפויות ברור, תוכנית נכונה ואפליקציות מתאימות — לפי מטרות, לא לפי הייפ.",
+          },
+          {
+            title: "עיצוב חנות",
+            description:
+              "מראה פרימיום שמתאים למותג שלכם ומקל על הלקוחות לקנות.",
+          },
+          {
+            title: "פיצ׳רים מותאמים אישית",
+            description:
+              "באנדלים, מנויים, אפסיילים, סקשנים בהתאמה, אוטומציות — בקוד נקי ותחזיק לאורך זמן.",
+          },
+          {
+            title: "מהירות ו-SEO",
+            description:
+              "טעינה מהירה יותר, Core Web Vitals טובים יותר, מבנה נקי ותשתית SEO שמצטברת.",
+          },
+          {
+            title: "תמיכה שוטפת",
+            description:
+              "תיקונים, שיפורים, ניסויים ופיצ׳רים חדשים — בלי כאוס של סוכנויות.",
+          },
+          {
+            title: "שדרוג חנות",
+            description:
+              "כבר באוויר? נבצע אודיט וניישם קודם את השיפורים בעלי ההשפעה הגבוהה ביותר.",
+          },
+        ],
+      },
+      why: {
+        title: "למה לבנות",
+        titleSpan: "איתנו?",
+        items: [
+          "ממוקדי המרה: מעצבים עם בהירות ופעולה, כדי שיותר מבקרים יהפכו ללקוחות.",
+          "פחות חיכוך: אנחנו מטפלים בקוד, באפליקציות ובהגדרות. אתם מקבלים חנות מלוטשת והעברה מסודרת.",
+          "בנוי לגדילה: מהשקה של מוצר ראשון ועד קטלוג גדול — שומרים על מהירות, יציבות ומוכנות לצמיחה.",
+        ],
+      },
+      cta: {
+        title: "מוכנים",
+        titleSpan: "לצמוח?",
+        description: "ספרו לנו איפה אתם היום — ונמפה את הדרך הכי מהירה קדימה.",
+        button: "בואו נדבר שופיפיי",
+      },
     },
     wordpress: {
-        hero: {
-            title: "וורדפרס בקלות",
-            subtitle: "אתרים חזקים. אפס כאבי ראש.",
-            description: "אנחנו מעצבים ומפתחים אתרים מהירים ומאובטחים שאתם באמת יכולים לנהל בעצמכם.",
-            badge: "מומחי פיתוח ווב"
-        },
-        services: {
-            title: "שירותי הוורדפרס שלנו",
-            subtitle: "פיתוח אתרים מקצה לקצה משלב העיצוב ועד העלייה לאוויר",
-            items: [
-                { title: "אתרים מותאמים אישית", description: "אנחנו בונים מאפס או מעצבים מחדש. בדיוק מה שאתם צריכים, נראה בדיוק כמו שאתם רוצים." },
-                { title: "התאמות תבנית", description: "יש לכם תבנית שאתם אוהבים? נתאים אותה בול למותג שלכם." },
-                { title: "פיצ'רים מותאמים אישית", description: "צריכים משהו ייחודי? טפסים, אזורי מנויים, או שפות. אנחנו בונים את זה מאובטח." },
-                { title: "WooCommerce", description: "למכור בוורדפרס. אנחנו מקימים חנויות קלות לניהול שהופכות מבקרים לקונים." },
-                { title: "מהירות ואבטחה", description: "אנחנו הופכים את האתר שלכם למהיר ושומרים עליו בטוח, בהתאם לצרכים שלכם." },
-                { title: "שקט נפשי", description: "אנחנו מטפלים בגיבויים, בעדכונים ובתיקונים כדי שאתם לא תצטרכו." }
-            ]
-        },
-        why: {
-            title: "אתרים שעובדים ",
-            titleSpan: "בשבילכם",
-            items: [
-              { strong: "עיצוב + ביצועים:", text: "אנחנו משלבים עיצוב יצירתי עם קוד חזק. אתם מקבלים אתר שנראה נהדר וטס מהר." },
-              { strong: "חופש מוחלט:", text: "אנחנו בונים אתרים שתוכלו לנהל בעצמכם. עדכנו טקסט, החליפו תמונות והוסיפו דפים חדשים בלי להתקשר למפתח." },
-              { strong: "בנוי להימצא:", text: "אנחנו בונים עם גוגל בראש שלנו. מבנה נכון וקוד נקי אומרים שהאתר שלכם מוכן לדירוג מהיום הראשון." },
-              { strong: "גמיש וסקיילבילי:", text: "בין אם אתם צריכים פורטפוליו פשוט או אתר תאגידי מורכב, אנחנו בונים פתרונות שיכולים לגדול איתכם." }
-            ]
-        },
-        cta: {
-            title: "צריכים אתר ש-",
-            titleSpan: "פשוט עובד?",
-            description: "יפה, פונקציונלי וקל לניהול. בואו נגרום לזה לקרות.",
-            button: "בואו נבנה את זה"
-        }
+      hero: {
+        title: "וורדפרס בקלות",
+        subtitle: "אתרים מהירים, מאובטחים וקלים לניהול",
+        description:
+          "אנחנו מעצבים ומפתחים אתרי וורדפרס שטסים, מדורגים טוב, ונשארים קלים לעדכון.",
+        badge: "מומחי פיתוח ווב",
+      },
+      services: {
+        title: "שירותי הוורדפרס שלנו",
+        subtitle: "פיתוח מקצה לקצה — מעיצוב ועד עלייה לאוויר",
+        items: [
+          {
+            title: "אתרים מותאמים אישית",
+            description:
+              "מאפס או רידיזיין — סביב המותג, התוכן והמטרות שלכם.",
+          },
+          {
+            title: "התאמות תבנית",
+            description:
+              "אוהבים תבנית? נתאים אותה נכון כדי שתיראה ייחודית ותישאר קלה לתחזוקה.",
+          },
+          {
+            title: "פיצ׳רים מותאמים אישית",
+            description:
+              "טפסים, אזורי מנויים, רב-לשוניות, אינטגרציות — בצורה מאובטחת ונקייה.",
+          },
+          {
+            title: "WooCommerce",
+            description:
+              "חנות על וורדפרס שקל לנהל — ובנויה להמרות.",
+          },
+          {
+            title: "מהירות ואבטחה",
+            description:
+              "שיפורי ביצועים ואבטחה הגיונית — לפי הצרכים שלכם.",
+          },
+          {
+            title: "שקט נפשי",
+            description:
+              "אנחנו מטפלים בעדכונים, גיבויים ותיקונים כדי שהאתר יישאר בריא.",
+          },
+        ],
+      },
+      why: {
+        title: "אתרים שעובדים",
+        titleSpan: "בשבילכם",
+        items: [
+          {
+            strong: "עיצוב + ביצועים:",
+            text: "ויזואל יפה עם הנדסה חזקה — מהיר, נגיש ואמין.",
+          },
+          {
+            strong: "חופש מוחלט:",
+            text: "עדכנו תוכן, החליפו תמונות והוסיפו דפים — בלי להרים טלפון למפתח.",
+          },
+          {
+            strong: "בנוי להימצא:",
+            text: "מבנה נקי ותשתית נכונה כדי שהאתר יהיה מוכן לדירוג בגוגל.",
+          },
+          {
+            strong: "גמיש וסקיילבילי:",
+            text: "מפורטפוליו פשוט ועד אתרים מורכבים — בנוי לגדול איתכם.",
+          },
+        ],
+      },
+      cta: {
+        title: "צריכים אתר ש-",
+        titleSpan: "פשוט עובד?",
+        description: "יפה, פונקציונלי וקל לניהול. בואו נגרום לזה לקרות.",
+        button: "בואו נבנה את זה",
+      },
     },
     ctaBanner: {
-      titlePart1: "מוכנים לקחת את העסק שלכם ל-",
-      titlePart2: "רמה הבאה?",
-      description: "לכם יש את החזון. לנו יש את הכלים להפוך אותו למציאות. בואו נבנה משהו שתהיו גאים להראות.",
-      button: "התחילו את השיחה"
+      titlePart1: "מוכנים לקחת את העסק שלכם",
+      titlePart2: "לרמה הבאה?",
+      description:
+        "אתם מביאים את החזון — אנחנו נבנה את המנוע. תהליך ברור, קוד נקי, תוצאות מדידות.",
+      button: "התחילו שיחה",
     },
     testimonials: {
       title: "סיפורי הצלחה",
       subtitle: "אל תסמכו רק על המילה שלנו",
       items: [
         {
-          quote: "CartShift Studio שינו את החנות המקוונת שלנו מקצה לקצה. ראינו עלייה של 50% בהמרות תוך 3 חודשים! תשומת הלב שלהם לפרטים הייתה יוצאת דופן.",
+          quote:
+            "CartShift Studio שדרגו לנו את חוויית החנות מקצה לקצה. ההמרות השתפרו מהר, והאתר סוף סוף מרגיש פרימיום.",
           author: "שרה כהן",
           company: "Artisan Creations",
           rating: 5,
         },
         {
-          quote: "העבודה עם CartShift הייתה משנת משחק. הם העבירו את כל החנות שלנו בצורה חלקה ושיפרו את המהירות ב-60%. הלקוחות שלנו שמו לב להבדל מיד.",
+          quote:
+            "הם העבירו לנו את החנות בצורה חלקה והפכו אותה למהירה משמעותית. הלקוחות הרגישו את ההבדל מיד.",
           author: "מיכאל לוי",
           company: "TechGear Pro",
           rating: 5,
         },
         {
-          quote: "הצוות ב-CartShift לא רק בונה אתרים. הם בונים שותפויות. הם הפכו לכתובת הקבועה שלנו לאופטימיזציה שוטפת, והמכירות שלנו צמחו בעקביות.",
+          quote:
+            "הם לא רק משיקים אתר — הם נשארים, משפרים, ועוזרים לנו לצמוח חודש אחרי חודש.",
           author: "אמילי רודריגז",
           company: "Boutique Fashion Co",
           rating: 5,
         },
-      ]
+      ],
     },
     whyChoose: {
       title: "למה לעבוד איתנו?",
-      subtitle: "אנחנו לא רק מתכנתים. אנחנו השותפים שלכם.",
+      subtitle: "לא רק בונים — שותפים אמיתיים.",
       items: [
         {
-          title: "מותאם במיוחד עבורכם",
-          description: "העסק שלכם לא גנרי, ולכן גם האתר שלכם לא צריך להיות כזה. אנחנו מעצבים הכל כדי להתאים למטרות הספציפיות שלכם.",
+          title: "מותאם לעסק שלכם",
+          description:
+            "בלי תבניות גנריות. אנחנו מעצבים סביב המטרות, הלקוחות והמוצרים שלכם.",
           icon: "target",
         },
         {
-          title: "אנחנו בזה ביחד",
-          description: "אכפת לנו מההצלחה שלכם בדיוק כמוכם. התייחסו אלינו כהרחבה של הצוות שלכם.",
+          title: "ליווי של בכירים",
+          description:
+            "אתם עובדים ישירות עם מומחים מנוסים — פחות העברות, יותר התקדמות.",
           icon: "handshake",
         },
         {
           title: "טכנולוגיה בפשטות",
-          description: "אנחנו מדברים את השפה הטכנית המסובכת כדי שאתם לא תצטרכו. אתם מקבלים אתר עוצמתי שקל להשתמש בו.",
+          description:
+            "אנחנו מתמודדים עם המורכבות ומסבירים החלטות בעברית ברורה.",
           icon: "bolt",
         },
         {
           title: "ממוקדי צמיחה",
-          description: "ההשקה היא רק הצעד הראשון. אנחנו נשארים לצדכם כדי לעזור לכם לצמוח, להסתגל ולהשתפר לאורך זמן.",
+          description:
+            "בונים עם הצעד הבא בראש: מהירות, SEO, אנליטיקס ושיפור מתמיד.",
           icon: "chart-up",
         },
-      ]
+      ],
     },
     servicesOverview: {
       title: "הפתרונות שלנו",
-      subtitle: "מומחיות איקומרס מקצה לקצה בשתי פלטפורמות חזקות",
+      subtitle: "מומחיות איקומרס בשופיפיי ובוורדפרס",
       shopify: {
         title: "צמיחה באונליין",
-        description: "כל מה שצריך כדי למכור אונליין. אנחנו דואגים לעיצוב, להקמה ולכל הפרטים הקטנים, כדי שאתם תוכלו להתמקד במה שחשוב באמת — המוצרים שלכם.",
+        description:
+          "כל מה שצריך כדי למכור אונליין. אנחנו דואגים לעיצוב, להקמה ולביצועים כדי שאתם תוכלו להתמקד במוצרים.",
         features: ["עיצוב והקמת חנויות", "פיתוחים מותאמים אישית", "אופטימיזציית מהירות", "ליווי לצמיחה עסקית"],
       },
       wordpress: {
         title: "עיצוב אתרים בהתאמה אישית",
-        description: "אתר ייחודי בדיוק כמו המותג שלכם. אנחנו יוצרים אתרים גמישים וקלים לניהול שעוזרים לכם לבלוט מעל כולם.",
-        features: ["עיצוב ייחודי (Custom)", "ממשק ניהול נוח", "תשתית למסחר אונליין", "אופטימיזציה לקידום (SEO)"],
-      }
+        description:
+          "אתר ייחודי כמו המותג שלכם. גמיש, קל לניהול, ובנוי לבלוט.",
+        features: ["עיצוב ייחודי (Custom)", "קל לעריכה", "מוכן לחנות אונליין", "מוכן ל-SEO"],
+      },
     },
     contact: {
       hero: {
-          title: "צרו איתנו קשר",
-          subtitle: "יש לכם רעיון? בואו נהפוך אותו למציאות.",
-          description: "ספרו לנו מה אתם צריכים. אנחנו נדאג לשאר.",
-          badge: "בואו נדבר"
+        title: "צרו איתנו קשר",
+        subtitle: "יש לכם פרויקט בראש? בואו נגרום לזה לקרות.",
+        description: "ספרו לנו מה אתם בונים — נחזור אליכם תוך 24 שעות.",
+        badge: "בואו נדבר",
       },
       title: "פרטי התקשרות",
       emailLabel: "אימייל",
-      quickResponseTitle: "אנחנו זריזים",
+      quickResponseTitle: "תגובה מהירה",
       quickResponseText: "בדרך כלל אנחנו חוזרים תוך 24 שעות.",
-      scheduleTitle: "מעדיפים לתאם שיחה?",
-      scheduleText1: "נשמח לתאם שיחת ייעוץ של 30 דקות לדיון על הפרויקט שלכם.",
-      scheduleText2: "פשוט ציינו זאת בהודעה, ונתאם זמן שנוח לכם.",
+      scheduleTitle: "מעדיפים שיחה?",
+      scheduleText1:
+        "נשמח לשיחת היכרות חינמית של 30 דקות כדי לדבר על מטרות, היקף והצעדים הבאים.",
+      scheduleText2:
+        "פשוט ציינו זאת בהודעה, ונתאם זמן שנוח לכם.",
       form: {
         title: "שלחו לנו הודעה",
         nameLabel: "שם מלא",
@@ -702,8 +872,8 @@ export const translations = {
         emailPlaceholder: "your@email.com",
         companyLabel: "חברה/אתר (אופציונלי)",
         companyPlaceholder: "שם החברה או כתובת האתר",
-        projectTypeLabel: "איך נוכל לעזור?",
-        selectOption: "בחר אפשרות",
+        projectTypeLabel: "במה נוכל לעזור?",
+        selectOption: "בחרו אפשרות",
         options: {
           shopify: "חנות שופיפיי",
           wordpress: "אתר וורדפרס",
@@ -711,37 +881,38 @@ export const translations = {
           other: "אחר",
         },
         messageLabel: "ספרו לנו על הפרויקט",
-        messagePlaceholder: "שתפו אותנו בפרטים על הפרויקט...",
+        messagePlaceholder: "שתפו כמה פרטים על הפרויקט שלכם...",
         submitButton: "שלח הודעה",
         submitting: "שולח...",
-        privacy: "אנחנו לעולם לא נשתף את המידע שלכם. הוא משמש רק כדי ליצור איתכם קשר לגבי הפנייה.",
+        privacy: "נשתמש במידע רק כדי לחזור אליכם לגבי הפנייה.",
         successTitle: "תודה!",
-        successText: "קיבלנו את ההודעה שלכם ונחזור אליכם תוך 24 שעות.",
+        successText: "קיבלנו — נחזור אליכם תוך 24 שעות.",
         sendAnother: "שלח הודעה נוספת",
-      }
+      },
     },
     footer: {
-      description: "פתרונות איקומרס נועזים שנבנו עבור החזון הייחודי שלך. אנחנו מעצבים, מפתחים ומבצעים אופטימיזציה לאתרי שופיפיי ווורדפרס שבולטים ומוכרים יותר.",
+      description:
+        "אתרי איקומרס נועזים לאמנים, יוצרים ומותגים. שופיפיי ווורדפרס שנראים מעולה, נטענים מהר ומוכרים יותר.",
       solutions: "פתרונות",
       company: "חברה",
       rights: "כל הזכויות שמורות.",
       links: {
-          shopify: "פתרונות שופיפיי",
-          wordpress: "פתרונות וורדפרס",
-          about: "מי אנחנו",
-          blog: "בלוג",
-          contact: "צור קשר",
-          privacy: "מדיניות פרטיות",
-          terms: "תנאי שימוש"
-      }
+        shopify: "פתרונות שופיפיי",
+        wordpress: "פתרונות וורדפרס",
+        about: "מי אנחנו",
+        blog: "בלוג",
+        contact: "צור קשר",
+        privacy: "מדיניות פרטיות",
+        terms: "תנאי שימוש",
+      },
     },
     common: {
       learnMore: "לפרטים נוספים",
       contactUs: "דברו איתנו",
       getStarted: "בואו נתחיל",
       viewWork: "לתיק העבודות",
-    }
-  }
+    },
+  },
 };
 
 export function getNestedTranslation(obj: Record<string, unknown>, path: string): unknown {

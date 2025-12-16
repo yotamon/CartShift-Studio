@@ -51,6 +51,7 @@ export const BlogPostTemplate: React.FC<BlogPostTemplateProps> = ({ post, relate
         subtitle={subtitle}
         description={finalDescription}
         badge={isHe ? "פוסט בבלוג" : "Blog Post"}
+        highlightLastWord={false}
       />
       <div className="py-8 px-4 sm:px-6 lg:px-8 bg-surface-900">
         <div className="max-w-4xl mx-auto">

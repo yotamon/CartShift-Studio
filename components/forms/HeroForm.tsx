@@ -52,7 +52,7 @@ export const HeroForm: React.FC = () => {
     return (
       <Card>
         <CardContent className="text-center py-8">
-          <div className="text-4xl mb-4">✓</div>
+          <div className="text-4xl mb-4 rtl:-scale-x-100 transform-gpu mb-4">✓</div>
           <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2 leading-tight tracking-tight">{t("heroForm.successTitle") as string}</h3>
           <p className="text-slate-600 dark:text-surface-300 text-base md:text-lg leading-relaxed">{t("heroForm.successText") as string}</p>
         </CardContent>

@@ -66,7 +66,7 @@ export const ServicesOverview: React.FC = () => {
                       viewport={{ once: true }}
                       transition={{ delay: index * 0.1 + idx * 0.1 }}
                     >
-                      <svg className="w-6 h-6 text-accent-500 dark:text-accent-400 me-4 mt-0.5 flex-shrink-0 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <svg className="w-6 h-6 text-accent-500 dark:text-accent-400 me-4 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                       <span className="text-slate-700 dark:text-surface-200 text-base md:text-lg font-medium">{feature}</span>
