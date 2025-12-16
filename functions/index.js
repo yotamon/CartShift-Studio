@@ -4,9 +4,9 @@ const admin = require("firebase-admin");
 
 admin.initializeApp();
 
-const gmailUser = defineSecret("GMAIL_USER");
-const gmailPassword = defineSecret("GMAIL_APP_PASSWORD");
-const contactEmail = defineSecret("CONTACT_EMAIL");
+const gmailUser = defineSecret("GMAIL_USER", { required: false });
+const gmailPassword = defineSecret("GMAIL_APP_PASSWORD", { required: false });
+const contactEmail = defineSecret("CONTACT_EMAIL", { required: false });
 
 exports.contactForm = onRequest(
 	{
