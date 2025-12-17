@@ -33,7 +33,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
         whileHover={{ y: -2 }}
         whileTap={{ scale: 0.98 }}
-        className={cn(baseStyles, variants[variant], sizes[size], className)}
+        className={cn(baseStyles, variants[variant], sizes[size], "touch-manipulation", className)}
         disabled={disabled || loading}
       >
         {variant === "primary" && (

@@ -76,7 +76,7 @@ export const HeroForm: React.FC = () => {
               id="name"
               type="text"
               {...register("name", { required: t("heroForm.fields.nameRequired") as string })}
-              className="w-full px-4 py-3 glass-effect rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-surface-500 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all"
+              className="w-full px-4 py-3 md:py-3 text-base md:text-base glass-effect rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-surface-500 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all touch-manipulation"
               placeholder={t("heroForm.fields.namePlaceholder") as string}
               aria-required="true"
               aria-invalid={errors.name ? "true" : "false"}
@@ -101,7 +101,7 @@ export const HeroForm: React.FC = () => {
                   message: t("heroForm.fields.emailInvalid") as string
                 }
               })}
-              className="w-full px-4 py-3 glass-effect rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-surface-500 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all"
+              className="w-full px-4 py-3 md:py-3 text-base md:text-base glass-effect rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-surface-500 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all touch-manipulation"
               placeholder={t("heroForm.fields.emailPlaceholder") as string}
               aria-required="true"
               aria-invalid={errors.email ? "true" : "false"}
@@ -121,7 +121,7 @@ export const HeroForm: React.FC = () => {
             <select
               id="interest"
               {...register("interest", { required: t("heroForm.fields.interestRequired") as string })}
-              className="w-full px-4 py-3 glass-effect rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all bg-white/50 dark:bg-surface-900/50"
+              className="w-full px-4 py-3 md:py-3 text-base md:text-base glass-effect rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all bg-white/50 dark:bg-surface-900/50 touch-manipulation"
               aria-required="true"
               aria-invalid={errors.interest ? "true" : "false"}
               aria-describedby={errors.interest ? "interest-error" : undefined}

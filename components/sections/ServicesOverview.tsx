@@ -8,6 +8,7 @@ import { Section, SectionHeader } from "@/components/ui/Section";
 import { Icon } from "@/components/ui/Icon";
 import { TiltCard } from "@/components/ui/TiltCard";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { Check, ArrowRight } from "lucide-react";
 
 
 
@@ -68,9 +69,7 @@ export const ServicesOverview: React.FC = () => {
                       viewport={{ once: true }}
                       transition={{ delay: index * 0.1 + idx * 0.1 }}
                     >
-                      <svg className="w-6 h-6 text-accent-500 dark:text-accent-400 me-4 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
+                      <Check className="w-6 h-6 text-accent-500 dark:text-accent-400 me-4 mt-0.5 flex-shrink-0" strokeWidth={2.5} />
                       <span className="text-slate-700 dark:text-surface-200 text-base md:text-lg font-medium">{feature}</span>
                     </motion.li>
                   ))}
@@ -78,9 +77,7 @@ export const ServicesOverview: React.FC = () => {
                 <Link href={service.href}>
                   <button className="group/link inline-flex items-center gap-3 px-6 py-3 border-2 border-accent-600 dark:border-accent-500 bg-transparent hover:bg-accent-600 dark:hover:bg-accent-500 text-accent-600 dark:text-accent-400 hover:text-white dark:hover:text-white font-bold rounded-xl transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg shine-sweep">
                     {t("common.learnMore") as string}
-                    <svg className="w-5 h-5 transition-transform group-hover/link:translate-x-1 rtl:group-hover/link:-translate-x-1 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
+                    <ArrowRight className="w-5 h-5 transition-transform group-hover/link:translate-x-1 rtl:group-hover/link:-translate-x-1 rtl:rotate-180" strokeWidth={2.5} />
                   </button>
                 </Link>
               </CardContent>

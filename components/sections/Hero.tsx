@@ -5,13 +5,14 @@ import { motion } from "framer-motion";
 import { HeroForm } from "@/components/forms/HeroForm";
 import { Button } from "@/components/ui/Button";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { ArrowRight, ArrowDown, Sparkles } from "lucide-react";
 
 export const Hero: React.FC = () => {
   const { t, direction } = useLanguage();
   const isRtl = direction === 'rtl';
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center py-20 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-50 dark:bg-surface-950">
+    <section className="relative min-h-[100dvh] flex items-center justify-center py-16 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-50 dark:bg-surface-950">
       {/* Background Ambience */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-surface-950 dark:to-surface-900 opacity-50"></div>
       <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid.svg')] opacity-[0.03] dark:opacity-5"></div>
@@ -222,12 +223,12 @@ export const Hero: React.FC = () => {
       />
 
       <div className="max-w-7xl mx-auto relative z-10 w-full">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <motion.div
             initial={{ opacity: 0, x: isRtl ? 50 : -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="space-y-10"
+            className="space-y-8 md:space-y-10"
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -235,13 +236,13 @@ export const Hero: React.FC = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 backdrop-blur-md shadow-premium"
             >
-              <span className="w-2 h-2 rounded-full bg-accent-500 animate-pulse"></span>
+              <Sparkles className="w-4 h-4 text-accent-500" />
               <span className="text-slate-700 dark:text-surface-200 text-sm font-semibold">
                 {t("hero.tag") as string}
               </span>
             </motion.div>
 
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold leading-[1.1] tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold leading-[1.1] tracking-tight text-slate-900 dark:text-white">
               {t("hero.titleLine1") as string} <br />
               <span className="gradient-text text-glow-subtle">{t("hero.titleLine2") as string}</span>
             </h1>
@@ -256,31 +257,26 @@ export const Hero: React.FC = () => {
             </motion.p>
 
             <motion.div
-              className="flex flex-wrap gap-4"
+              className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
             >
-              <a href="#contact-form">
-                <Button size="lg" className="group text-lg px-10 py-5 shadow-premium hover:shadow-premium-hover">
-                  <span className="relative z-10 flex items-center gap-3">
+              <a href="#contact-form" className="w-full sm:w-auto">
+                <Button size="lg" className="group text-base md:text-lg px-8 md:px-10 py-4 md:py-5 shadow-premium hover:shadow-premium-hover w-full sm:w-auto">
+                  <span className="relative z-10 flex items-center gap-3 justify-center">
                     {t("hero.primaryCta") as string}
-                    <motion.svg
-                      className="w-5 h-5 rtl:rotate-180"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2.5}
+                    <motion.div
                       animate={{ x: isRtl ? [0, -5, 0] : [0, 5, 0] }}
                       transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </motion.svg>
+                      <ArrowRight className={`w-5 h-5 ${isRtl ? 'rotate-180' : ''}`} strokeWidth={2.5} />
+                    </motion.div>
                   </span>
                 </Button>
               </a>
-              <a href="/solutions/shopify">
-                <Button variant="outline" size="lg" className="text-lg px-10 py-5 shadow-premium hover:shadow-premium-hover">
+              <a href="/solutions/shopify" className="w-full sm:w-auto">
+                <Button variant="outline" size="lg" className="text-base md:text-lg px-8 md:px-10 py-4 md:py-5 shadow-premium hover:shadow-premium-hover w-full sm:w-auto">
                   {t("hero.secondaryCta") as string}
                 </Button>
               </a>
@@ -290,15 +286,15 @@ export const Hero: React.FC = () => {
                initial={{ opacity: 0 }}
                animate={{ opacity: 1 }}
                transition={{ delay: 0.8, duration: 1 }}
-               className="pt-10 border-t border-slate-200 dark:border-white/5 flex gap-12"
+               className="pt-8 md:pt-10 border-t border-slate-200 dark:border-white/5 flex flex-wrap gap-8 md:gap-12"
             >
                 <div className="flex flex-col">
-                    <span className="text-3xl md:text-4xl font-display font-bold text-slate-900 dark:text-white mb-1">{t("hero.stats.clients.value") as string}</span>
-                    <span className="text-sm md:text-base text-slate-500 dark:text-surface-400 font-medium">{t("hero.stats.clients.label") as string}</span>
+                    <span className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-slate-900 dark:text-white mb-1">{t("hero.stats.clients.value") as string}</span>
+                    <span className="text-xs sm:text-sm md:text-base text-slate-500 dark:text-surface-400 font-medium">{t("hero.stats.clients.label") as string}</span>
                 </div>
                 <div className="flex flex-col">
-                    <span className="text-3xl md:text-4xl font-display font-bold text-slate-900 dark:text-white mb-1">{t("hero.stats.dedication.value") as string}</span>
-                    <span className="text-sm md:text-base text-slate-500 dark:text-surface-400 font-medium">{t("hero.stats.dedication.label") as string}</span>
+                    <span className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-slate-900 dark:text-white mb-1">{t("hero.stats.dedication.value") as string}</span>
+                    <span className="text-xs sm:text-sm md:text-base text-slate-500 dark:text-surface-400 font-medium">{t("hero.stats.dedication.label") as string}</span>
                 </div>
             </motion.div>
           </motion.div>
@@ -331,9 +327,7 @@ export const Hero: React.FC = () => {
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         >
           <span className="text-sm font-medium">{t("hero.scrollIndicator") as string}</span>
-          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
+          <ArrowDown className="w-6 h-6" strokeWidth={2} />
         </motion.div>
       </motion.div>
 

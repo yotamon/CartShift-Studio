@@ -70,7 +70,7 @@ export const Process: React.FC = () => {
           transition={{ duration: 1.5, ease: "easeOut" }}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8 lg:gap-6">
           {steps.map((step, index) => (
             <motion.div
               key={index}

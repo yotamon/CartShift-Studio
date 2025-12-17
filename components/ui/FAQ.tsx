@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 
 export interface FAQItem {
   question: string;
@@ -33,24 +34,19 @@ export const FAQ: React.FC<FAQProps> = ({ items, className = "" }) => {
         >
           <button
             onClick={() => toggleItem(index)}
-            className="w-full px-6 py-5 text-start flex items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-surface-700 transition-colors"
+            className="w-full px-4 md:px-6 py-4 md:py-5 text-start flex items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-surface-700 transition-colors touch-manipulation"
             aria-expanded={openIndex === index}
             aria-controls={`faq-answer-${index}`}
           >
-            <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white pe-8">
+            <h3 className="text-base md:text-lg lg:text-xl font-bold text-slate-900 dark:text-white pe-4 md:pe-8">
               {item.question}
             </h3>
-            <motion.svg
-              className="w-6 h-6 text-accent-500 dark:text-accent-400 flex-shrink-0"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2.5}
+            <motion.div
               animate={{ rotate: openIndex === index ? 180 : 0 }}
               transition={{ duration: 0.3 }}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </motion.svg>
+              <ChevronDown className="w-6 h-6 text-accent-500 dark:text-accent-400 flex-shrink-0" strokeWidth={2.5} />
+            </motion.div>
           </button>
           <AnimatePresence>
             {openIndex === index && (

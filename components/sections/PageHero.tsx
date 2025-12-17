@@ -2,6 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { Sparkles } from "lucide-react";
 
 interface PageHeroProps {
 	title: string;
@@ -31,7 +32,7 @@ export const PageHero: React.FC<PageHeroProps> = ({ title, subtitle, description
 							animate={{ opacity: 1, scale: 1 }}
 							transition={{ duration: 0.6, delay: 0.2 }}
 							className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 backdrop-blur-md mb-8">
-							<span className="w-2 h-2 rounded-full bg-accent-500 animate-pulse"></span>
+							<Sparkles className="w-4 h-4 text-accent-500" />
 							<span className="text-slate-700 dark:text-surface-200 text-sm font-medium">{badge}</span>
 						</motion.div>
 					)}

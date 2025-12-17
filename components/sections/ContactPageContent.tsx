@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { trackFormSubmission } from "@/components/analytics/GoogleAnalytics";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { logError } from "@/lib/error-handler";
+import { Mail, Clock, CheckCircle } from "lucide-react";
 
 interface ContactFormData {
   name: string;
@@ -67,29 +68,44 @@ export const ContactPageContent: React.FC = () => {
               {t("contact.title") as string}
             </h2>
             <div className="space-y-6 text-start">
-              <div>
-                <h3 className="font-semibold text-slate-900 dark:text-white mb-2 text-base md:text-lg">{t("contact.emailLabel") as string}</h3>
-                <a
-                  href="mailto:hello@cartshiftstudio.com"
-                  className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors text-base md:text-lg"
-                >
-                  hello@cartshiftstudio.com
-                </a>
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-500/10 flex items-center justify-center flex-shrink-0">
+                  <Mail className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900 dark:text-white mb-2 text-base md:text-lg">{t("contact.emailLabel") as string}</h3>
+                  <a
+                    href="mailto:hello@cartshiftstudio.com"
+                    className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors text-base md:text-lg"
+                  >
+                    hello@cartshiftstudio.com
+                  </a>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-slate-900 dark:text-white mb-2 text-base md:text-lg">{t("contact.quickResponseTitle") as string}</h3>
-                <p className="text-slate-600 dark:text-surface-300 text-base md:text-lg leading-relaxed">
-                  {t("contact.quickResponseText") as string}
-                </p>
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-accent-100 dark:bg-accent-500/10 flex items-center justify-center flex-shrink-0">
+                  <CheckCircle className="w-6 h-6 text-accent-600 dark:text-accent-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900 dark:text-white mb-2 text-base md:text-lg">{t("contact.quickResponseTitle") as string}</h3>
+                  <p className="text-slate-600 dark:text-surface-300 text-base md:text-lg leading-relaxed">
+                    {t("contact.quickResponseText") as string}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-slate-900 dark:text-white mb-2 text-base md:text-lg">{t("contact.scheduleTitle") as string}</h3>
-                <p className="text-slate-600 dark:text-surface-300 mb-2 text-base md:text-lg leading-relaxed">
-                  {t("contact.scheduleText1") as string}
-                </p>
-                <p className="text-slate-600 dark:text-surface-300 text-base md:text-lg leading-relaxed">
-                  {t("contact.scheduleText2") as string}
-                </p>
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-500/10 flex items-center justify-center flex-shrink-0">
+                  <Clock className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900 dark:text-white mb-2 text-base md:text-lg">{t("contact.scheduleTitle") as string}</h3>
+                  <p className="text-slate-600 dark:text-surface-300 mb-2 text-base md:text-lg leading-relaxed">
+                    {t("contact.scheduleText1") as string}
+                  </p>
+                  <p className="text-slate-600 dark:text-surface-300 text-base md:text-lg leading-relaxed">
+                    {t("contact.scheduleText2") as string}
+                  </p>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -103,7 +119,9 @@ export const ContactPageContent: React.FC = () => {
             {submitted ? (
               <Card glow>
                 <CardContent className="text-center py-12">
-                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white text-4xl font-bold shadow-lg">✓</div>
+                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white shadow-lg">
+                    <CheckCircle className="w-12 h-12" strokeWidth={2} />
+                  </div>
                   <h3 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-4 leading-tight tracking-tight">{t("contact.form.successTitle") as string}</h3>
                   <p className="text-slate-600 dark:text-surface-300 mb-6 text-base md:text-lg leading-relaxed">
                     {t("contact.form.successText") as string}

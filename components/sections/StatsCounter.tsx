@@ -3,11 +3,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { Briefcase, ThumbsUp, Award, Clock } from "lucide-react";
 
 interface Stat {
 	value: number;
 	suffix: string;
 	label: string;
+	icon: React.ReactNode;
 }
 
 const AnimatedCounter: React.FC<{ value: number; suffix: string; inView: boolean }> = ({ value, suffix, inView }) => {
@@ -51,22 +53,26 @@ export const StatsCounter: React.FC = () => {
 		{
 			value: 50,
 			suffix: "+",
-			label: (t("stats.projects.label") as string) || "Projects Delivered"
+			label: (t("stats.projects.label") as string) || "Projects Delivered",
+			icon: <Briefcase className="w-8 h-8 md:w-10 md:h-10" strokeWidth={1.5} />
 		},
 		{
 			value: 98,
 			suffix: "%",
-			label: (t("stats.satisfaction.label") as string) || "Client Satisfaction"
+			label: (t("stats.satisfaction.label") as string) || "Client Satisfaction",
+			icon: <ThumbsUp className="w-8 h-8 md:w-10 md:h-10" strokeWidth={1.5} />
 		},
 		{
 			value: 12,
 			suffix: "+",
-			label: (t("stats.years.label") as string) || "Years Experience"
+			label: (t("stats.years.label") as string) || "Years Experience",
+			icon: <Award className="w-8 h-8 md:w-10 md:h-10" strokeWidth={1.5} />
 		},
 		{
 			value: 24,
 			suffix: "/7",
-			label: (t("stats.support.label") as string) || "Support Available"
+			label: (t("stats.support.label") as string) || "Support Available",
+			icon: <Clock className="w-8 h-8 md:w-10 md:h-10" strokeWidth={1.5} />
 		}
 	];
 
@@ -134,6 +140,7 @@ export const StatsCounter: React.FC = () => {
 								)}
 
 								<div className="relative z-10 text-center">
+									<div className="flex items-center justify-center mb-4 text-white/90">{stat.icon}</div>
 									<div className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-display font-bold text-white mb-3 tracking-tight">
 										<AnimatedCounter value={stat.value} suffix={stat.suffix} inView={isInView} />
 									</div>

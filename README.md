@@ -59,7 +59,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Deployment
 
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed Firebase deployment instructions.
+See [DEPLOYMENT.md](./docs/DEPLOYMENT.md) for detailed Firebase deployment instructions.
 
 Quick deploy:
 ```bash
@@ -111,10 +111,18 @@ firebase functions:config:set contact.email="hello@yourdomain.com"
 
 ## Documentation
 
-- [DEPLOYMENT.md](./DEPLOYMENT.md) - Firebase deployment guide
-- [TESTING.md](./TESTING.md) - Testing checklist
-- [PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md) - Implementation summary
-- [CODE_REVIEW.md](./CODE_REVIEW.md) - Comprehensive code review and fixes
+All documentation is located in the `/docs` folder:
+
+- [DEPLOYMENT.md](./docs/DEPLOYMENT.md) - Firebase deployment guide
+- [TESTING.md](./docs/TESTING.md) - Testing checklist
+- [PROJECT_SUMMARY.md](./docs/PROJECT_SUMMARY.md) - Implementation summary
+- [CODE_REVIEW.md](./docs/CODE_REVIEW.md) - Comprehensive code review and fixes
+- [INCONSISTENCIES_ANALYSIS.md](./docs/INCONSISTENCIES_ANALYSIS.md) - Code inconsistencies analysis
+- [SEO_DOCS_README.md](./docs/SEO_DOCS_README.md) - SEO documentation overview
+- [SEO_STRATEGY.md](./docs/SEO_STRATEGY.md) - Comprehensive SEO strategy
+- [SEO_QUICK_START.md](./docs/SEO_QUICK_START.md) - SEO quick start guide
+- [KEYWORD_STRATEGY.md](./docs/KEYWORD_STRATEGY.md) - Keyword research strategy
+- [LINK_BUILDING_GUIDE.md](./docs/LINK_BUILDING_GUIDE.md) - Link building playbook
 
 ## License
 

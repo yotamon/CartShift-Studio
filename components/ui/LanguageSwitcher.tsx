@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { ChevronDown } from "lucide-react";
 
 const USFlag = () => (
   <svg viewBox="0 0 640 480" className="w-5 h-5 rounded-full object-cover">
@@ -88,14 +89,9 @@ export const LanguageSwitcher = () => {
         <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
             {language === 'en' ? 'EN' : 'עב'}
         </span>
-        <svg
+        <ChevronDown
             className={`w-3 h-3 text-slate-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-        >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
+        />
       </button>
 
       <AnimatePresence>

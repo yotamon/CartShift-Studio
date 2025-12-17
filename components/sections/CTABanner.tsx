@@ -4,15 +4,15 @@ import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { ArrowRight } from "lucide-react";
 
 export const CTABanner: React.FC = () => {
   const { t, direction } = useLanguage();
   const isRtl = direction === 'rtl';
 
   return (
-    <section className="relative py-20 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-50 dark:bg-surface-950">
+    <section className="relative py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-50 dark:bg-surface-950">
       {/* Animated mesh gradient background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-accent-500/5"></div>
@@ -79,12 +79,12 @@ export const CTABanner: React.FC = () => {
           <div className="absolute -inset-[1px] bg-gradient-to-r from-primary-500 via-accent-500 to-primary-500 rounded-[2rem] opacity-90 animate-gradient-x"></div>
 
           {/* Inner content */}
-          <div className="relative rounded-[2rem] p-10 md:p-14 bg-white dark:bg-surface-900 text-center overflow-hidden">
+          <div className="relative rounded-xl md:rounded-[2rem] p-8 md:p-12 lg:p-14 bg-white dark:bg-surface-900 text-center overflow-hidden">
             {/* Inner decorative orb */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-b from-primary-500/10 to-transparent rounded-full blur-3xl"></div>
 
-            <div className="relative z-10 space-y-8">
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-slate-900 dark:text-white leading-[1.1] tracking-tight">
+            <div className="relative z-10 space-y-6 md:space-y-8">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold text-slate-900 dark:text-white leading-[1.1] tracking-tight">
                 {t("ctaBanner.titlePart1") as string}{" "}
                 <span className="gradient-text text-glow-subtle">{t("ctaBanner.titlePart2") as string}</span>
               </h2>
@@ -94,7 +94,7 @@ export const CTABanner: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2, duration: 0.8 }}
-                className="text-lg md:text-xl text-slate-600 dark:text-surface-300 font-light leading-relaxed max-w-2xl mx-auto"
+                className="text-base md:text-lg lg:text-xl text-slate-600 dark:text-surface-300 font-light leading-relaxed max-w-2xl mx-auto"
               >
                 {t("ctaBanner.description") as string}
               </motion.p>
@@ -104,23 +104,18 @@ export const CTABanner: React.FC = () => {
                 whileInView={{ opacity: 1, scale: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.4, duration: 0.8, type: "spring" }}
-                className="pt-4"
+                className="pt-2 md:pt-4"
               >
                 <Link href="/contact">
-                  <Button size="lg" variant="secondary" className="text-xl px-14 py-6 font-black shadow-glow-primary group">
-                    <span className="flex items-center gap-3">
+                  <Button size="lg" variant="secondary" className="text-lg md:text-xl px-10 md:px-14 py-5 md:py-6 font-black shadow-glow-primary group w-full sm:w-auto">
+                    <span className="flex items-center gap-3 justify-center">
                       {t("ctaBanner.button") as string}
-                      <motion.svg
-                        className="w-5 h-5 rtl:rotate-180"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2.5}
+                      <motion.div
                         animate={{ x: isRtl ? [0, -5, 0] : [0, 5, 0] }}
                         transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                      </motion.svg>
+                        <ArrowRight className={`w-5 h-5 ${isRtl ? 'rotate-180' : ''}`} strokeWidth={2.5} />
+                      </motion.div>
                     </span>
                   </Button>
                 </Link>

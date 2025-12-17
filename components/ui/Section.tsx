@@ -24,7 +24,7 @@ export const Section: React.FC<SectionProps> = ({
     <section
       id={id}
       className={cn(
-        "py-20 md:py-32 px-4 sm:px-6 lg:px-8 relative",
+        "py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 relative",
         backgrounds[background],
         className
       )}
@@ -51,15 +51,15 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
 }) => {
   return (
     <div className={cn(
-      "mb-12",
+      "mb-10 md:mb-12 lg:mb-16",
       align === "center" ? "text-center" : "text-start",
       className
     )}>
-      <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-slate-900 dark:text-white mb-8 leading-tight tracking-tight">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold text-slate-900 dark:text-white mb-6 md:mb-8 leading-tight tracking-tight">
         <span className="gradient-text block">{title}</span>
       </h2>
       {subtitle && (
-        <p className="text-base md:text-lg text-slate-600 dark:text-surface-300 max-w-4xl mx-auto leading-relaxed font-light">
+        <p className="text-sm sm:text-base md:text-lg text-slate-600 dark:text-surface-300 max-w-4xl mx-auto leading-relaxed font-light">
           {subtitle}
         </p>
       )}
