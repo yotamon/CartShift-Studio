@@ -459,6 +459,42 @@ export const translations = {
       getStarted: "Get Started",
       viewWork: "View Our Work",
     },
+    process: {
+      title: "How We Work",
+      subtitle: "A streamlined process designed for success",
+      steps: {
+        discovery: {
+          title: "Discovery",
+          description: "We learn about your business, goals, and vision to create a tailored strategy.",
+        },
+        design: {
+          title: "Design",
+          description: "Our designers craft stunning visuals that capture your brand identity.",
+        },
+        develop: {
+          title: "Develop",
+          description: "We build your store with clean code and optimized performance.",
+        },
+        launch: {
+          title: "Launch",
+          description: "Your store goes live with full support and ongoing optimization.",
+        },
+      },
+    },
+    stats: {
+      projects: {
+        label: "Projects Delivered",
+      },
+      satisfaction: {
+        label: "Client Satisfaction",
+      },
+      years: {
+        label: "Years Experience",
+      },
+      support: {
+        label: "Support Available",
+      },
+    },
   },
   he: {
     nav: {
@@ -911,6 +947,42 @@ export const translations = {
       contactUs: "דברו איתנו",
       getStarted: "בואו נתחיל",
       viewWork: "לתיק העבודות",
+    },
+    process: {
+      title: "איך אנחנו עובדים",
+      subtitle: "תהליך ייעודי שמוביל להצלחה",
+      steps: {
+        discovery: {
+          title: "גילוי",
+          description: "אנחנו לומדים על העסק, המטרות והחזון שלכם כדי ליצור אסטרטגיה מותאמת.",
+        },
+        design: {
+          title: "עיצוב",
+          description: "המעצבים שלנו יוצרים ויזואל מרהיב שמבטא את זהות המותג שלכם.",
+        },
+        develop: {
+          title: "פיתוח",
+          description: "אנחנו בונים את החנות עם קוד נקי וביצועים אופטימליים.",
+        },
+        launch: {
+          title: "השקה",
+          description: "החנות עולה לאוויר עם תמיכה מלאה ואופטימיזציה שוטפת.",
+        },
+      },
+    },
+    stats: {
+      projects: {
+        label: "פרויקטים שהושקו",
+      },
+      satisfaction: {
+        label: "שביעות רצון לקוחות",
+      },
+      years: {
+        label: "שנות ניסיון",
+      },
+      support: {
+        label: "תמיכה זמינה",
+      },
     },
   },
 };

@@ -110,7 +110,7 @@ export const Hero: React.FC = () => {
             className="relative"
           >
             <div className="absolute inset-0 bg-gradient-brand opacity-15 blur-3xl rounded-full"></div>
-            <div className="relative glass-card p-1">
+            <div className="relative">
               <HeroForm />
             </div>
           </motion.div>

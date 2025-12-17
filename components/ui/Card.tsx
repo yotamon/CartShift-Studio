@@ -23,7 +23,7 @@ export const Card: React.FC<CardProps> = ({ children, className, hover = false, 
       )}
     >
       {glow && (
-        <div className="absolute inset-0 bg-gradient-to-br from-accent-500/10 via-transparent to-primary-500/10 pointer-events-none"></div>
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary-500 via-accent-500 to-primary-500 rounded-t-3xl opacity-60 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
       )}
       <div className="relative z-10">
         {children}

@@ -8,56 +8,127 @@ import { Button } from "@/components/ui/Button";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export const CTABanner: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, direction } = useLanguage();
+  const isRtl = direction === 'rtl';
 
   return (
     <section className="relative py-32 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-50 dark:bg-surface-950">
-      <div className="absolute inset-0 bg-gradient-brand opacity-[0.03] dark:opacity-15"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0.05),transparent_70%)] dark:bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0.2),transparent_70%)]"></div>
+      {/* Animated mesh gradient background */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-accent-500/5"></div>
+        <div className="absolute top-0 left-0 w-full h-full">
+          <svg className="absolute inset-0 w-full h-full opacity-[0.03] dark:opacity-[0.08]" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+              <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5"/>
+              </pattern>
+            </defs>
+            <rect width="100" height="100" fill="url(#grid)" />
+          </svg>
+        </div>
+      </div>
 
-      {/* Ambient Glow Orbs */}
-      <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-primary-400/10 dark:bg-primary-500/20 rounded-full blur-[100px] animate-pulse-glow"></div>
-      <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-accent-400/10 dark:bg-accent-500/15 rounded-full blur-[100px] animate-pulse-glow" style={{ animationDelay: '1s' }}></div>
+      {/* Floating geometric shapes */}
+      <motion.div
+        className="absolute top-20 left-[15%] w-20 h-20 border-2 border-primary-500/20 rounded-xl"
+        animate={{
+          rotate: [0, 90, 180, 270, 360],
+          y: [0, -20, 0, 20, 0]
+        }}
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+      />
+      <motion.div
+        className="absolute bottom-20 right-[15%] w-16 h-16 border-2 border-accent-500/20 rounded-full"
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.3, 0.6, 0.3]
+        }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute top-1/2 left-[5%] w-24 h-24 border border-primary-400/10 rounded-2xl"
+        animate={{
+          rotate: [0, -45, 0],
+        }}
+        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute top-1/3 right-[8%] w-12 h-12 bg-accent-500/5 rounded-lg"
+        animate={{
+          y: [0, 30, 0],
+          rotate: [0, 45, 0]
+        }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+      />
 
-      <div className="max-w-4xl mx-auto text-center relative z-10">
+      {/* Ambient Glow Orbs - Enhanced */}
+      <div className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-primary-400/10 dark:bg-primary-500/20 rounded-full blur-[150px] animate-pulse"></div>
+      <div className="absolute top-1/2 right-1/4 w-[400px] h-[400px] bg-accent-400/10 dark:bg-accent-500/15 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
+
+      {/* Main Content Card with Animated Border */}
+      <div className="max-w-4xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="space-y-8"
+          className="relative"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-slate-900 dark:text-white leading-[1.1] tracking-tight">
-            {t("ctaBanner.titlePart1") as string}{" "}
-            <span className="gradient-text text-glow-subtle">{t("ctaBanner.titlePart2") as string}</span>
-          </h2>
+          {/* Animated gradient border wrapper */}
+          <div className="absolute -inset-[2px] bg-gradient-to-r from-primary-500 via-accent-500 to-primary-500 rounded-[2rem] opacity-75 blur-sm animate-gradient-x"></div>
+          <div className="absolute -inset-[1px] bg-gradient-to-r from-primary-500 via-accent-500 to-primary-500 rounded-[2rem] opacity-90 animate-gradient-x"></div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-            className="text-lg md:text-xl text-slate-600 dark:text-surface-200 font-light leading-relaxed max-w-2xl mx-auto"
-          >
-            {t("ctaBanner.description") as string}
-          </motion.p>
+          {/* Inner content */}
+          <div className="relative rounded-[2rem] p-10 md:p-14 bg-white dark:bg-surface-900 text-center overflow-hidden">
+            {/* Inner decorative orb */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-b from-primary-500/10 to-transparent rounded-full blur-3xl"></div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            whileInView={{ opacity: 1, scale: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4, duration: 0.8, type: "spring" }}
-            className="pt-4"
-          >
-            <Link href="/contact">
-              <Button size="lg" variant="secondary" className="text-xl px-14 py-6 font-black shadow-glow-primary">
-                {t("ctaBanner.button") as string}
-              </Button>
-            </Link>
-          </motion.div>
+            <div className="relative z-10 space-y-8">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-slate-900 dark:text-white leading-[1.1] tracking-tight">
+                {t("ctaBanner.titlePart1") as string}{" "}
+                <span className="gradient-text text-glow-subtle">{t("ctaBanner.titlePart2") as string}</span>
+              </h2>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, duration: 0.8 }}
+                className="text-lg md:text-xl text-slate-600 dark:text-surface-200 font-light leading-relaxed max-w-2xl mx-auto"
+              >
+                {t("ctaBanner.description") as string}
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4, duration: 0.8, type: "spring" }}
+                className="pt-4"
+              >
+                <Link href="/contact">
+                  <Button size="lg" variant="secondary" className="text-xl px-14 py-6 font-black shadow-glow-primary group">
+                    <span className="flex items-center gap-3">
+                      {t("ctaBanner.button") as string}
+                      <motion.svg
+                        className="w-5 h-5 rtl:rotate-180"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2.5}
+                        animate={{ x: isRtl ? [0, -5, 0] : [0, 5, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </motion.svg>
+                    </span>
+                  </Button>
+                </Link>
+              </motion.div>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>
   );
 };
-

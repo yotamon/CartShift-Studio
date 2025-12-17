@@ -107,3 +107,5 @@ Struggling with a slow store? We've optimized dozens of Shopify sites. [Contact 
 מתמודדים עם חנות איטית? ביצענו אופטימיזציה לעשרות אתרי שופיפיי. [צרו קשר עם CartShift Studio](/contact) כדי לדון כיצד נוכל לעזור להפוך את שלכם למהירה יותר.
 
 
+
+

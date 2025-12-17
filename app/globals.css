@@ -239,6 +239,22 @@ body {
     }
   }
 
+  @keyframes gradient-x {
+    0%, 100% {
+      background-position: 0% 50%;
+      background-size: 200% 200%;
+    }
+    50% {
+      background-position: 100% 50%;
+      background-size: 200% 200%;
+    }
+  }
+
+  .animate-gradient-x {
+    animation: gradient-x 3s ease infinite;
+    background-size: 200% 200%;
+  }
+
   .text-glow {
     text-shadow: 0 0 20px rgba(192, 38, 211, 0.5);
   }
