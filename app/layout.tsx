@@ -29,10 +29,10 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "CartShift Studio - Bold eCommerce Solutions",
+    default: "CartShift Studio | Shopify & WordPress E-commerce Development Agency",
     template: "%s | CartShift Studio",
   },
-  description: "Creative Shopify & WordPress development agency specializing in custom e-commerce solutions",
+  description: "Expert Shopify & WordPress development agency. Custom e-commerce stores, migrations, and optimization. Get a free consultation for your online store project.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://cartshiftstudio.com"),
 };
 

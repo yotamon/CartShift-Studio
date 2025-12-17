@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { PageHero } from "@/components/sections/PageHero";
 import { BlogPostContent } from "@/components/sections/BlogPostContent";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { BlogPost } from "@/lib/markdown";
 
@@ -13,9 +13,12 @@ interface BlogPostTemplateProps {
     slug: string;
     title: string;
     excerpt: string;
+    category: string;
+    date: string;
     translation?: {
       title: string;
       excerpt: string;
+      category: string;
     };
   }>;
 }
@@ -42,7 +45,16 @@ export const BlogPostTemplate: React.FC<BlogPostTemplateProps> = ({ post, relate
     slug: p.slug,
     title: isHe && p.translation?.title ? p.translation.title : p.title,
     excerpt: isHe && p.translation?.excerpt ? p.translation.excerpt : p.excerpt,
+    category: isHe && p.translation?.category ? p.translation.category : p.category,
+    date: p.date,
+    translation: p.translation,
   }));
+
+  const breadcrumbItems = [
+    { name: isHe ? "ראשי" : "Home", url: "/" },
+    { name: isHe ? "בלוג" : "Blog", url: "/blog" },
+    { name: title, url: `/blog/${post.slug}` },
+  ];
 
   return (
     <>
@@ -53,14 +65,9 @@ export const BlogPostTemplate: React.FC<BlogPostTemplateProps> = ({ post, relate
         badge={isHe ? "פוסט בבלוג" : "Blog Post"}
         highlightLastWord={false}
       />
-      <div className="py-8 px-4 sm:px-6 lg:px-8 bg-surface-900">
-        <div className="max-w-4xl mx-auto">
-          <Link href="/blog" className="text-primary-400 hover:text-primary-300 mb-4 inline-flex items-center gap-2 transition-colors rtl:flex-row-reverse">
-            <svg className="w-4 h-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            {isHe ? "חזרה לבלוג" : "Back to Blog"}
-          </Link>
+      <div className="bg-slate-50 dark:bg-surface-900 border-b border-slate-200 dark:border-transparent">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <Breadcrumb items={breadcrumbItems} />
         </div>
       </div>
       <BlogPostContent

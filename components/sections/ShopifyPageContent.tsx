@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { FAQ, FAQItem } from "@/components/ui/FAQ";
+import { ProcessSection } from "@/components/sections/ProcessSection";
 import Link from "next/link";
 
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -19,6 +21,9 @@ export const ShopifyPageContent: React.FC = () => {
 
 	const services = t("shopify.services.items") as unknown as Array<{ title: string; description: string }>;
 	const whyItems = t("shopify.why.items") as unknown as string[];
+	const learnMoreData = t("shopify.learnMore") as unknown as { title: string; description: string; links: Array<{ title: string; href: string }> };
+	const faqData = t("shopify.faq") as unknown as { title: string; subtitle: string; items: FAQItem[] };
+	const faqItems = faqData?.items || [];
 
 	return (
 		<>
@@ -63,6 +68,54 @@ export const ShopifyPageContent: React.FC = () => {
 							</motion.p>
 						))}
 					</div>
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.6, delay: 0.4 }}
+						className="mt-12"
+					>
+						<Card hover glow className="overflow-hidden">
+							<CardHeader>
+								<CardTitle className="text-2xl mb-2">{learnMoreData?.title || "Learn More About Shopify"}</CardTitle>
+								<p className="text-base md:text-lg text-slate-600 dark:text-surface-300 leading-relaxed">
+									{learnMoreData?.description || "Explore our comprehensive guides on Shopify development, optimization, and best practices."}
+								</p>
+							</CardHeader>
+							<CardContent>
+								<div className="grid md:grid-cols-3 gap-4">
+									{learnMoreData?.links?.map((link, index) => (
+										<Link
+											key={index}
+											href={link.href}
+											className="group p-4 rounded-lg border border-slate-200 dark:border-surface-700 hover:border-accent-300 dark:hover:border-accent-600 bg-slate-50 dark:bg-surface-800/50 hover:bg-slate-100 dark:hover:bg-surface-800 transition-all duration-200"
+										>
+											<div className="flex items-center justify-between">
+												<span className="text-sm md:text-base font-medium text-slate-900 dark:text-white group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors">
+													{link.title}
+												</span>
+												<svg className="w-4 h-4 text-slate-400 group-hover:text-accent-600 dark:group-hover:text-accent-400 group-hover:translate-x-1 transition-all rtl:rotate-180 rtl:group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+												</svg>
+											</div>
+										</Link>
+									))}
+								</div>
+							</CardContent>
+						</Card>
+					</motion.div>
+				</div>
+			</Section>
+
+			<ProcessSection processPath="shopify.process" />
+
+			<Section background="light" className="relative overflow-hidden">
+				<div className="max-w-4xl mx-auto">
+					<SectionHeader
+						title={faqData?.title || "Frequently Asked Questions"}
+						subtitle={faqData?.subtitle || "Everything you need to know about our Shopify development services"}
+					/>
+					<FAQ items={faqItems} />
 				</div>
 			</Section>
 

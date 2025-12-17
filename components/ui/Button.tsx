@@ -16,8 +16,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = "font-semibold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-surface-950 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden";
 
     const variants = {
-      primary: "fashion-gradient text-white hover:shadow-glow-primary focus:ring-primary-500 shadow-lg hover:scale-[1.02] active:scale-[0.98]",
-      secondary: "bg-accent-600 text-white hover:bg-accent-500 focus:ring-accent-500 shadow-glow hover:shadow-glow active:scale-[0.98]",
+      primary: "fashion-gradient text-white hover:shadow-glow-primary focus:ring-primary-500 shadow-lg hover:scale-[1.02] active:scale-[0.98] shine-sweep",
+      secondary: "bg-accent-600 text-white hover:bg-accent-500 focus:ring-accent-500 shadow-glow hover:shadow-glow active:scale-[0.98] shine-sweep",
       outline: "border-2 border-accent-600 dark:border-accent-500/50 text-accent-600 dark:text-accent-400 hover:border-accent-700 dark:hover:border-accent-500 hover:bg-accent-50 dark:hover:bg-accent-500/10 backdrop-blur-sm focus:ring-accent-500 active:scale-[0.98]",
     };
 
@@ -37,7 +37,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled || loading}
       >
         {variant === "primary" && (
-          <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+          <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent rtl:bg-gradient-to-l translate-x-[-100%] group-hover:translate-x-[100%] rtl:translate-x-[100%] rtl:group-hover:translate-x-[-100%] transition-transform duration-700"></span>
         )}
         <span className="relative z-10 flex items-center justify-center gap-2">
           {loading && (

@@ -68,10 +68,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       slug: p.slug,
       title: p.title,
       excerpt: p.excerpt,
+      category: p.category,
+      date: p.date,
       // Pass dictionary for client-side selection
       translation: p.translation ? {
         title: p.translation.title,
-        excerpt: p.translation.excerpt
+        excerpt: p.translation.excerpt,
+        category: p.translation.category
       } : undefined
     }));
 

@@ -15,8 +15,7 @@ interface ProcessStep {
 }
 
 export const Process: React.FC = () => {
-  const { t, direction } = useLanguage();
-  const isRtl = direction === 'rtl';
+  const { t } = useLanguage();
 
   const steps: ProcessStep[] = [
     {
@@ -49,7 +48,7 @@ export const Process: React.FC = () => {
     <Section background="default" className="relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 opacity-30 dark:opacity-20">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-primary-500/5 to-transparent rounded-full"></div>
+        <div className="absolute top-1/2 start-1/2 rtl:translate-x-1/2 ltr:-translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-primary-500/5 to-transparent rounded-full"></div>
       </div>
 
       <SectionHeader
@@ -60,11 +59,11 @@ export const Process: React.FC = () => {
       {/* Process Timeline */}
       <div className="relative">
         {/* Connection Line - Desktop */}
-        <div className="hidden lg:block absolute top-24 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-slate-200 dark:via-surface-700 to-transparent"></div>
+        <div className="hidden lg:block absolute top-24 start-0 end-0 h-0.5 bg-gradient-to-r from-transparent via-slate-200 dark:via-surface-700 to-transparent rtl:bg-gradient-to-l"></div>
 
         {/* Animated line overlay */}
         <motion.div
-          className="hidden lg:block absolute top-24 left-0 h-0.5 bg-gradient-to-r from-primary-500 to-accent-500"
+          className="hidden lg:block absolute top-24 start-0 h-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rtl:bg-gradient-to-l"
           initial={{ width: "0%" }}
           whileInView={{ width: "100%" }}
           viewport={{ once: true }}
@@ -97,7 +96,7 @@ export const Process: React.FC = () => {
                   </div>
 
                   {/* Icon floating above */}
-                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-accent-500 rounded-lg flex items-center justify-center shadow-lg transform group-hover:rotate-12 transition-transform">
+                  <div className="absolute -top-2 -end-2 w-8 h-8 bg-accent-500 rounded-lg flex items-center justify-center shadow-lg transform group-hover:rotate-12 transition-transform">
                     <Icon name={step.icon} className="w-4 h-4 text-white" size={16} />
                   </div>
                 </motion.div>
@@ -116,7 +115,7 @@ export const Process: React.FC = () => {
                 {index < steps.length - 1 && (
                   <div className="lg:hidden flex justify-center py-6">
                     <motion.svg
-                      className={`w-6 h-6 text-accent-500 ${isRtl ? '' : ''}`}
+                      className="w-6 h-6 text-accent-500"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"

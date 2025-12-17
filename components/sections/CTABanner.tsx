@@ -12,7 +12,7 @@ export const CTABanner: React.FC = () => {
   const isRtl = direction === 'rtl';
 
   return (
-    <section className="relative py-32 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-50 dark:bg-surface-950">
+    <section className="relative py-20 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-50 dark:bg-surface-950">
       {/* Animated mesh gradient background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-accent-500/5"></div>
@@ -94,7 +94,7 @@ export const CTABanner: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2, duration: 0.8 }}
-                className="text-lg md:text-xl text-slate-600 dark:text-surface-200 font-light leading-relaxed max-w-2xl mx-auto"
+                className="text-lg md:text-xl text-slate-600 dark:text-surface-300 font-light leading-relaxed max-w-2xl mx-auto"
               >
                 {t("ctaBanner.description") as string}
               </motion.p>

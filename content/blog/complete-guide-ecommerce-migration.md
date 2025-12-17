@@ -10,7 +10,7 @@ category_he: "אסטרטגיית איקומרס"
 
 Migrating your e-commerce store to a new platform is one of the most critical decisions you'll make. Done right, it can unlock new features, improve performance, and scale your business. Done wrong, it can result in lost sales, broken SEO rankings, and frustrated customers.
 
-This comprehensive guide covers everything you need to know about e-commerce migration, whether you're moving from WooCommerce to Shopify, Shopify to WooCommerce, or any other platform combination.
+This comprehensive guide covers everything you need to know about e-commerce migration, whether you're moving from Magento, BigCommerce, or other platforms to Shopify.
 
 ## Why Businesses Migrate Their E-commerce Stores
 
@@ -269,11 +269,10 @@ Define what success looks like:
 - Optimize for Shopify's structure
 - Leverage Shopify's SEO features
 
-### Migrating to WooCommerce
+### Migrating to Other Platforms
 
 **Advantages:**
 - Complete control and customization
-- WordPress ecosystem access
 - No platform fees
 - Flexible hosting options
 
@@ -371,7 +370,7 @@ Remember: migration is not just about moving data—it's about improving your bu
 
 העברת חנות האיקומרס שלכם לפלטפורמה חדשה היא אחת ההחלטות הקריטיות ביותר שתקבלו. אם נעשית נכון, היא יכולה לפתוח פיצ'רים חדשים, לשפר ביצועים ולהגדיל את העסק. אם נעשית לא נכון, היא עלולה להוביל לאובדן מכירות, פגיעה בדירוגי SEO ולקוחות מתוסכלים.
 
-מדריך מקיף זה מכסה את כל מה שצריך לדעת על מיגרציית איקומרס, בין אם אתם עוברים מ-WooCommerce לשופיפיי, משופיפיי ל-WooCommerce, או כל שילוב פלטפורמות אחר.
+מדריך מקיף זה מכסה את כל מה שצריך לדעת על מיגרציית איקומרס, בין אם אתם עוברים מ-Magento, BigCommerce או פלטפורמות אחרות לשופיפיי.
 
 ## למה עסקים מעבירים את החנויות שלהם
 

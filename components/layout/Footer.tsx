@@ -18,10 +18,6 @@ export const Footer: React.FC = () => {
       { name: t("footer.links.blog") as string, href: "/blog" },
       { name: t("footer.links.contact") as string, href: "/contact" },
     ],
-    legal: [
-      { name: t("footer.links.privacy") as string, href: "/privacy" },
-      { name: t("footer.links.terms") as string, href: "/terms" },
-    ],
   };
 
   return (

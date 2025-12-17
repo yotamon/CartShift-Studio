@@ -54,7 +54,7 @@ export const ContactPageContent: React.FC = () => {
   const isRtl = direction === 'rtl';
 
   return (
-    <section className="py-20 md:py-32 lg:py-40 px-4 sm:px-6 lg:px-8 relative bg-slate-50 dark:bg-surface-900">
+    <section className="py-20 md:py-32 px-4 sm:px-6 lg:px-8 relative bg-slate-50 dark:bg-surface-900">
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid md:grid-cols-2 gap-8">
           <motion.div
@@ -103,7 +103,7 @@ export const ContactPageContent: React.FC = () => {
             {submitted ? (
               <Card glow>
                 <CardContent className="text-center py-12">
-                  <div className="text-6xl mb-6 text-accent-500 dark:text-accent-400">✓</div>
+                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white text-4xl font-bold shadow-lg">✓</div>
                   <h3 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-4 leading-tight tracking-tight">{t("contact.form.successTitle") as string}</h3>
                   <p className="text-slate-600 dark:text-surface-300 mb-6 text-base md:text-lg leading-relaxed">
                     {t("contact.form.successText") as string}

@@ -1,16 +1,27 @@
 import { ContactTemplate } from "@/components/templates/ContactTemplate";
 import type { Metadata } from "next";
-import { generateMetadata as genMeta } from "@/lib/seo";
+import { generateMetadata as genMeta, generateBreadcrumbSchema } from "@/lib/seo";
+import Script from "next/script";
 
 export const metadata: Metadata = genMeta({
-  title: "Contact Us | CartShift Studio",
-  description: "Ready to start your project? Let's talk. We're friendly, fast, and ready to help you build something amazing.",
+  title: "Contact CartShift Studio | Free E-commerce Consultation",
+  description: "Get in touch with CartShift Studio for a free consultation on your Shopify or WordPress project. Expert advice on e-commerce development.",
   url: "/contact",
 });
 
 export default function ContactPage() {
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Home", url: "/" },
+    { name: "Contact", url: "/contact" },
+  ]);
+
   return (
     <>
+      <Script
+        id="contact-breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <ContactTemplate />
     </>
   );

@@ -19,8 +19,8 @@ export const Testimonials: React.FC = () => {
   return (
     <Section background="light" className="relative overflow-hidden">
       {/* Decorative background elements */}
-      <div className="absolute top-20 left-10 w-32 h-32 border border-accent-500/10 rounded-full"></div>
-      <div className="absolute bottom-20 right-10 w-48 h-48 border border-primary-500/10 rounded-full"></div>
+      <div className="absolute top-20 start-10 w-32 h-32 border border-accent-500/10 rounded-full"></div>
+      <div className="absolute bottom-20 end-10 w-48 h-48 border border-primary-500/10 rounded-full"></div>
 
       <SectionHeader
         title={t("testimonials.title") as string}
@@ -35,17 +35,17 @@ export const Testimonials: React.FC = () => {
         transition={{ duration: 0.7 }}
         className="mb-10"
       >
-        <div className="relative rounded-[2rem] p-10 md:p-14 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 dark:from-surface-800 dark:via-surface-900 dark:to-surface-800 shadow-2xl overflow-hidden">
+        <div className="relative rounded-[2rem] p-10 md:p-14 bg-gradient-to-br from-primary-600 via-primary-700 to-accent-600 dark:from-surface-800 dark:via-surface-900 dark:to-surface-800 shadow-2xl overflow-hidden">
           {/* Large decorative quote */}
-          <div className="absolute top-6 left-8 md:left-12 text-[120px] md:text-[180px] font-serif text-white/5 leading-none select-none pointer-events-none">
+          <div className="absolute top-6 start-8 md:start-12 text-[120px] md:text-[180px] font-serif text-white/10 dark:text-white/5 leading-none select-none pointer-events-none">
             "
           </div>
-          <div className="absolute bottom-0 right-8 md:right-12 text-[120px] md:text-[180px] font-serif text-white/5 leading-none select-none pointer-events-none rotate-180">
+          <div className="absolute bottom-0 end-8 md:end-12 text-[120px] md:text-[180px] font-serif text-white/10 dark:text-white/5 leading-none select-none pointer-events-none rotate-180">
             "
           </div>
 
           {/* Glow effect */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-accent-500/10 blur-[100px] rounded-full pointer-events-none"></div>
+          <div className="absolute top-1/2 start-1/2 rtl:translate-x-1/2 ltr:-translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-accent-500/20 dark:bg-accent-500/10 blur-[100px] rounded-full pointer-events-none"></div>
 
           <div className="relative z-10">
             {/* Star Rating - Animated */}
@@ -70,12 +70,12 @@ export const Testimonials: React.FC = () => {
 
             {/* Author */}
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-accent-500 to-primary-500 flex items-center justify-center text-white font-bold text-lg md:text-xl shadow-lg">
+              <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/20 dark:bg-white/10 backdrop-blur-sm border border-white/30 dark:border-white/20 flex items-center justify-center text-white font-bold text-lg md:text-xl shadow-lg">
                 {featuredTestimonial.author.split(' ').map((n: string) => n[0]).join('')}
               </div>
               <div>
                 <p className="font-bold text-white text-lg md:text-xl">{featuredTestimonial.author}</p>
-                <p className="text-sm md:text-base text-slate-400">{featuredTestimonial.company}</p>
+                <p className="text-sm md:text-base text-white/80 dark:text-slate-400">{featuredTestimonial.company}</p>
               </div>
             </div>
           </div>
@@ -95,7 +95,7 @@ export const Testimonials: React.FC = () => {
             >
               <div className="h-full glass-effect rounded-2xl p-7 md:p-8 group hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 shadow-premium hover:shadow-premium-hover relative overflow-hidden">
                 {/* Subtle quote icon */}
-                <div className="absolute top-4 right-4 text-4xl font-serif text-accent-500/10 select-none">"</div>
+                <div className="absolute top-4 end-4 text-4xl font-serif text-accent-500/10 select-none">"</div>
 
                 {/* Star Rating */}
                 <div className="flex gap-1 mb-5">

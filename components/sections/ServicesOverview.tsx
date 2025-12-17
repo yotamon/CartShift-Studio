@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { Icon } from "@/components/ui/Icon";
+import { TiltCard } from "@/components/ui/TiltCard";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 
@@ -47,6 +48,7 @@ export const ServicesOverview: React.FC = () => {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, delay: index * 0.2 }}
           >
+          <TiltCard tiltStrength={8} glare>
             <Card hover glow accent className="h-full group relative overflow-hidden">
               <CardHeader>
                 <div className="w-20 h-20 mb-6 rounded-2xl bg-slate-100 dark:bg-surface-800 flex items-center justify-center border border-slate-200 dark:border-surface-700 group-hover:border-accent-500/50 transition-colors duration-300">
@@ -74,7 +76,7 @@ export const ServicesOverview: React.FC = () => {
                   ))}
                 </ul>
                 <Link href={service.href}>
-                  <button className="group/link inline-flex items-center gap-3 px-6 py-3 border-2 border-accent-600 dark:border-accent-500 bg-transparent hover:bg-accent-600 dark:hover:bg-accent-500 text-accent-600 dark:text-accent-400 hover:text-white dark:hover:text-white font-bold rounded-xl transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg">
+                  <button className="group/link inline-flex items-center gap-3 px-6 py-3 border-2 border-accent-600 dark:border-accent-500 bg-transparent hover:bg-accent-600 dark:hover:bg-accent-500 text-accent-600 dark:text-accent-400 hover:text-white dark:hover:text-white font-bold rounded-xl transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg shine-sweep">
                     {t("common.learnMore") as string}
                     <svg className="w-5 h-5 transition-transform group-hover/link:translate-x-1 rtl:group-hover/link:-translate-x-1 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -83,6 +85,7 @@ export const ServicesOverview: React.FC = () => {
                 </Link>
               </CardContent>
             </Card>
+          </TiltCard>
           </motion.div>
         ))}
       </div>

@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/Card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
@@ -11,6 +11,13 @@ interface RelatedPost {
   slug: string;
   title: string;
   excerpt: string;
+  category: string;
+  date: string;
+  translation?: {
+    title: string;
+    excerpt: string;
+    category: string;
+  };
 }
 
 interface BlogPostContentProps {
@@ -31,11 +38,11 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
   readingTime
 }) => {
   const { t, language } = useLanguage();
+  const isHe = language === "he";
   const [readingProgress, setReadingProgress] = useState(0);
   const [headings, setHeadings] = useState<Array<{ id: string; text: string; level: number }>>([]);
   const [mobileTocOpen, setMobileTocOpen] = useState(false);
   const articleRef = useRef<HTMLElement>(null);
-  const isHe = language === "he";
 
   useEffect(() => {
     const article = articleRef.current;
@@ -294,6 +301,52 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                   </CardContent>
                 </Card>
 
+                {category && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.15 }}
+                    className="mt-12 p-6 rounded-xl bg-slate-50 dark:bg-surface-800/50 border border-slate-200 dark:border-surface-700"
+                  >
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-3">
+                      {category === "Shopify"
+                        ? t("blogPost.relatedServices.shopifyTitle") as string
+                        : category === "WordPress"
+                        ? t("blogPost.relatedServices.wordpressTitle") as string
+                        : t("blogPost.relatedServices.title") as string}
+                    </h3>
+                    <p className="text-slate-600 dark:text-surface-300 mb-4 text-sm">
+                      {category === "Shopify"
+                        ? t("blogPost.relatedServices.shopifyDescription") as string
+                        : category === "WordPress"
+                        ? t("blogPost.relatedServices.wordpressDescription") as string
+                        : t("blogPost.relatedServices.description") as string}
+                    </p>
+                    <div className="flex flex-wrap gap-3">
+                      {category === "Shopify" ? (
+                        <Link href="/solutions/shopify" className="text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 font-medium underline text-sm">
+                          {t("blogPost.relatedServices.shopifyLink") as string} →
+                        </Link>
+                      ) : category === "WordPress" ? (
+                        <Link href="/solutions/wordpress" className="text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 font-medium underline text-sm">
+                          {t("blogPost.relatedServices.wordpressLink") as string} →
+                        </Link>
+                      ) : (
+                        <>
+                          <Link href="/solutions/shopify" className="text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 font-medium underline text-sm">
+                            {t("blogPost.relatedServices.shopifyServices") as string}
+                          </Link>
+                          <span className="text-slate-400">•</span>
+                          <Link href="/solutions/wordpress" className="text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 font-medium underline text-sm">
+                            {t("blogPost.relatedServices.wordpressServices") as string}
+                          </Link>
+                        </>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -336,26 +389,51 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                 {t("blog.relatedPosts.title") as string} <span className="gradient-text">{t("blog.relatedPosts.span") as string}</span>
               </h2>
               <div className="grid md:grid-cols-3 gap-8">
-                {relatedPosts.map((relatedPost, index) => (
-                  <motion.div
-                    key={relatedPost.slug}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                  >
-                    <Link href={`/blog/${relatedPost.slug}`}>
+                {relatedPosts.map((relatedPost, index) => {
+                  const postTitle = isHe && relatedPost.translation?.title ? relatedPost.translation.title : relatedPost.title;
+                  const postCategory = isHe && relatedPost.translation?.category ? relatedPost.translation.category : relatedPost.category;
+                  const postExcerpt = isHe && relatedPost.translation?.excerpt ? relatedPost.translation.excerpt : relatedPost.excerpt;
+                  const formattedDate = new Date(relatedPost.date).toLocaleDateString(language === 'he' ? 'he-IL' : 'en-US');
+
+                  return (
+                    <motion.div
+                      key={relatedPost.slug}
+                      initial={{ opacity: 0, y: 50 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-100px" }}
+                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                    >
                       <Card hover glow className="h-full group relative overflow-hidden">
-                        <CardContent className="p-6">
-                          <h3 className="font-bold text-slate-900 dark:text-white mb-3 text-base md:text-lg leading-tight">
-                            {relatedPost.title}
-                          </h3>
-                          <p className="text-xs md:text-sm text-slate-600 dark:text-surface-300 leading-relaxed">{relatedPost.excerpt}</p>
+                        <CardHeader>
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="text-xs font-semibold text-accent-600 dark:text-primary-400 uppercase tracking-wider">
+                              {postCategory}
+                            </span>
+                            <span className="text-xs text-slate-500 dark:text-surface-400">
+                              {formattedDate}
+                            </span>
+                          </div>
+                          <CardTitle>
+                            <Link href={`/blog/${relatedPost.slug}`} className="text-slate-900 dark:text-white hover:text-accent-600 dark:hover:text-primary-400 transition-colors">
+                              {postTitle}
+                            </Link>
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="mb-6 text-base md:text-lg text-slate-600 dark:text-surface-300 leading-relaxed">{postExcerpt}</p>
+                          <Link href={`/blog/${relatedPost.slug}`}>
+                            <button className="text-accent-600 dark:text-primary-400 font-bold hover:text-accent-700 dark:hover:text-primary-300 transition-colors text-base md:text-lg flex items-center gap-2 group/link">
+                              {t("blog.readMore") as string}
+                              <svg className="w-5 h-5 group-hover/link:translate-x-1 transition-transform rtl:rotate-180 rtl:group-hover/link:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                              </svg>
+                            </button>
+                          </Link>
                         </CardContent>
                       </Card>
-                    </Link>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  );
+                })}
               </div>
             </motion.div>
           )}

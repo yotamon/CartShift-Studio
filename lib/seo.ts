@@ -13,8 +13,7 @@ export interface SEOConfig {
 
 export function generateMetadata(config: SEOConfig, language?: "en" | "he"): Metadata {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cartshiftstudio.com";
-  const defaultImage = `${siteUrl}/og-image.jpg`;
-  const imageUrl = config.image || defaultImage;
+  const imageUrl = config.image;
 
   const alternates: Metadata["alternates"] = {
     canonical: config.url || siteUrl,
@@ -162,6 +161,7 @@ export function generateWebSiteSchema() {
 }
 
 export function generateBreadcrumbSchema(items: Array<{ name: string; url: string }>) {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cartshiftstudio.com";
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -169,8 +169,90 @@ export function generateBreadcrumbSchema(items: Array<{ name: string; url: strin
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: item.url,
+      item: item.url.startsWith("http") ? item.url : `${siteUrl}${item.url}`,
     })),
+  };
+}
+
+export function generateFAQPageSchema(faqs: Array<{ question: string; answer: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  };
+}
+
+export function generateReviewSchema(reviews: Array<{
+  author: string;
+  text: string;
+  rating: number;
+  date?: string;
+}>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "CartShift Studio",
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length,
+      reviewCount: reviews.length,
+      bestRating: 5,
+      worstRating: 1,
+    },
+    review: reviews.map((review) => ({
+      "@type": "Review",
+      author: {
+        "@type": "Person",
+        name: review.author,
+      },
+      reviewBody: review.text,
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: review.rating,
+        bestRating: 5,
+        worstRating: 1,
+      },
+      ...(review.date && { datePublished: review.date }),
+    })),
+  };
+}
+
+export function generatePersonSchema(person: {
+  name: string;
+  jobTitle?: string;
+  description?: string;
+  url?: string;
+  image?: string;
+  sameAs?: string[];
+}) {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cartshiftstudio.com";
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: person.name,
+    ...(person.jobTitle && { jobTitle: person.jobTitle }),
+    ...(person.description && { description: person.description }),
+    ...(person.url && { url: person.url }),
+    ...(person.image && {
+      image: {
+        "@type": "ImageObject",
+        url: person.image.startsWith("http") ? person.image : `${siteUrl}${person.image}`,
+      },
+    }),
+    ...(person.sameAs && person.sameAs.length > 0 && { sameAs: person.sameAs }),
+    worksFor: {
+      "@type": "Organization",
+      name: "CartShift Studio",
+      url: siteUrl,
+    },
   };
 }
 

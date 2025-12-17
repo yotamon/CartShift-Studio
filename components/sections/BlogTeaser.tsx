@@ -3,7 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Section, SectionHeader } from "@/components/ui/Section";
+import { SectionHeader } from "@/components/ui/Section";
 
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
@@ -20,12 +20,14 @@ export const BlogTeaser: React.FC = () => {
 	const getReadTime = () => language === 'he' ? '5 דקות קריאה' : '5 min read';
 
 	return (
-		<Section background="default" className="relative overflow-hidden">
-			{/* Decorative elements */}
-			<div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-accent-500/5 to-transparent rounded-bl-full"></div>
-			<div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-primary-500/5 to-transparent rounded-tr-full"></div>
-
-			<SectionHeader title={t("blogTeaser.title") as string} subtitle={t("blogTeaser.subtitle") as string} />
+		<section className="py-20 md:py-32 px-4 sm:px-6 lg:px-8 relative bg-slate-50 dark:bg-surface-900 overflow-hidden">
+			<div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-screen max-w-[100vw] pointer-events-none">
+				<div className="absolute -top-[250px] end-0 w-[500px] h-[500px] bg-gradient-to-bl from-accent-500/10 via-accent-500/5 to-transparent rounded-full blur-3xl"></div>
+				<div className="absolute -bottom-[200px] start-0 w-[400px] h-[400px] bg-gradient-to-tr from-primary-500/10 via-primary-500/5 to-transparent rounded-full blur-3xl"></div>
+				<div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-primary-500/5 via-transparent to-accent-500/5 rounded-full blur-3xl"></div>
+			</div>
+			<div className="max-w-7xl mx-auto relative z-10">
+				<SectionHeader title={t("blogTeaser.title") as string} subtitle={t("blogTeaser.subtitle") as string} />
 
 			{/* Featured Post - Full Width */}
 			<motion.div
@@ -43,13 +45,13 @@ export const BlogTeaser: React.FC = () => {
 							whileInView={{ opacity: 1, scale: 1 }}
 							viewport={{ once: true }}
 							transition={{ delay: 0.3 }}
-							className="absolute top-6 right-6 px-3 py-1.5 bg-accent-500 text-white text-xs font-bold uppercase rounded-full shadow-lg"
+							className="absolute top-6 end-6 px-3 py-1.5 bg-accent-500 text-white text-xs font-bold uppercase rounded-full shadow-lg"
 						>
 							{language === 'he' ? 'חדש' : 'New'}
 						</motion.span>
 
 						{/* Decorative accent line */}
-						<div className="absolute top-0 left-0 h-full w-1.5 bg-gradient-to-b from-primary-500 via-accent-500 to-primary-500 rounded-l-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+						<div className="absolute top-0 start-0 h-full w-1.5 bg-gradient-to-b from-primary-500 via-accent-500 to-primary-500 rtl:rounded-r-3xl ltr:rounded-l-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
 						<div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-10">
 							<div className="flex-1">
@@ -106,7 +108,7 @@ export const BlogTeaser: React.FC = () => {
 							<Link href={post.href}>
 								<div className="h-full glass-effect rounded-2xl p-6 group hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 shadow-premium hover:shadow-premium-hover relative overflow-hidden">
 									{/* Top gradient line */}
-									<div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary-500 to-accent-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl"></div>
+									<div className="absolute top-0 start-0 end-0 h-1 bg-gradient-to-r from-primary-500 to-accent-500 rtl:bg-gradient-to-l opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl"></div>
 
 									<div className="flex items-center gap-3 mb-4">
 										<span className="text-xs text-slate-500 dark:text-surface-400 uppercase tracking-wider">
@@ -156,6 +158,7 @@ export const BlogTeaser: React.FC = () => {
 					</button>
 				</Link>
 			</motion.div>
-		</Section>
+			</div>
+		</section>
 	);
 };

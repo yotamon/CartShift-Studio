@@ -17,14 +17,14 @@ export const Section: React.FC<SectionProps> = ({
   const backgrounds = {
     default: "bg-slate-50 dark:bg-surface-900",
     light: "bg-white dark:bg-surface-800",
-    white: "bg-slate-100 dark:bg-white",
+    white: "bg-slate-100 dark:bg-surface-850",
   };
 
   return (
     <section
       id={id}
       className={cn(
-        "py-20 md:py-32 lg:py-40 px-4 sm:px-6 lg:px-8 relative",
+        "py-20 md:py-32 px-4 sm:px-6 lg:px-8 relative",
         backgrounds[background],
         className
       )}
@@ -52,7 +52,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   return (
     <div className={cn(
       "mb-12",
-      align === "center" ? "text-center" : "text-left",
+      align === "center" ? "text-center" : "text-start",
       className
     )}>
       <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-slate-900 dark:text-white mb-8 leading-tight tracking-tight">

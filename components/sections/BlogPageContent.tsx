@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
@@ -28,9 +28,20 @@ import { useLanguage } from "@/components/providers/LanguageProvider";
 export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categories }) => {
   const { t, language } = useLanguage();
   const isHe = language === "he";
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  const getCategoryDisplayName = (categoryKey: string): string => {
+    if (!isHe) return categoryKey;
+    const post = posts.find((p) => p.category === categoryKey);
+    return post?.translation?.category || categoryKey;
+  };
+
+  const filteredPosts = selectedCategory
+    ? posts.filter((post) => post.category === selectedCategory)
+    : posts;
 
   return (
-    <section className="py-20 md:py-32 lg:py-40 px-4 sm:px-6 lg:px-8 relative bg-slate-50 dark:bg-surface-900">
+    <section className="py-20 md:py-32 px-4 sm:px-6 lg:px-8 relative bg-slate-50 dark:bg-surface-900">
       <div className="max-w-7xl mx-auto relative z-10">
         {categories.length > 0 && (
           <motion.div
@@ -38,27 +49,44 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="mb-12 flex flex-wrap gap-3"
+            className="mb-12"
           >
-            <span className="text-sm font-semibold text-slate-700 dark:text-surface-200 me-2">{t("blog.categories") as string}</span>
-            {categories.map((category) => (
-              <span
-                key={category}
-                className="px-4 py-2 glass-effect text-primary-300 rounded-full text-sm font-medium"
+            <span className="text-sm font-semibold text-slate-700 dark:text-surface-200 me-4 mb-3 inline-block">{t("blog.categories") as string}</span>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => setSelectedCategory(null)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  selectedCategory === null
+                    ? "bg-accent-600 dark:bg-accent-500 text-white shadow-md"
+                    : "glass-effect text-slate-700 dark:text-surface-200 hover:bg-slate-100 dark:hover:bg-surface-800"
+                }`}
               >
-                {category}
-              </span>
-            ))}
+                {isHe ? "הכל" : "All"}
+              </button>
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                    selectedCategory === category
+                      ? "bg-accent-600 dark:bg-accent-500 text-white shadow-md"
+                      : "glass-effect text-slate-700 dark:text-surface-200 hover:bg-slate-100 dark:hover:bg-surface-800"
+                  }`}
+                >
+                  {getCategoryDisplayName(category)}
+                </button>
+              ))}
+            </div>
           </motion.div>
         )}
 
-        {posts.length === 0 ? (
+        {filteredPosts.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-base md:text-lg text-slate-600 dark:text-surface-300">{t("blog.noPosts") as string}</p>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.map((post, index) => {
+            {filteredPosts.map((post, index) => {
               const title = isHe && post.translation?.title ? post.translation.title : post.title;
               const category = isHe && post.translation?.category ? post.translation.category : post.category;
               const excerpt = isHe && post.translation?.excerpt ? post.translation.excerpt : post.excerpt;

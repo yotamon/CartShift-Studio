@@ -37,11 +37,11 @@ export const Logo: React.FC<LogoProps> = ({ className, size = "md" }) => {
       <div className="relative flex-shrink-0">
         <Image
           src="/images/CartShift-Logo-Full.svg"
-          alt="CartShift Studio"
+          alt="CartShift Studio - E-commerce Development Agency"
           width={config.width}
           height={config.height}
-          className="transition-transform duration-300 drop-shadow-sm group-hover:drop-shadow-md"
-          style={{ width: `${config.width}px`, height: 'auto' }} // Explicitly enforce width
+          className="transition-all duration-300 drop-shadow-sm group-hover:drop-shadow-md dark:brightness-0 dark:invert"
+          style={{ height: 'auto' }}
           priority
         />
         {/* Subtle glow effect on hover */}

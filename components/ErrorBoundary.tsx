@@ -51,7 +51,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 We encountered an unexpected error. Please try refreshing the page.
               </p>
               {process.env.NODE_ENV !== "production" && this.state.error && (
-                <details className="mt-4 text-left">
+                <details className="mt-4 text-start">
                   <summary className="cursor-pointer text-sm text-slate-500 dark:text-surface-400">
                     Error details
                   </summary>

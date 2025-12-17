@@ -48,6 +48,7 @@ const config: Config = {
           600: "#475569",
           700: "#334155",
           800: "#1e293b",
+          850: "#172033", // Intermediate dark shade
           900: "#0f172a", // Dark surface base
           950: "#020617", // Darker surface base
         },
