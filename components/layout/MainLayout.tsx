@@ -2,7 +2,9 @@ import React from "react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { WhatsAppFloatingButton } from "@/components/ui/WhatsAppFloatingButton";
+import { FloatingActions } from "@/components/ui/FloatingActions";
+import { ExitIntentModal } from "@/components/ui/ExitIntentModal";
+import { CookieConsent } from "@/components/ui/CookieConsent";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -21,7 +23,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <Header />
         <main id="main-content" className="flex-1">{children}</main>
         <Footer />
-        <WhatsAppFloatingButton />
+        <FloatingActions />
+        <ExitIntentModal delay={5000} />
+        <CookieConsent />
       </div>
     </ErrorBoundary>
   );

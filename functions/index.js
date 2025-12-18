@@ -87,3 +87,50 @@ ${message ? `Message: ${message}` : ""}
 		}
 	}
 );
+
+exports.newsletterSubscription = onRequest(
+	{
+		cors: true,
+		maxInstances: 10,
+	},
+	async (req, res) => {
+		res.set("Access-Control-Allow-Origin", "*");
+		res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+		res.set("Access-Control-Allow-Headers", "Content-Type");
+
+		if (req.method === "OPTIONS") {
+			res.status(204).send("");
+			return;
+		}
+
+		if (req.method !== "POST") {
+			return res.status(405).json({ error: "Method not allowed" });
+		}
+
+		try {
+			const { email } = req.body;
+
+			if (!email) {
+				return res.status(400).json({ error: "Email is required" });
+			}
+
+			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!emailRegex.test(email)) {
+				return res.status(400).json({ error: "Invalid email address" });
+			}
+
+			await admin
+				.firestore()
+				.collection("newsletter_subscriptions")
+				.add({
+					email,
+					timestamp: admin.firestore.FieldValue.serverTimestamp()
+				});
+
+			return res.status(200).json({ success: true });
+		} catch (error) {
+			console.error("Newsletter subscription error:", error);
+			return res.status(500).json({ error: "Failed to process request" });
+		}
+	}
+);

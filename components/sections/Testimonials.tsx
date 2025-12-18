@@ -4,6 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { Icon } from "@/components/ui/Icon";
+import { Parallax } from "@/components/ui/Parallax";
 
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
@@ -18,9 +19,82 @@ export const Testimonials: React.FC = () => {
 
   return (
     <Section background="light" className="relative overflow-hidden">
-      {/* Decorative background elements */}
-      <div className="absolute top-20 start-10 w-32 h-32 border border-accent-500/10 rounded-full"></div>
-      <div className="absolute bottom-20 end-10 w-48 h-48 border border-primary-500/10 rounded-full"></div>
+      {/* Parallax background elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Ambient glow orbs with parallax */}
+        <Parallax speed={0.12}>
+          <div className="absolute top-[8%] right-[5%] w-[400px] h-[400px] bg-accent-500/12 dark:bg-accent-500/6 rounded-full blur-[90px]"></div>
+        </Parallax>
+        <Parallax speed={-0.15}>
+          <div className="absolute top-[50%] left-[3%] w-[450px] h-[450px] bg-primary-500/15 dark:bg-primary-500/8 rounded-full blur-[100px]"></div>
+        </Parallax>
+        <Parallax speed={0.2}>
+          <div className="absolute top-[30%] left-[40%] w-[500px] h-[500px] bg-accent-400/10 dark:bg-accent-400/5 rounded-full blur-[120px]"></div>
+        </Parallax>
+        <Parallax speed={-0.1}>
+          <div className="absolute bottom-[5%] right-[20%] w-[400px] h-[400px] bg-primary-400/12 dark:bg-primary-400/6 rounded-full blur-[100px]"></div>
+        </Parallax>
+
+        {/* Floating geometric shapes - CTA style */}
+        <Parallax speed={0.3}>
+          <motion.div
+            className="absolute top-[15%] left-[8%] w-18 h-18 border-2 border-accent-500/15 dark:border-accent-400/10 rounded-xl"
+            animate={{ rotate: [0, -90, -180, -270, -360], y: [0, 15, 0, -15, 0] }}
+            transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
+          />
+        </Parallax>
+
+        <Parallax speed={-0.25}>
+          <motion.div
+            className="absolute top-[70%] right-[10%] w-20 h-20 border-2 border-primary-500/15 dark:border-primary-400/10 rounded-full"
+            animate={{ scale: [1, 1.15, 1], opacity: [0.25, 0.45, 0.25] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </Parallax>
+
+        <Parallax speed={0.18}>
+          <motion.div
+            className="absolute top-[40%] right-[5%] w-24 h-24 border border-accent-400/10 dark:border-accent-300/6 rounded-2xl"
+            animate={{ rotate: [0, 40, 0] }}
+            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </Parallax>
+
+        <Parallax speed={-0.35}>
+          <motion.div
+            className="absolute top-[20%] right-[25%] w-12 h-12 bg-primary-500/6 dark:bg-primary-400/4 rounded-lg"
+            animate={{ y: [0, -20, 0], rotate: [0, -45, 0] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </Parallax>
+
+        <Parallax speed={0.22}>
+          <motion.div
+            className="absolute bottom-[35%] left-[15%] w-14 h-14 border border-accent-500/12 dark:border-accent-400/8 rounded-full"
+            animate={{ scale: [1, 1.3, 1], x: [0, -10, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </Parallax>
+
+        <Parallax speed={-0.18}>
+          <motion.div
+            className="absolute top-[55%] left-[50%] w-10 h-10 border-2 border-primary-400/10 dark:border-primary-300/6 rounded-lg"
+            animate={{ rotate: [-45, 0, -45], y: [0, 10, 0] }}
+            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </Parallax>
+
+        <Parallax speed={0.28}>
+          <motion.div
+            className="absolute bottom-[25%] right-[40%] w-8 h-8 bg-accent-400/10 dark:bg-accent-300/6 rounded-full"
+            animate={{ scale: [1, 1.5, 1], opacity: [0.3, 0.6, 0.3] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </Parallax>
+
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(30,41,59,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(30,41,59,0.03)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)]"></div>
+      </div>
 
       <SectionHeader
         title={t("testimonials.title") as string}
@@ -75,7 +149,7 @@ export const Testimonials: React.FC = () => {
               </div>
               <div>
                 <p className="font-bold text-white text-lg md:text-xl">{featuredTestimonial.author}</p>
-                <p className="text-sm md:text-base text-white/80 dark:text-slate-400">{featuredTestimonial.company}</p>
+                <p className="text-sm md:text-base text-white dark:text-slate-300">{featuredTestimonial.company}</p>
               </div>
             </div>
           </div>
@@ -93,7 +167,7 @@ export const Testimonials: React.FC = () => {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.5, delay: index * 0.1, type: "spring" }}
             >
-              <div className="h-full glass-effect rounded-2xl p-7 md:p-8 group hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 shadow-premium hover:shadow-premium-hover relative overflow-hidden">
+              <div className="h-full liquid-glass liquid-glass-highlight rounded-2xl p-7 md:p-8 group hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
                 {/* Subtle quote icon */}
                 <div className="absolute top-4 end-4 text-4xl font-serif text-accent-500/10 select-none">"</div>
 
@@ -110,8 +184,8 @@ export const Testimonials: React.FC = () => {
                 </p>
 
                 {/* Author Info */}
-                <div className="flex items-center gap-3 pt-5 border-t border-slate-200 dark:border-white/10">
-                  <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-surface-800 flex items-center justify-center border border-slate-200 dark:border-surface-700 flex-shrink-0">
+                <div className="flex items-center gap-3 pt-5 border-t border-slate-300/50 dark:border-white/10">
+                  <div className="w-10 h-10 rounded-full bg-slate-200/70 dark:bg-surface-800 flex items-center justify-center border border-slate-300/60 dark:border-surface-700 flex-shrink-0">
                     <span className="text-slate-700 dark:text-white font-semibold text-sm">
                       {testimonial.author.split(' ').map((n: string) => n[0]).join('')}
                     </span>

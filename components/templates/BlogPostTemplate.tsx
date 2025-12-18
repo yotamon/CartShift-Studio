@@ -64,6 +64,7 @@ export const BlogPostTemplate: React.FC<BlogPostTemplateProps> = ({ post, relate
         description={finalDescription}
         badge={isHe ? "פוסט בבלוג" : "Blog Post"}
         highlightLastWord={false}
+        compact
       />
       <div className="bg-slate-50 dark:bg-surface-900 border-b border-slate-200 dark:border-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

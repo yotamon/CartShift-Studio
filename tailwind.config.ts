@@ -65,6 +65,9 @@ const config: Config = {
         18: "4.5rem",
         88: "22rem",
         128: "32rem",
+        'section-y': '5rem',
+        'section-y-md': '6rem',
+        'section-y-lg': '8rem',
       },
       borderRadius: {
         "4xl": "2rem",

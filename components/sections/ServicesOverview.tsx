@@ -50,10 +50,10 @@ export const ServicesOverview: React.FC = () => {
             transition={{ duration: 0.6, delay: index * 0.2 }}
           >
           <TiltCard tiltStrength={8} glare>
-            <Card hover glow accent className="h-full group relative overflow-hidden">
+            <Card hover accent className="h-full group relative overflow-hidden">
               <CardHeader>
-                <div className="w-20 h-20 mb-6 rounded-2xl bg-slate-100 dark:bg-surface-800 flex items-center justify-center border border-slate-200 dark:border-surface-700 group-hover:border-accent-500/50 transition-colors duration-300">
-                  <Icon name={service.icon} className="w-10 h-10 text-accent-500 dark:text-accent-400" size={40} />
+                <div className="w-20 h-20 mb-6 rounded-2xl bg-slate-200/60 dark:bg-surface-800 flex items-center justify-center border border-slate-300/60 dark:border-surface-700 group-hover:border-accent-500/50 transition-colors duration-300">
+                  <Icon name={service.icon} className="text-accent-500 dark:text-accent-400 flex-shrink-0" size={40} />
                 </div>
                 <CardTitle className="text-2xl md:text-3xl mb-4">{service.title}</CardTitle>
               </CardHeader>

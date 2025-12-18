@@ -47,22 +47,3 @@ export function trackFormSubmission(formName: string) {
   trackEvent("form_submit", "engagement", formName);
 }
 
-interface GtagConfig {
-  page_path?: string;
-  event_category?: string;
-  event_label?: string;
-  value?: number;
-  [key: string]: unknown;
-}
-
-declare global {
-  interface Window {
-    gtag: (
-      command: "config" | "event" | "js",
-      targetId: string | Date,
-      config?: GtagConfig
-    ) => void;
-    dataLayer: unknown[];
-  }
-}
-

@@ -4,6 +4,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import { SectionHeader } from "@/components/ui/Section";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { Parallax } from "@/components/ui/Parallax";
+import { Icon } from "@/components/ui/Icon";
 
 interface WhyItem {
   title: string;
@@ -52,9 +54,83 @@ export const WhyChoose: React.FC = () => {
   const isFeature = (index: number) => index === 0;
 
   return (
-    <section className="py-20 md:py-32 px-4 sm:px-6 lg:px-8 relative bg-white dark:bg-surface-800 overflow-hidden">
-      {/* Subtle background texture - positioned to extend beyond section */}
-      <div className="pointer-events-none absolute inset-y-0 left-1/2 -translate-x-1/2 w-screen max-w-[100vw] bg-[radial-gradient(circle_at_30%_20%,rgba(99,102,241,0.06),transparent_50%),radial-gradient(circle_at_80%_80%,rgba(168,85,247,0.05),transparent_40%)]"></div>
+    <section className="py-20 md:py-32 px-4 sm:px-6 lg:px-8 relative bg-gradient-to-b from-white via-slate-50 to-white dark:from-surface-800 dark:via-surface-800 dark:to-surface-800 overflow-hidden">
+      {/* Parallax background elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Ambient glow orbs with parallax */}
+        <Parallax speed={0.15}>
+          <div className="absolute top-[5%] left-[3%] w-[450px] h-[450px] bg-primary-500/15 dark:bg-primary-500/8 rounded-full blur-[100px]"></div>
+        </Parallax>
+        <Parallax speed={-0.12}>
+          <div className="absolute top-[55%] right-[5%] w-[400px] h-[400px] bg-accent-500/12 dark:bg-accent-500/6 rounded-full blur-[90px]"></div>
+        </Parallax>
+        <Parallax speed={0.18}>
+          <div className="absolute top-[35%] right-[30%] w-[550px] h-[550px] bg-primary-400/10 dark:bg-primary-400/5 rounded-full blur-[130px]"></div>
+        </Parallax>
+        <Parallax speed={-0.1}>
+          <div className="absolute bottom-[10%] left-[25%] w-[500px] h-[500px] bg-accent-400/12 dark:bg-accent-400/6 rounded-full blur-[110px]"></div>
+        </Parallax>
+
+        {/* Floating geometric shapes - CTA style */}
+        <Parallax speed={0.35}>
+          <motion.div
+            className="absolute top-[12%] left-[10%] w-20 h-20 border-2 border-primary-500/15 dark:border-primary-400/10 rounded-xl"
+            animate={{ rotate: [0, 90, 180, 270, 360], y: [0, -20, 0, 20, 0] }}
+            transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+          />
+        </Parallax>
+
+        <Parallax speed={-0.28}>
+          <motion.div
+            className="absolute top-[75%] right-[12%] w-16 h-16 border-2 border-accent-500/15 dark:border-accent-400/10 rounded-full"
+            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </Parallax>
+
+        <Parallax speed={0.22}>
+          <motion.div
+            className="absolute top-[50%] left-[5%] w-28 h-28 border border-primary-400/8 dark:border-primary-300/6 rounded-2xl"
+            animate={{ rotate: [0, -35, 0] }}
+            transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </Parallax>
+
+        <Parallax speed={-0.32}>
+          <motion.div
+            className="absolute top-[22%] right-[8%] w-14 h-14 bg-accent-500/6 dark:bg-accent-400/4 rounded-lg"
+            animate={{ y: [0, 25, 0], rotate: [0, 45, 0] }}
+            transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </Parallax>
+
+        <Parallax speed={0.18}>
+          <motion.div
+            className="absolute bottom-[30%] right-[35%] w-12 h-12 border border-primary-500/10 dark:border-primary-400/6 rounded-full"
+            animate={{ scale: [1, 1.25, 1], x: [0, 12, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </Parallax>
+
+        <Parallax speed={-0.2}>
+          <motion.div
+            className="absolute top-[60%] left-[40%] w-10 h-10 border-2 border-accent-400/8 dark:border-accent-300/5 rounded-lg"
+            animate={{ rotate: [45, 90, 45], y: [0, -12, 0] }}
+            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </Parallax>
+
+        <Parallax speed={0.28}>
+          <motion.div
+            className="absolute bottom-[40%] left-[60%] w-8 h-8 bg-primary-400/8 dark:bg-primary-300/5 rounded-full"
+            animate={{ scale: [1, 1.4, 1], opacity: [0.4, 0.7, 0.4] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </Parallax>
+
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(30,41,59,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(30,41,59,0.03)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)]"></div>
+      </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
       <div className="relative">
@@ -82,7 +158,7 @@ export const WhyChoose: React.FC = () => {
                   h-full relative rounded-3xl transition-all duration-500 ease-out
                   ${isFeature(index)
                     ? "p-8 md:p-10 bg-gradient-to-br from-primary-600 via-primary-700 to-accent-600 text-white shadow-2xl shadow-primary-500/25 group-hover:shadow-[0_25px_60px_-12px_rgba(99,102,241,0.4)] overflow-visible"
-                    : "p-6 md:p-7 bg-white dark:bg-surface-800/90 border border-slate-200/60 dark:border-surface-700/60 shadow-lg group-hover:shadow-xl dark:shadow-surface-950/20 overflow-hidden"
+                    : "p-6 md:p-7 liquid-glass liquid-glass-highlight liquid-glass-animated-border overflow-hidden"
                   }
                   group-hover:-translate-y-1
                 `}
@@ -102,6 +178,31 @@ export const WhyChoose: React.FC = () => {
                 )}
 
                 <div className="relative z-10 h-full flex flex-col">
+                  {/* Icon */}
+                  <div className="mb-6">
+                    <div
+                      className={`
+                        inline-flex items-center justify-center rounded-2xl transition-all duration-300
+                        ${isFeature(index)
+                          ? "w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-sm group-hover:bg-white/30"
+                          : "w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary-500/10 to-accent-500/10 dark:from-primary-500/20 dark:to-accent-500/20 group-hover:from-primary-500/20 group-hover:to-accent-500/20 dark:group-hover:from-primary-500/30 dark:group-hover:to-accent-500/30"
+                        }
+                      `}
+                    >
+                      <Icon
+                        name={value.icon}
+                        className={`
+                          transition-transform duration-300 group-hover:scale-110
+                          ${isFeature(index)
+                            ? "text-white"
+                            : "text-accent-600 dark:text-accent-400"
+                          }
+                        `}
+                        size={isFeature(index) ? 32 : 28}
+                      />
+                    </div>
+                  </div>
+
                   {/* Content */}
                   <div className="flex-1 flex flex-col">
                     <h3
@@ -119,7 +220,7 @@ export const WhyChoose: React.FC = () => {
                       className={`
                         leading-relaxed
                         ${isFeature(index)
-                          ? "text-base md:text-lg text-white/90"
+                          ? "text-base md:text-lg text-white"
                           : "text-sm md:text-base text-slate-600 dark:text-surface-300"
                         }
                       `}

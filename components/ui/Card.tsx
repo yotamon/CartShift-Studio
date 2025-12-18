@@ -7,22 +7,22 @@ interface CardProps {
   children: React.ReactNode;
   className?: string;
   hover?: boolean;
-  glow?: boolean;
+  glow?: "glow" | "none" | "subtle" | "lift";
   accent?: boolean;
 }
 
-export const Card: React.FC<CardProps> = ({ children, className, hover = false, glow = false, accent = false }) => {
+export const Card: React.FC<CardProps> = ({ children, className, hover = false, glow, accent = false }) => {
   return (
     <div
       className={cn(
-        "glass-effect rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-10 relative overflow-hidden transition-all duration-300",
-        glow && "shadow-premium hover:shadow-premium-hover",
+        "liquid-glass liquid-glass-intense liquid-glass-highlight rounded-2xl md:rounded-3xl p-4 relative overflow-hidden transition-all duration-300",
+        glow === "glow" && "liquid-glass-glow",
         accent && "border-accent-500/30",
         hover && "hover:scale-[1.02] hover:-translate-y-1",
         className
       )}
     >
-      {glow && (
+      {glow === "glow" && (
         <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary-500 via-accent-500 to-primary-500 rounded-t-3xl opacity-60 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
       )}
       <div className="relative z-10">

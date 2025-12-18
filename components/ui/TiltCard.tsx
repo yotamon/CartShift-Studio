@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -11,10 +11,6 @@ interface TiltCardProps {
   glare?: boolean;
 }
 
-/**
- * TiltCard - A card component with 3D tilt effect that follows the cursor.
- * Creates a premium interactive feel.
- */
 export const TiltCard: React.FC<TiltCardProps> = ({
   children,
   className = "",
@@ -24,9 +20,14 @@ export const TiltCard: React.FC<TiltCardProps> = ({
   const ref = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
   const [glarePosition, setGlarePosition] = useState({ x: 50, y: 50 });
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return;
+    if (isTouchDevice || !ref.current) return;
 
     const { left, top, width, height } = ref.current.getBoundingClientRect();
     const x = (e.clientX - left) / width;
@@ -40,6 +41,7 @@ export const TiltCard: React.FC<TiltCardProps> = ({
   };
 
   const handleMouseLeave = () => {
+    if (isTouchDevice) return;
     setTilt({ rotateX: 0, rotateY: 0 });
   };
 
@@ -49,7 +51,7 @@ export const TiltCard: React.FC<TiltCardProps> = ({
       className={cn("relative", className)}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{ perspective: 1000 }}
+      style={{ perspective: isTouchDevice ? undefined : 1000 }}
     >
       <motion.div
         animate={{
@@ -57,13 +59,12 @@ export const TiltCard: React.FC<TiltCardProps> = ({
           rotateY: tilt.rotateY,
         }}
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
-        style={{ transformStyle: "preserve-3d" }}
+        style={{ transformStyle: isTouchDevice ? undefined : "preserve-3d" }}
         className="relative"
       >
         {children}
 
-        {/* Glare effect overlay */}
-        {glare && (
+        {glare && !isTouchDevice && (
           <motion.div
             className="absolute inset-0 pointer-events-none rounded-inherit overflow-hidden"
             style={{ borderRadius: "inherit" }}

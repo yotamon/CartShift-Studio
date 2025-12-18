@@ -1,7 +1,8 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import { translations, Language, getNestedTranslation } from '@/lib/translations';
+import { trackLanguageSwitch } from '@/lib/analytics';
 
 type Direction = 'ltr' | 'rtl';
 
@@ -27,12 +28,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const setLanguage = (lang: Language) => {
+  const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
     localStorage.setItem('language', lang);
-  };
+    trackLanguageSwitch(lang);
+  }, []);
 
-  const direction = language === 'he' ? 'rtl' : 'ltr';
+  const direction: Direction = language === 'he' ? 'rtl' : 'ltr';
 
   useEffect(() => {
     if (mounted) {
@@ -46,17 +48,22 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
   }, [language, direction, mounted]);
 
-  const t = (path: string) => {
+  const t = useCallback((path: string) => {
     const langData = translations[language];
     const value = getNestedTranslation(langData, path);
     return value;
-  };
+  }, [language]);
+
+  const contextValue = useMemo(
+    () => ({ language, direction, setLanguage, t, mounted }),
+    [language, direction, setLanguage, t, mounted]
+  );
 
   // We render the provider always to ensure useLanguage hook works in children
   // (Header requires it immediately).
   // Hydration mismatch is handled by initial 'en' state.
   return (
-    <LanguageContext.Provider value={{ language, direction, setLanguage, t, mounted }}>
+    <LanguageContext.Provider value={contextValue}>
       {children}
     </LanguageContext.Provider>
   );

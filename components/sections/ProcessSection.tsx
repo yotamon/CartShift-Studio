@@ -30,10 +30,10 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ processPath }) =
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, delay: index * 0.1 }}
           >
-            <Card hover glow className="h-full group relative overflow-hidden">
+            <Card hover glow="glow" className="h-full group relative overflow-hidden">
               <CardHeader>
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-full bg-accent-500/10 dark:bg-accent-500/20 flex items-center justify-center text-accent-600 dark:text-accent-400 font-bold text-xl">
+                  <div className="w-12 h-12 rounded-full bg-accent-500/15 dark:bg-accent-500/20 flex items-center justify-center text-accent-600 dark:text-accent-400 font-bold text-xl border border-accent-500/20 dark:border-transparent">
                     {index + 1}
                   </div>
                   <CardTitle className="text-xl md:text-2xl">{step.title}</CardTitle>

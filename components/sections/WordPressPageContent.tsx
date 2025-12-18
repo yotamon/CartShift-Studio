@@ -36,7 +36,7 @@ export const WordPressPageContent: React.FC = () => {
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
-              <Card hover glow className="h-full group relative overflow-hidden">
+              <Card hover className="h-full group relative overflow-hidden">
                 <CardHeader>
                   <CardTitle>{service.title}</CardTitle>
                 </CardHeader>
@@ -81,7 +81,7 @@ export const WordPressPageContent: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="mt-12"
           >
-            <Card hover glow className="h-full group relative overflow-hidden">
+            <Card hover className="h-full group relative overflow-hidden">
               <CardHeader>
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xs font-semibold text-accent-600 dark:text-primary-400 uppercase tracking-wider">

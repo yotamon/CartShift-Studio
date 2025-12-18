@@ -107,8 +107,7 @@ export const BlogTeaser: React.FC = () => {
 						>
 							<Link href={post.href}>
 								<div className="h-full glass-effect rounded-2xl p-6 group hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 shadow-premium hover:shadow-premium-hover relative overflow-hidden">
-									{/* Top gradient line */}
-									<div className="absolute top-0 start-0 end-0 h-1 bg-gradient-to-r from-primary-500 to-accent-500 rtl:bg-gradient-to-l opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl"></div>
+
 
 									<div className="flex items-center gap-3 mb-4">
 										<span className="text-xs text-slate-500 dark:text-surface-400 uppercase tracking-wider">

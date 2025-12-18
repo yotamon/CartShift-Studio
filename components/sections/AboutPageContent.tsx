@@ -2,15 +2,17 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { ParallaxText } from "@/components/ui/Parallax";
 
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export const AboutPageContent: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, direction } = useLanguage();
   const storyContent = t("about.story.content") as string[];
   const teamMembers = t("about.team.members") as any[];
   const valuesItems = t("about.values.items") as any[];
@@ -20,15 +22,11 @@ export const AboutPageContent: React.FC = () => {
     <>
       <Section background="default" className="relative overflow-hidden">
         <div className="max-w-4xl mx-auto">
-          <motion.h2
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white font-display mb-8 text-center leading-tight tracking-tight"
-          >
-            {t("about.story.title") as string}
-          </motion.h2>
+          <ParallaxText type="fade-up">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white font-display mb-8 text-center leading-tight tracking-tight">
+              {t("about.story.title") as string}
+            </h2>
+          </ParallaxText>
           <div className="space-y-6">
             {storyContent.map((text, index) => (
               <motion.p
@@ -46,35 +44,66 @@ export const AboutPageContent: React.FC = () => {
         </div>
       </Section>
 
+      {/* Founders Image & Team Section */}
       <Section background="light" className="relative overflow-hidden">
-        <SectionHeader
-          title={t("about.team.title") as string}
-          subtitle={t("about.team.subtitle") as string}
-        />
-        <div className="grid md:grid-cols-2 gap-8">
-          {teamMembers.map((member, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-            >
-              <Card hover glow className="h-full group relative overflow-hidden">
-                <CardHeader>
-                  <CardTitle>{member.name}</CardTitle>
-                  <p className="text-primary-500 dark:text-primary-400 font-medium mt-2 text-base md:text-lg">{member.role}</p>
-                </CardHeader>
-                <CardContent>
-                  <p className="mb-6 text-base md:text-lg leading-relaxed">{member.bio}</p>
-                  <div className="pt-6 border-t border-slate-200 dark:border-white/10">
-                    <p className="text-xs md:text-sm font-semibold text-slate-900 dark:text-white mb-2">{t("about.team.expertiseLabel") as string}</p>
-                    <p className="text-xs md:text-sm text-slate-600 dark:text-surface-300">{member.expertise}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
+              {t("about.team.title") as string}
+            </h2>
+            <p className="text-lg text-slate-600 dark:text-surface-400">
+              {t("about.team.subtitle") as string}
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="relative rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-200 dark:ring-white/10 mb-12"
+          >
+            <div className="aspect-[4/3] md:aspect-[16/9] relative">
+              <Image
+                src="/images/the-team.png"
+                alt="CartShift Studio Founders"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+            </div>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-8" dir="ltr">
+            {teamMembers.map((member, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
+                dir={direction}
+              >
+                <Card hover glow="glow" className="h-full group relative overflow-hidden">
+                  <CardHeader>
+                    <CardTitle>{member.name}</CardTitle>
+                    <p className="text-primary-500 dark:text-primary-400 font-medium mt-2 text-base md:text-lg">{member.role}</p>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-base md:text-lg leading-relaxed">{member.bio}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </Section>
 
@@ -92,7 +121,7 @@ export const AboutPageContent: React.FC = () => {
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
-              <Card hover glow className="h-full group relative overflow-hidden">
+              <Card hover glow="glow" className="h-full group relative overflow-hidden">
                 <CardHeader>
                   <CardTitle>{value.title}</CardTitle>
                 </CardHeader>
@@ -107,15 +136,11 @@ export const AboutPageContent: React.FC = () => {
 
       <Section background="light" className="relative overflow-hidden">
         <div className="max-w-4xl mx-auto">
-          <motion.h2
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white font-display mb-8 text-center leading-tight tracking-tight"
-          >
-            {t("about.expect.title") as string} <span className="gradient-text">{t("about.expect.titleSpan") as string}</span>
-          </motion.h2>
+          <ParallaxText type="fade-up">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white font-display mb-8 text-center leading-tight tracking-tight">
+              {t("about.expect.title") as string} <span className="gradient-text">{t("about.expect.titleSpan") as string}</span>
+            </h2>
+          </ParallaxText>
           <div className="space-y-6">
             {expectContent.map((text, index) => (
               <motion.p

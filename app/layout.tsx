@@ -27,13 +27,23 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cartshiftstudio.com";
+
 export const metadata: Metadata = {
   title: {
     default: "CartShift Studio | Shopify & WordPress E-commerce Development Agency",
     template: "%s | CartShift Studio",
   },
   description: "Expert Shopify & WordPress development agency. Custom e-commerce stores, migrations, and optimization. Get a free consultation for your online store project.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://cartshiftstudio.com"),
+  metadataBase: new URL(siteUrl),
+  alternates: {
+    canonical: siteUrl,
+    languages: {
+      "en": siteUrl,
+      "he": siteUrl,
+      "x-default": siteUrl,
+    },
+  },
 };
 
 export default function RootLayout({

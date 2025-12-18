@@ -15,10 +15,13 @@ This complete guide covers everything you need to know about optimizing your Sho
 ## Why Shopify SEO Matters
 
 **The Numbers:**
-- 68% of online experiences start with a search engine
-- Organic search drives 53% of website traffic
-- SEO leads have a 14.6% close rate compared to 1.7% for outbound leads
-- 75% of users never scroll past the first page of search results
+
+| Metric | Value | Why It Matters |
+| - | :-: | :- |
+| Online experiences starting with search | 68% | Most customers find you via search |
+| Organic traffic share | 53% | Free, sustainable traffic source |
+| SEO lead close rate | 14.6% | vs 1.7% for outbound leads |
+| Users clicking past page 1 | < 25% | First page ranking is critical |
 
 For Shopify stores, ranking well in search results means:
 - Free, sustainable traffic
@@ -32,11 +35,14 @@ For Shopify stores, ranking well in search results means:
 ### 1. Technical SEO Setup
 
 **Site Speed Optimization:**
-- Use Shopify's built-in CDN
-- Optimize images (WebP format, lazy loading)
-- Minimize apps and scripts
-- Choose a fast, lightweight theme
-- Enable browser caching
+
+- [ ] Use Shopify's built-in CDN
+- [ ] Optimize images (WebP format, lazy loading)
+- [ ] Minimize apps and scripts
+- [ ] Choose a fast, lightweight theme
+- [ ] Enable browser caching
+- [ ] Test with https://pagespeed.web.dev/
+- [ ] Monitor Core Web Vitals in Google Search Console
 
 **Mobile Optimization:**
 - Ensure responsive design

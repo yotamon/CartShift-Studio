@@ -17,13 +17,16 @@ This comprehensive guide covers everything you need to know about e-commerce mig
 Understanding your motivation helps determine the right approach and timeline:
 
 ### Common Reasons for Migration:
-- **Performance issues**: Slow loading times affecting conversions
-- **Scaling limitations**: Current platform can't handle growth
-- **Cost optimization**: Reducing platform fees or hosting costs
-- **Feature requirements**: Need specific functionality not available
-- **Better support**: Requiring more reliable customer service
-- **Security concerns**: Current platform has vulnerabilities
-- **User experience**: Need better mobile or checkout experience
+
+| Reason | Impact | Priority |
+| - | :- | :-: |
+| **Performance issues** | Slow loading times affecting conversions | High |
+| **Scaling limitations** | Current platform can't handle growth | High |
+| **Cost optimization** | Reducing platform fees or hosting costs | Medium |
+| **Feature requirements** | Need specific functionality not available | High |
+| **Better support** | Requiring more reliable customer service | Medium |
+| **Security concerns** | Current platform has vulnerabilities | Critical |
+| **User experience** | Need better mobile or checkout experience | High |
 
 ## Pre-Migration Planning: The Foundation of Success
 
@@ -364,7 +367,7 @@ E-commerce migration is a complex process that requires careful planning, execut
 
 Remember: migration is not just about moving data—it's about improving your business. Take advantage of the opportunity to optimize your store, improve performance, and enhance the customer experience.
 
-**Ready to migrate your store?** At CartShift Studio, we've successfully migrated hundreds of e-commerce stores with zero downtime and preserved SEO rankings. [Contact us](/contact) for a free consultation and migration quote.
+**Ready to migrate your store?** At CartShift Studio, we've successfully migrated 50+ e-commerce stores with zero downtime and preserved SEO rankings. [Contact us](/contact) for a free consultation and migration quote.
 
 ---he---
 

@@ -32,7 +32,7 @@ export const ShopifyPageContent: React.FC = () => {
 				<div className="grid md:grid-cols-2 gap-8">
 					{services.map((service, index) => (
 						<motion.div key={index} initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6, delay: index * 0.1 }}>
-							<Card hover glow className="h-full group relative overflow-hidden">
+							<Card hover className="h-full group relative overflow-hidden">
 								<CardHeader>
 									<CardTitle>{service.title}</CardTitle>
 								</CardHeader>
@@ -75,7 +75,7 @@ export const ShopifyPageContent: React.FC = () => {
 						transition={{ duration: 0.6, delay: 0.4 }}
 						className="mt-12"
 					>
-						<Card hover glow className="overflow-hidden">
+						<Card hover className="overflow-hidden">
 							<CardHeader>
 								<CardTitle className="text-2xl mb-2">{learnMoreData?.title || "Learn More About Shopify"}</CardTitle>
 								<p className="text-base md:text-lg text-slate-600 dark:text-surface-300 leading-relaxed">

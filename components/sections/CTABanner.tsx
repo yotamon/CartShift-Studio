@@ -12,10 +12,10 @@ export const CTABanner: React.FC = () => {
   const isRtl = direction === 'rtl';
 
   return (
-    <section className="relative py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-50 dark:bg-surface-950">
+    <section className="relative py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#e8eef4] dark:bg-surface-950">
       {/* Animated mesh gradient background */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-accent-500/5"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-500/8 via-transparent to-accent-500/8 dark:from-primary-500/5 dark:to-accent-500/5"></div>
         <div className="absolute top-0 left-0 w-full h-full">
           <svg className="absolute inset-0 w-full h-full opacity-[0.03] dark:opacity-[0.08]" viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>
@@ -62,8 +62,8 @@ export const CTABanner: React.FC = () => {
       />
 
       {/* Ambient Glow Orbs - Enhanced */}
-      <div className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-primary-400/10 dark:bg-primary-500/20 rounded-full blur-[150px] animate-pulse"></div>
-      <div className="absolute top-1/2 right-1/4 w-[400px] h-[400px] bg-accent-400/10 dark:bg-accent-500/15 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-primary-500/15 dark:bg-primary-500/20 rounded-full blur-[150px] animate-pulse"></div>
+      <div className="absolute top-1/2 right-1/4 w-[400px] h-[400px] bg-accent-500/12 dark:bg-accent-500/15 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
 
       {/* Main Content Card with Animated Border */}
       <div className="max-w-4xl mx-auto relative z-10">

@@ -8,11 +8,13 @@ excerpt_he: "למדו אסטרטגיות מוכחות לשיפור ביצועי 
 category_he: "שופיפיי"
 ---
 
-Speed is crucial for e-commerce success. A slow-loading store can significantly impact your conversion rates and search engine rankings. Here are 10 proven strategies to speed up your Shopify store:
+Speed is crucial for e-commerce success. A slow-loading store can significantly impact your conversion rates and search engine rankings. ~~Old advice: "just compress images"~~ Modern approach: systematic optimization across multiple layers. Here are 10 proven strategies to speed up your Shopify store:
 
 ## 1. Optimize Images
 
 Large, unoptimized images are one of the biggest culprits of slow loading times. Use Shopify's built-in image optimization or compress images before uploading. Consider using WebP format for better compression.
+
+**Impact:** Optimizing images can reduce page weight by 60-80% and improve load time by 2-4 seconds.
 
 ## 2. Minimize Apps
 
@@ -48,7 +50,18 @@ Implement proper caching strategies. Shopify's CDN helps, but you can also use b
 
 ## 10. Monitor Performance
 
-Use tools like Google PageSpeed Insights and Shopify's built-in performance metrics to regularly monitor your store's speed. Track improvements over time.
+Use tools like https://pagespeed.web.dev/ and Shopify's built-in performance metrics to regularly monitor your store's speed. Track improvements over time.
+
+**Pro tip:** Set up automated monitoring with tools like https://gtmetrix.com/ or https://www.webpagetest.org/ to catch regressions before customers notice.
+
+### Performance Benchmarks
+
+| Metric | Target | Poor |
+| - | :-: | :-: |
+| **LCP (Largest Contentful Paint)** | < 2.5s | > 4s |
+| **FID (First Input Delay)** | < 100ms | > 300ms |
+| **CLS (Cumulative Layout Shift)** | < 0.1 | > 0.25 |
+| **TTFB (Time to First Byte)** | < 600ms | > 1.2s |
 
 ## Conclusion
 

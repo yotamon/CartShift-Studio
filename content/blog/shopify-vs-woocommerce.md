@@ -44,6 +44,21 @@ Self-hosted platforms like Magento, BigCommerce, and custom solutions give you m
 - **More setup required**: Initial setup can be more complex
 - **Maintenance overhead**: You handle updates, security patches, and technical issues
 
+## Platform Comparison Table
+
+| Feature | Shopify | Self-Hosted (WooCommerce, Magento) |
+| - | :- | :- |
+| **Setup Time** | Hours to days | Days to weeks |
+| **Technical Knowledge** | Minimal | Advanced required |
+| **Hosting** | Included | You manage |
+| **Monthly Cost** | $29-$299+ | Hosting only (~$10-$50) |
+| **Transaction Fees** | Yes (unless Shopify Payments) | No |
+| **Customization** | Theme-based, limited | Full code access |
+| **Security & Updates** | Automatic | Manual |
+| **Support** | 24/7 included | Community/self-service |
+| **Scalability** | Built-in | Requires optimization |
+| **Mobile Optimization** | Automatic | Theme-dependent |
+
 ## Which Should You Choose?
 
 ### Choose Shopify if:
@@ -68,7 +83,7 @@ At CartShift Studio, we specialize in Shopify development because it offers the 
 
 Shopify is ideal for most businesses that want simplicity, reliability, and the ability to scale without technical headaches. While self-hosted solutions offer more control, they require significant technical resources and ongoing maintenance.
 
-Still not sure? [Contact us](/contact) for a free consultation. We'll help you choose the platform that's right for your business and goals.
+Still not sure? Contact us at hello@cartshift.studio or visit https://cartshift.studio/contact for a free consultation. We'll help you choose the platform that's right for your business and goals.
 
 ---he---
 

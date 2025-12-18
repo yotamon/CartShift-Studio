@@ -5,10 +5,13 @@ import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { Parallax } from "@/components/ui/Parallax";
 import { trackFormSubmission } from "@/components/analytics/GoogleAnalytics";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { logError } from "@/lib/error-handler";
-import { Mail, Clock, CheckCircle } from "lucide-react";
+import { getScheduleUrl } from "@/lib/schedule";
+import { Icon } from "@/components/ui/Icon";
+import { Mail, Clock, CheckCircle, Calendar } from "lucide-react";
 
 interface ContactFormData {
   name: string;
@@ -69,9 +72,11 @@ export const ContactPageContent: React.FC = () => {
             </h2>
             <div className="space-y-6 text-start">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-500/10 flex items-center justify-center flex-shrink-0">
-                  <Mail className="w-6 h-6 text-primary-600 dark:text-primary-400" />
-                </div>
+                <Parallax speed={0.15}>
+                  <div className="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-500/10 flex items-center justify-center flex-shrink-0">
+                    <Mail className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+                  </div>
+                </Parallax>
                 <div>
                   <h3 className="font-semibold text-slate-900 dark:text-white mb-2 text-base md:text-lg">{t("contact.emailLabel") as string}</h3>
                   <a
@@ -83,9 +88,11 @@ export const ContactPageContent: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-accent-100 dark:bg-accent-500/10 flex items-center justify-center flex-shrink-0">
-                  <CheckCircle className="w-6 h-6 text-accent-600 dark:text-accent-400" />
-                </div>
+                <Parallax speed={-0.15}>
+                  <div className="w-12 h-12 rounded-xl bg-accent-100 dark:bg-accent-500/10 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="w-6 h-6 text-accent-600 dark:text-accent-400" />
+                  </div>
+                </Parallax>
                 <div>
                   <h3 className="font-semibold text-slate-900 dark:text-white mb-2 text-base md:text-lg">{t("contact.quickResponseTitle") as string}</h3>
                   <p className="text-slate-600 dark:text-surface-300 text-base md:text-lg leading-relaxed">
@@ -94,17 +101,47 @@ export const ContactPageContent: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-500/10 flex items-center justify-center flex-shrink-0">
-                  <Clock className="w-6 h-6 text-primary-600 dark:text-primary-400" />
-                </div>
+                <Parallax speed={0.2}>
+                  <div className="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-500/10 flex items-center justify-center flex-shrink-0">
+                    <Clock className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+                  </div>
+                </Parallax>
                 <div>
                   <h3 className="font-semibold text-slate-900 dark:text-white mb-2 text-base md:text-lg">{t("contact.scheduleTitle") as string}</h3>
-                  <p className="text-slate-600 dark:text-surface-300 mb-2 text-base md:text-lg leading-relaxed">
+                  <p className="text-slate-600 dark:text-surface-300 mb-3 text-base md:text-lg leading-relaxed">
                     {t("contact.scheduleText1") as string}
                   </p>
-                  <p className="text-slate-600 dark:text-surface-300 text-base md:text-lg leading-relaxed">
-                    {t("contact.scheduleText2") as string}
+                  <a
+                    href={getScheduleUrl()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"
+                  >
+                    <Calendar className="w-5 h-5" />
+                    <span>{isRtl ? "קביעת פגישה" : "Schedule Now"}</span>
+                  </a>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <Parallax speed={-0.2}>
+                  <div className="w-12 h-12 rounded-xl bg-[#25D366]/10 dark:bg-[#25D366]/10 flex items-center justify-center flex-shrink-0">
+                    <Icon name="whatsapp" size={24} className="text-[#25D366]" />
+                  </div>
+                </Parallax>
+                <div>
+                  <h3 className="font-semibold text-slate-900 dark:text-white mb-2 text-base md:text-lg">{isRtl ? "וואטסאפ" : "WhatsApp"}</h3>
+                  <p className="text-slate-600 dark:text-surface-300 mb-3 text-base md:text-lg leading-relaxed">
+                    {isRtl ? "מעדיפים הודעה מהירה? צרו קשר בוואטסאפ." : "Prefer instant messaging? Reach us on WhatsApp."}
                   </p>
+                  <a
+                    href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "972503591552"}?text=${encodeURIComponent(isRtl ? "שלום! אשמח לשמוע פרטים נוספים." : "Hello! I'd like to get in touch.")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-[#25D366] hover:text-[#128C7E] font-medium transition-colors"
+                  >
+                    <Icon name="whatsapp" size={20} />
+                    <span>{isRtl ? "שלחו הודעה" : "Send Message"}</span>
+                  </a>
                 </div>
               </div>
             </div>
@@ -117,7 +154,7 @@ export const ContactPageContent: React.FC = () => {
             transition={{ duration: 0.6 }}
           >
             {submitted ? (
-              <Card glow>
+              <Card>
                 <CardContent className="text-center py-12">
                   <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white shadow-lg">
                     <CheckCircle className="w-12 h-12" strokeWidth={2} />
@@ -126,16 +163,33 @@ export const ContactPageContent: React.FC = () => {
                   <p className="text-slate-600 dark:text-surface-300 mb-6 text-base md:text-lg leading-relaxed">
                     {t("contact.form.successText") as string}
                   </p>
-                  <Button
-                    variant="outline"
-                    onClick={() => setSubmitted(false)}
-                  >
-                    {t("contact.form.sendAnother") as string}
-                  </Button>
+                  <p className="text-slate-600 dark:text-surface-300 mb-6 text-base md:text-lg leading-relaxed">
+                    {isRtl ? "מעדיפים לדבר? קבעו פגישה עכשיו:" : "Prefer to talk? Schedule a meeting now:"}
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <a
+                      href={getScheduleUrl()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block"
+                    >
+                      <Button className="w-full sm:w-auto">
+                        <Calendar className="w-4 h-4 me-2" />
+                        {isRtl ? "קביעת פגישה" : "Schedule Meeting"}
+                      </Button>
+                    </a>
+                    <Button
+                      variant="outline"
+                      onClick={() => setSubmitted(false)}
+                      className="w-full sm:w-auto"
+                    >
+                      {t("contact.form.sendAnother") as string}
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ) : (
-              <Card glow>
+              <Card>
                 <CardHeader>
                   <CardTitle className="text-xl md:text-2xl text-start">{t("contact.form.title") as string}</CardTitle>
                 </CardHeader>
@@ -149,11 +203,14 @@ export const ContactPageContent: React.FC = () => {
                         id="name"
                         type="text"
                         {...register("name", { required: "Name is required" })}
-                        className="w-full px-4 py-3 rounded-xl glass-effect text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-surface-500 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all"
+                        className="w-full px-4 py-4 md:py-3 rounded-xl glass-effect text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-surface-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all touch-manipulation"
                         placeholder={t("contact.form.namePlaceholder") as string}
+                        aria-required="true"
+                        aria-invalid={errors.name ? "true" : "false"}
+                        aria-describedby={errors.name ? "contact-name-error" : undefined}
                       />
                       {errors.name && (
-                        <p className="mt-1 text-sm text-error">{errors.name.message}</p>
+                        <p id="contact-name-error" role="alert" className="mt-1 text-sm text-error">{errors.name.message}</p>
                       )}
                     </div>
 
@@ -171,12 +228,15 @@ export const ContactPageContent: React.FC = () => {
                             message: "Invalid email address"
                           }
                         })}
-                        className="w-full px-4 py-3 rounded-xl glass-effect text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-surface-500 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all text-start"
-                        style={{ direction: 'ltr' }} // Email should always be LTR
+                        className="w-full px-4 py-4 md:py-3 rounded-xl glass-effect text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-surface-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all text-start touch-manipulation"
+                        style={{ direction: 'ltr' }}
                         placeholder={t("contact.form.emailPlaceholder") as string}
+                        aria-required="true"
+                        aria-invalid={errors.email ? "true" : "false"}
+                        aria-describedby={errors.email ? "contact-email-error" : undefined}
                       />
                       {errors.email && (
-                        <p className="mt-1 text-sm text-error">{errors.email.message}</p>
+                        <p id="contact-email-error" role="alert" className="mt-1 text-sm text-error">{errors.email.message}</p>
                       )}
                     </div>
 
@@ -188,7 +248,7 @@ export const ContactPageContent: React.FC = () => {
                         id="company"
                         type="text"
                         {...register("company")}
-                        className="w-full px-4 py-3 rounded-xl glass-effect text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-surface-500 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all"
+                        className="w-full px-4 py-4 md:py-3 rounded-xl glass-effect text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-surface-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all touch-manipulation"
                         placeholder={t("contact.form.companyPlaceholder") as string}
                       />
                     </div>
@@ -200,7 +260,10 @@ export const ContactPageContent: React.FC = () => {
                       <select
                         id="projectType"
                         {...register("projectType", { required: "Please select a project type" })}
-                        className="w-full px-4 py-3 rounded-xl glass-effect text-slate-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all bg-white dark:bg-surface-900 [&>option]:text-slate-900 dark:[&>option]:text-white"
+                        className="w-full px-4 py-4 md:py-3 rounded-xl glass-effect text-slate-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all bg-white dark:bg-surface-900 [&>option]:text-slate-900 dark:[&>option]:text-white touch-manipulation"
+                        aria-required="true"
+                        aria-invalid={errors.projectType ? "true" : "false"}
+                        aria-describedby={errors.projectType ? "contact-projectType-error" : undefined}
                       >
                         <option value="">{t("contact.form.selectOption") as string}</option>
                         <option value="shopify">{t("contact.form.options.shopify") as string}</option>
@@ -209,7 +272,7 @@ export const ContactPageContent: React.FC = () => {
                         <option value="other">{t("contact.form.options.other") as string}</option>
                       </select>
                       {errors.projectType && (
-                        <p className="mt-1 text-sm text-error">{errors.projectType.message}</p>
+                        <p id="contact-projectType-error" role="alert" className="mt-1 text-sm text-error">{errors.projectType.message}</p>
                       )}
                     </div>
 
@@ -221,11 +284,14 @@ export const ContactPageContent: React.FC = () => {
                         id="message"
                         rows={6}
                         {...register("message", { required: "Message is required" })}
-                        className="w-full px-4 py-3 rounded-xl glass-effect text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-surface-500 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all resize-none"
+                        className="w-full px-4 py-4 md:py-3 rounded-xl glass-effect text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-surface-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all resize-none touch-manipulation"
                         placeholder={t("contact.form.messagePlaceholder") as string}
+                        aria-required="true"
+                        aria-invalid={errors.message ? "true" : "false"}
+                        aria-describedby={errors.message ? "contact-message-error" : undefined}
                       />
                       {errors.message && (
-                        <p className="mt-1 text-sm text-error">{errors.message.message}</p>
+                        <p id="contact-message-error" role="alert" className="mt-1 text-sm text-error">{errors.message.message}</p>
                       )}
                     </div>
 

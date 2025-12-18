@@ -59,7 +59,7 @@ export const Process: React.FC = () => {
       {/* Process Timeline */}
       <div className="relative">
         {/* Connection Line - Desktop */}
-        <div className="hidden lg:block absolute top-24 start-0 end-0 h-0.5 bg-gradient-to-r from-transparent via-slate-200 dark:via-surface-700 to-transparent rtl:bg-gradient-to-l"></div>
+        <div className="hidden lg:block absolute top-24 start-0 end-0 h-0.5 bg-gradient-to-r from-transparent via-slate-300 dark:via-surface-700 to-transparent rtl:bg-gradient-to-l"></div>
 
         {/* Animated line overlay */}
         <motion.div
@@ -89,7 +89,7 @@ export const Process: React.FC = () => {
                   transition={{ type: "spring", stiffness: 300 }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl opacity-20 blur-lg group-hover:opacity-40 transition-opacity"></div>
-                  <div className="relative w-full h-full bg-white dark:bg-surface-900 border-2 border-slate-200 dark:border-surface-700 group-hover:border-accent-500/50 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-lg">
+                  <div className="relative w-full h-full bg-white dark:bg-surface-900 border-2 border-slate-300/70 dark:border-surface-700 group-hover:border-accent-500/50 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-lg">
                     <span className="text-2xl font-display font-bold bg-gradient-to-br from-primary-600 to-accent-600 bg-clip-text text-transparent">
                       {step.number}
                     </span>
@@ -97,7 +97,7 @@ export const Process: React.FC = () => {
 
                   {/* Icon floating above */}
                   <div className="absolute -top-2 -end-2 w-8 h-8 bg-accent-500 rounded-lg flex items-center justify-center shadow-lg transform group-hover:rotate-12 transition-transform">
-                    <Icon name={step.icon} className="w-4 h-4 text-white" size={16} />
+                    <Icon name={step.icon} className="text-white flex-shrink-0" size={16} />
                   </div>
                 </motion.div>
 
@@ -111,22 +111,24 @@ export const Process: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Connection arrow - Mobile/Tablet */}
+                {/* Connection - Mobile/Tablet */}
                 {index < steps.length - 1 && (
-                  <div className="lg:hidden flex justify-center py-6">
-                    <motion.svg
-                      className="w-6 h-6 text-accent-500"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      initial={{ opacity: 0, y: -10 }}
-                      whileInView={{ opacity: 1, y: 0 }}
+                  <div className="lg:hidden flex flex-col items-center py-4">
+                    <motion.div
+                      className="w-0.5 h-8 bg-gradient-to-b from-accent-500 to-primary-500"
+                      initial={{ scaleY: 0 }}
+                      whileInView={{ scaleY: 1 }}
                       viewport={{ once: true }}
-                      transition={{ delay: 0.3 }}
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                    </motion.svg>
+                      transition={{ delay: 0.2, duration: 0.4 }}
+                      style={{ transformOrigin: "top" }}
+                    />
+                    <motion.div
+                      className="w-3 h-3 rounded-full bg-accent-500"
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.4, type: "spring", stiffness: 200 }}
+                    />
                   </div>
                 )}
               </div>

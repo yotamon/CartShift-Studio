@@ -1,6 +1,6 @@
 import { ContactTemplate } from "@/components/templates/ContactTemplate";
 import type { Metadata } from "next";
-import { generateMetadata as genMeta, generateBreadcrumbSchema } from "@/lib/seo";
+import { generateMetadata as genMeta, generateBreadcrumbSchema, generateLocalBusinessSchema } from "@/lib/seo";
 import Script from "next/script";
 
 export const metadata: Metadata = genMeta({
@@ -14,6 +14,7 @@ export default function ContactPage() {
     { name: "Home", url: "/" },
     { name: "Contact", url: "/contact" },
   ]);
+  const localBusinessSchema = generateLocalBusinessSchema();
 
   return (
     <>
@@ -21,6 +22,11 @@ export default function ContactPage() {
         id="contact-breadcrumb-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <Script
+        id="local-business-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
       />
       <ContactTemplate />
     </>

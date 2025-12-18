@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
+import { ParallaxLayer } from "@/components/ui/Parallax";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { Briefcase, ThumbsUp, Award, Clock } from "lucide-react";
 
@@ -14,10 +15,12 @@ interface Stat {
 
 const AnimatedCounter: React.FC<{ value: number; suffix: string; inView: boolean }> = ({ value, suffix, inView }) => {
 	const [count, setCount] = useState(0);
+	const hasAnimatedRef = useRef(false);
 
 	useEffect(() => {
-		if (!inView) return;
+		if (!inView || hasAnimatedRef.current) return;
 
+		hasAnimatedRef.current = true;
 		const duration = 2000;
 		const steps = 60;
 		const increment = value / steps;
@@ -47,7 +50,7 @@ const AnimatedCounter: React.FC<{ value: number; suffix: string; inView: boolean
 export const StatsCounter: React.FC = () => {
 	const { t } = useLanguage();
 	const ref = useRef(null);
-	const isInView = useInView(ref, { once: true, margin: "-100px" });
+	const isInView = useInView(ref, { once: true, margin: "0px" });
 
 	const stats: Stat[] = [
 		{
@@ -91,40 +94,44 @@ export const StatsCounter: React.FC = () => {
 				</svg>
 			</div>
 
-			<motion.div
-				className="absolute top-1/4 start-1/4 w-96 h-96 bg-white/10 dark:bg-white/10 rounded-full blur-[120px]"
-				animate={{
-					x: [0, 50, 0],
-					y: [0, 30, 0],
-					scale: [1, 1.2, 1]
-				}}
-				transition={{
-					duration: 8,
-					repeat: Infinity,
-					ease: "easeInOut"
-				}}
-			/>
-			<motion.div
-				className="absolute bottom-1/4 end-1/4 w-96 h-96 bg-accent-500/20 dark:bg-accent-500/20 rounded-full blur-[120px]"
-				animate={{
-					x: [0, -50, 0],
-					y: [0, -30, 0],
-					scale: [1, 1.2, 1]
-				}}
-				transition={{
-					duration: 10,
-					repeat: Infinity,
-					ease: "easeInOut"
-				}}
-			/>
+			<ParallaxLayer depth={1.5} baseSpeed={0.15}>
+				<motion.div
+					className="absolute top-1/4 start-1/4 w-96 h-96 bg-white/10 dark:bg-white/10 rounded-full blur-[120px]"
+					animate={{
+						x: [0, 50, 0],
+						y: [0, 30, 0],
+						scale: [1, 1.2, 1]
+					}}
+					transition={{
+						duration: 8,
+						repeat: Infinity,
+						ease: "easeInOut"
+					}}
+				/>
+			</ParallaxLayer>
+			<ParallaxLayer depth={1.2} baseSpeed={0.12}>
+				<motion.div
+					className="absolute bottom-1/4 end-1/4 w-96 h-96 bg-accent-500/20 dark:bg-accent-500/20 rounded-full blur-[120px]"
+					animate={{
+						x: [0, -50, 0],
+						y: [0, -30, 0],
+						scale: [1, 1.2, 1]
+					}}
+					transition={{
+						duration: 10,
+						repeat: Infinity,
+						ease: "easeInOut"
+					}}
+				/>
+			</ParallaxLayer>
 
 			<div className="max-w-7xl mx-auto relative z-10">
 				<motion.div initial={{ opacity: 0, y: 20 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-16">
 					<h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white mb-4 tracking-tight">{(t("stats.title") as string) || "Our Impact"}</h2>
-					<p className="text-lg text-white/90 dark:text-white/80 max-w-2xl mx-auto">{(t("stats.subtitle") as string) || "Numbers that speak for themselves"}</p>
+					<p className="text-lg text-white max-w-2xl mx-auto">{(t("stats.subtitle") as string) || "Numbers that speak for themselves"}</p>
 				</motion.div>
 
-				<div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
 					{stats.map((stat, index) => (
 						<motion.div
 							key={index}
@@ -135,17 +142,13 @@ export const StatsCounter: React.FC = () => {
 							<div className="relative h-full p-6 lg:p-8 rounded-2xl bg-white/10 dark:bg-white/10 backdrop-blur-md border border-white/20 dark:border-white/20 hover:bg-white/15 dark:hover:bg-white/15 hover:border-white/30 dark:hover:border-white/30 transition-all duration-300 shadow-xl hover:shadow-2xl">
 								<div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-								{index > 0 && (
-									<div className="hidden lg:block absolute start-0 top-1/2 -translate-y-1/2 rtl:translate-x-4 ltr:-translate-x-4 w-px h-16 bg-gradient-to-b from-transparent via-white/30 to-transparent"></div>
-								)}
-
 								<div className="relative z-10 text-center">
-									<div className="flex items-center justify-center mb-4 text-white/90">{stat.icon}</div>
+									<div className="flex items-center justify-center mb-4 text-white">{stat.icon}</div>
 									<div className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-display font-bold text-white mb-3 tracking-tight">
 										<AnimatedCounter value={stat.value} suffix={stat.suffix} inView={isInView} />
 									</div>
 
-									<div className="text-sm md:text-base text-white/95 dark:text-white/90 font-medium leading-relaxed">{stat.label}</div>
+									<div className="text-sm md:text-base text-white font-medium leading-relaxed">{stat.label}</div>
 								</div>
 
 								<div className="absolute bottom-0 start-0 end-0 h-1 bg-gradient-to-r from-transparent via-white/30 to-transparent rtl:bg-gradient-to-l opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>

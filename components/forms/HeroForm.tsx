@@ -61,7 +61,7 @@ export const HeroForm: React.FC = () => {
   }
 
   return (
-    <Card glow className="border-2 border-accent-500/30">
+    <Card className="border-2 border-accent-500/30">
       <CardHeader>
           <CardTitle className="text-xl md:text-2xl mb-2">{t("heroForm.title") as string}</CardTitle>
           <p className="text-slate-600 dark:text-surface-400 text-xs md:text-sm leading-relaxed">{t("heroForm.subtitle") as string}</p>
@@ -76,13 +76,14 @@ export const HeroForm: React.FC = () => {
               id="name"
               type="text"
               {...register("name", { required: t("heroForm.fields.nameRequired") as string })}
-              className="w-full px-4 py-3 md:py-3 text-base md:text-base glass-effect rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-surface-500 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all touch-manipulation"
+              className="w-full px-4 py-4 md:py-3 text-base glass-effect rounded-xl text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-surface-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all touch-manipulation"
               placeholder={t("heroForm.fields.namePlaceholder") as string}
               aria-required="true"
               aria-invalid={errors.name ? "true" : "false"}
+              aria-describedby={errors.name ? "name-error" : undefined}
             />
             {errors.name && (
-              <p className="mt-1 text-sm text-error">{errors.name.message}</p>
+              <p id="name-error" role="alert" className="mt-1 text-sm text-error">{errors.name.message}</p>
             )}
           </div>
 
@@ -101,14 +102,14 @@ export const HeroForm: React.FC = () => {
                   message: t("heroForm.fields.emailInvalid") as string
                 }
               })}
-              className="w-full px-4 py-3 md:py-3 text-base md:text-base glass-effect rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-surface-500 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all touch-manipulation"
+              className="w-full px-4 py-4 md:py-3 text-base glass-effect rounded-xl text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-surface-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all touch-manipulation"
               placeholder={t("heroForm.fields.emailPlaceholder") as string}
               aria-required="true"
               aria-invalid={errors.email ? "true" : "false"}
               aria-describedby={errors.email ? "email-error" : undefined}
             />
             {errors.email && (
-              <p id="email-error" className="mt-1 text-sm text-error" role="alert">
+              <p id="email-error" role="alert" className="mt-1 text-sm text-error">
                 {errors.email.message}
               </p>
             )}
@@ -121,7 +122,7 @@ export const HeroForm: React.FC = () => {
             <select
               id="interest"
               {...register("interest", { required: t("heroForm.fields.interestRequired") as string })}
-              className="w-full px-4 py-3 md:py-3 text-base md:text-base glass-effect rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all bg-white/50 dark:bg-surface-900/50 touch-manipulation"
+              className="w-full px-4 py-4 md:py-3 text-base glass-effect rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all bg-white/50 dark:bg-surface-900/50 touch-manipulation"
               aria-required="true"
               aria-invalid={errors.interest ? "true" : "false"}
               aria-describedby={errors.interest ? "interest-error" : undefined}
@@ -132,7 +133,7 @@ export const HeroForm: React.FC = () => {
               <option value="consultation" className="bg-white dark:bg-surface-900 text-slate-900 dark:text-white">{t("heroForm.fields.options.consultation") as string}</option>
             </select>
             {errors.interest && (
-              <p id="interest-error" className="mt-2 text-sm text-error font-semibold" role="alert">
+              <p id="interest-error" role="alert" className="mt-2 text-sm text-error font-semibold">
                 {errors.interest.message}
               </p>
             )}

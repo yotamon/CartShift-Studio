@@ -9,7 +9,10 @@ export const translations = {
 			about: "About",
 			services: "Services",
 			blog: "Blog",
-			contact: "Contact"
+			contact: "Contact",
+			work: "Work",
+			pricing: "Pricing",
+			maintenance: "Maintenance"
 		},
 		heroForm: {
 			title: "Get a Free Consultation",
@@ -48,7 +51,7 @@ export const translations = {
 			intro: {
 				title: "Your E-commerce Development Partner",
 				paragraphs: [
-					"CartShift Studio is a specialized e-commerce development agency that transforms online businesses through expert Shopify and WordPress solutions. With years of experience building high-converting stores and content-driven websites, we've helped hundreds of businesses launch, optimize, and scale their online presence.",
+					"CartShift Studio is a specialized e-commerce development agency that transforms online businesses through expert Shopify and WordPress solutions. With years of experience building high-converting stores and content-driven websites, we've helped 50+ businesses launch, optimize, and scale their online presence.",
 					"Whether you're launching your first Shopify store, migrating from another platform, or need a custom WordPress website for your content business, we combine technical expertise with a deep understanding of what drives conversions and growth. Our approach is simple: we listen to your goals, build solutions that actually work, and stick around to help you improve.",
 					"We specialize in Shopify development for e-commerce stores that need custom features, performance optimization, and ongoing support. For content-focused businesses, news platforms, and custom websites, we leverage WordPress to create fast, secure, and easy-to-manage sites that rank well in search engines. Every project is tailored to your unique needs, with clean code, thoughtful design, and a focus on results that matter to your business."
 				]
@@ -62,6 +65,9 @@ export const translations = {
 					value: "100%",
 					label: "Hands-on"
 				}
+			},
+			platforms: {
+				label: "We Build On"
 			}
 		},
 		blog: {
@@ -105,6 +111,18 @@ export const translations = {
 			viewAll: "View all posts",
 			posts: [
 				{
+					title: "E-commerce Conversion Rate Optimization: 20 Proven Strategies That Work",
+					excerpt: "Discover 20 proven strategies to increase your e-commerce conversion rate. Learn how to turn more visitors into customers and boost your revenue.",
+					href: "/blog/ecommerce-conversion-rate-optimization",
+					date: "2024-12-20"
+				},
+				{
+					title: "Complete Guide to E-commerce Migration: How to Move Your Store Without Losing Sales",
+					excerpt: "Learn how to migrate your e-commerce store safely and efficiently. Step-by-step guide to moving between platforms without losing data, SEO rankings, or sales.",
+					href: "/blog/complete-guide-ecommerce-migration",
+					date: "2024-12-10"
+				},
+				{
 					title: "Speed Up Your Shopify Store (Without Breaking Your Theme)",
 					excerpt: "Slow sites bleed revenue. Here are the practical fixes we use to cut load times and lift conversions.",
 					href: "/blog/speed-up-shopify-store",
@@ -138,15 +156,15 @@ export const translations = {
 				expertiseLabel: "Expertise:",
 				members: [
 					{
-						name: "Technical Lead",
+						name: "Yotam Faraggi",
 						role: "Co-Founder & Developer",
-						bio: "With over a decade of experience in e-commerce development, our Technical Lead specializes in building scalable Shopify stores and high-performance WordPress websites. Starting as a frontend developer, they've evolved into a full-stack expert who understands both the technical and business sides of online stores. They're passionate about clean code architecture, performance optimization, and creating features that not only work perfectly today but remain maintainable as businesses scale. Their expertise spans custom theme development, app integration, API customization, and solving complex technical challenges that many agencies shy away from. When they're not coding, they're researching the latest e-commerce trends and technologies to ensure our clients always have access to cutting-edge solutions that drive real results.",
+						bio: "I started as a frontend developer and gradually fell in love with the full stack. These days, I build Shopify stores and WordPress sites that are fast, reliable, and actually fun to maintain. I'm a bit obsessed with clean code and performance – probably because I've seen too many slow sites lose customers. When I'm not coding, I'm usually exploring new e-commerce tools or figuring out how to solve tricky technical problems that most people avoid.",
 						expertise: "Shopify, WordPress, Custom Development, Performance Optimization, Full-Stack Development, API Integration"
 					},
 					{
-						name: "Customer-Facing Lead",
+						name: "Danielle Shamir",
 						role: "Co-Founder & Strategist",
-						bio: "Our Customer-Facing Lead brings a unique blend of technical understanding and business strategy to every project. With a background in digital marketing and project management, they excel at translating complex technical concepts into clear, actionable plans that align with business goals. They've managed hundreds of e-commerce projects, from small startups to established brands, and understand that successful projects require more than just great code. They need clear communication, realistic timelines, and a focus on outcomes that matter. Their approach is collaborative and transparent: they ask the right questions upfront, keep clients informed throughout the process, and ensure every decision supports the client's growth objectives. They're also passionate about building long-term partnerships, not just delivering one-time projects, which is why so many of our clients continue working with us year after year.",
+						bio: "I'm the person who makes sure tech talk turns into actual plans. With a background in digital marketing and project management, I love bridging the gap between what's technically possible and what makes business sense. I ask a lot of questions upfront because I've learned that understanding your goals deeply is the only way to build something that truly works for you. I'm all about clear communication, realistic expectations, and building relationships that last beyond just one project.",
 						expertise: "Client Relations, Strategy, Project Management, Digital Marketing, E-commerce Consulting, Growth Optimization"
 					}
 				]
@@ -670,6 +688,236 @@ export const translations = {
 			support: {
 				label: "Support Available"
 			}
+		},
+		work: {
+			hero: {
+				title: "Our Work",
+				subtitle: "Real projects. Real results.",
+				description: "See how we've helped businesses launch, grow, and optimize their online presence.",
+				badge: "Portfolio"
+			},
+			filters: {
+				all: "All Projects",
+				shopify: "Shopify",
+				wordpress: "WordPress"
+			},
+			cta: {
+				title: "Ready to join our",
+				titleSpan: "success stories?",
+				description: "Let's talk about your project and see how we can help.",
+				button: "Start Your Project"
+			},
+			viewProject: "View Project",
+			comingSoon: "Case studies coming soon. We're documenting our recent projects."
+		},
+		pricing: {
+			hero: {
+				title: "Simple, Transparent Pricing",
+				subtitle: "No hidden fees. No surprises.",
+				description: "Choose a package that fits your needs, or let's build something custom.",
+				badge: "Pricing"
+			},
+			packages: {
+				quickLaunch: {
+					name: "Quick Launch",
+					description: "Get your Shopify store live fast with a proven foundation.",
+					price: "From $2,500",
+					timeline: "1-2 weeks",
+					features: [
+						"Shopify store setup and configuration",
+						"Theme selection and basic customization",
+						"Essential app integrations",
+						"Payment and shipping setup",
+						"Basic SEO setup",
+						"Training session"
+					],
+					cta: "Get Started"
+				},
+				growthUpgrade: {
+					name: "Growth Upgrade",
+					description: "Optimize your existing store for better performance and conversions.",
+					price: "From $3,500",
+					timeline: "2-4 weeks",
+					popular: true,
+					features: [
+						"Full site audit (speed, SEO, UX)",
+						"Performance optimization",
+						"Conversion improvements",
+						"App cleanup and optimization",
+						"Mobile experience tuning",
+						"30 days post-launch support"
+					],
+					cta: "Upgrade Now"
+				},
+				customBuild: {
+					name: "Custom Build",
+					description: "A fully custom solution built around your unique needs.",
+					price: "From $8,000",
+					timeline: "4-8 weeks",
+					features: ["Custom discovery and strategy", "Custom theme development", "Advanced features and integrations", "Performance optimization", "SEO foundation", "60 days post-launch support"],
+					cta: "Let's Talk"
+				},
+				storeAudit: {
+					name: "Store Audit",
+					description: "A comprehensive review of your store with actionable recommendations.",
+					price: "$500",
+					timeline: "3-5 days",
+					features: [
+						"60-minute video walkthrough",
+						"Speed analysis with specific fixes",
+						"SEO review and recommendations",
+						"Conversion opportunities",
+						"Prioritized action plan",
+						"Follow-up Q&A call"
+					],
+					cta: "Book an Audit"
+				}
+			},
+			included: {
+				title: "What's Always Included",
+				items: [
+					"Direct communication with senior developers",
+					"Regular progress updates and demos",
+					"Clean, documented code",
+					"Post-launch support period",
+					"Performance optimization",
+					"Mobile-first approach"
+				]
+			},
+			notIncluded: {
+				title: "What's Separate",
+				items: ["Ongoing monthly support (see Maintenance Plans)", "Third-party app subscription costs", "Stock photography and copywriting", "Domain and hosting fees"]
+			},
+			faq: {
+				title: "Pricing Questions",
+				items: [
+					{
+						question: "Do you offer payment plans?",
+						answer: "Yes, for projects over $5,000, we typically split payments into milestones: 40% to start, 30% at design approval, and 30% at launch."
+					},
+					{
+						question: "What if my project doesn't fit these packages?",
+						answer: "These are starting points. We'll scope your project properly and provide a custom quote based on your specific needs."
+					},
+					{
+						question: "Are there any hidden fees?",
+						answer: "No. We quote transparently. If something comes up during the project that changes scope, we discuss it before any additional work."
+					},
+					{
+						question: "What's not included in these prices?",
+						answer: "Third-party costs like app subscriptions, themes (if purchasing one), domain registration, and ongoing hosting are separate. We'll outline everything clearly in your quote."
+					}
+				]
+			},
+			cta: {
+				title: "Not sure which package",
+				titleSpan: "is right for you?",
+				description: "Book a free 30-minute call. We'll learn about your project and recommend the best path forward.",
+				button: "Book a Free Call"
+			}
+		},
+		maintenance: {
+			hero: {
+				title: "Maintenance & Support",
+				subtitle: "Keep your store running smooth",
+				description: "Monthly plans that handle updates, monitoring, and improvements so you can focus on your business.",
+				badge: "Support Plans"
+			},
+			plans: {
+				essential: {
+					name: "Essential Care",
+					price: "$299/month",
+					description: "Basic maintenance to keep your store healthy.",
+					features: [
+						"Monthly health check (speed, security, uptime)",
+						"Software and theme updates",
+						"Monthly backup verification",
+						"Basic performance monitoring",
+						"Email support (48hr response)",
+						"1 hour of support/fixes per month"
+					],
+					cta: "Get Essential"
+				},
+				growth: {
+					name: "Growth Care",
+					price: "$599/month",
+					popular: true,
+					description: "Proactive support for growing stores.",
+					features: [
+						"Everything in Essential, plus:",
+						"Up to 5 hours of development/support",
+						"Priority email support (24hr response)",
+						"Bi-weekly check-in calls",
+						"Conversion monitoring",
+						"Quarterly performance review"
+					],
+					cta: "Get Growth"
+				},
+				premium: {
+					name: "Premium Care",
+					price: "$1,199/month",
+					description: "Full-service support for high-volume stores.",
+					features: [
+						"Everything in Growth, plus:",
+						"Up to 12 hours of development/support",
+						"Same-day emergency support",
+						"Weekly check-in calls",
+						"A/B testing and optimization",
+						"Dedicated account manager"
+					],
+					cta: "Get Premium"
+				}
+			},
+			coverage: {
+				title: "What's Covered",
+				technical: {
+					title: "Technical Maintenance",
+					items: ["Regular software/plugin updates", "Security monitoring and patches", "Backup management", "Uptime monitoring"]
+				},
+				support: {
+					title: "Support & Fixes",
+					items: ["Bug fixes and troubleshooting", "Content updates and changes", "Minor feature adjustments", "Third-party app support"]
+				},
+				performance: {
+					title: "Performance",
+					items: ["Speed monitoring", "Performance optimization", "Core Web Vitals tracking", "Monthly reporting"]
+				}
+			},
+			terms: {
+				title: "Terms",
+				items: ["Month-to-month, cancel anytime with 30 days notice", "Hours don't roll over", "Additional hours billed at $150/hour"]
+			},
+			faq: {
+				title: "Support Questions",
+				items: [
+					{
+						question: "What if I need more hours than my plan includes?",
+						answer: "Additional hours are billed at $150/hour. We'll always let you know before any extra work is done."
+					},
+					{
+						question: "Can I change plans?",
+						answer: "Yes, you can upgrade or downgrade at any time. Changes take effect at the start of your next billing cycle."
+					},
+					{
+						question: "What's considered an emergency?",
+						answer: "Site down, checkout broken, or security incidents. Premium plan members get same-day response for emergencies."
+					},
+					{
+						question: "Do you support stores you didn't build?",
+						answer: "Yes, we take on maintenance for existing stores. We'll do an initial review to understand your setup first."
+					}
+				]
+			},
+			cta: {
+				title: "Need custom",
+				titleSpan: "support terms?",
+				description: "For larger stores or specific requirements, we can create a custom plan.",
+				button: "Discuss Custom Plan"
+			}
+		},
+		stickyCta: {
+			text: "Book a Call",
+			textHe: "קבעו שיחה"
 		}
 	},
 	he: {
@@ -678,7 +926,10 @@ export const translations = {
 			about: "אודות",
 			services: "שירותים",
 			blog: "בלוג",
-			contact: "צור קשר"
+			contact: "צור קשר",
+			work: "עבודות",
+			pricing: "מחירים",
+			maintenance: "תחזוקה"
 		},
 		heroForm: {
 			title: "שיחת ייעוץ ללא עלות",
@@ -731,6 +982,9 @@ export const translations = {
 					value: "100%",
 					label: "ליווי צמוד"
 				}
+			},
+			platforms: {
+				label: "הפלטפורמות שלנו"
 			}
 		},
 		blog: {
@@ -774,6 +1028,18 @@ export const translations = {
 			viewAll: "לכל המאמרים",
 			posts: [
 				{
+					title: "אופטימיזציה לשיעור המרה באיקומרס: 20 אסטרטגיות שעובדות",
+					excerpt: "גלו 20 אסטרטגיות מוכחות להגדלת שיעור ההמרה בחנות האיקומרס שלכם. למדו איך להפוך יותר מבקרים ללקוחות ולהגדיל את ההכנסות.",
+					href: "/blog/ecommerce-conversion-rate-optimization",
+					date: "2024-12-20"
+				},
+				{
+					title: "המדריך השלם למיגרציית איקומרס: איך להעביר את החנות מבלי לאבד מכירות",
+					excerpt: "למדו איך להעביר את חנות האיקומרס שלכם בצורה בטוחה ויעילה. מדריך צעד-אחר-צעד למעבר בין פלטפורמות מבלי לאבד נתונים, דירוגי SEO או מכירות.",
+					href: "/blog/complete-guide-ecommerce-migration",
+					date: "2024-12-10"
+				},
+				{
 					title: "איך להאיץ את חנות השופיפיי (בלי לשבור את התבנית)",
 					excerpt: "חנות איטית פוגעת במכירות. הנה השיפורים המעשיים שאנחנו עושים כדי לקצר זמני טעינה ולהעלות המרות.",
 					href: "/blog/speed-up-shopify-store",
@@ -807,15 +1073,15 @@ export const translations = {
 				expertiseLabel: "תחומי התמחות:",
 				members: [
 					{
-						name: "מוביל טכני",
+						name: "יותם פרג'י",
 						role: "שותף מייסד ומפתח",
-						bio: "עם יותר מעשור של ניסיון בפיתוח מסחר אלקטרוני, המוביל הטכני שלנו מתמחה בבניית חנויות שופיפיי מדרגיות ואתרי וורדפרס בעלי ביצועים גבוהים. התחיל כמפתח פרונטאנד והתפתח למומחה פול-סטאק שמבין גם את הצד הטכני וגם את הצד העסקי של חנויות אונליין. נלהב מארכיטקטורת קוד נקייה, אופטימיזציית ביצועים, ויצירת פיצ׳רים שעובדים מושלם היום ונשארים קלים לתחזוקה כשהעסק גדל. המומחיות כוללת פיתוח תבניות מותאמות, אינטגרציה של אפליקציות, התאמת API, ופתרון אתגרים טכניים מורכבים שסוכנויות רבות נמנעות מהם. כשלא מקודד, חוקר את המגמות והטכנולוגיות העדכניות ביותר כדי להבטיח ללקוחות גישה לפתרונות מתקדמים שמניבים תוצאות.",
+						bio: "התחלתי כמפתח פרונטאנד והתאהבתי בפול-סטאק. היום אני בונה חנויות שופיפיי ואתרי וורדפרס מהירים, אמינים וממש כיף לתחזק. קצת אובססיבי לגבי קוד נקי וביצועים – כנראה כי ראיתי יותר מדי אתרים איטיים שמאבדים לקוחות. כשאני לא מקודד, בדרך כלל אני חוקר כלים חדשים או מנסה לפתור בעיות טכניות מסובכות שרוב האנשים נמנעים מהן.",
 						expertise: "שופיפיי, וורדפרס, פיתוח מותאם, אופטימיזציית ביצועים, פיתוח Full-Stack, אינטגרציית API"
 					},
 					{
-						name: "מוביל לקוחות",
-						role: "שותף מייסד ואסטרטג",
-						bio: "המוביל לקוחות שלנו מביא שילוב ייחודי של הבנה טכנית ואסטרטגיה עסקית לכל פרויקט. עם רקע בשיווק דיגיטלי וניהול פרויקטים, מצטיין בתרגום מושגים טכניים מורכבים לתוכניות ברורות שמתיישרות עם יעדים עסקיים. ניהל מאות פרויקטי מסחר אלקטרוני, מסטארטאפים קטנים ועד מותגים מבוססים, ומבין שפרויקטים מצליחים דורשים יותר מקוד מעולה. הם צריכים תקשורת ברורה, לוחות זמנים ריאליסטיים, ומיקוד בתוצאות שחשובות. הגישה שיתופית ושקופה: שואל את השאלות הנכונות מראש, שומר על לקוחות מעודכנים לאורך כל הדרך, ומוודא שכל החלטה תומכת ביעדי הצמיחה. נלהב מבניית שותפויות ארוכות טווח, לא רק אספקת פרויקטים חד-פעמיים. זו הסיבה שלקוחות רבים ממשיכים לעבוד איתנו שנה אחר שנה.",
+						name: "דניאל שמיר",
+						role: "שותפה מייסדת ואסטרטגית",
+						bio: "אני האדם שדואג שדיבורים טכניים יהפכו לתוכניות אמיתיות. עם רקע בשיווק דיגיטלי וניהול פרויקטים, אני אוהבת לגשר בין מה שאפשר טכנית למה שהגיוני עסקית. אני שואלת הרבה שאלות בהתחלה כי למדתי שהבנה עמוקה של המטרות שלכם היא הדרך היחידה לבנות משהו שבאמת עובד. אני כל הזמן על תקשורת ברורה, ציפיות ריאליסטיות, ובניית קשרים שנמשכים מעבר לפרויקט אחד.",
 						expertise: "קשרי לקוחות, אסטרטגיה, ניהול פרויקטים, שיווק דיגיטלי, ייעוץ מסחר אלקטרוני, אופטימיזציית צמיחה"
 					}
 				]
@@ -1005,8 +1271,7 @@ export const translations = {
 					},
 					{
 						question: "איך מתחילים עם שירותי פיתוח השופיפיי?",
-						answer:
-							"להתחיל זה קל! פשוט צרו קשר דרך הטופס או קבעו ייעוץ חינמי. נדון בדרישות הפרויקט, נענה על כל שאלה, ונספק הצעה מפורטת. אין התחייבות ואנחנו כאן לעזור לכם להצליח."
+						answer: "להתחיל זה קל! פשוט צרו קשר דרך הטופס או קבעו ייעוץ חינמי. נדון בדרישות הפרויקט, נענה על כל שאלה, ונספק הצעה מפורטת. אין התחייבות ואנחנו כאן לעזור לכם להצליח."
 					}
 				]
 			}
@@ -1129,18 +1394,15 @@ export const translations = {
 					},
 					{
 						question: "אפשר להעביר את האתר הקיים לוורדפרס?",
-						answer:
-							"כן, אנחנו מטפלים בהעברות וורדפרס מספקי אחסון שונים ויכולים לעזור באופטימיזציה של האתר במהלך ההעברה. מבטיחים שכל התוכן, המדיה וההגדרות מועברים בבטחה לסביבה החדשה."
+						answer: "כן, אנחנו מטפלים בהעברות וורדפרס מספקי אחסון שונים ויכולים לעזור באופטימיזציה של האתר במהלך ההעברה. מבטיחים שכל התוכן, המדיה וההגדרות מועברים בבטחה לסביבה החדשה."
 					},
 					{
 						question: "אתם מספקים אחסון ותחזוקה לוורדפרס?",
-						answer:
-							"אנחנו לא מספקים אחסון ישירות, אבל יכולים להמליץ על ספקים אמינים ולטפל בכל משימות התחזוקה: עדכונים, ניטור אבטחה, גיבויים, אופטימיזציית ביצועים ותמיכה טכנית."
+						answer: "אנחנו לא מספקים אחסון ישירות, אבל יכולים להמליץ על ספקים אמינים ולטפל בכל משימות התחזוקה: עדכונים, ניטור אבטחה, גיבויים, אופטימיזציית ביצועים ותמיכה טכנית."
 					},
 					{
 						question: "כמה עולה פיתוח וורדפרס?",
-						answer:
-							"המחיר תלוי בדרישות הפרויקט. אנחנו מספקים הצעות מחיר מותאמות לצרכים הספציפיים ולא חבילות קבועות. בייעוץ החינמי נדון במטרות ונספק מחיר שקוף שמביא ערך מקסימלי."
+						answer: "המחיר תלוי בדרישות הפרויקט. אנחנו מספקים הצעות מחיר מותאמות לצרכים הספציפיים ולא חבילות קבועות. בייעוץ החינמי נדון במטרות ונספק מחיר שקוף שמביא ערך מקסימלי."
 					},
 					{
 						question: "אפשר להתאים תבניות וורדפרס?",
@@ -1148,8 +1410,7 @@ export const translations = {
 					},
 					{
 						question: "אתם עוזרים עם אבטחת וורדפרס?",
-						answer:
-							"כן, אבטחה היא עדיפות עליונה. מיישמים שיטות עבודה מומלצות: תעודות SSL, תוספי אבטחה, עדכונים שוטפים, סריקת תוכנות זדוניות והמלצות אחסון מאובטח להגנה מפני איומים."
+						answer: "כן, אבטחה היא עדיפות עליונה. מיישמים שיטות עבודה מומלצות: תעודות SSL, תוספי אבטחה, עדכונים שוטפים, סריקת תוכנות זדוניות והמלצות אחסון מאובטח להגנה מפני איומים."
 					},
 					{
 						question: "אילו סוגי אתרים הכי מתאימים לוורדפרס?",
@@ -1336,6 +1597,194 @@ export const translations = {
 			support: {
 				label: "תמיכה זמינה"
 			}
+		},
+		work: {
+			hero: {
+				title: "העבודות שלנו",
+				subtitle: "פרויקטים אמיתיים. תוצאות אמיתיות.",
+				description: "ראו איך עזרנו לעסקים להשיק, לצמוח ולמטב את הנוכחות הדיגיטלית שלהם.",
+				badge: "תיק עבודות"
+			},
+			filters: {
+				all: "כל הפרויקטים",
+				shopify: "שופיפיי",
+				wordpress: "וורדפרס"
+			},
+			cta: {
+				title: "מוכנים להצטרף",
+				titleSpan: "לסיפורי ההצלחה?",
+				description: "בואו נדבר על הפרויקט שלכם ונראה איך נוכל לעזור.",
+				button: "התחילו את הפרויקט"
+			},
+			viewProject: "צפייה בפרויקט",
+			comingSoon: "קייס סטאדיז בקרוב. אנחנו מתעדים את הפרויקטים האחרונים שלנו."
+		},
+		pricing: {
+			hero: {
+				title: "מחירים פשוטים ושקופים",
+				subtitle: "בלי עלויות נסתרות. בלי הפתעות.",
+				description: "בחרו חבילה שמתאימה לצרכים שלכם, או בואו נבנה משהו מותאם אישית.",
+				badge: "מחירים"
+			},
+			packages: {
+				quickLaunch: {
+					name: "השקה מהירה",
+					description: "העלו את חנות השופיפיי לאוויר מהר עם תשתית מוכחת.",
+					price: "החל מ-$2,500",
+					timeline: "1-2 שבועות",
+					features: ["הקמה והגדרת חנות שופיפיי", "בחירת תבנית והתאמה בסיסית", "אינטגרציות אפליקציות חיוניות", "הגדרת תשלומים ומשלוחים", "הגדרת SEO בסיסית", "פגישת הדרכה"],
+					cta: "בואו נתחיל"
+				},
+				growthUpgrade: {
+					name: "שדרוג צמיחה",
+					description: "מטבו את החנות הקיימת לביצועים והמרות טובים יותר.",
+					price: "החל מ-$3,500",
+					timeline: "2-4 שבועות",
+					popular: true,
+					features: ["אודיט מלא לאתר (מהירות, SEO, UX)", "אופטימיזציית ביצועים", "שיפורי המרה", "ניקוי ומיטוב אפליקציות", "כיוונון חוויית מובייל", "30 יום תמיכה לאחר השקה"],
+					cta: "שדרגו עכשיו"
+				},
+				customBuild: {
+					name: "בנייה מותאמת",
+					description: "פתרון מותאם לחלוטין סביב הצרכים הייחודיים שלכם.",
+					price: "החל מ-$8,000",
+					timeline: "4-8 שבועות",
+					features: ["גילוי ואסטרטגיה מותאמים", "פיתוח תבנית מותאמת", "פיצ'רים ואינטגרציות מתקדמים", "אופטימיזציית ביצועים", "תשתית SEO", "60 יום תמיכה לאחר השקה"],
+					cta: "בואו נדבר"
+				},
+				storeAudit: {
+					name: "אודיט חנות",
+					description: "סקירה מקיפה של החנות עם המלצות מעשיות.",
+					price: "$500",
+					timeline: "3-5 ימים",
+					features: ["סרטון של 60 דקות עם סקירה", "ניתוח מהירות עם תיקונים ספציפיים", "סקירת SEO והמלצות", "הזדמנויות להמרה", "תוכנית פעולה מתועדפת", "שיחת מעקב לשאלות"],
+					cta: "הזמינו אודיט"
+				}
+			},
+			included: {
+				title: "מה תמיד כלול",
+				items: ["תקשורת ישירה עם מפתחים בכירים", "עדכוני התקדמות ודמואים קבועים", "קוד נקי ומתועד", "תקופת תמיכה לאחר השקה", "אופטימיזציית ביצועים", "גישת Mobile-first"]
+			},
+			notIncluded: {
+				title: "מה נפרד",
+				items: ["תמיכה חודשית שוטפת (ראו תוכניות תחזוקה)", "עלויות מנוי לאפליקציות צד שלישי", "צילומים וכתיבת תוכן", "דומיין ואחסון"]
+			},
+			faq: {
+				title: "שאלות על מחירים",
+				items: [
+					{
+						question: "אתם מציעים תוכניות תשלום?",
+						answer: "כן, לפרויקטים מעל $5,000, אנחנו בדרך כלל מחלקים תשלומים לאבני דרך: 40% להתחלה, 30% באישור עיצוב, ו-30% בהשקה."
+					},
+					{
+						question: "מה אם הפרויקט שלי לא מתאים לחבילות האלה?",
+						answer: "אלה נקודות התחלה. נגדיר את הפרויקט כראוי ונספק הצעת מחיר מותאמת לצרכים הספציפיים שלכם."
+					},
+					{
+						question: "יש עלויות נסתרות?",
+						answer: "לא. אנחנו מציעים מחירים בשקיפות. אם משהו עולה במהלך הפרויקט שמשנה את ההיקף, נדון בזה לפני כל עבודה נוספת."
+					},
+					{
+						question: "מה לא כלול במחירים האלה?",
+						answer: "עלויות צד שלישי כמו מנויים לאפליקציות, תבניות (אם רוכשים), רישום דומיין ואחסון שוטף הם נפרדים. נפרט הכול בבירור בהצעה."
+					}
+				]
+			},
+			cta: {
+				title: "לא בטוחים איזו חבילה",
+				titleSpan: "מתאימה לכם?",
+				description: "קבעו שיחת ייעוץ חינמית של 30 דקות. נלמד על הפרויקט ונמליץ על הדרך הטובה ביותר קדימה.",
+				button: "קבעו שיחה חינם"
+			}
+		},
+		maintenance: {
+			hero: {
+				title: "תחזוקה ותמיכה",
+				subtitle: "שמירה על החנות בריצה חלקה",
+				description: "תוכניות חודשיות שמטפלות בעדכונים, ניטור ושיפורים כדי שתוכלו להתמקד בעסק.",
+				badge: "תוכניות תמיכה"
+			},
+			plans: {
+				essential: {
+					name: "טיפול בסיסי",
+					price: "$299/חודש",
+					description: "תחזוקה בסיסית לשמירה על בריאות החנות.",
+					features: [
+						"בדיקת בריאות חודשית (מהירות, אבטחה, זמינות)",
+						"עדכוני תוכנה ותבנית",
+						"אימות גיבוי חודשי",
+						"ניטור ביצועים בסיסי",
+						"תמיכה באימייל (תגובה תוך 48 שעות)",
+						"שעה אחת של תמיכה/תיקונים בחודש"
+					],
+					cta: "קבלו בסיסי"
+				},
+				growth: {
+					name: "טיפול צמיחה",
+					price: "$599/חודש",
+					popular: true,
+					description: "תמיכה פרואקטיבית לחנויות בצמיחה.",
+					features: ["הכול בבסיסי, ועוד:", "עד 5 שעות פיתוח/תמיכה", "תמיכה באימייל בעדיפות (תגובה תוך 24 שעות)", "שיחות בדיקה דו-שבועיות", "ניטור המרות", "סקירת ביצועים רבעונית"],
+					cta: "קבלו צמיחה"
+				},
+				premium: {
+					name: "טיפול פרימיום",
+					price: "$1,199/חודש",
+					description: "תמיכה מלאה לחנויות בנפח גבוה.",
+					features: ["הכול בצמיחה, ועוד:", "עד 12 שעות פיתוח/תמיכה", "תמיכת חירום באותו יום", "שיחות בדיקה שבועיות", "בדיקות A/B ואופטימיזציה", "מנהל לקוח ייעודי"],
+					cta: "קבלו פרימיום"
+				}
+			},
+			coverage: {
+				title: "מה מכוסה",
+				technical: {
+					title: "תחזוקה טכנית",
+					items: ["עדכוני תוכנה/תוספים קבועים", "ניטור אבטחה ותיקונים", "ניהול גיבויים", "ניטור זמינות"]
+				},
+				support: {
+					title: "תמיכה ותיקונים",
+					items: ["תיקוני באגים ופתרון בעיות", "עדכוני תוכן ושינויים", "התאמות פיצ'רים קטנות", "תמיכה באפליקציות צד שלישי"]
+				},
+				performance: {
+					title: "ביצועים",
+					items: ["ניטור מהירות", "אופטימיזציית ביצועים", "מעקב Core Web Vitals", "דוחות חודשיים"]
+				}
+			},
+			terms: {
+				title: "תנאים",
+				items: ["חודש-בחודש, ביטול בכל עת עם 30 יום הודעה מראש", "שעות לא מצטברות", "שעות נוספות בחיוב של $150 לשעה"]
+			},
+			faq: {
+				title: "שאלות על תמיכה",
+				items: [
+					{
+						question: "מה אם אני צריך יותר שעות מהתוכנית?",
+						answer: "שעות נוספות מחויבות ב-$150 לשעה. תמיד נודיע לכם לפני כל עבודה נוספת."
+					},
+					{
+						question: "אפשר לשנות תוכנית?",
+						answer: "כן, אפשר לשדרג או להוריד בכל עת. השינויים נכנסים לתוקף בתחילת מחזור החיוב הבא."
+					},
+					{
+						question: "מה נחשב למצב חירום?",
+						answer: "אתר למטה, תשלום שבור, או אירועי אבטחה. חברי תוכנית פרימיום מקבלים תגובה באותו יום לחירומים."
+					},
+					{
+						question: "אתם תומכים בחנויות שלא בניתם?",
+						answer: "כן, אנחנו מקבלים תחזוקה לחנויות קיימות. נעשה סקירה ראשונית להבנת ההתקנה שלכם קודם."
+					}
+				]
+			},
+			cta: {
+				title: "צריכים תנאי",
+				titleSpan: "תמיכה מותאמים?",
+				description: "לחנויות גדולות או דרישות ספציפיות, נוכל ליצור תוכנית מותאמת.",
+				button: "דברו על תוכנית מותאמת"
+			}
+		},
+		stickyCta: {
+			text: "Book a Call",
+			textHe: "קבעו שיחה"
 		}
 	}
 };
