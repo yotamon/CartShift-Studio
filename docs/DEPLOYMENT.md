@@ -4,7 +4,7 @@
 
 1. **Environment Variables** (Required)
    - Set `NEXT_PUBLIC_SITE_URL` to your production domain (required)
-   - Set `FIREBASE_FUNCTION_URL` to your Cloud Function URL (required)
+   - Set `NEXT_PUBLIC_FIREBASE_FUNCTION_URL` to your Cloud Function URL (required)
    - Set `NEXT_PUBLIC_GA_ID` for Google Analytics (optional)
 
    **Note**: Environment variables are validated at startup. Missing required variables will cause build failures.
@@ -98,7 +98,7 @@ After deployment, note the function URL (e.g., `https://us-central1-cartshiftstu
 Create a `.env.local` file in the root directory:
 ```env
 NEXT_PUBLIC_SITE_URL=https://cartshiftstudio.web.app
-FIREBASE_FUNCTION_URL=https://us-central1-cartshiftstudio.cloudfunctions.net/contactForm
+NEXT_PUBLIC_FIREBASE_FUNCTION_URL=https://us-central1-cartshiftstudio.cloudfunctions.net/contactForm
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 ```
 Replace the function URL with your actual deployed function URL.
@@ -174,7 +174,7 @@ The `firebase.json` is already configured. For Next.js with SSR, you have two op
 ```env
 NEXT_PUBLIC_SITE_URL=https://yourdomain.com
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
-FIREBASE_FUNCTION_URL=https://us-central1-your-project.cloudfunctions.net/contactForm
+NEXT_PUBLIC_FIREBASE_FUNCTION_URL=https://us-central1-your-project.cloudfunctions.net/contactForm
 ```
 
 ### Firebase Functions Config

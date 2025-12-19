@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { trackFormSubmission } from "@/components/analytics/GoogleAnalytics";
 import { logError } from "@/lib/error-handler";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { submitContactFormClient } from "@/lib/services/contact-client";
 
 interface FormData {
   name: string;
@@ -26,15 +27,9 @@ export const HeroForm: React.FC = () => {
     setError(null);
 
     try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const result = await submitContactFormClient(data);
 
-      const result = await response.json();
-
-      if (!response.ok) {
+      if (!result.success) {
         throw new Error(result.error || "Failed to submit form");
       }
 

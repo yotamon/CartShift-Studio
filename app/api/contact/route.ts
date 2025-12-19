@@ -40,27 +40,52 @@ export async function POST(request: NextRequest) {
           status: 429,
           headers: {
             "Retry-After": "60",
+            "Content-Type": "application/json",
           },
         }
       );
     }
 
-    const body = await request.json();
+    let body;
+    try {
+      body = await request.json();
+    } catch (error) {
+      return NextResponse.json(
+        createErrorResponse("Invalid JSON in request body", 400),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
     const result = await submitContactForm(body);
 
     if (!result.success) {
       return NextResponse.json(
         createErrorResponse(result.error, result.status),
-        { status: result.status }
+        {
+          status: result.status,
+          headers: { "Content-Type": "application/json" },
+        }
       );
     }
 
-    return NextResponse.json({ success: true }, { status: 200 });
+    return NextResponse.json(
+      { success: true },
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     logError("Contact form API error", error);
     return NextResponse.json(
       createErrorResponse("Failed to process request", 500),
-      { status: 500 }
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
     );
   }
 }

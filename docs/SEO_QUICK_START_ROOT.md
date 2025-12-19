@@ -338,7 +338,7 @@ NEXT_PUBLIC_SITE_URL=https://cartshiftstudio.com
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 
 # Firebase Functions (if using)
-FIREBASE_FUNCTION_URL=https://your-function-url
+NEXT_PUBLIC_FIREBASE_FUNCTION_URL=https://your-function-url
 ```
 
 ---

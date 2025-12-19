@@ -1,9 +1,8 @@
-import { env } from "@/lib/env";
 import { validateContactForm, type ContactFormData } from "@/lib/validation";
 import { sanitizeString } from "@/lib/sanitize";
 import { logError } from "@/lib/error-handler";
 
-export async function submitContactForm(data: unknown): Promise<{ success: true } | { success: false; error: string; status: number }> {
+export async function submitContactFormClient(data: unknown): Promise<{ success: true } | { success: false; error: string; status: number }> {
   const validation = validateContactForm(data);
 
   if (!validation.success) {
@@ -24,7 +23,7 @@ export async function submitContactForm(data: unknown): Promise<{ success: true 
     projectType: validation.data.projectType ? sanitizeString(validation.data.projectType) : undefined,
   };
 
-  const firebaseUrl = env.NEXT_PUBLIC_FIREBASE_FUNCTION_URL;
+  const firebaseUrl = process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_URL;
   if (!firebaseUrl) {
     logError("FIREBASE_FUNCTION_URL is not configured", new Error("Missing environment variable"));
     return {

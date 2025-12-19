@@ -12,6 +12,7 @@ import { logError } from "@/lib/error-handler";
 import { getScheduleUrl } from "@/lib/schedule";
 import { Icon } from "@/components/ui/Icon";
 import { Mail, Clock, CheckCircle, Calendar } from "lucide-react";
+import { submitContactFormClient } from "@/lib/services/contact-client";
 
 interface ContactFormData {
   name: string;
@@ -33,15 +34,9 @@ export const ContactPageContent: React.FC = () => {
     setError(null);
 
     try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const result = await submitContactFormClient(data);
 
-      const result = await response.json();
-
-      if (!response.ok) {
+      if (!result.success) {
         throw new Error(result.error || "Failed to submit form");
       }
 

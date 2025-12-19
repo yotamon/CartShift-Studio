@@ -94,11 +94,11 @@ After deployment, you'll get a function URL like:
 Create `.env.local` in the project root:
 ```env
 NEXT_PUBLIC_SITE_URL=https://cartshiftstudio.web.app
-FIREBASE_FUNCTION_URL=https://us-central1-cartshiftstudio.cloudfunctions.net/contactForm
+NEXT_PUBLIC_FIREBASE_FUNCTION_URL=https://us-central1-cartshiftstudio.cloudfunctions.net/contactForm
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 ```
 
-Replace `FIREBASE_FUNCTION_URL` with your actual function URL from Step 1.
+Replace `NEXT_PUBLIC_FIREBASE_FUNCTION_URL` with your actual function URL from Step 1.
 
 ### Step 3: Build Next.js Application
 ```bash

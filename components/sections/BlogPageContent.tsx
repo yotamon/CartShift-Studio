@@ -3,9 +3,8 @@
 import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import Image from "next/image";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { Search, Clock, ArrowRight, TrendingUp, Sparkles, Calendar } from "lucide-react";
+import { Search, Clock, ArrowRight, Sparkles, Calendar } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 interface BlogPost {
@@ -30,7 +29,7 @@ interface BlogPageContentProps {
 type SortOption = "newest" | "oldest" | "popular";
 
 export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categories }) => {
-	const { t, language } = useLanguage();
+	const { language } = useLanguage();
 	const isHe = language === "he";
 
 	// State management

@@ -74,12 +74,12 @@ npm run deploy
 ```env
 NEXT_PUBLIC_SITE_URL=https://yourdomain.com
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
-FIREBASE_FUNCTION_URL=https://us-central1-your-project.cloudfunctions.net/contactForm
+NEXT_PUBLIC_FIREBASE_FUNCTION_URL=https://us-central1-your-project.cloudfunctions.net/contactForm
 ```
 
 **Required Variables**:
 - `NEXT_PUBLIC_SITE_URL` - Your production domain URL
-- `FIREBASE_FUNCTION_URL` - Your Firebase Cloud Function URL for contact form submissions
+- `NEXT_PUBLIC_FIREBASE_FUNCTION_URL` - Your Firebase Cloud Function URL for contact form submissions
 
 **Optional Variables**:
 - `NEXT_PUBLIC_GA_ID` - Google Analytics tracking ID
