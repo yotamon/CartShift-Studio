@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React from "react";
-import { PageHero } from "@/components/sections/PageHero";
-import { BlogPostContent } from "@/components/sections/BlogPostContent";
-import { Breadcrumb } from "@/components/ui/Breadcrumb";
-import { useLanguage } from "@/components/providers/LanguageProvider";
-import { BlogPost } from "@/lib/markdown";
+import React from 'react';
+import { PageHero } from '@/components/sections/PageHero';
+import { BlogPostContent } from '@/components/sections/BlogPostContent';
+import { Breadcrumb } from '@/components/ui/Breadcrumb';
+import { useLanguage } from '@/components/providers/LanguageProvider';
+import { BlogPost } from '@/lib/markdown';
 
 interface BlogPostTemplateProps {
   post: BlogPost;
@@ -25,7 +25,7 @@ interface BlogPostTemplateProps {
 
 export const BlogPostTemplate: React.FC<BlogPostTemplateProps> = ({ post, relatedPosts }) => {
   const { language } = useLanguage();
-  const isHe = language === "he";
+  const isHe = language === 'he';
 
   const title = isHe && post.translation?.title ? post.translation.title : post.title;
   const subtitle = isHe && post.translation?.category ? post.translation.category : post.category;
@@ -33,9 +33,13 @@ export const BlogPostTemplate: React.FC<BlogPostTemplateProps> = ({ post, relate
   const content = isHe && post.translation?.content ? post.translation.content : post.content;
 
   // Format date correctly based on locale
-  const formattedDate = new Date(post.date).toLocaleDateString(language === 'he' ? 'he-IL' : 'en-US');
+  const formattedDate = new Date(post.date).toLocaleDateString(
+    language === 'he' ? 'he-IL' : 'en-US'
+  );
   const readingTimeText = post.readingTime
-    ? (isHe ? ` • ${post.readingTime} דקות קריאה` : ` • ${post.readingTime} min read`)
+    ? isHe
+      ? ` • ${post.readingTime} דקות קריאה`
+      : ` • ${post.readingTime} min read`
     : '';
 
   const finalDescription = `${formattedDate}${readingTimeText}`;
@@ -51,8 +55,8 @@ export const BlogPostTemplate: React.FC<BlogPostTemplateProps> = ({ post, relate
   }));
 
   const breadcrumbItems = [
-    { name: isHe ? "ראשי" : "Home", url: "/" },
-    { name: isHe ? "בלוג" : "Blog", url: "/blog" },
+    { name: isHe ? 'ראשי' : 'Home', url: '/' },
+    { name: isHe ? 'בלוג' : 'Blog', url: '/blog' },
     { name: title, url: `/blog/${post.slug}` },
   ];
 
@@ -62,7 +66,7 @@ export const BlogPostTemplate: React.FC<BlogPostTemplateProps> = ({ post, relate
         title={title}
         subtitle={subtitle}
         description={finalDescription}
-        badge={isHe ? "פוסט בבלוג" : "Blog Post"}
+        badge={isHe ? 'פוסט בבלוג' : 'Blog Post'}
         highlightLastWord={false}
         compact
       />

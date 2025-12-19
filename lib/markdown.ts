@@ -1,14 +1,14 @@
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
-import { remark } from "remark";
-import html from "remark-html";
-import remarkGfm from "remark-gfm";
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
+import { remark } from 'remark';
+import html from 'remark-html';
+import remarkGfm from 'remark-gfm';
 
-import { sanitizeHtml } from "@/lib/sanitize";
-import { logError } from "@/lib/error-handler";
+import { sanitizeHtml } from '@/lib/sanitize';
+import { logError } from '@/lib/error-handler';
 
-const postsDirectory = path.join(process.cwd(), "content/blog");
+const postsDirectory = path.join(process.cwd(), 'content/blog');
 
 export interface BlogPost {
   slug: string;
@@ -105,14 +105,14 @@ function postprocessHtml(htmlContent: string, slug?: string): string {
     '<ul class="contains-task-list">$1'
   );
 
-    // Add classes to strikethrough text
-    processed = processed.replace(/<del>/g, '<del class="strikethrough">');
+  // Add classes to strikethrough text
+  processed = processed.replace(/<del>/g, '<del class="strikethrough">');
 
-    // Enhance footnotes section styling
-    processed = processed.replace(
-      /<section([^>]*data-footnotes[^>]*)>/g,
-      '<section$1 class="footnotes-section">'
-    );
+  // Enhance footnotes section styling
+  processed = processed.replace(
+    /<section([^>]*data-footnotes[^>]*)>/g,
+    '<section$1 class="footnotes-section">'
+  );
 
   // Ensure code blocks have proper language class preserved
   processed = processed.replace(
@@ -135,13 +135,13 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
     if (!fs.existsSync(fullPath)) {
       return null;
     }
-    const fileContents = fs.readFileSync(fullPath, "utf8");
+    const fileContents = fs.readFileSync(fullPath, 'utf8');
     const { data, content } = matter(fileContents);
 
     // Split content into English and Hebrew parts
-    const contentParts = content.split("---he---");
+    const contentParts = content.split('---he---');
     let contentEn = contentParts[0];
-    let contentHe = contentParts[1] || "";
+    let contentHe = contentParts[1] || '';
 
     // Pre-process markdown
     contentEn = preprocessMarkdown(contentEn);
@@ -166,11 +166,17 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
     let contentHtmlEn = postprocessHtml(processedContentEn.toString(), slug);
     contentHtmlEn = sanitizeHtml(contentHtmlEn);
     // Remove disabled attribute from checkboxes after sanitization (in case it was added back)
-    contentHtmlEn = contentHtmlEn.replace(/<input([^>]*type=["']?checkbox["']?[^>]*)\s+disabled([^>]*)>/gi, '<input$1$2>');
-    contentHtmlEn = contentHtmlEn.replace(/<input([^>]*)\s+disabled([^>]*type=["']?checkbox["']?[^>]*)>/gi, '<input$1$2>');
+    contentHtmlEn = contentHtmlEn.replace(
+      /<input([^>]*type=["']?checkbox["']?[^>]*)\s+disabled([^>]*)>/gi,
+      '<input$1$2>'
+    );
+    contentHtmlEn = contentHtmlEn.replace(
+      /<input([^>]*)\s+disabled([^>]*type=["']?checkbox["']?[^>]*)>/gi,
+      '<input$1$2>'
+    );
 
     // Process Hebrew content if it exists
-    let contentHtmlHe = "";
+    let contentHtmlHe = '';
     if (contentHe) {
       const processedContentHe = await remark()
         .use(remarkGfm, {
@@ -188,8 +194,14 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
       contentHtmlHe = postprocessHtml(processedContentHe.toString(), slug);
       contentHtmlHe = sanitizeHtml(contentHtmlHe);
       // Remove disabled attribute from checkboxes after sanitization
-      contentHtmlHe = contentHtmlHe.replace(/<input([^>]*type=["']?checkbox["']?[^>]*)\s+disabled([^>]*)>/gi, '<input$1$2>');
-      contentHtmlHe = contentHtmlHe.replace(/<input([^>]*)\s+disabled([^>]*type=["']?checkbox["']?[^>]*)>/gi, '<input$1$2>');
+      contentHtmlHe = contentHtmlHe.replace(
+        /<input([^>]*type=["']?checkbox["']?[^>]*)\s+disabled([^>]*)>/gi,
+        '<input$1$2>'
+      );
+      contentHtmlHe = contentHtmlHe.replace(
+        /<input([^>]*)\s+disabled([^>]*type=["']?checkbox["']?[^>]*)>/gi,
+        '<input$1$2>'
+      );
     }
 
     // Calculate reading time
@@ -199,16 +211,16 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
 
     return {
       slug,
-      title: data.title || "",
-      date: data.date || "",
-      excerpt: data.excerpt || "",
-      category: data.category || "General",
+      title: data.title || '',
+      date: data.date || '',
+      excerpt: data.excerpt || '',
+      category: data.category || 'General',
       content: contentHtmlEn,
       readingTime,
       translation: {
-        title: data.title_he || data.title || "",
-        excerpt: data.excerpt_he || data.excerpt || "",
-        category: data.category_he || data.category || "General",
+        title: data.title_he || data.title || '',
+        excerpt: data.excerpt_he || data.excerpt || '',
+        category: data.category_he || data.category || 'General',
         content: contentHtmlHe || contentHtmlEn,
       },
     };
@@ -222,15 +234,16 @@ export function getPostSlugs(): string[] {
   if (!fs.existsSync(postsDirectory)) {
     return [];
   }
-  return fs.readdirSync(postsDirectory)
-    .filter((file) => file.endsWith(".md"))
-    .map((file) => file.replace(/\.md$/, ""));
+  return fs
+    .readdirSync(postsDirectory)
+    .filter(file => file.endsWith('.md'))
+    .map(file => file.replace(/\.md$/, ''));
 }
 
 export async function getAllPosts(): Promise<BlogPost[]> {
   const slugs = getPostSlugs();
   const posts = await Promise.all(
-    slugs.map(async (slug) => {
+    slugs.map(async slug => {
       const post = await getPostBySlug(slug);
       return post;
     })
@@ -243,14 +256,11 @@ export async function getAllPosts(): Promise<BlogPost[]> {
     });
 }
 
-
-
-
 export async function getCategories(): Promise<string[]> {
   const posts = await getAllPosts();
   const categories = new Set<string>();
 
-  posts.forEach((post) => {
+  posts.forEach(post => {
     if (post.category) {
       categories.add(post.category);
     }
@@ -258,4 +268,3 @@ export async function getCategories(): Promise<string[]> {
 
   return Array.from(categories);
 }
-

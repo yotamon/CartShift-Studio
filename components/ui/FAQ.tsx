@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronsUpDown } from "lucide-react";
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown, ChevronsUpDown } from 'lucide-react';
 
 export interface FAQItem {
   question: string;
@@ -18,14 +18,14 @@ interface FAQProps {
 
 export const FAQ: React.FC<FAQProps> = ({
   items,
-  className = "",
+  className = '',
   allowMultiple = false,
-  showExpandAll = false
+  showExpandAll = false,
 }) => {
   const [openIndices, setOpenIndices] = useState<Set<number>>(new Set());
 
   const toggleItem = (index: number) => {
-    setOpenIndices((prev) => {
+    setOpenIndices(prev => {
       const newSet = new Set(prev);
       if (newSet.has(index)) {
         newSet.delete(index);
@@ -61,7 +61,7 @@ export const FAQ: React.FC<FAQProps> = ({
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-surface-400 hover:text-accent-600 dark:hover:text-accent-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-surface-800"
           >
             <ChevronsUpDown className="w-4 h-4" />
-            {allExpanded ? "Collapse All" : "Expand All"}
+            {allExpanded ? 'Collapse All' : 'Expand All'}
           </button>
         </div>
       )}
@@ -88,7 +88,10 @@ export const FAQ: React.FC<FAQProps> = ({
                 animate={{ rotate: isOpen(index) ? 180 : 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <ChevronDown className="w-6 h-6 text-accent-500 dark:text-accent-400 flex-shrink-0" strokeWidth={2.5} />
+                <ChevronDown
+                  className="w-6 h-6 text-accent-500 dark:text-accent-400 flex-shrink-0"
+                  strokeWidth={2.5}
+                />
               </motion.div>
             </button>
             <AnimatePresence>
@@ -96,7 +99,7 @@ export const FAQ: React.FC<FAQProps> = ({
                 <motion.div
                   id={`faq-answer-${index}`}
                   initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
+                  animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.3 }}
                   className="overflow-hidden"

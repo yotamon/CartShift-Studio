@@ -1,77 +1,88 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from "react";
-import { translations, Language, getNestedTranslation } from "@/lib/translations";
-import { trackLanguageSwitch } from "@/lib/analytics";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useMemo,
+  useCallback,
+} from 'react';
+import { translations, Language, getNestedTranslation } from '@/lib/translations';
+import { trackLanguageSwitch } from '@/lib/analytics';
 
-type Direction = "ltr" | "rtl";
+type Direction = 'ltr' | 'rtl';
 
 interface LanguageContextType {
-	language: Language;
-	direction: Direction;
-	setLanguage: (lang: Language) => void;
-	t: (path: string) => string | string[] | Record<string, unknown> | unknown;
-	mounted: boolean;
+  language: Language;
+  direction: Direction;
+  setLanguage: (lang: Language) => void;
+  t: (path: string) => string | string[] | Record<string, unknown> | unknown;
+  mounted: boolean;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-	const [language, setLanguageState] = useState<Language>(() => {
-		// Only run on client side
-		if (typeof window === "undefined") return "en";
+  const [language, setLanguageState] = useState<Language>(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') return 'en';
 
-		const savedLang = localStorage.getItem("language") as Language;
-		return savedLang && (savedLang === "en" || savedLang === "he") ? savedLang : "en";
-	});
-	const [mounted, setMounted] = useState(false);
+    const savedLang = localStorage.getItem('language') as Language;
+    return savedLang && (savedLang === 'en' || savedLang === 'he') ? savedLang : 'en';
+  });
+  const [mounted, setMounted] = useState(false);
 
-	useEffect(() => {
-		setMounted(true);
-		// Language is already set correctly from initial state
-	}, []);
+  useEffect(() => {
+    setMounted(true);
+    // Language is already set correctly from initial state
+  }, []);
 
-	const setLanguage = useCallback((lang: Language) => {
-		setLanguageState(lang);
-		localStorage.setItem("language", lang);
-		trackLanguageSwitch(lang);
-	}, []);
+  const setLanguage = useCallback((lang: Language) => {
+    setLanguageState(lang);
+    localStorage.setItem('language', lang);
+    trackLanguageSwitch(lang);
+  }, []);
 
-	const direction: Direction = language === "he" ? "rtl" : "ltr";
+  const direction: Direction = language === 'he' ? 'rtl' : 'ltr';
 
-	useEffect(() => {
-		if (mounted) {
-			document.documentElement.lang = language;
-			document.documentElement.dir = direction;
-			if (language === "he") {
-				document.body.classList.add("lang-he");
-			} else {
-				document.body.classList.remove("lang-he");
-			}
-		}
-	}, [language, direction, mounted]);
+  useEffect(() => {
+    if (mounted) {
+      document.documentElement.lang = language;
+      document.documentElement.dir = direction;
+      if (language === 'he') {
+        document.body.classList.add('lang-he');
+      } else {
+        document.body.classList.remove('lang-he');
+      }
+    }
+  }, [language, direction, mounted]);
 
-	const t = useCallback(
-		(path: string) => {
-			const langData = translations[language];
-			const value = getNestedTranslation(langData, path);
-			return value;
-		},
-		[language]
-	);
+  const t = useCallback(
+    (path: string) => {
+      const langData = translations[language];
+      const value = getNestedTranslation(langData, path);
+      return value;
+    },
+    [language]
+  );
 
-	const contextValue = useMemo(() => ({ language, direction, setLanguage, t, mounted }), [language, direction, setLanguage, t, mounted]);
+  const contextValue = useMemo(
+    () => ({ language, direction, setLanguage, t, mounted }),
+    [language, direction, setLanguage, t, mounted]
+  );
 
-	// We render the provider always to ensure useLanguage hook works in children
-	// (Header requires it immediately).
-	// Hydration mismatch is handled by initial 'en' state.
-	return <LanguageContext.Provider value={contextValue}>{children}</LanguageContext.Provider>;
+  // We render the provider always to ensure useLanguage hook works in children
+  // (Header requires it immediately).
+  // Hydration mismatch is handled by initial 'en' state.
+  return <LanguageContext.Provider value={contextValue}>{children}</LanguageContext.Provider>;
 }
 
 export const useLanguage = () => {
-	const context = useContext(LanguageContext);
-	if (context === undefined) {
-		throw new Error("useLanguage must be used within a LanguageProvider");
-	}
-	return context;
+  const context = useContext(LanguageContext);
+  if (context === undefined) {
+    throw new Error('useLanguage must be used within a LanguageProvider');
+  }
+  return context;
 };

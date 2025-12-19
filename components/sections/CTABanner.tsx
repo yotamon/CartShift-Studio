@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React from "react";
-import { motion } from "framer-motion";
-import Link from "next/link";
-import { Button } from "@/components/ui/Button";
-import { useLanguage } from "@/components/providers/LanguageProvider";
-import { ArrowRight } from "lucide-react";
+import React from 'react';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { Button } from '@/components/ui/Button';
+import { useLanguage } from '@/components/providers/LanguageProvider';
+import { ArrowRight } from 'lucide-react';
 
 export const CTABanner: React.FC = () => {
   const { t, direction } = useLanguage();
@@ -17,10 +17,14 @@ export const CTABanner: React.FC = () => {
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-br from-primary-500/8 via-transparent to-accent-500/8 dark:from-primary-500/5 dark:to-accent-500/5"></div>
         <div className="absolute top-0 left-0 w-full h-full">
-          <svg className="absolute inset-0 w-full h-full opacity-[0.03] dark:opacity-[0.08]" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <svg
+            className="absolute inset-0 w-full h-full opacity-[0.03] dark:opacity-[0.08]"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+          >
             <defs>
               <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5"/>
+                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5" />
               </pattern>
             </defs>
             <rect width="100" height="100" fill="url(#grid)" />
@@ -33,37 +37,40 @@ export const CTABanner: React.FC = () => {
         className="absolute top-20 left-[15%] w-20 h-20 border-2 border-primary-500/20 rounded-xl"
         animate={{
           rotate: [0, 90, 180, 270, 360],
-          y: [0, -20, 0, 20, 0]
+          y: [0, -20, 0, 20, 0],
         }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
       />
       <motion.div
         className="absolute bottom-20 right-[15%] w-16 h-16 border-2 border-accent-500/20 rounded-full"
         animate={{
           scale: [1, 1.2, 1],
-          opacity: [0.3, 0.6, 0.3]
+          opacity: [0.3, 0.6, 0.3],
         }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
         className="absolute top-1/2 left-[5%] w-24 h-24 border border-primary-400/10 rounded-2xl"
         animate={{
           rotate: [0, -45, 0],
         }}
-        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
         className="absolute top-1/3 right-[8%] w-12 h-12 bg-accent-500/5 rounded-lg"
         animate={{
           y: [0, 30, 0],
-          rotate: [0, 45, 0]
+          rotate: [0, 45, 0],
         }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
       />
 
       {/* Ambient Glow Orbs - Enhanced */}
       <div className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-primary-500/15 dark:bg-primary-500/20 rounded-full blur-[150px] animate-pulse"></div>
-      <div className="absolute top-1/2 right-1/4 w-[400px] h-[400px] bg-accent-500/12 dark:bg-accent-500/15 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
+      <div
+        className="absolute top-1/2 right-1/4 w-[400px] h-[400px] bg-accent-500/12 dark:bg-accent-500/15 rounded-full blur-[120px] animate-pulse"
+        style={{ animationDelay: '1s' }}
+      ></div>
 
       {/* Main Content Card with Animated Border */}
       <div className="max-w-4xl mx-auto relative z-10">
@@ -85,8 +92,10 @@ export const CTABanner: React.FC = () => {
 
             <div className="relative z-10 space-y-6 md:space-y-8">
               <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold text-slate-900 dark:text-white leading-[1.1] tracking-tight">
-                {t("ctaBanner.titlePart1") as string}{" "}
-                <span className="gradient-text text-glow-subtle">{t("ctaBanner.titlePart2") as string}</span>
+                {t('ctaBanner.titlePart1') as string}{' '}
+                <span className="gradient-text text-glow-subtle">
+                  {t('ctaBanner.titlePart2') as string}
+                </span>
               </h2>
 
               <motion.p
@@ -96,25 +105,32 @@ export const CTABanner: React.FC = () => {
                 transition={{ delay: 0.2, duration: 0.8 }}
                 className="text-base md:text-lg lg:text-xl text-slate-600 dark:text-surface-300 font-light leading-relaxed max-w-2xl mx-auto"
               >
-                {t("ctaBanner.description") as string}
+                {t('ctaBanner.description') as string}
               </motion.p>
 
               <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 whileInView={{ opacity: 1, scale: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.4, duration: 0.8, type: "spring" }}
+                transition={{ delay: 0.4, duration: 0.8, type: 'spring' }}
                 className="pt-2 md:pt-4"
               >
                 <Link href="/contact">
-                  <Button size="lg" variant="secondary" className="text-lg md:text-xl px-10 md:px-14 py-5 md:py-6 font-black shadow-glow-primary group w-full sm:w-auto">
+                  <Button
+                    size="lg"
+                    variant="secondary"
+                    className="text-lg md:text-xl px-10 md:px-14 py-5 md:py-6 font-black shadow-glow-primary group w-full sm:w-auto"
+                  >
                     <span className="flex items-center gap-3 justify-center">
-                      {t("ctaBanner.button") as string}
+                      {t('ctaBanner.button') as string}
                       <motion.div
                         animate={{ x: isRtl ? [0, -5, 0] : [0, 5, 0] }}
-                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                        transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
                       >
-                        <ArrowRight className={`w-5 h-5 ${isRtl ? 'rotate-180' : ''}`} strokeWidth={2.5} />
+                        <ArrowRight
+                          className={`w-5 h-5 ${isRtl ? 'rotate-180' : ''}`}
+                          strokeWidth={2.5}
+                        />
                       </motion.div>
                     </span>
                   </Button>

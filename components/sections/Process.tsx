@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React from "react";
-import { motion } from "framer-motion";
-import { Section, SectionHeader } from "@/components/ui/Section";
-import { Icon } from "@/components/ui/Icon";
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Section, SectionHeader } from '@/components/ui/Section';
+import { Icon } from '@/components/ui/Icon';
 
-import { useLanguage } from "@/components/providers/LanguageProvider";
+import { useLanguage } from '@/components/providers/LanguageProvider';
 
 interface ProcessStep {
   number: string;
@@ -19,28 +19,36 @@ export const Process: React.FC = () => {
 
   const steps: ProcessStep[] = [
     {
-      number: "01",
-      title: t("process.steps.discovery.title") as string || "Discovery",
-      description: t("process.steps.discovery.description") as string || "We learn about your business, goals, and vision to create a tailored strategy.",
-      icon: "search",
+      number: '01',
+      title: (t('process.steps.discovery.title') as string) || 'Discovery',
+      description:
+        (t('process.steps.discovery.description') as string) ||
+        'We learn about your business, goals, and vision to create a tailored strategy.',
+      icon: 'search',
     },
     {
-      number: "02",
-      title: t("process.steps.design.title") as string || "Design",
-      description: t("process.steps.design.description") as string || "Our designers craft stunning visuals that capture your brand identity.",
-      icon: "palette",
+      number: '02',
+      title: (t('process.steps.design.title') as string) || 'Design',
+      description:
+        (t('process.steps.design.description') as string) ||
+        'Our designers craft stunning visuals that capture your brand identity.',
+      icon: 'palette',
     },
     {
-      number: "03",
-      title: t("process.steps.develop.title") as string || "Develop",
-      description: t("process.steps.develop.description") as string || "We build your store with clean code and optimized performance.",
-      icon: "code",
+      number: '03',
+      title: (t('process.steps.develop.title') as string) || 'Develop',
+      description:
+        (t('process.steps.develop.description') as string) ||
+        'We build your store with clean code and optimized performance.',
+      icon: 'code',
     },
     {
-      number: "04",
-      title: t("process.steps.launch.title") as string || "Launch",
-      description: t("process.steps.launch.description") as string || "Your store goes live with full support and ongoing optimization.",
-      icon: "rocket",
+      number: '04',
+      title: (t('process.steps.launch.title') as string) || 'Launch',
+      description:
+        (t('process.steps.launch.description') as string) ||
+        'Your store goes live with full support and ongoing optimization.',
+      icon: 'rocket',
     },
   ];
 
@@ -52,8 +60,8 @@ export const Process: React.FC = () => {
       </div>
 
       <SectionHeader
-        title={t("process.title") as string || "How We Work"}
-        subtitle={t("process.subtitle") as string || "A streamlined process designed for success"}
+        title={(t('process.title') as string) || 'How We Work'}
+        subtitle={(t('process.subtitle') as string) || 'A streamlined process designed for success'}
       />
 
       {/* Process Timeline */}
@@ -64,10 +72,10 @@ export const Process: React.FC = () => {
         {/* Animated line overlay */}
         <motion.div
           className="hidden lg:block absolute top-24 start-0 h-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rtl:bg-gradient-to-l"
-          initial={{ width: "0%" }}
-          whileInView={{ width: "100%" }}
+          initial={{ width: '0%' }}
+          whileInView={{ width: '100%' }}
           viewport={{ once: true }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
+          transition={{ duration: 1.5, ease: 'easeOut' }}
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8 lg:gap-6">
@@ -76,7 +84,7 @@ export const Process: React.FC = () => {
               key={index}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
+              viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.6, delay: index * 0.15 }}
               className="relative"
             >
@@ -86,7 +94,7 @@ export const Process: React.FC = () => {
                 <motion.div
                   className="relative mx-auto w-20 h-20 mb-8"
                   whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl opacity-20 blur-lg group-hover:opacity-40 transition-opacity"></div>
                   <div className="relative w-full h-full bg-white dark:bg-surface-900 border-2 border-slate-300/70 dark:border-surface-700 group-hover:border-accent-500/50 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-lg">
@@ -120,14 +128,14 @@ export const Process: React.FC = () => {
                       whileInView={{ scaleY: 1 }}
                       viewport={{ once: true }}
                       transition={{ delay: 0.2, duration: 0.4 }}
-                      style={{ transformOrigin: "top" }}
+                      style={{ transformOrigin: 'top' }}
                     />
                     <motion.div
                       className="w-3 h-3 rounded-full bg-accent-500"
                       initial={{ scale: 0 }}
                       whileInView={{ scale: 1 }}
                       viewport={{ once: true }}
-                      transition={{ delay: 0.4, type: "spring", stiffness: 200 }}
+                      transition={{ delay: 0.4, type: 'spring', stiffness: 200 }}
                     />
                   </div>
                 )}
