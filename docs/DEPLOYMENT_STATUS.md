@@ -75,9 +75,9 @@ If you want email notifications from the contact form:
 
 3. **Set Firebase Functions Config** (after functions are deployed):
 ```bash
-firebase functions:config:set gmail.user="your-email@gmail.com"
-firebase functions:config:set gmail.app_password="your-app-password"
-firebase functions:config:set contact.email="hello@cartshiftstudio.com"
+firebase functions:secrets:set GMAIL_USER="your-email@gmail.com"
+firebase functions:secrets:set GMAIL_APP_PASSWORD="your-app-password"
+firebase functions:secrets:set CONTACT_EMAIL="hello@cartshiftstudio.com"
 ```
 
 ## 📋 Deployment Steps (After Upgrades)
@@ -147,4 +147,3 @@ firebase deploy
 - Functions are deployed to: `us-central1` region
 - Static export is configured, so the site is fully static (no SSR)
 - Contact form submissions are stored in Firestore collection: `contact_submissions`
-

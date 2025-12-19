@@ -1,27 +1,28 @@
 "use client";
 
 import React, { useRef, useEffect, useCallback, useState } from "react";
+import { logError } from "@/lib/logger";
 
 interface LiquidGlassProps {
-  children: React.ReactNode;
-  className?: string;
-  /**
-   * Image URL to use as the background for the glass effect.
-   * If not provided, the component will capture the background.
-   */
-  backgroundImage?: string;
-  /**
-   * Enable/disable the glass effect
-   */
-  enabled?: boolean;
-  /**
-   * Intensity of the blur effect (1-10)
-   */
-  blurIntensity?: number;
-  /**
-   * Intensity of the lens distortion (1-10)
-   */
-  lensIntensity?: number;
+	children: React.ReactNode;
+	className?: string;
+	/**
+	 * Image URL to use as the background for the glass effect.
+	 * If not provided, the component will capture the background.
+	 */
+	backgroundImage?: string;
+	/**
+	 * Enable/disable the glass effect
+	 */
+	enabled?: boolean;
+	/**
+	 * Intensity of the blur effect (1-10)
+	 */
+	blurIntensity?: number;
+	/**
+	 * Intensity of the lens distortion (1-10)
+	 */
+	lensIntensity?: number;
 }
 
 const VERTEX_SHADER = `
@@ -113,284 +114,263 @@ const FRAGMENT_SHADER = `
   }
 `;
 
-export const LiquidGlass: React.FC<LiquidGlassProps> = ({
-  children,
-  className = "",
-  backgroundImage,
-  enabled = true,
-  blurIntensity = 1,
-  lensIntensity = 1,
-}) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const glRef = useRef<WebGLRenderingContext | null>(null);
-  const programRef = useRef<WebGLProgram | null>(null);
-  const textureRef = useRef<WebGLTexture | null>(null);
-  const animationRef = useRef<number>(0);
-  const mouseRef = useRef<[number, number]>([0, 0]);
-  const startTimeRef = useRef<number>(performance.now());
-  const uniformsRef = useRef<{
-    resolution: WebGLUniformLocation | null;
-    time: WebGLUniformLocation | null;
-    mouse: WebGLUniformLocation | null;
-    texture: WebGLUniformLocation | null;
-    blurIntensity: WebGLUniformLocation | null;
-    lensIntensity: WebGLUniformLocation | null;
-  }>({
-    resolution: null,
-    time: null,
-    mouse: null,
-    texture: null,
-    blurIntensity: null,
-    lensIntensity: null,
-  });
-  const [isReady, setIsReady] = useState(false);
+export const LiquidGlass: React.FC<LiquidGlassProps> = ({ children, className = "", backgroundImage, enabled = true, blurIntensity = 1, lensIntensity = 1 }) => {
+	const containerRef = useRef<HTMLDivElement>(null);
+	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const glRef = useRef<WebGLRenderingContext | null>(null);
+	const programRef = useRef<WebGLProgram | null>(null);
+	const textureRef = useRef<WebGLTexture | null>(null);
+	const animationRef = useRef<number>(0);
+	const mouseRef = useRef<[number, number]>([0, 0]);
+	const startTimeRef = useRef<number>(performance.now());
+	const uniformsRef = useRef<{
+		resolution: WebGLUniformLocation | null;
+		time: WebGLUniformLocation | null;
+		mouse: WebGLUniformLocation | null;
+		texture: WebGLUniformLocation | null;
+		blurIntensity: WebGLUniformLocation | null;
+		lensIntensity: WebGLUniformLocation | null;
+	}>({
+		resolution: null,
+		time: null,
+		mouse: null,
+		texture: null,
+		blurIntensity: null,
+		lensIntensity: null
+	});
+	const [isReady, setIsReady] = useState(false);
 
-  const createShader = useCallback(
-    (gl: WebGLRenderingContext, type: number, source: string): WebGLShader | null => {
-      const shader = gl.createShader(type);
-      if (!shader) return null;
+	const createShader = useCallback((gl: WebGLRenderingContext, type: number, source: string): WebGLShader | null => {
+		const shader = gl.createShader(type);
+		if (!shader) return null;
 
-      gl.shaderSource(shader, source);
-      gl.compileShader(shader);
+		gl.shaderSource(shader, source);
+		gl.compileShader(shader);
 
-      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.error("Shader compile error:", gl.getShaderInfoLog(shader));
-        gl.deleteShader(shader);
-        return null;
-      }
-      return shader;
-    },
-    []
-  );
+		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+			logError("Shader compile error", new Error(gl.getShaderInfoLog(shader) || "Unknown shader error"));
+			gl.deleteShader(shader);
+			return null;
+		}
+		return shader;
+	}, []);
 
-  const setupTexture = useCallback(
-    (gl: WebGLRenderingContext, image: HTMLImageElement) => {
-      if (textureRef.current) {
-        gl.deleteTexture(textureRef.current);
-      }
+	const setupTexture = useCallback((gl: WebGLRenderingContext, image: HTMLImageElement) => {
+		if (textureRef.current) {
+			gl.deleteTexture(textureRef.current);
+		}
 
-      const texture = gl.createTexture();
-      textureRef.current = texture;
+		const texture = gl.createTexture();
+		textureRef.current = texture;
 
-      gl.bindTexture(gl.TEXTURE_2D, texture);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    },
-    []
-  );
+		gl.bindTexture(gl.TEXTURE_2D, texture);
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+	}, []);
 
-  const render = useCallback(() => {
-    const gl = glRef.current;
-    const canvas = canvasRef.current;
-    const program = programRef.current;
-    const uniforms = uniformsRef.current;
-    const texture = textureRef.current;
+	const render = useCallback(() => {
+		const gl = glRef.current;
+		const canvas = canvasRef.current;
+		const program = programRef.current;
+		const uniforms = uniformsRef.current;
+		const texture = textureRef.current;
 
-    if (!gl || !canvas || !program || !texture) return;
+		if (!gl || !canvas || !program || !texture) return;
 
-    const currentTime = (performance.now() - startTimeRef.current) / 1000;
+		const currentTime = (performance.now() - startTimeRef.current) / 1000;
 
-    gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clear(gl.COLOR_BUFFER_BIT);
+		gl.viewport(0, 0, canvas.width, canvas.height);
+		gl.clear(gl.COLOR_BUFFER_BIT);
 
-    gl.useProgram(program);
+		gl.useProgram(program);
 
-    if (uniforms.resolution) {
-      gl.uniform3f(uniforms.resolution, canvas.width, canvas.height, 1.0);
-    }
-    if (uniforms.time) {
-      gl.uniform1f(uniforms.time, currentTime);
-    }
-    if (uniforms.mouse) {
-      gl.uniform4f(uniforms.mouse, mouseRef.current[0], mouseRef.current[1], 0, 0);
-    }
-    if (uniforms.blurIntensity) {
-      gl.uniform1f(uniforms.blurIntensity, blurIntensity);
-    }
-    if (uniforms.lensIntensity) {
-      gl.uniform1f(uniforms.lensIntensity, lensIntensity);
-    }
+		if (uniforms.resolution) {
+			gl.uniform3f(uniforms.resolution, canvas.width, canvas.height, 1.0);
+		}
+		if (uniforms.time) {
+			gl.uniform1f(uniforms.time, currentTime);
+		}
+		if (uniforms.mouse) {
+			gl.uniform4f(uniforms.mouse, mouseRef.current[0], mouseRef.current[1], 0, 0);
+		}
+		if (uniforms.blurIntensity) {
+			gl.uniform1f(uniforms.blurIntensity, blurIntensity);
+		}
+		if (uniforms.lensIntensity) {
+			gl.uniform1f(uniforms.lensIntensity, lensIntensity);
+		}
 
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    if (uniforms.texture) {
-      gl.uniform1i(uniforms.texture, 0);
-    }
+		gl.activeTexture(gl.TEXTURE0);
+		gl.bindTexture(gl.TEXTURE_2D, texture);
+		if (uniforms.texture) {
+			gl.uniform1i(uniforms.texture, 0);
+		}
 
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
-    animationRef.current = requestAnimationFrame(render);
-  }, [blurIntensity, lensIntensity]);
+		animationRef.current = requestAnimationFrame(render);
+	}, [blurIntensity, lensIntensity]);
 
-  const initWebGL = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+	const initWebGL = useCallback(() => {
+		const canvas = canvasRef.current;
+		if (!canvas) return;
 
-    const gl = canvas.getContext("webgl", {
-      alpha: true,
-      premultipliedAlpha: false,
-      preserveDrawingBuffer: true,
-    });
+		const gl = canvas.getContext("webgl", {
+			alpha: true,
+			premultipliedAlpha: false,
+			preserveDrawingBuffer: true
+		});
 
-    if (!gl) {
-      console.error("WebGL not supported");
-      return;
-    }
+		if (!gl) {
+			logError("WebGL not supported");
+			return;
+		}
 
-    glRef.current = gl;
+		glRef.current = gl;
 
-    // Create shaders
-    const vs = createShader(gl, gl.VERTEX_SHADER, VERTEX_SHADER);
-    const fs = createShader(gl, gl.FRAGMENT_SHADER, FRAGMENT_SHADER);
+		// Create shaders
+		const vs = createShader(gl, gl.VERTEX_SHADER, VERTEX_SHADER);
+		const fs = createShader(gl, gl.FRAGMENT_SHADER, FRAGMENT_SHADER);
 
-    if (!vs || !fs) return;
+		if (!vs || !fs) return;
 
-    // Create program
-    const program = gl.createProgram();
-    if (!program) return;
+		// Create program
+		const program = gl.createProgram();
+		if (!program) return;
 
-    gl.attachShader(program, vs);
-    gl.attachShader(program, fs);
-    gl.linkProgram(program);
+		gl.attachShader(program, vs);
+		gl.attachShader(program, fs);
+		gl.linkProgram(program);
 
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      console.error("Program link error:", gl.getProgramInfoLog(program));
-      return;
-    }
+		if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+			logError("Program link error", new Error(gl.getProgramInfoLog(program) || "Unknown program error"));
+			return;
+		}
 
-    programRef.current = program;
-    gl.useProgram(program);
+		programRef.current = program;
+		gl.useProgram(program);
 
-    // Setup buffer
-    const buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]),
-      gl.STATIC_DRAW
-    );
+		// Setup buffer
+		const buffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
 
-    const position = gl.getAttribLocation(program, "position");
-    gl.enableVertexAttribArray(position);
-    gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+		const position = gl.getAttribLocation(program, "position");
+		gl.enableVertexAttribArray(position);
+		gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
 
-    // Get uniform locations
-    uniformsRef.current = {
-      resolution: gl.getUniformLocation(program, "iResolution"),
-      time: gl.getUniformLocation(program, "iTime"),
-      mouse: gl.getUniformLocation(program, "iMouse"),
-      texture: gl.getUniformLocation(program, "iChannel0"),
-      blurIntensity: gl.getUniformLocation(program, "uBlurIntensity"),
-      lensIntensity: gl.getUniformLocation(program, "uLensIntensity"),
-    };
+		// Get uniform locations
+		uniformsRef.current = {
+			resolution: gl.getUniformLocation(program, "iResolution"),
+			time: gl.getUniformLocation(program, "iTime"),
+			mouse: gl.getUniformLocation(program, "iMouse"),
+			texture: gl.getUniformLocation(program, "iChannel0"),
+			blurIntensity: gl.getUniformLocation(program, "uBlurIntensity"),
+			lensIntensity: gl.getUniformLocation(program, "uLensIntensity")
+		};
 
-    // Enable blending for transparency
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-  }, [createShader]);
+		// Enable blending for transparency
+		gl.enable(gl.BLEND);
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+	}, [createShader]);
 
-  const loadImage = useCallback(
-    (src: string) => {
-      const gl = glRef.current;
-      if (!gl) return;
+	const loadImage = useCallback(
+		(src: string) => {
+			const gl = glRef.current;
+			if (!gl) return;
 
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = () => {
-        setupTexture(gl, img);
-        setIsReady(true);
-        render();
-      };
-      img.onerror = () => {
-        console.error("Failed to load image:", src);
-      };
-      img.src = src;
-    },
-    [setupTexture, render]
-  );
+			const img = new Image();
+			img.crossOrigin = "anonymous";
+			img.onload = () => {
+				setupTexture(gl, img);
+				setIsReady(true);
+				render();
+			};
+			img.onerror = () => {
+				logError("Failed to load image", new Error(`Failed to load: ${src}`));
+			};
+			img.src = src;
+		},
+		[setupTexture, render]
+	);
 
-  const setCanvasSize = useCallback(() => {
-    const canvas = canvasRef.current;
-    const container = containerRef.current;
-    if (!canvas || !container) return;
+	const setCanvasSize = useCallback(() => {
+		const canvas = canvasRef.current;
+		const container = containerRef.current;
+		if (!canvas || !container) return;
 
-    const rect = container.getBoundingClientRect();
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+		const rect = container.getBoundingClientRect();
+		const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    canvas.style.width = `${rect.width}px`;
-    canvas.style.height = `${rect.height}px`;
-  }, []);
+		canvas.width = rect.width * dpr;
+		canvas.height = rect.height * dpr;
+		canvas.style.width = `${rect.width}px`;
+		canvas.style.height = `${rect.height}px`;
+	}, []);
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+	const handleMouseMove = useCallback((e: MouseEvent) => {
+		const canvas = canvasRef.current;
+		if (!canvas) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = rect.height - (e.clientY - rect.top);
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+		const rect = canvas.getBoundingClientRect();
+		const x = e.clientX - rect.left;
+		const y = rect.height - (e.clientY - rect.top);
+		const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-    mouseRef.current = [x * dpr, y * dpr];
-  }, []);
+		mouseRef.current = [x * dpr, y * dpr];
+	}, []);
 
-  useEffect(() => {
-    if (!enabled) return;
+	useEffect(() => {
+		if (!enabled) return;
 
-    initWebGL();
-    setCanvasSize();
+		initWebGL();
+		setCanvasSize();
 
-    if (backgroundImage) {
-      loadImage(backgroundImage);
-    }
+		if (backgroundImage) {
+			loadImage(backgroundImage);
+		}
 
-    const handleResize = () => {
-      setCanvasSize();
-      if (backgroundImage) {
-        loadImage(backgroundImage);
-      }
-    };
+		const handleResize = () => {
+			setCanvasSize();
+			if (backgroundImage) {
+				loadImage(backgroundImage);
+			}
+		};
 
-    window.addEventListener("resize", handleResize);
+		window.addEventListener("resize", handleResize);
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [enabled, backgroundImage, initWebGL, setCanvasSize, loadImage]);
+		return () => {
+			window.removeEventListener("resize", handleResize);
+			if (animationRef.current) {
+				cancelAnimationFrame(animationRef.current);
+			}
+		};
+	}, [enabled, backgroundImage, initWebGL, setCanvasSize, loadImage]);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || !enabled) return;
+	useEffect(() => {
+		const canvas = canvasRef.current;
+		if (!canvas || !enabled) return;
 
-    canvas.addEventListener("mousemove", handleMouseMove);
+		canvas.addEventListener("mousemove", handleMouseMove);
 
-    return () => {
-      canvas.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, [enabled, handleMouseMove]);
+		return () => {
+			canvas.removeEventListener("mousemove", handleMouseMove);
+		};
+	}, [enabled, handleMouseMove]);
 
-  if (!enabled) {
-    return <div className={className}>{children}</div>;
-  }
+	if (!enabled) {
+		return <div className={className}>{children}</div>;
+	}
 
-  return (
-    <div ref={containerRef} className={`relative ${className}`}>
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full pointer-events-auto z-0"
-        style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.3s ease" }}
-      />
-      <div className="relative z-10">{children}</div>
-    </div>
-  );
+	return (
+		<div ref={containerRef} className={`relative ${className}`}>
+			<canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-auto z-0" style={{ opacity: isReady ? 1 : 0, transition: "opacity 0.3s ease" }} />
+			<div className="relative z-10">{children}</div>
+		</div>
+	);
 };
 
 export default LiquidGlass;

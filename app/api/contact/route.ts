@@ -8,8 +8,13 @@ const RATE_LIMIT_MAX_REQUESTS = 5;
 
 function getRateLimitKey(request: NextRequest): string {
   const forwarded = request.headers.get("x-forwarded-for");
-  const ip = forwarded ? forwarded.split(",")[0] : (request as any).ip || "unknown";
-  return ip;
+  const realIp = request.headers.get("x-real-ip");
+  const ip = forwarded ? forwarded.split(",")[0].trim() : realIp || (request as any).ip;
+  if (ip) {
+    return ip;
+  }
+  const userAgent = request.headers.get("user-agent") || "unknown";
+  return `ua:${userAgent}`;
 }
 
 function checkRateLimit(key: string): boolean {

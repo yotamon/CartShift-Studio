@@ -357,14 +357,7 @@ export const Hero: React.FC = () => {
 						className="relative hidden lg:block">
 						<div className="absolute inset-0 bg-gradient-brand opacity-15 blur-3xl rounded-full"></div>
 						<div className="relative">
-							<Image
-								src="/images/website-builders-illustration.svg"
-								alt="Website builders illustration"
-								width={876}
-								height={661}
-								className="w-full h-auto"
-								priority
-							/>
+							<Image src="/images/website-builders-illustration.svg" alt="Website builders illustration" width={876} height={661} className="w-full h-auto" priority />
 						</div>
 					</motion.div>
 				</div>

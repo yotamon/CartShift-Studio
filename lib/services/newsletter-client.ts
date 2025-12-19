@@ -1,10 +1,11 @@
-import { env } from "@/lib/env";
 import { validateNewsletterSubscription, type NewsletterSubscriptionData } from "@/lib/validation";
 import { sanitizeString } from "@/lib/sanitize";
 import { logError } from "@/lib/error-handler";
 import { buildFirebaseFunctionUrl } from "@/lib/services/firebase";
 
-export async function subscribeNewsletter(data: unknown): Promise<{ success: true } | { success: false; error: string; status: number }> {
+export async function subscribeNewsletterClient(
+  data: unknown
+): Promise<{ success: true } | { success: false; error: string; status: number }> {
   const validation = validateNewsletterSubscription(data);
 
   if (!validation.success) {
@@ -19,7 +20,7 @@ export async function subscribeNewsletter(data: unknown): Promise<{ success: tru
     email: sanitizeString(validation.data.email),
   };
 
-  const firebaseUrl = env.NEXT_PUBLIC_FIREBASE_FUNCTION_URL;
+  const firebaseUrl = process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_URL;
   if (!firebaseUrl) {
     logError("NEXT_PUBLIC_FIREBASE_FUNCTION_URL is not configured", new Error("Missing environment variable"));
     return {
@@ -34,6 +35,7 @@ export async function subscribeNewsletter(data: unknown): Promise<{ success: tru
     if (!functionUrl) {
       throw new Error("Invalid Firebase function URL");
     }
+
     const response = await fetch(functionUrl, {
       method: "POST",
       headers: {

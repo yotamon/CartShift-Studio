@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { logError } from "@/lib/logger";
 
 interface RelatedPost {
 	slug: string;
@@ -48,21 +49,19 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ content, relat
 			if (checkboxes.length === 0) return;
 
 			// First, remove disabled attribute from all checkboxes
-			checkboxes.forEach((checkbox) => {
-				checkbox.removeAttribute('disabled');
+			checkboxes.forEach(checkbox => {
+				checkbox.removeAttribute("disabled");
 				checkbox.disabled = false;
 			});
 
 			// Use a more reliable storage key based on the page URL
-			const storageKey = typeof window !== 'undefined'
-				? `blog-checklist-${window.location.pathname.replace(/\//g, '-')}`
-				: `blog-checklist-${title.replace(/\s+/g, '-').toLowerCase()}`;
+			const storageKey = typeof window !== "undefined" ? `blog-checklist-${window.location.pathname.replace(/\//g, "-")}` : `blog-checklist-${title.replace(/\s+/g, "-").toLowerCase()}`;
 
 			// Load saved state from localStorage
-			const savedState = typeof window !== 'undefined' ? localStorage.getItem(storageKey) : null;
+			const savedState = typeof window !== "undefined" ? localStorage.getItem(storageKey) : null;
 			const savedChecks: Record<string, boolean> = savedState ? JSON.parse(savedState) : {};
 
-			checkboxes.forEach((checkbox) => {
+			checkboxes.forEach(checkbox => {
 				const checkboxId = checkbox.id;
 
 				// Restore saved state
@@ -81,30 +80,30 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ content, relat
 
 						// Save to localStorage
 						savedChecks[checkboxId] = checkbox.checked;
-						if (typeof window !== 'undefined') {
+						if (typeof window !== "undefined") {
 							localStorage.setItem(storageKey, JSON.stringify(savedChecks));
 						}
 					});
 				};
 
 				// Listen to change event (fires after checkbox state changes)
-				checkbox.addEventListener('change', handleChange);
+				checkbox.addEventListener("change", handleChange);
 			});
 		};
 
 		const updateCheckboxState = (checkbox: HTMLInputElement) => {
-			const listItem = checkbox.closest('.task-list-item');
+			const listItem = checkbox.closest(".task-list-item");
 			if (!listItem) return;
 
 			// Update the checked attribute to ensure CSS :checked selector works
 			if (checkbox.checked) {
-				checkbox.setAttribute('checked', 'checked');
-				listItem.classList.remove('task-incomplete');
-				listItem.classList.add('task-complete');
+				checkbox.setAttribute("checked", "checked");
+				listItem.classList.remove("task-incomplete");
+				listItem.classList.add("task-complete");
 			} else {
-				checkbox.removeAttribute('checked');
-				listItem.classList.remove('task-complete');
-				listItem.classList.add('task-incomplete');
+				checkbox.removeAttribute("checked");
+				listItem.classList.remove("task-complete");
+				listItem.classList.add("task-incomplete");
 			}
 		};
 
@@ -194,7 +193,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ content, relat
 		try {
 			await navigator.clipboard.writeText(shareUrl);
 		} catch (err) {
-			console.error("Failed to copy link:", err);
+			logError("Failed to copy link", err);
 		}
 	};
 
@@ -523,12 +522,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ content, relat
 								)}
 
 								{/* CTA Banner */}
-								<motion.div
-									initial={{ opacity: 0, y: 30 }}
-									whileInView={{ opacity: 1, y: 0 }}
-									viewport={{ once: true }}
-									transition={{ duration: 0.6, delay: 0.2 }}
-									className="mt-12 relative">
+								<motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }} className="mt-12 relative">
 									{/* Animated gradient border wrapper */}
 									<div className="absolute -inset-[2px] bg-gradient-to-r from-primary-500 via-accent-500 to-primary-500 rounded-2xl opacity-75 blur-sm animate-gradient-x" />
 									<div className="absolute -inset-[1px] bg-gradient-to-r from-primary-500 via-accent-500 to-primary-500 rounded-2xl opacity-90 animate-gradient-x" />
@@ -570,13 +564,10 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ content, relat
 											</div>
 
 											<h3 className="text-2xl md:text-3xl lg:text-4xl font-display font-bold text-slate-900 dark:text-white leading-[1.1] tracking-tight">
-												{t("blogPost.cta.title") as string}{" "}
-												<span className="gradient-text text-glow-subtle">{t("blogPost.cta.titleSpan") as string}</span>
+												{t("blogPost.cta.title") as string} <span className="gradient-text text-glow-subtle">{t("blogPost.cta.titleSpan") as string}</span>
 											</h3>
 
-											<p className="text-base md:text-lg text-slate-600 dark:text-surface-300 font-light leading-relaxed max-w-2xl mx-auto">
-												{t("blogPost.cta.description") as string}
-											</p>
+											<p className="text-base md:text-lg text-slate-600 dark:text-surface-300 font-light leading-relaxed max-w-2xl mx-auto">{t("blogPost.cta.description") as string}</p>
 
 											<div className="pt-2">
 												<Link href="/contact">
@@ -641,9 +632,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({ content, relat
 															<span className="px-3 py-1 text-xs font-semibold rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300">{postCategory}</span>
 															<span className="text-xs text-slate-500 dark:text-surface-400 font-medium">{formattedDate}</span>
 														</div>
-														<CardTitle className="text-base font-semibold text-slate-900 dark:text-white line-clamp-2 leading-snug mb-2">
-															{postTitle}
-														</CardTitle>
+														<CardTitle className="text-base font-semibold text-slate-900 dark:text-white line-clamp-2 leading-snug mb-2">{postTitle}</CardTitle>
 													</CardHeader>
 													<CardContent>
 														<p className="mb-4 text-sm text-slate-600 dark:text-surface-300 leading-relaxed line-clamp-4">{postExcerpt}</p>

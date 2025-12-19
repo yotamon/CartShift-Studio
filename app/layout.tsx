@@ -9,68 +9,63 @@ import Script from "next/script";
 import "./globals.css";
 
 const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
+	subsets: ["latin"],
+	variable: "--font-inter",
+	display: "swap"
 });
 
 const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-poppins",
-  display: "optional",
+	subsets: ["latin"],
+	weight: ["400", "600", "700"],
+	variable: "--font-poppins",
+	display: "optional"
 });
 
 const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains",
-  display: "swap",
+	subsets: ["latin"],
+	variable: "--font-jetbrains",
+	display: "swap"
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cartshiftstudio.com";
 
 export const metadata: Metadata = {
-  title: {
-    default: "CartShift Studio | Shopify & WordPress E-commerce Development Agency",
-    template: "%s | CartShift Studio",
-  },
-  description: "Expert Shopify & WordPress development agency. Custom e-commerce stores, migrations, and optimization. Get a free consultation for your online store project.",
-  metadataBase: new URL(siteUrl),
-  alternates: {
-    canonical: siteUrl,
-    languages: {
-      "en": siteUrl,
-      "he": siteUrl,
-      "x-default": siteUrl,
-    },
-  },
+	title: {
+		default: "CartShift Studio | Shopify & WordPress E-commerce Development Agency",
+		template: "%s | CartShift Studio"
+	},
+	description: "Expert Shopify & WordPress development agency. Custom e-commerce stores, migrations, and optimization. Get a free consultation for your online store project.",
+	metadataBase: new URL(siteUrl),
+	alternates: {
+		canonical: siteUrl,
+		languages: {
+			en: siteUrl,
+			he: siteUrl,
+			"x-default": siteUrl
+		}
+	}
 };
 
 export default function RootLayout({
-  children,
+	children
 }: Readonly<{
-  children: React.ReactNode;
+	children: React.ReactNode;
 }>) {
-  const orgSchema = generateOrganizationSchema();
+	const orgSchema = generateOrganizationSchema();
 
-  return (
-    <html lang="en">
-      <head>
-        <Script
-          id="organization-schema"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
-        />
-      </head>
-      <body className={`${inter.variable} ${poppins.variable} ${jetbrainsMono.variable} font-sans`}>
-        <ThemeProvider>
-          <LanguageProvider>
-            <GoogleAnalytics />
-            <MainLayout>{children}</MainLayout>
-          </LanguageProvider>
-        </ThemeProvider>
-      </body>
-    </html>
-  );
+	return (
+		<html lang="en">
+			<head>
+				<Script id="organization-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }} />
+			</head>
+			<body className={`${inter.variable} ${poppins.variable} ${jetbrainsMono.variable} font-sans`}>
+				<ThemeProvider>
+					<LanguageProvider>
+						<GoogleAnalytics />
+						<MainLayout>{children}</MainLayout>
+					</LanguageProvider>
+				</ThemeProvider>
+			</body>
+		</html>
+	);
 }
-

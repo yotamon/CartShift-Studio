@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { trackNewsletterSignup } from "@/lib/analytics";
+import { subscribeNewsletterClient } from "@/lib/services/newsletter-client";
 
 export const Footer: React.FC = () => {
   const { t, language } = useLanguage();
@@ -20,12 +21,12 @@ export const Footer: React.FC = () => {
     solutions: [
       { name: t("footer.links.shopify") as string, href: "/solutions/shopify" },
       { name: t("footer.links.wordpress") as string, href: "/solutions/wordpress" },
-      { name: isHe ? "מחירים" : "Pricing", href: "/pricing" },
-      { name: isHe ? "תחזוקה" : "Maintenance", href: "/maintenance" },
+      { name: t("nav.pricing") as string, href: "/pricing" },
+      { name: t("nav.maintenance") as string, href: "/maintenance" },
     ],
     company: [
       { name: t("footer.links.about") as string, href: "/about" },
-      { name: isHe ? "עבודות" : "Our Work", href: "/work" },
+      { name: t("nav.work") as string, href: "/work" },
       { name: t("footer.links.blog") as string, href: "/blog" },
       { name: t("footer.links.contact") as string, href: "/contact" },
     ],
@@ -43,18 +44,10 @@ export const Footer: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/newsletter", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
+      const result = await subscribeNewsletterClient({ email });
 
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || "Failed to subscribe");
+      if (!result.success) {
+        throw new Error(result.error || "Failed to subscribe");
       }
 
       setSubscribed(true);

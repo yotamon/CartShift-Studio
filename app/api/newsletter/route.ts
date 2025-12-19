@@ -8,8 +8,13 @@ const RATE_LIMIT_MAX_REQUESTS = 3;
 
 function getRateLimitKey(request: NextRequest): string {
   const forwarded = request.headers.get("x-forwarded-for");
-  const ip = forwarded ? forwarded.split(",")[0] : (request as any).ip || "unknown";
-  return ip;
+  const realIp = request.headers.get("x-real-ip");
+  const ip = forwarded ? forwarded.split(",")[0].trim() : realIp || (request as any).ip;
+  if (ip) {
+    return ip;
+  }
+  const userAgent = request.headers.get("user-agent") || "unknown";
+  return `ua:${userAgent}`;
 }
 
 function checkRateLimit(key: string): boolean {
@@ -40,30 +45,55 @@ export async function POST(request: NextRequest) {
           status: 429,
           headers: {
             "Retry-After": "60",
+            "Content-Type": "application/json",
           },
         }
       );
     }
 
-    const body = await request.json();
+    let body;
+    try {
+      body = await request.json();
+    } catch (error) {
+      return NextResponse.json(
+        createErrorResponse("Invalid JSON in request body", 400),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
     const result = await subscribeNewsletter(body);
 
     if (!result.success) {
       return NextResponse.json(
         createErrorResponse(result.error, result.status),
-        { status: result.status }
+        {
+          status: result.status,
+          headers: { "Content-Type": "application/json" },
+        }
       );
     }
 
-    return NextResponse.json({ success: true }, { status: 200 });
+    return NextResponse.json(
+      { success: true },
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     logError("Newsletter subscription API error", error);
     return NextResponse.json(
       createErrorResponse("Failed to process request", 500),
-      { status: 500 }
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
     );
   }
 }
+
 
 
 

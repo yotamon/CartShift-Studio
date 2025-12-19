@@ -25,7 +25,7 @@ export async function submitContactFormClient(data: unknown): Promise<{ success:
 
   const firebaseUrl = process.env.NEXT_PUBLIC_FIREBASE_FUNCTION_URL;
   if (!firebaseUrl) {
-    logError("FIREBASE_FUNCTION_URL is not configured", new Error("Missing environment variable"));
+    logError("NEXT_PUBLIC_FIREBASE_FUNCTION_URL is not configured", new Error("Missing environment variable"));
     return {
       success: false,
       error: "Configuration error. Please contact support.",
@@ -45,7 +45,7 @@ export async function submitContactFormClient(data: unknown): Promise<{ success:
     const contentType = response.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
       const text = await response.text();
-      throw new Error(`Firebase function returned non-JSON response: ${response.status} ${response.statusText}`);
+      throw new Error(`Firebase function returned non-JSON response: ${response.status} ${response.statusText}. Response: ${text}`);
     }
 
     const result = await response.json();

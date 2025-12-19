@@ -84,11 +84,11 @@ NEXT_PUBLIC_FIREBASE_FUNCTION_URL=https://us-central1-your-project.cloudfunction
 **Optional Variables**:
 - `NEXT_PUBLIC_GA_ID` - Google Analytics tracking ID
 
-### Firebase Functions Config
+### Firebase Functions Secrets
 ```bash
-firebase functions:config:set gmail.user="your-email@gmail.com"
-firebase functions:config:set gmail.app_password="your-app-password"
-firebase functions:config:set contact.email="hello@yourdomain.com"
+firebase functions:secrets:set GMAIL_USER="your-email@gmail.com"
+firebase functions:secrets:set GMAIL_APP_PASSWORD="your-app-password"
+firebase functions:secrets:set CONTACT_EMAIL="hello@yourdomain.com"
 ```
 
 ## Key Features

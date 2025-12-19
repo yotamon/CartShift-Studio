@@ -4,6 +4,60 @@ const admin = require("firebase-admin");
 
 admin.initializeApp();
 
+const contactRateLimitMap = new Map();
+const newsletterRateLimitMap = new Map();
+const RATE_LIMIT_WINDOW = 60 * 1000;
+const CONTACT_RATE_LIMIT_MAX_REQUESTS = 5;
+const NEWSLETTER_RATE_LIMIT_MAX_REQUESTS = 3;
+
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+	? process.env.ALLOWED_ORIGINS.split(",").map((origin) => origin.trim()).filter(Boolean)
+	: [];
+
+function applyCors(req, res) {
+	const origin = req.headers.origin;
+
+	if (allowedOrigins.length > 0) {
+		if (origin && !allowedOrigins.includes(origin)) {
+			res.status(403).json({ error: "Origin not allowed" });
+			return false;
+		}
+		res.set("Access-Control-Allow-Origin", origin || allowedOrigins[0]);
+		res.set("Vary", "Origin");
+	} else {
+		res.set("Access-Control-Allow-Origin", "*");
+	}
+
+	res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+	res.set("Access-Control-Allow-Headers", "Content-Type");
+	return true;
+}
+
+function getRateLimitKey(req) {
+	const forwarded = req.headers["x-forwarded-for"];
+	if (typeof forwarded === "string" && forwarded.length > 0) {
+		return forwarded.split(",")[0].trim();
+	}
+	return req.ip || "unknown";
+}
+
+function checkRateLimit(map, key, maxRequests) {
+	const now = Date.now();
+	const record = map.get(key);
+
+	if (!record || now > record.resetTime) {
+		map.set(key, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+		return true;
+	}
+
+	if (record.count >= maxRequests) {
+		return false;
+	}
+
+	record.count += 1;
+	return true;
+}
+
 const gmailUser = defineSecret("GMAIL_USER", { required: false });
 const gmailPassword = defineSecret("GMAIL_APP_PASSWORD", { required: false });
 const contactEmail = defineSecret("CONTACT_EMAIL", { required: false });
@@ -15,9 +69,9 @@ exports.contactForm = onRequest(
 		secrets: [gmailUser, gmailPassword, contactEmail]
 	},
 	async (req, res) => {
-		res.set("Access-Control-Allow-Origin", "*");
-		res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-		res.set("Access-Control-Allow-Headers", "Content-Type");
+		if (!applyCors(req, res)) {
+			return;
+		}
 
 		if (req.method === "OPTIONS") {
 			res.status(204).send("");
@@ -29,6 +83,12 @@ exports.contactForm = onRequest(
 		}
 
 		try {
+			const rateLimitKey = getRateLimitKey(req);
+			if (!checkRateLimit(contactRateLimitMap, rateLimitKey, CONTACT_RATE_LIMIT_MAX_REQUESTS)) {
+				res.set("Retry-After", "60");
+				return res.status(429).json({ error: "Too many requests. Please try again later." });
+			}
+
 			const { name, email, interest, message, company, projectType } = req.body;
 
 			if (!name || !email) {
@@ -94,9 +154,9 @@ exports.newsletterSubscription = onRequest(
 		maxInstances: 10,
 	},
 	async (req, res) => {
-		res.set("Access-Control-Allow-Origin", "*");
-		res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-		res.set("Access-Control-Allow-Headers", "Content-Type");
+		if (!applyCors(req, res)) {
+			return;
+		}
 
 		if (req.method === "OPTIONS") {
 			res.status(204).send("");
@@ -108,6 +168,12 @@ exports.newsletterSubscription = onRequest(
 		}
 
 		try {
+			const rateLimitKey = getRateLimitKey(req);
+			if (!checkRateLimit(newsletterRateLimitMap, rateLimitKey, NEWSLETTER_RATE_LIMIT_MAX_REQUESTS)) {
+				res.set("Retry-After", "60");
+				return res.status(429).json({ error: "Too many requests. Please try again later." });
+			}
+
 			const { email } = req.body;
 
 			if (!email) {

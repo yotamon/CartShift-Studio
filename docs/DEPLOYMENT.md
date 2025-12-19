@@ -70,9 +70,9 @@ Update `.firebaserc` with your project ID:
 
 ### 3. Set Firebase Functions Config
 ```bash
-firebase functions:config:set gmail.user="your-email@gmail.com"
-firebase functions:config:set gmail.app_password="your-app-password"
-firebase functions:config:set contact.email="hello@cartshiftstudio.com"
+firebase functions:secrets:set GMAIL_USER="your-email@gmail.com"
+firebase functions:secrets:set GMAIL_APP_PASSWORD="your-app-password"
+firebase functions:secrets:set CONTACT_EMAIL="hello@cartshiftstudio.com"
 ```
 
 ## Deployment Steps
@@ -179,9 +179,9 @@ NEXT_PUBLIC_FIREBASE_FUNCTION_URL=https://us-central1-your-project.cloudfunction
 
 ### Firebase Functions Config
 ```bash
-firebase functions:config:set gmail.user="your-email@gmail.com"
-firebase functions:config:set gmail.app_password="your-app-password"
-firebase functions:config:set contact.email="hello@yourdomain.com"
+firebase functions:secrets:set GMAIL_USER="your-email@gmail.com"
+firebase functions:secrets:set GMAIL_APP_PASSWORD="your-app-password"
+firebase functions:secrets:set CONTACT_EMAIL="hello@yourdomain.com"
 ```
 
 ## Alternative: Google Cloud SendGrid
@@ -220,4 +220,3 @@ If you prefer SendGrid on Google Cloud:
 - Review bundle size
 - Enable Firebase Hosting caching
 - Use Firebase CDN for static assets
-
