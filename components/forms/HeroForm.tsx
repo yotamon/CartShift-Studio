@@ -54,10 +54,10 @@ export const HeroForm: React.FC = () => {
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
             ✓
           </div>
-          <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2 leading-tight tracking-tight">
+          <h3 className="text-lg md:text-xl font-bold text-surface-900 dark:text-white mb-2 leading-tight tracking-tight">
             {t('heroForm.successTitle') as string}
           </h3>
-          <p className="text-slate-600 dark:text-surface-300 text-base md:text-lg leading-relaxed">
+          <p className="text-surface-600 dark:text-surface-300 text-base md:text-lg leading-relaxed">
             {t('heroForm.successText') as string}
           </p>
         </CardContent>
@@ -69,7 +69,7 @@ export const HeroForm: React.FC = () => {
     <Card className="border-2 border-accent-500/30">
       <CardHeader>
         <CardTitle className="text-xl md:text-2xl mb-2">{t('heroForm.title') as string}</CardTitle>
-        <p className="text-slate-600 dark:text-surface-400 text-xs md:text-sm leading-relaxed">
+        <p className="text-surface-600 dark:text-surface-400 text-xs md:text-sm leading-relaxed">
           {t('heroForm.subtitle') as string}
         </p>
       </CardHeader>
@@ -78,7 +78,7 @@ export const HeroForm: React.FC = () => {
           <div>
             <label
               htmlFor="name"
-              className="block text-sm font-semibold text-slate-700 dark:text-surface-300 mb-2"
+              className="block text-sm font-semibold text-surface-700 dark:text-surface-300 mb-2"
             >
               {t('heroForm.fields.name') as string}
             </label>
@@ -86,7 +86,7 @@ export const HeroForm: React.FC = () => {
               id="name"
               type="text"
               {...register('name', { required: t('heroForm.fields.nameRequired') as string })}
-              className="w-full px-4 py-4 md:py-3 text-base glass-effect rounded-xl text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-surface-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all touch-manipulation"
+              className="w-full px-4 py-4 md:py-3 text-base glass-effect rounded-xl text-surface-900 dark:text-white placeholder:text-surface-500 dark:placeholder:text-surface-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all touch-manipulation"
               placeholder={t('heroForm.fields.namePlaceholder') as string}
               aria-required="true"
               aria-invalid={errors.name ? 'true' : 'false'}
@@ -102,7 +102,7 @@ export const HeroForm: React.FC = () => {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-semibold text-slate-700 dark:text-surface-300 mb-2"
+              className="block text-sm font-semibold text-surface-700 dark:text-surface-300 mb-2"
             >
               {t('heroForm.fields.email') as string}
             </label>
@@ -117,7 +117,7 @@ export const HeroForm: React.FC = () => {
                   message: t('heroForm.fields.emailInvalid') as string,
                 },
               })}
-              className="w-full px-4 py-4 md:py-3 text-base glass-effect rounded-xl text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-surface-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all touch-manipulation"
+              className="w-full px-4 py-4 md:py-3 text-base glass-effect rounded-xl text-surface-900 dark:text-white placeholder:text-surface-500 dark:placeholder:text-surface-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all touch-manipulation"
               placeholder={t('heroForm.fields.emailPlaceholder') as string}
               aria-required="true"
               aria-invalid={errors.email ? 'true' : 'false'}
@@ -133,7 +133,7 @@ export const HeroForm: React.FC = () => {
           <div>
             <label
               htmlFor="interest"
-              className="block text-sm font-semibold text-slate-700 dark:text-surface-300 mb-2"
+              className="block text-sm font-semibold text-surface-700 dark:text-surface-300 mb-2"
             >
               {t('heroForm.fields.interest') as string}
             </label>
@@ -142,32 +142,32 @@ export const HeroForm: React.FC = () => {
               {...register('interest', {
                 required: t('heroForm.fields.interestRequired') as string,
               })}
-              className="w-full px-4 py-4 md:py-3 text-base glass-effect rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all bg-white/50 dark:bg-surface-900/50 touch-manipulation"
+              className="w-full px-4 py-4 md:py-3 text-base glass-effect rounded-xl text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all bg-white/50 dark:bg-surface-900/50 touch-manipulation"
               aria-required="true"
               aria-invalid={errors.interest ? 'true' : 'false'}
               aria-describedby={errors.interest ? 'interest-error' : undefined}
             >
               <option
                 value=""
-                className="bg-white dark:bg-surface-900 text-slate-900 dark:text-white"
+                className="bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
               >
                 {t('heroForm.fields.selectOption') as string}
               </option>
               <option
                 value="shopify"
-                className="bg-white dark:bg-surface-900 text-slate-900 dark:text-white"
+                className="bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
               >
                 {t('heroForm.fields.options.shopify') as string}
               </option>
               <option
                 value="wordpress"
-                className="bg-white dark:bg-surface-900 text-slate-900 dark:text-white"
+                className="bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
               >
                 {t('heroForm.fields.options.wordpress') as string}
               </option>
               <option
                 value="consultation"
-                className="bg-white dark:bg-surface-900 text-slate-900 dark:text-white"
+                className="bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
               >
                 {t('heroForm.fields.options.consultation') as string}
               </option>

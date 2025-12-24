@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Inter, Poppins, JetBrains_Mono } from "next/font/google";
-import { MainLayout } from "@/components/layout/MainLayout";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { LanguageProvider } from "@/components/providers/LanguageProvider";
 import { generateOrganizationSchema } from "@/lib/seo";
+import { ConditionalLayout } from "@/components/layout/ConditionalLayout";
 import Script from "next/script";
 import "./globals.css";
 
@@ -62,7 +62,7 @@ export default function RootLayout({
 				<ThemeProvider>
 					<LanguageProvider>
 						<GoogleAnalytics />
-						<MainLayout>{children}</MainLayout>
+						<ConditionalLayout>{children}</ConditionalLayout>
 					</LanguageProvider>
 				</ThemeProvider>
 			</body>

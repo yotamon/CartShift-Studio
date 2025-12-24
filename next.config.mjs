@@ -1,9 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "export",
-  turbopack: {
-    root: process.cwd(),
-  },
+  output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
+  transpilePackages: ['firebase'],
   images: {
     unoptimized: true,
     formats: ['image/avif', 'image/webp'],

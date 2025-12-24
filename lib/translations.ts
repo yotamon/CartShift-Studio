@@ -13,6 +13,9 @@ export const translations = {
       work: 'Work',
       pricing: 'Pricing',
       maintenance: 'Maintenance',
+      company: 'Company',
+      login: 'Login',
+      portal: 'Portal',
     },
     heroForm: {
       title: 'Get a Free Consultation',
@@ -1020,6 +1023,9 @@ export const translations = {
       work: 'עבודות',
       pricing: 'מחירים',
       maintenance: 'תחזוקה',
+      company: 'חברה',
+      login: 'התחברות',
+      portal: 'פורטל',
     },
     heroForm: {
       title: 'שיחת ייעוץ ללא עלות',

@@ -109,6 +109,45 @@ export const trackExitIntentClosed = (action: "cta_clicked" | "dismissed") => {
   });
 };
 
+/**
+ * Portal Tracking
+ */
+export const trackPortalEvent = (eventName: string, params?: EventParams) => {
+  trackEvent(`portal_${eventName}`, {
+    ...params,
+    area: "portal"
+  });
+};
+
+export const trackPortalLogin = (method: string) => {
+  trackPortalEvent("login", { method });
+};
+
+export const trackPortalSignup = () => {
+  trackPortalEvent("signup");
+};
+
+export const trackPortalRequestCreate = (type: string) => {
+  trackPortalEvent("request_create", { request_type: type });
+};
+
+export const trackPortalRequestStatusChange = (requestId: string, from: string, to: string) => {
+  trackPortalEvent("status_change", { request_id: requestId, from_status: from, to_status: to });
+};
+
+export const trackPortalCommentAdded = (requestId: string) => {
+  trackPortalEvent("comment_add", { request_id: requestId });
+};
+
+export const trackPortalFileUpload = (fileType: string) => {
+  trackPortalEvent("file_upload", { file_type: fileType });
+};
+
+export const trackPortalInviteSent = () => {
+  trackPortalEvent("invite_sent");
+};
+
+
 export const useScrollTracking = (thresholds: number[] = [25, 50, 75, 100]) => {
   if (typeof window === "undefined") return;
 

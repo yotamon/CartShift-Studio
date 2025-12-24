@@ -1,0 +1,20 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Portal files
+    match /portal/{orgId}/{allPaths=**} {
+      // Anyone authenticated can read
+      allow read: if isAuthenticated();
+
+      // Only authenticated users can upload
+      // Max file size: 50MB
+      allow write: if isAuthenticated()
+                   && request.resource.size < 50 * 1024 * 1024;
+    }
+  }
+}

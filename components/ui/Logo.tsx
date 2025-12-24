@@ -5,9 +5,10 @@ import { cn } from "@/lib/utils";
 interface LogoProps {
   className?: string;
   size?: "sm" | "md" | "lg";
+  disableLink?: boolean;
 }
 
-export const Logo: React.FC<LogoProps> = ({ className, size = "md" }) => {
+export const Logo: React.FC<LogoProps> = ({ className, size = "md", disableLink = false }) => {
   // 3.3:1 aspect ratio (1989x601) after cropping
   const sizeConfig = {
     sm: {
@@ -26,6 +27,30 @@ export const Logo: React.FC<LogoProps> = ({ className, size = "md" }) => {
 
   const config = sizeConfig[size];
 
+  const content = (
+    <div className="relative flex-shrink-0">
+      <Image
+        src="/images/CartShift-Logo-Full.svg"
+        alt="CartShift Studio - E-commerce Development Agency"
+        width={config.width}
+        height={config.height}
+        className="transition-all duration-300 drop-shadow-sm group-hover:drop-shadow-md dark:brightness-0 dark:invert"
+        style={{ height: 'auto' }}
+        priority
+      />
+      {/* Subtle glow effect on hover */}
+      <div className="absolute inset-0 bg-gradient-to-r from-primary-500/0 via-accent-500/10 to-primary-500/0 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10 scale-105" />
+    </div>
+  );
+
+  if (disableLink) {
+    return (
+      <div className={cn("group flex items-center transition-all duration-300 hover:scale-[1.02]", className)}>
+        {content}
+      </div>
+    );
+  }
+
   return (
     <Link
       href="/"
@@ -34,19 +59,7 @@ export const Logo: React.FC<LogoProps> = ({ className, size = "md" }) => {
         className
       )}
     >
-      <div className="relative flex-shrink-0">
-        <Image
-          src="/images/CartShift-Logo-Full.svg"
-          alt="CartShift Studio - E-commerce Development Agency"
-          width={config.width}
-          height={config.height}
-          className="transition-all duration-300 drop-shadow-sm group-hover:drop-shadow-md dark:brightness-0 dark:invert"
-          style={{ height: 'auto' }}
-          priority
-        />
-        {/* Subtle glow effect on hover */}
-        <div className="absolute inset-0 bg-gradient-to-r from-primary-500/0 via-accent-500/10 to-primary-500/0 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10 scale-105" />
-      </div>
+      {content}
     </Link>
   );
 };

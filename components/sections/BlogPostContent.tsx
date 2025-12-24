@@ -253,14 +253,14 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
   return (
     <>
       <div className="reading-progress" style={{ width: `${readingProgress}%` }} />
-      <section className="py-12 md:py-20 px-4 sm:px-6 lg:px-8 relative bg-slate-50 dark:bg-surface-900">
+      <section className="py-12 md:py-20 px-4 sm:px-6 lg:px-8 relative bg-surface-50 dark:bg-surface-900">
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-12 gap-8">
             <aside className="lg:col-span-3 hidden lg:block relative">
               <div className="lg:sticky lg:top-28">
                 {headings.length > 0 && (
                   <Card className="p-6 mb-6">
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wider flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-surface-900 dark:text-white mb-4 uppercase tracking-wider flex items-center gap-2">
                       <svg
                         className="w-4 h-4 text-primary-500"
                         fill="none"
@@ -282,10 +282,10 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                           key={heading.id}
                           type="button"
                           onClick={() => scrollToHeading(heading.id)}
-                          className="w-full text-start block text-sm text-slate-600 dark:text-surface-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all py-2 ps-3 border-s-2 border-slate-200 dark:border-surface-700 hover:border-primary-500 dark:hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/10 rounded-e-lg group"
+                          className="w-full text-start block text-sm text-surface-600 dark:text-surface-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all py-2 ps-3 border-s-2 border-surface-200 dark:border-surface-700 hover:border-primary-500 dark:hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/10 rounded-e-lg group"
                         >
                           <span className="flex items-center gap-2">
-                            <span className="text-xs text-slate-400 dark:text-surface-500 font-mono group-hover:text-primary-500 transition-colors">
+                            <span className="text-xs text-surface-400 dark:text-surface-500 font-mono group-hover:text-primary-500 transition-colors">
                               {String(index + 1).padStart(2, '0')}
                             </span>
                             <span className="line-clamp-2">{heading.text}</span>
@@ -298,17 +298,17 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
 
                 {/* Quick Actions */}
                 <div className="p-4 rounded-xl bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/20 dark:to-accent-900/20 border border-primary-200/50 dark:border-primary-800/30">
-                  <p className="text-xs font-medium text-slate-600 dark:text-surface-400 mb-3 uppercase tracking-wider">
+                  <p className="text-xs font-medium text-surface-600 dark:text-surface-400 mb-3 uppercase tracking-wider">
                     {isHe ? 'שתף מאמר' : 'Share Article'}
                   </p>
                   <div className="flex gap-2">
                     <button
                       onClick={shareToTwitter}
-                      className="flex-1 p-2.5 rounded-lg bg-white dark:bg-surface-800 hover:bg-slate-50 dark:hover:bg-surface-700 transition-colors border border-slate-200 dark:border-surface-700 group"
+                      className="flex-1 p-2.5 rounded-lg bg-white dark:bg-surface-800 hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors border border-surface-200 dark:border-surface-700 group"
                       aria-label="Share on Twitter"
                     >
                       <svg
-                        className="w-4 h-4 mx-auto text-slate-500 dark:text-surface-400 group-hover:text-[#1DA1F2] transition-colors"
+                        className="w-4 h-4 mx-auto text-surface-500 dark:text-surface-400 group-hover:text-[#1DA1F2] transition-colors"
                         fill="currentColor"
                         viewBox="0 0 24 24"
                       >
@@ -317,11 +317,11 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                     </button>
                     <button
                       onClick={shareToLinkedIn}
-                      className="flex-1 p-2.5 rounded-lg bg-white dark:bg-surface-800 hover:bg-slate-50 dark:hover:bg-surface-700 transition-colors border border-slate-200 dark:border-surface-700 group"
+                      className="flex-1 p-2.5 rounded-lg bg-white dark:bg-surface-800 hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors border border-surface-200 dark:border-surface-700 group"
                       aria-label="Share on LinkedIn"
                     >
                       <svg
-                        className="w-4 h-4 mx-auto text-slate-500 dark:text-surface-400 group-hover:text-[#0A66C2] transition-colors"
+                        className="w-4 h-4 mx-auto text-surface-500 dark:text-surface-400 group-hover:text-[#0A66C2] transition-colors"
                         fill="currentColor"
                         viewBox="0 0 24 24"
                       >
@@ -330,11 +330,11 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                     </button>
                     <button
                       onClick={copyLink}
-                      className="flex-1 p-2.5 rounded-lg bg-white dark:bg-surface-800 hover:bg-slate-50 dark:hover:bg-surface-700 transition-colors border border-slate-200 dark:border-surface-700 group"
+                      className="flex-1 p-2.5 rounded-lg bg-white dark:bg-surface-800 hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors border border-surface-200 dark:border-surface-700 group"
                       aria-label="Copy link"
                     >
                       <svg
-                        className="w-4 h-4 mx-auto text-slate-500 dark:text-surface-400 group-hover:text-primary-500 transition-colors"
+                        className="w-4 h-4 mx-auto text-surface-500 dark:text-surface-400 group-hover:text-primary-500 transition-colors"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -358,9 +358,9 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                 <div className="lg:hidden mb-8">
                   <button
                     onClick={() => setMobileTocOpen(!mobileTocOpen)}
-                    className="w-full flex items-center justify-between p-4 rounded-xl bg-white dark:bg-surface-800 border border-slate-200 dark:border-surface-700 hover:border-primary-300 dark:hover:border-primary-600 transition-all shadow-sm"
+                    className="w-full flex items-center justify-between p-4 rounded-xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:border-primary-300 dark:hover:border-primary-600 transition-all shadow-sm"
                   >
-                    <span className="flex items-center gap-2 font-semibold text-slate-900 dark:text-white">
+                    <span className="flex items-center gap-2 font-semibold text-surface-900 dark:text-white">
                       <svg
                         className="w-5 h-5 text-primary-500"
                         fill="none"
@@ -381,7 +381,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                         {headings.length} {isHe ? 'חלקים' : 'sections'}
                       </span>
                       <svg
-                        className={`w-5 h-5 text-slate-500 dark:text-surface-400 transition-transform duration-300 ${mobileTocOpen ? 'rotate-180' : ''}`}
+                        className={`w-5 h-5 text-surface-500 dark:text-surface-400 transition-transform duration-300 ${mobileTocOpen ? 'rotate-180' : ''}`}
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -406,9 +406,9 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                               setMobileTocOpen(false);
                               scrollToHeading(heading.id);
                             }}
-                            className="w-full text-start flex items-center gap-3 text-sm text-slate-600 dark:text-surface-300 hover:text-primary-600 dark:hover:text-primary-400 py-2.5 px-3 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/10 transition-all"
+                            className="w-full text-start flex items-center gap-3 text-sm text-surface-600 dark:text-surface-300 hover:text-primary-600 dark:hover:text-primary-400 py-2.5 px-3 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/10 transition-all"
                           >
-                            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-slate-100 dark:bg-surface-700 text-slate-500 dark:text-surface-400 text-xs font-semibold flex items-center justify-center">
+                            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-surface-100 dark:bg-surface-700 text-surface-500 dark:text-surface-400 text-xs font-semibold flex items-center justify-center">
                               {index + 1}
                             </span>
                             <span className="line-clamp-1">{heading.text}</span>
@@ -427,16 +427,16 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                 transition={{ duration: 0.6 }}
               >
                 {/* Article Meta Card */}
-                <div className="mb-10 p-6 rounded-2xl bg-gradient-to-br from-white via-white to-slate-50 dark:from-surface-800 dark:via-surface-800 dark:to-surface-900 border border-slate-200 dark:border-surface-700 shadow-sm">
+                <div className="mb-10 p-6 rounded-2xl bg-gradient-to-br from-white via-white to-surface-50 dark:from-surface-800 dark:via-surface-800 dark:to-surface-900 border border-surface-200 dark:border-surface-700 shadow-sm">
                   <div className="flex flex-wrap items-center gap-4 text-sm">
                     <span className="px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold shadow-sm">
                       {category}
                     </span>
                     <time
                       dateTime={date}
-                      className="flex items-center gap-2 text-slate-600 dark:text-surface-400"
+                      className="flex items-center gap-2 text-surface-600 dark:text-surface-400"
                     >
-                      <span className="p-1.5 rounded-lg bg-slate-100 dark:bg-surface-700">
+                      <span className="p-1.5 rounded-lg bg-surface-100 dark:bg-surface-700">
                         <svg
                           className="w-4 h-4"
                           fill="none"
@@ -460,8 +460,8 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                       </span>
                     </time>
                     {readingTime && (
-                      <span className="flex items-center gap-2 text-slate-600 dark:text-surface-400">
-                        <span className="p-1.5 rounded-lg bg-slate-100 dark:bg-surface-700">
+                      <span className="flex items-center gap-2 text-surface-600 dark:text-surface-400">
+                        <span className="p-1.5 rounded-lg bg-surface-100 dark:bg-surface-700">
                           <svg
                             className="w-4 h-4"
                             fill="none"
@@ -484,18 +484,18 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                   </div>
 
                   {/* Mobile Share Buttons */}
-                  <div className="lg:hidden flex items-center gap-3 pt-4 mt-4 border-t border-slate-200 dark:border-surface-700">
-                    <span className="text-sm font-medium text-slate-600 dark:text-surface-400">
+                  <div className="lg:hidden flex items-center gap-3 pt-4 mt-4 border-t border-surface-200 dark:border-surface-700">
+                    <span className="text-sm font-medium text-surface-600 dark:text-surface-400">
                       {isHe ? 'שתף:' : 'Share:'}
                     </span>
                     <div className="flex gap-2">
                       <button
                         onClick={shareToTwitter}
-                        className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-surface-700 transition-colors group"
+                        className="p-2.5 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors group"
                         aria-label="Share on Twitter"
                       >
                         <svg
-                          className="w-5 h-5 text-slate-500 dark:text-surface-400 group-hover:text-[#1DA1F2] transition-colors"
+                          className="w-5 h-5 text-surface-500 dark:text-surface-400 group-hover:text-[#1DA1F2] transition-colors"
                           fill="currentColor"
                           viewBox="0 0 24 24"
                         >
@@ -504,11 +504,11 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                       </button>
                       <button
                         onClick={shareToLinkedIn}
-                        className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-surface-700 transition-colors group"
+                        className="p-2.5 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors group"
                         aria-label="Share on LinkedIn"
                       >
                         <svg
-                          className="w-5 h-5 text-slate-500 dark:text-surface-400 group-hover:text-[#0A66C2] transition-colors"
+                          className="w-5 h-5 text-surface-500 dark:text-surface-400 group-hover:text-[#0A66C2] transition-colors"
                           fill="currentColor"
                           viewBox="0 0 24 24"
                         >
@@ -517,11 +517,11 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                       </button>
                       <button
                         onClick={shareToFacebook}
-                        className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-surface-700 transition-colors group"
+                        className="p-2.5 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors group"
                         aria-label="Share on Facebook"
                       >
                         <svg
-                          className="w-5 h-5 text-slate-500 dark:text-surface-400 group-hover:text-[#1877F2] transition-colors"
+                          className="w-5 h-5 text-surface-500 dark:text-surface-400 group-hover:text-[#1877F2] transition-colors"
                           fill="currentColor"
                           viewBox="0 0 24 24"
                         >
@@ -530,11 +530,11 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                       </button>
                       <button
                         onClick={copyLink}
-                        className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-surface-700 transition-colors group"
+                        className="p-2.5 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors group"
                         aria-label="Copy link"
                       >
                         <svg
-                          className="w-5 h-5 text-slate-500 dark:text-surface-400 group-hover:text-primary-500 transition-colors"
+                          className="w-5 h-5 text-surface-500 dark:text-surface-400 group-hover:text-primary-500 transition-colors"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -569,7 +569,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: 0.15 }}
-                    className="mt-12 p-6 md:p-8 rounded-2xl bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-surface-800 dark:via-surface-800/50 dark:to-surface-900 border border-slate-200 dark:border-surface-700 relative overflow-hidden"
+                    className="mt-12 p-6 md:p-8 rounded-2xl bg-gradient-to-br from-surface-50 via-white to-surface-50 dark:from-surface-800 dark:via-surface-800/50 dark:to-surface-900 border border-surface-200 dark:border-surface-700 relative overflow-hidden"
                   >
                     {/* Decorative element */}
                     <div className="absolute top-0 end-0 w-32 h-32 bg-gradient-to-br from-primary-500/10 to-accent-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
@@ -592,14 +592,14 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                           </svg>
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2">
+                          <h3 className="text-lg md:text-xl font-bold text-surface-900 dark:text-white mb-2">
                             {category === 'Shopify'
                               ? (t('blogPost.relatedServices.shopifyTitle') as string)
                               : category === 'WordPress'
                                 ? (t('blogPost.relatedServices.wordpressTitle') as string)
                                 : (t('blogPost.relatedServices.title') as string)}
                           </h3>
-                          <p className="text-slate-600 dark:text-surface-300 mb-4 text-sm md:text-base">
+                          <p className="text-surface-600 dark:text-surface-300 mb-4 text-sm md:text-base">
                             {category === 'Shopify'
                               ? (t('blogPost.relatedServices.shopifyDescription') as string)
                               : category === 'WordPress'
@@ -668,7 +668,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                                     />
                                   </svg>
                                 </Link>
-                                <span className="text-slate-300 dark:text-surface-600">|</span>
+                                <span className="text-surface-300 dark:text-surface-600">|</span>
                                 <Link
                                   href="/solutions/wordpress"
                                   className="inline-flex items-center gap-2 text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 font-semibold text-sm group"
@@ -750,14 +750,14 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                         {isHe ? 'שירותי מומחים' : 'Expert Services'}
                       </div>
 
-                      <h3 className="text-2xl md:text-3xl lg:text-4xl font-display font-bold text-slate-900 dark:text-white leading-[1.1] tracking-tight">
+                      <h3 className="text-2xl md:text-3xl lg:text-4xl font-display font-bold text-surface-900 dark:text-white leading-[1.1] tracking-tight">
                         {t('blogPost.cta.title') as string}{' '}
                         <span className="gradient-text text-glow-subtle">
                           {t('blogPost.cta.titleSpan') as string}
                         </span>
                       </h3>
 
-                      <p className="text-base md:text-lg text-slate-600 dark:text-surface-300 font-light leading-relaxed max-w-2xl mx-auto">
+                      <p className="text-base md:text-lg text-surface-600 dark:text-surface-300 font-light leading-relaxed max-w-2xl mx-auto">
                         {t('blogPost.cta.description') as string}
                       </p>
 
@@ -803,13 +803,13 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="mt-20 pt-16 border-t border-slate-200 dark:border-surface-700"
+              className="mt-20 pt-16 border-t border-surface-200 dark:border-surface-700"
             >
               <div className="text-center mb-12">
                 <span className="inline-block px-4 py-1.5 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-semibold mb-4">
                   {isHe ? 'המשך לקרוא' : 'Keep Reading'}
                 </span>
-                <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white font-display leading-tight tracking-tight">
+                <h2 className="text-3xl md:text-4xl font-bold text-surface-900 dark:text-white font-display leading-tight tracking-tight">
                   {t('blog.relatedPosts.title') as string}{' '}
                   <span className="gradient-text">{t('blog.relatedPosts.span') as string}</span>
                 </h2>
@@ -847,16 +847,16 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                               <span className="px-3 py-1 text-xs font-semibold rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300">
                                 {postCategory}
                               </span>
-                              <span className="text-xs text-slate-500 dark:text-surface-400 font-medium">
+                              <span className="text-xs text-surface-500 dark:text-surface-400 font-medium">
                                 {formattedDate}
                               </span>
                             </div>
-                            <CardTitle className="text-base font-semibold text-slate-900 dark:text-white line-clamp-2 leading-snug mb-2">
+                            <CardTitle className="text-base font-semibold text-surface-900 dark:text-white line-clamp-2 leading-snug mb-2">
                               {postTitle}
                             </CardTitle>
                           </CardHeader>
                           <CardContent>
-                            <p className="mb-4 text-sm text-slate-600 dark:text-surface-300 leading-relaxed line-clamp-4">
+                            <p className="mb-4 text-sm text-surface-600 dark:text-surface-300 leading-relaxed line-clamp-4">
                               {postExcerpt}
                             </p>
                             <span className="inline-flex items-center gap-2 text-primary-600 dark:text-primary-400 font-semibold text-sm">

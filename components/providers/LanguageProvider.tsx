@@ -25,18 +25,15 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>(() => {
-    // Only run on client side
-    if (typeof window === 'undefined') return 'en';
-
-    const savedLang = localStorage.getItem('language') as Language;
-    return savedLang && (savedLang === 'en' || savedLang === 'he') ? savedLang : 'en';
-  });
+  const [language, setLanguageState] = useState<Language>('en');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    // Language is already set correctly from initial state
+    const savedLang = localStorage.getItem('language') as Language;
+    if (savedLang && (savedLang === 'en' || savedLang === 'he')) {
+      setLanguageState(savedLang);
+    }
   }, []);
 
   const setLanguage = useCallback((lang: Language) => {

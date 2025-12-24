@@ -100,7 +100,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
   }, [selectedCategory, searchQuery, sortBy]);
 
   return (
-    <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative bg-slate-50 dark:bg-surface-900">
+    <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative bg-surface-50 dark:bg-surface-900">
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Featured Posts Section */}
         {!searchQuery && !selectedCategory && currentPage === 1 && (
@@ -112,7 +112,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
           >
             <div className="flex items-center gap-3 mb-8">
               <Sparkles className="w-6 h-6 text-accent-600 dark:text-primary-400" />
-              <h2 className="text-2xl md:text-3xl font-display font-bold text-slate-900 dark:text-white">
+              <h2 className="text-2xl md:text-3xl font-display font-bold text-surface-900 dark:text-white">
                 {isHe ? 'מאמרים מובלטים' : 'Featured Posts'}
               </h2>
             </div>
@@ -146,10 +146,10 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                               {category}
                             </span>
                           </div>
-                          <h3 className="text-xl font-display font-bold text-slate-900 dark:text-white mb-3 group-hover:text-accent-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
+                          <h3 className="text-xl font-display font-bold text-surface-900 dark:text-white mb-3 group-hover:text-accent-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
                             {title}
                           </h3>
-                          <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-surface-400">
+                          <div className="flex items-center gap-4 text-sm text-surface-500 dark:text-surface-400">
                             <span className="flex items-center gap-1">
                               <Calendar className="w-4 h-4" />
                               {formattedDate}
@@ -183,13 +183,13 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
             >
               {/* Search Bar */}
               <div className="relative">
-                <Search className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <Search className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-surface-400" />
                 <input
                   type="text"
                   placeholder={isHe ? 'חיפוש מאמרים...' : 'Search articles...'}
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full ps-12 pe-4 py-3 rounded-xl glass-effect border border-slate-200 dark:border-surface-700 focus:outline-none focus:ring-2 focus:ring-accent-500 dark:focus:ring-primary-500 text-slate-900 dark:text-white placeholder:text-slate-400"
+                  className="w-full ps-12 pe-4 py-3 rounded-xl glass-effect border border-surface-200 dark:border-surface-700 focus:outline-none focus:ring-2 focus:ring-accent-500 dark:focus:ring-primary-500 text-surface-900 dark:text-white placeholder:text-surface-400"
                 />
               </div>
 
@@ -201,7 +201,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                     className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                       selectedCategory === null
                         ? 'bg-accent-600 dark:bg-accent-500 text-white shadow-md'
-                        : 'glass-effect text-slate-700 dark:text-surface-200 hover:bg-slate-100 dark:hover:bg-surface-800'
+                        : 'glass-effect text-surface-700 dark:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800'
                     }`}
                   >
                     {isHe ? 'הכל' : 'All'}
@@ -213,7 +213,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                       className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                         selectedCategory === category
                           ? 'bg-accent-600 dark:bg-accent-500 text-white shadow-md'
-                          : 'glass-effect text-slate-700 dark:text-surface-200 hover:bg-slate-100 dark:hover:bg-surface-800'
+                          : 'glass-effect text-surface-700 dark:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800'
                       }`}
                     >
                       {getCategoryDisplayName(category)}
@@ -224,13 +224,13 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
 
               {/* Sort and Results Count */}
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-600 dark:text-surface-400">
+                <span className="text-sm text-surface-600 dark:text-surface-400">
                   {filteredAndSortedPosts.length} {isHe ? 'מאמרים' : 'articles'}
                 </span>
                 <select
                   value={sortBy}
                   onChange={e => setSortBy(e.target.value as SortOption)}
-                  className="px-4 py-2 rounded-lg glass-effect border border-slate-200 dark:border-surface-700 text-sm font-medium text-slate-700 dark:text-surface-200 focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  className="px-4 py-2 rounded-lg glass-effect border border-surface-200 dark:border-surface-700 text-sm font-medium text-surface-700 dark:text-surface-200 focus:outline-none focus:ring-2 focus:ring-accent-500"
                 >
                   <option value="newest">{isHe ? 'החדשים ביותר' : 'Newest First'}</option>
                   <option value="oldest">{isHe ? 'הישנים ביותר' : 'Oldest First'}</option>
@@ -242,7 +242,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
             {/* Posts Grid */}
             {paginatedPosts.length === 0 ? (
               <div className="text-center py-16">
-                <p className="text-lg text-slate-600 dark:text-surface-300">
+                <p className="text-lg text-surface-600 dark:text-surface-300">
                   {isHe ? 'לא נמצאו מאמרים' : 'No posts found'}
                 </p>
               </div>
@@ -282,15 +282,15 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                                   {category}
                                 </span>
                               </div>
-                              <h3 className="text-lg font-display font-bold text-slate-900 dark:text-white mb-2 group-hover:text-accent-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
+                              <h3 className="text-lg font-display font-bold text-surface-900 dark:text-white mb-2 group-hover:text-accent-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
                                 {title}
                               </h3>
-                              <p className="text-sm text-slate-600 dark:text-surface-400 mb-4 line-clamp-2">
+                              <p className="text-sm text-surface-600 dark:text-surface-400 mb-4 line-clamp-2">
                                 {excerpt}
                               </p>
                               {/* Meta info */}
-                              <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-surface-700">
-                                <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-surface-400">
+                              <div className="flex items-center justify-between pt-4 border-t border-surface-200 dark:border-surface-700">
+                                <div className="flex items-center gap-4 text-sm text-surface-500 dark:text-surface-400">
                                   <span className="flex items-center gap-1">
                                     <Calendar className="w-4 h-4" />
                                     {formattedDate}
@@ -320,7 +320,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                     <button
                       onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                       disabled={currentPage === 1}
-                      className="px-4 py-2 rounded-lg glass-effect text-sm font-medium text-slate-700 dark:text-surface-200 hover:bg-slate-100 dark:hover:bg-surface-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                      className="px-4 py-2 rounded-lg glass-effect text-sm font-medium text-surface-700 dark:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     >
                       {isHe ? 'הקודם' : 'Previous'}
                     </button>
@@ -332,7 +332,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                         className={`w-10 h-10 rounded-lg text-sm font-medium transition-all ${
                           currentPage === page
                             ? 'bg-accent-600 dark:bg-accent-500 text-white shadow-md'
-                            : 'glass-effect text-slate-700 dark:text-surface-200 hover:bg-slate-100 dark:hover:bg-surface-800'
+                            : 'glass-effect text-surface-700 dark:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800'
                         }`}
                       >
                         {page}
@@ -342,7 +342,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                     <button
                       onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                       disabled={currentPage === totalPages}
-                      className="px-4 py-2 rounded-lg glass-effect text-sm font-medium text-slate-700 dark:text-surface-200 hover:bg-slate-100 dark:hover:bg-surface-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                      className="px-4 py-2 rounded-lg glass-effect text-sm font-medium text-surface-700 dark:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     >
                       {isHe ? 'הבא' : 'Next'}
                     </button>
@@ -366,18 +366,18 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                   <CardContent className="relative p-6">
                     <div className="flex items-center gap-2 mb-3">
                       <Sparkles className="w-5 h-5 text-accent-600 dark:text-primary-400" />
-                      <h3 className="text-lg font-display font-bold text-slate-900 dark:text-white">
+                      <h3 className="text-lg font-display font-bold text-surface-900 dark:text-white">
                         {isHe ? 'הירשמו לניוזלטר' : 'Subscribe to Newsletter'}
                       </h3>
                     </div>
-                    <p className="text-sm text-slate-600 dark:text-surface-300 mb-4">
+                    <p className="text-sm text-surface-600 dark:text-surface-300 mb-4">
                       {isHe ? 'קבלו טיפים ועדכונים שבועיים' : 'Get weekly tips and updates'}
                     </p>
                     <form className="space-y-3">
                       <input
                         type="email"
                         placeholder={isHe ? 'האימייל שלך' : 'Your email'}
-                        className="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent-500"
+                        className="w-full px-4 py-2 rounded-lg border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-white placeholder:text-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                       <button
                         type="submit"
@@ -413,13 +413,13 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                               className={`w-full text-start px-4 py-2 rounded-lg transition-all ${
                                 selectedCategory === category
                                   ? 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300'
-                                  : 'hover:bg-slate-100 dark:hover:bg-surface-800 text-slate-700 dark:text-surface-200'
+                                  : 'hover:bg-surface-100 dark:hover:bg-surface-800 text-surface-700 dark:text-surface-200'
                               }`}
                             >
                               <span className="font-medium">
                                 {getCategoryDisplayName(category)}
                               </span>
-                              <span className="float-end text-sm text-slate-500 dark:text-surface-400">
+                              <span className="float-end text-sm text-surface-500 dark:text-surface-400">
                                 ({count})
                               </span>
                             </button>

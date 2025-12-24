@@ -10,17 +10,23 @@ import { Icon } from '@/components/ui/Icon';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import { useTheme } from '@/components/providers/ThemeProvider';
+import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 
 export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [solutionsOpen, setSolutionsOpen] = useState(false);
+  const [companyOpen, setCompanyOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [isAtTop, setIsAtTop] = useState(true);
   const { t, mounted } = useLanguage();
   const { theme } = useTheme();
+  const { user } = usePortalAuth();
   const isDark = theme === 'dark';
+  const isLoggedIn = !!user;
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const companyDropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const companyButtonRef = useRef<HTMLButtonElement>(null);
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
 
@@ -76,16 +82,26 @@ export const Header: React.FC = () => {
       ) {
         setSolutionsOpen(false);
       }
+      if (
+        companyDropdownRef.current &&
+        !companyDropdownRef.current.contains(event.target as Node) &&
+        companyButtonRef.current &&
+        !companyButtonRef.current.contains(event.target as Node)
+      ) {
+        setCompanyOpen(false);
+      }
     };
 
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setSolutionsOpen(false);
+        setCompanyOpen(false);
         buttonRef.current?.focus();
+        companyButtonRef.current?.focus();
       }
     };
 
-    if (solutionsOpen) {
+    if (solutionsOpen || companyOpen) {
       document.addEventListener('mousedown', handleClickOutside);
       document.addEventListener('keydown', handleEscape);
     }
@@ -94,7 +110,7 @@ export const Header: React.FC = () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
     };
-  }, [solutionsOpen]);
+  }, [solutionsOpen, companyOpen]);
 
   const navigation = mounted
     ? [
@@ -108,9 +124,15 @@ export const Header: React.FC = () => {
             { name: (t('nav.maintenance') as string) || 'Maintenance', href: '/maintenance' },
           ],
         },
-        { name: (t('nav.work') as string) || 'Work', href: '/work' },
-        { name: (t('nav.pricing') as string) || 'Pricing', href: '/pricing' },
-        { name: t('nav.about') as string, href: '/about' },
+        {
+          name: t('nav.company') as string,
+          href: '#',
+          submenu: [
+            { name: (t('nav.work') as string) || 'Work', href: '/work' },
+            { name: (t('nav.pricing') as string) || 'Pricing', href: '/pricing' },
+            { name: t('nav.about') as string, href: '/about' },
+          ],
+        },
         { name: t('nav.blog') as string, href: '/blog' },
         { name: t('nav.contact') as string, href: '/contact' },
       ]
@@ -125,9 +147,15 @@ export const Header: React.FC = () => {
             { name: 'Maintenance', href: '/maintenance' },
           ],
         },
-        { name: 'Work', href: '/work' },
-        { name: 'Pricing', href: '/pricing' },
-        { name: 'About', href: '/about' },
+        {
+          name: 'Company',
+          href: '#',
+          submenu: [
+            { name: 'Work', href: '/work' },
+            { name: 'Pricing', href: '/pricing' },
+            { name: 'About', href: '/about' },
+          ],
+        },
         { name: 'Blog', href: '/blog' },
         { name: 'Contact', href: '/contact' },
       ];
@@ -148,61 +176,68 @@ export const Header: React.FC = () => {
         ${
           isAtTop
             ? 'bg-transparent border-transparent shadow-none'
-            : 'border-b border-slate-300/50 dark:border-white/10'
+            : 'border-b border-surface-200/40 dark:border-white/8'
         }
       `}
       style={{
-        backdropFilter: isAtTop ? 'none' : 'blur(24px) saturate(180%)',
-        WebkitBackdropFilter: isAtTop ? 'none' : 'blur(24px) saturate(180%)',
+        backdropFilter: isAtTop ? 'none' : 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: isAtTop ? 'none' : 'blur(20px) saturate(180%)',
         backgroundColor: 'transparent',
         boxShadow: isAtTop
           ? 'none'
           : isDark
-            ? '0 8px 32px -8px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1px 0 rgba(0, 0, 0, 0.2)'
-            : '0 8px 32px -8px rgba(30, 41, 59, 0.15), 0 4px 12px -4px rgba(30, 41, 59, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -1px 0 rgba(148, 163, 184, 0.2)',
+            ? '0 4px 24px -8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08)'
+            : '0 4px 24px -8px rgba(30, 41, 59, 0.1), 0 2px 8px -4px rgba(30, 41, 59, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
       }}
     >
       {/* Top highlight line when scrolled */}
       {!isAtTop && (
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent dark:via-white/20 pointer-events-none" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent dark:via-white/15 pointer-events-none" />
       )}
 
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Top">
-        <div className="flex items-center justify-between h-18 md:h-20">
+        <div className="flex items-center justify-between h-16 md:h-18">
           <Logo size="md" />
 
-          <div className="hidden md:flex md:items-center md:gap-8 lg:gap-10">
+          <div className="hidden md:flex md:items-center md:gap-6 lg:gap-8">
             {navigation.map(item => {
               if (item.submenu) {
+                const isCompany =
+                  item.name === (mounted ? (t('nav.company') as string) : 'Company');
+                const isOpen = isCompany ? companyOpen : solutionsOpen;
+                const setIsOpen = isCompany ? setCompanyOpen : setSolutionsOpen;
+                const ref = isCompany ? companyDropdownRef : dropdownRef;
+                const buttonRefToUse = isCompany ? companyButtonRef : buttonRef;
+
                 return (
                   <div
                     key={item.name}
                     className="relative"
-                    onMouseEnter={() => setSolutionsOpen(true)}
-                    onMouseLeave={() => setSolutionsOpen(false)}
-                    ref={dropdownRef}
+                    onMouseEnter={() => setIsOpen(true)}
+                    onMouseLeave={() => setIsOpen(false)}
+                    ref={ref}
                   >
                     <button
-                      ref={buttonRef}
-                      className="text-slate-700 dark:text-surface-200 hover:text-slate-900 dark:hover:text-white font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded px-2 py-1"
-                      aria-expanded={solutionsOpen}
+                      ref={buttonRefToUse}
+                      className="text-surface-600 dark:text-surface-300 hover:text-surface-900 dark:hover:text-white font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded px-2 py-1"
+                      aria-expanded={isOpen}
                       aria-haspopup="true"
-                      onClick={() => setSolutionsOpen(!solutionsOpen)}
+                      onClick={() => setIsOpen(!isOpen)}
                       onKeyDown={e => {
                         if (e.key === 'Enter' || e.key === ' ') {
                           e.preventDefault();
-                          setSolutionsOpen(!solutionsOpen);
+                          setIsOpen(!isOpen);
                         }
-                        if (e.key === 'ArrowDown' && !solutionsOpen) {
+                        if (e.key === 'ArrowDown' && !isOpen) {
                           e.preventDefault();
-                          setSolutionsOpen(true);
+                          setIsOpen(true);
                         }
                       }}
                     >
                       {item.name}
                     </button>
                     <AnimatePresence>
-                      {solutionsOpen && (
+                      {isOpen && (
                         <motion.div
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -228,13 +263,13 @@ export const Header: React.FC = () => {
                             <Link
                               key={subItem.name}
                               href={subItem.href}
-                              className="block px-5 py-3 text-sm text-slate-700 dark:text-surface-300 hover:bg-slate-100/50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white transition-colors font-medium text-start focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-inset first:rounded-t-2xl last:rounded-b-2xl"
+                              className="block px-5 py-3 text-sm text-surface-700 dark:text-surface-300 hover:bg-surface-100/50 dark:hover:bg-white/5 hover:text-surface-900 dark:hover:text-white transition-colors font-medium text-start focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-inset first:rounded-t-2xl last:rounded-b-2xl"
                               role="menuitem"
                               tabIndex={0}
                               onKeyDown={e => {
                                 if (e.key === 'Escape') {
-                                  setSolutionsOpen(false);
-                                  buttonRef.current?.focus();
+                                  setIsOpen(false);
+                                  buttonRefToUse.current?.focus();
                                 }
                                 if (e.key === 'ArrowDown' && index < item.submenu.length - 1) {
                                   e.preventDefault();
@@ -259,13 +294,25 @@ export const Header: React.FC = () => {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-slate-700 dark:text-surface-300 hover:text-slate-900 dark:hover:text-white font-semibold transition-colors px-2 py-1"
+                  className="text-surface-600 dark:text-surface-300 hover:text-surface-900 dark:hover:text-white font-medium transition-colors px-2 py-1"
                 >
                   {item.name}
                 </Link>
               );
             })}
             <div className="flex items-center gap-3">
+              <Link
+                href={isLoggedIn ? '/portal/org' : '/portal/login'}
+                className="text-surface-600 dark:text-surface-300 hover:text-surface-900 dark:hover:text-white font-medium transition-colors px-2 py-1"
+              >
+                {mounted
+                  ? isLoggedIn
+                    ? (t('nav.portal') as string)
+                    : (t('nav.login') as string)
+                  : isLoggedIn
+                    ? 'Portal'
+                    : 'Login'}
+              </Link>
               <LanguageSwitcher />
               <ThemeToggle />
               <Link href="/contact">
@@ -278,7 +325,7 @@ export const Header: React.FC = () => {
 
           <button
             type="button"
-            className="md:hidden p-3 text-slate-700 dark:text-surface-200 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded transition-colors touch-manipulation"
+            className="md:hidden p-3 text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-white/5 hover:text-surface-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded transition-colors touch-manipulation"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
             aria-expanded={mobileMenuOpen}
@@ -311,14 +358,14 @@ export const Header: React.FC = () => {
                     if (item.submenu) {
                       return (
                         <div key={item.name} className="space-y-1">
-                          <div className="px-4 py-2 text-slate-900 dark:text-surface-200 font-bold">
+                          <div className="px-4 py-2 text-surface-800 dark:text-surface-200 font-medium">
                             {item.name}
                           </div>
                           {item.submenu.map(subItem => (
                             <Link
                               key={subItem.name}
                               href={subItem.href}
-                              className="block px-8 py-2.5 text-sm text-slate-600 dark:text-surface-400 hover:bg-slate-100 dark:hover:bg-accent-500/10 hover:text-accent-600 dark:hover:text-accent-400 transition-colors font-medium text-start"
+                              className="block px-8 py-2.5 text-sm text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-accent-500/10 hover:text-accent-600 dark:hover:text-accent-400 transition-colors font-normal text-start"
                               onClick={() => setMobileMenuOpen(false)}
                             >
                               {subItem.name}
@@ -331,7 +378,7 @@ export const Header: React.FC = () => {
                       <Link
                         key={item.name}
                         href={item.href}
-                        className="block px-4 py-2.5 text-slate-700 dark:text-surface-300 hover:bg-slate-100 dark:hover:bg-accent-500/10 hover:text-accent-600 dark:hover:text-accent-400 transition-colors font-semibold text-start"
+                        className="block px-4 py-2.5 text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-accent-500/10 hover:text-accent-600 dark:hover:text-accent-400 transition-colors font-medium text-start"
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         {item.name}
@@ -339,8 +386,21 @@ export const Header: React.FC = () => {
                     );
                   })}
                   <div className="px-4 pt-4 flex flex-col gap-4">
+                    <Link
+                      href={isLoggedIn ? '/portal/org' : '/portal/login'}
+                      className="block px-4 py-2.5 text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-accent-500/10 hover:text-accent-600 dark:hover:text-accent-400 transition-colors font-medium text-start"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {mounted
+                        ? isLoggedIn
+                          ? (t('nav.portal') as string)
+                          : (t('nav.login') as string)
+                        : isLoggedIn
+                          ? 'Portal'
+                          : 'Login'}
+                    </Link>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                      <span className="text-sm font-medium text-surface-600 dark:text-surface-400">
                         Settings
                       </span>
                       <div className="flex items-center gap-3">
