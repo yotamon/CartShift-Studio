@@ -58,9 +58,9 @@ export const PortalShell = ({ children, orgId, isAgency = false }: PortalShellPr
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center space-y-4">
+      <div className="min-h-screen bg-surface-50 dark:bg-surface-950 flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-        <p className="text-slate-500 font-medium">Loading your workspace...</p>
+        <p className="text-surface-500 font-medium">Loading your workspace...</p>
       </div>
     );
   }
@@ -101,7 +101,7 @@ export const PortalShell = ({ children, orgId, isAgency = false }: PortalShellPr
                 )}
                 title={!isSidebarOpen ? item.label : undefined}
               >
-                <item.icon size={18} className={cn(isActive ? "text-[var(--portal-accent)]" : "text-slate-500")} />
+                <item.icon size={18} className={cn(isActive ? "text-[var(--portal-accent)]" : "text-surface-500")} />
                 {isSidebarOpen && <span className="text-sm font-medium">{item.label}</span>}
               </Link>
             );
@@ -111,7 +111,7 @@ export const PortalShell = ({ children, orgId, isAgency = false }: PortalShellPr
         <div className="absolute bottom-0 w-full p-4 border-t border-[var(--portal-sidebar-border)] bg-[var(--portal-sidebar-bg)] overflow-hidden">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="flex items-center gap-3 px-3 py-2 text-slate-500 hover:text-slate-900 dark:hover:text-white w-full transition-colors rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
+            className="flex items-center gap-3 px-3 py-2 text-surface-500 hover:text-surface-900 dark:hover:text-white w-full transition-colors rounded-md hover:bg-surface-100 dark:hover:bg-surface-800"
           >
             <ChevronLeft className={cn("transition-transform duration-300", !isSidebarOpen && "rotate-180")} size={18} />
             {isSidebarOpen && <span className="text-sm font-medium">Collapse</span>}
@@ -135,10 +135,10 @@ export const PortalShell = ({ children, orgId, isAgency = false }: PortalShellPr
         )}
       >
         {/* Topbar */}
-        <header className="portal-header fixed top-0 right-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-[var(--portal-border)] h-16 flex items-center px-8" style={{ left: isSidebarOpen ? '16rem' : '5rem', transition: 'left 0.3s ease-in-out' }}>
+        <header className="portal-header fixed top-0 right-0 z-40 bg-white/80 dark:bg-surface-950/80 backdrop-blur-md border-b border-[var(--portal-border)] h-16 flex items-center px-8" style={{ left: isSidebarOpen ? '16rem' : '5rem', transition: 'left 0.3s ease-in-out' }}>
           <div className="flex items-center gap-4 flex-1">
             <div className="relative w-full max-w-sm hidden md:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400" size={16} />
               <input
                 type="text"
                 placeholder="Search resources..."
@@ -148,19 +148,19 @@ export const PortalShell = ({ children, orgId, isAgency = false }: PortalShellPr
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors relative rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
+            <button className="p-2 text-surface-500 hover:text-surface-900 dark:hover:text-white transition-colors relative rounded-full hover:bg-surface-100 dark:hover:bg-surface-800">
               <Bell size={18} />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-950"></span>
+              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-surface-950"></span>
             </button>
-            <div className="h-6 w-px bg-slate-200 dark:bg-slate-800 mx-1"></div>
+            <div className="h-6 w-px bg-surface-200 dark:bg-surface-800 mx-1"></div>
             <div className="flex items-center gap-3 pl-1">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold text-slate-900 dark:text-white leading-none mb-1">{userData?.name || 'User'}</p>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider leading-none">
+                <p className="text-sm font-bold text-surface-900 dark:text-white leading-none mb-1">{userData?.name || 'User'}</p>
+                <p className="text-[10px] font-bold text-surface-400 uppercase tracking-wider leading-none">
                   {userData?.isAgency ? 'Agency Partner' : 'Client Workspace'}
                 </p>
               </div>
-              <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-blue-600 border border-slate-200 dark:border-slate-700 shadow-sm">
+              <div className="w-9 h-9 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center text-blue-600 border border-surface-200 dark:border-surface-700 shadow-sm">
                 <UserIcon size={18} />
               </div>
             </div>
