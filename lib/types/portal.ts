@@ -52,6 +52,9 @@ export interface Organization {
   name: string;
   slug: string;
   logoUrl?: string;
+  website?: string;
+  industry?: string;
+  bio?: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
@@ -74,6 +77,12 @@ export interface PortalUser {
   photoUrl?: string;
   isAgency: boolean;
   organizations: string[]; // org IDs
+  notificationPreferences?: {
+    emailOnRequestUpdate: boolean;
+    emailOnNewComment: boolean;
+    emailOnStatusChange: boolean;
+    marketingEmails: boolean;
+  };
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }

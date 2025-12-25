@@ -15,7 +15,7 @@ import {
   increment,
   serverTimestamp,
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { getFirestoreDb } from '@/lib/firebase';
 import {
   Request,
   CreateRequestData,
@@ -23,6 +23,9 @@ import {
   REQUEST_STATUS,
   RequestStatus,
 } from '@/lib/types/portal';
+
+// Initialize Firestore
+const db = getFirestoreDb();
 
 const REQUESTS_COLLECTION = 'portal_requests';
 

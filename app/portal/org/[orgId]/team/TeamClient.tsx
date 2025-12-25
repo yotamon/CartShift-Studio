@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import {
   UserPlus,
@@ -14,37 +14,68 @@ import {
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
-import { getOrganizationMembers, getInvitesByOrg } from '@/lib/services/portal-organizations';
+import { cancelInvite, subscribeToMembers, subscribeToInvites } from '@/lib/services/portal-organizations';
 import { OrganizationMember, Invite } from '@/lib/types/portal';
 import { format } from 'date-fns';
+import { InviteTeamMemberForm } from '@/components/portal/forms/InviteTeamMemberForm';
 
 export default function TeamClient() {
   const { orgId } = useParams();
   const [members, setMembers] = useState<OrganizationMember[]>([]);
   const [invites, setInvites] = useState<Invite[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [cancellingInvite, setCancellingInvite] = useState<string | null>(null);
+
+  const membersReceivedRef = useRef(false);
+  const invitesReceivedRef = useRef(false);
 
   useEffect(() => {
-    async function fetchData() {
-      if (!orgId || typeof orgId !== 'string') return;
+    if (!orgId || typeof orgId !== 'string') return;
 
-      setLoading(true);
-      try {
-        const [membersData, invitesData] = await Promise.all([
-          getOrganizationMembers(orgId),
-          getInvitesByOrg(orgId)
-        ]);
-        setMembers(membersData);
-        setInvites(invitesData);
-      } catch (error) {
-        console.error('Error fetching team data:', error);
-      } finally {
+    setLoading(true);
+    membersReceivedRef.current = false;
+    invitesReceivedRef.current = false;
+
+    const unsubscribeMembers = subscribeToMembers(orgId, (data) => {
+      setMembers(data);
+      membersReceivedRef.current = true;
+      if (membersReceivedRef.current && invitesReceivedRef.current) {
         setLoading(false);
       }
-    }
+    });
 
-    fetchData();
+    const unsubscribeInvites = subscribeToInvites(orgId, (data) => {
+      setInvites(data);
+      invitesReceivedRef.current = true;
+      if (membersReceivedRef.current && invitesReceivedRef.current) {
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      unsubscribeMembers();
+      unsubscribeInvites();
+    };
   }, [orgId]);
+
+  const handleInviteSuccess = async () => {
+    setShowInviteModal(false);
+  };
+
+  const handleCancelInvite = async (inviteId: string) => {
+    if (!confirm('Are you sure you want to cancel this invitation?')) return;
+
+    setCancellingInvite(inviteId);
+    try {
+      await cancelInvite(inviteId);
+    } catch (error) {
+      console.error('Error cancelling invite:', error);
+      alert('Failed to cancel invite');
+    } finally {
+      setCancellingInvite(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -62,7 +93,10 @@ export default function TeamClient() {
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Team Members</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Manage collaborators and permissions for this organization.</p>
         </div>
-        <PortalButton className="flex items-center gap-2 shadow-lg shadow-blue-500/20">
+        <PortalButton
+          onClick={() => setShowInviteModal(true)}
+          className="flex items-center gap-2 shadow-lg shadow-blue-500/20"
+        >
           <UserPlus size={18} />
           Invite Colleague
         </PortalButton>
@@ -117,14 +151,33 @@ export default function TeamClient() {
                         <Shield size={12} className="text-blue-500" /> {invite.role}
                       </p>
                     </div>
-                    <button className="text-[10px] font-black text-rose-500 uppercase tracking-widest hover:underline px-2 py-1 bg-rose-50 dark:bg-rose-950/30 rounded-md">Cancel</button>
+                    <button
+                      onClick={() => handleCancelInvite(invite.id)}
+                      disabled={cancellingInvite === invite.id}
+                      className="text-[10px] font-black text-rose-500 uppercase tracking-widest hover:underline px-2 py-1 bg-rose-50 dark:bg-rose-950/30 rounded-md disabled:opacity-50"
+                    >
+                      {cancellingInvite === invite.id ? (
+                        <Loader2 size={12} className="animate-spin" />
+                      ) : (
+                        <>Cancel</>
+                      )}
+                    </button>
                   </div>
                   <div className="flex items-center justify-between text-[10px] font-bold text-slate-400">
                     <span className="flex items-center gap-1 uppercase">
                       <Clock size={12} />
                       {invite.createdAt?.toDate ? `Sent ${format(invite.createdAt.toDate(), 'MMM d')}` : 'Recently'}
                     </span>
-                    <button className="text-blue-600 dark:text-blue-400 hover:underline">RESEND EMAIL</button>
+                    <button
+                      onClick={() => {
+                        const inviteLink = `${window.location.origin}/portal/invite/${invite.id}`;
+                        navigator.clipboard.writeText(inviteLink);
+                        alert('Invite link copied! Share it with your colleague.');
+                      }}
+                      className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+                    >
+                      COPY INVITE LINK
+                    </button>
                   </div>
                   <div className="h-px bg-slate-100 dark:bg-slate-800 last:hidden" />
                 </div>
@@ -162,6 +215,14 @@ export default function TeamClient() {
           </PortalCard>
         </div>
       </div>
+
+      {showInviteModal && orgId && typeof orgId === 'string' && (
+        <InviteTeamMemberForm
+          orgId={orgId}
+          onSuccess={handleInviteSuccess}
+          onCancel={() => setShowInviteModal(false)}
+        />
+      )}
     </div>
   );
 }

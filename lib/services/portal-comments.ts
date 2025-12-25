@@ -12,9 +12,12 @@ import {
   serverTimestamp,
   Timestamp,
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { getFirestoreDb } from '@/lib/firebase';
 import { Comment, CreateCommentData } from '@/lib/types/portal';
 import { incrementCommentCount } from './portal-requests';
+
+// Initialize Firestore
+const db = getFirestoreDb();
 
 const COMMENTS_COLLECTION = 'portal_comments';
 

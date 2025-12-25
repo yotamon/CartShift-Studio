@@ -16,7 +16,7 @@ import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
 import Link from 'next/link';
-import { getRequestStats, getRecentRequestsByOrg } from '@/lib/services/portal-requests';
+import { subscribeToOrgRequests } from '@/lib/services/portal-requests';
 import { Request } from '@/lib/types/portal';
 import { format } from 'date-fns';
 
@@ -27,26 +27,25 @@ export default function DashboardClient() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchData() {
-      if (!orgId || typeof orgId !== 'string') return;
+    if (!orgId || typeof orgId !== 'string') return;
 
-      setLoading(true);
-      try {
-        const [statsData, requestsData] = await Promise.all([
-          getRequestStats(orgId),
-          getRecentRequestsByOrg(orgId, 5)
-        ]);
+    setLoading(true);
 
-        setStats(statsData);
-        setRecentRequests(requestsData);
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
+    const unsubscribe = subscribeToOrgRequests(orgId, (data) => {
+      setRecentRequests(data.slice(0, 5));
 
-    fetchData();
+      // Calculate stats locally from the full list
+      setStats({
+        total: data.length,
+        active: data.filter(r => ['NEW', 'QUEUED', 'IN_PROGRESS'].includes(r.status)).length,
+        inReview: data.filter(r => r.status === 'IN_REVIEW').length,
+        completed: data.filter(r => ['DELIVERED', 'CLOSED'].includes(r.status)).length,
+      });
+
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, [orgId]);
 
   const statCards = [

@@ -14,7 +14,7 @@ import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
 import Link from 'next/link';
-import { getRequestsByOrg } from '@/lib/services/portal-requests';
+import { subscribeToOrgRequests } from '@/lib/services/portal-requests';
 import { Request } from '@/lib/types/portal';
 import { format } from 'date-fns';
 
@@ -28,21 +28,15 @@ export default function RequestsClient() {
   const filters = ['All', 'NEW', 'IN_PROGRESS', 'IN_REVIEW', 'DELIVERED', 'CLOSED'];
 
   useEffect(() => {
-    async function fetchRequests() {
-      if (!orgId || typeof orgId !== 'string') return;
+    if (!orgId || typeof orgId !== 'string') return;
 
-      setLoading(true);
-      try {
-        const data = await getRequestsByOrg(orgId);
-        setRequests(data);
-      } catch (error) {
-        console.error('Error fetching requests:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
+    setLoading(true);
+    const unsubscribe = subscribeToOrgRequests(orgId, (data) => {
+      setRequests(data);
+      setLoading(false);
+    });
 
-    fetchRequests();
+    return () => unsubscribe();
   }, [orgId]);
 
   const filteredRequests = requests.filter(req => {

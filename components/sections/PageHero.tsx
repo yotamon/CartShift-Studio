@@ -26,7 +26,7 @@ export const PageHero: React.FC<PageHeroProps> = ({
 }) => {
   return (
     <section className="relative min-h-[50vh] flex items-center justify-center py-12 md:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#f0f4f8] dark:bg-surface-950">
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-100 via-[#e8f0f8] to-slate-200 dark:from-surface-950 dark:to-surface-900 dark:opacity-40"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-surface-100 via-[#e8f0f8] to-surface-200 dark:from-surface-950 dark:to-surface-900 dark:opacity-40"></div>
       <div className="absolute top-0 start-0 w-full h-full bg-[url('/grid.svg')] opacity-[0.06] dark:opacity-10"></div>
 
       <ParallaxLayer depth={0.6} baseSpeed={0.25}>
@@ -46,10 +46,10 @@ export const PageHero: React.FC<PageHeroProps> = ({
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 dark:bg-white/5 border border-slate-300/50 dark:border-white/10 backdrop-blur-xl mb-8 shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 dark:bg-white/5 border border-surface-300/50 dark:border-white/10 backdrop-blur-xl mb-8 shadow-sm"
             >
               <Sparkles className="w-4 h-4 text-accent-500" />
-              <span className="text-slate-700 dark:text-surface-200 text-sm font-medium">
+              <span className="text-surface-700 dark:text-surface-200 text-sm font-medium">
                 {badge}
               </span>
             </motion.div>
@@ -61,8 +61,8 @@ export const PageHero: React.FC<PageHeroProps> = ({
             transition={{ duration: 0.8, ease: 'easeOut' }}
             className={
               compact
-                ? 'text-3xl md:text-4xl lg:text-5xl font-display font-bold leading-tight tracking-tight mb-6 text-slate-900 dark:text-white'
-                : 'text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight tracking-tight mb-6 text-slate-900 dark:text-white'
+                ? 'text-3xl md:text-4xl lg:text-5xl font-display font-bold leading-tight tracking-tight mb-6 text-surface-900 dark:text-white'
+                : 'text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight tracking-tight mb-6 text-surface-900 dark:text-white'
             }
           >
             {seoH1 ? (
@@ -105,7 +105,7 @@ export const PageHero: React.FC<PageHeroProps> = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg md:text-xl text-slate-600 dark:text-surface-300 mb-6 font-light leading-relaxed"
+            className="text-lg md:text-xl text-surface-600 dark:text-surface-300 mb-6 font-light leading-relaxed"
           >
             {subtitle}
           </motion.p>
@@ -114,7 +114,7 @@ export const PageHero: React.FC<PageHeroProps> = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-base md:text-lg text-slate-600 dark:text-surface-300 max-w-3xl mx-auto leading-relaxed"
+            className="text-base md:text-lg text-surface-600 dark:text-surface-300 max-w-3xl mx-auto leading-relaxed"
           >
             {description}
           </motion.p>

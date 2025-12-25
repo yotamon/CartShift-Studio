@@ -16,7 +16,7 @@ import {
   Bell,
   Search,
   User as UserIcon,
-  Loader2
+  Loader2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
@@ -43,18 +43,20 @@ export const PortalShell = ({ children, orgId, isAgency = false }: PortalShellPr
     }
   };
 
-  const navItems = isAgency ? [
-    { label: 'Inbox', icon: Inbox, href: '/portal/agency/inbox/' },
-    { label: 'Workboard', icon: Kanban, href: '/portal/agency/workboard/' },
-    { label: 'Clients', icon: Users, href: '/portal/agency/clients/' },
-    { label: 'Settings', icon: Settings, href: '/portal/agency/settings/' },
-  ] : [
-    { label: 'Dashboard', icon: LayoutDashboard, href: `/portal/org/${orgId}/dashboard/` },
-    { label: 'Requests', icon: ClipboardList, href: `/portal/org/${orgId}/requests/` },
-    { label: 'Team', icon: Users, href: `/portal/org/${orgId}/team/` },
-    { label: 'Files', icon: FolderOpen, href: `/portal/org/${orgId}/files/` },
-    { label: 'Settings', icon: Settings, href: `/portal/org/${orgId}/settings/` },
-  ];
+  const navItems = isAgency
+    ? [
+        { label: 'Inbox', icon: Inbox, href: '/portal/agency/inbox/' },
+        { label: 'Workboard', icon: Kanban, href: '/portal/agency/workboard/' },
+        { label: 'Clients', icon: Users, href: '/portal/agency/clients/' },
+        { label: 'Settings', icon: Settings, href: '/portal/agency/settings/' },
+      ]
+    : [
+        { label: 'Dashboard', icon: LayoutDashboard, href: `/portal/org/${orgId}/dashboard/` },
+        { label: 'Requests', icon: ClipboardList, href: `/portal/org/${orgId}/requests/` },
+        { label: 'Team', icon: Users, href: `/portal/org/${orgId}/team/` },
+        { label: 'Files', icon: FolderOpen, href: `/portal/org/${orgId}/files/` },
+        { label: 'Settings', icon: Settings, href: `/portal/org/${orgId}/settings/` },
+      ];
 
   if (loading) {
     return (
@@ -74,8 +76,8 @@ export const PortalShell = ({ children, orgId, isAgency = false }: PortalShellPr
       {/* Sidebar */}
       <aside
         className={cn(
-          "portal-sidebar fixed top-0 left-0 bottom-0 z-50 transition-all duration-300 ease-in-out border-r border-[var(--portal-sidebar-border)]",
-          isSidebarOpen ? "w-64" : "w-20"
+          'portal-sidebar fixed top-0 left-0 bottom-0 z-50 transition-all duration-300 ease-in-out border-r border-[var(--portal-sidebar-border)]',
+          isSidebarOpen ? 'w-64' : 'w-20'
         )}
       >
         <div className="h-16 flex items-center px-6 border-b border-[var(--portal-sidebar-border)] bg-[var(--portal-sidebar-bg)]">
@@ -88,20 +90,23 @@ export const PortalShell = ({ children, orgId, isAgency = false }: PortalShellPr
         </div>
 
         <nav className="p-4 space-y-1">
-          {navItems.map((item) => {
+          {navItems.map(item => {
             const isActive = pathname?.startsWith(item.href);
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "portal-nav-item h-11",
-                  isActive && "active",
-                  !isSidebarOpen && "justify-center px-0"
+                  'portal-nav-item h-11',
+                  isActive && 'active',
+                  !isSidebarOpen && 'justify-center px-0'
                 )}
                 title={!isSidebarOpen ? item.label : undefined}
               >
-                <item.icon size={18} className={cn(isActive ? "text-[var(--portal-accent)]" : "text-surface-500")} />
+                <item.icon
+                  size={18}
+                  className={cn(isActive ? 'text-[var(--portal-accent)]' : 'text-surface-500')}
+                />
                 {isSidebarOpen && <span className="text-sm font-medium">{item.label}</span>}
               </Link>
             );
@@ -113,7 +118,10 @@ export const PortalShell = ({ children, orgId, isAgency = false }: PortalShellPr
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             className="flex items-center gap-3 px-3 py-2 text-surface-500 hover:text-surface-900 dark:hover:text-white w-full transition-colors rounded-md hover:bg-surface-100 dark:hover:bg-surface-800"
           >
-            <ChevronLeft className={cn("transition-transform duration-300", !isSidebarOpen && "rotate-180")} size={18} />
+            <ChevronLeft
+              className={cn('transition-transform duration-300', !isSidebarOpen && 'rotate-180')}
+              size={18}
+            />
             {isSidebarOpen && <span className="text-sm font-medium">Collapse</span>}
           </button>
 
@@ -130,15 +138,21 @@ export const PortalShell = ({ children, orgId, isAgency = false }: PortalShellPr
       {/* Main Content Area */}
       <div
         className={cn(
-          "flex-1 flex flex-col transition-all duration-300 ease-in-out min-h-screen",
-          isSidebarOpen ? "pl-64" : "pl-20"
+          'flex-1 flex flex-col transition-all duration-300 ease-in-out min-h-screen',
+          isSidebarOpen ? 'pl-64' : 'pl-20'
         )}
       >
         {/* Topbar */}
-        <header className="portal-header fixed top-0 right-0 z-40 bg-white/80 dark:bg-surface-950/80 backdrop-blur-md border-b border-[var(--portal-border)] h-16 flex items-center px-8" style={{ left: isSidebarOpen ? '16rem' : '5rem', transition: 'left 0.3s ease-in-out' }}>
+        <header
+          className="portal-header fixed top-0 right-0 z-40 bg-white/80 dark:bg-surface-950/80 backdrop-blur-md border-b border-[var(--portal-border)] h-16 flex items-center px-8"
+          style={{ left: isSidebarOpen ? '16rem' : '5rem', transition: 'left 0.3s ease-in-out' }}
+        >
           <div className="flex items-center gap-4 flex-1">
             <div className="relative w-full max-w-sm hidden md:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400" size={16} />
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400"
+                size={16}
+              />
               <input
                 type="text"
                 placeholder="Search resources..."
@@ -155,7 +169,9 @@ export const PortalShell = ({ children, orgId, isAgency = false }: PortalShellPr
             <div className="h-6 w-px bg-surface-200 dark:bg-surface-800 mx-1"></div>
             <div className="flex items-center gap-3 pl-1">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold text-surface-900 dark:text-white leading-none mb-1">{userData?.name || 'User'}</p>
+                <p className="text-sm font-bold text-surface-900 dark:text-white leading-none mb-1">
+                  {userData?.name || 'User'}
+                </p>
                 <p className="text-[10px] font-bold text-surface-400 uppercase tracking-wider leading-none">
                   {userData?.isAgency ? 'Agency Partner' : 'Client Workspace'}
                 </p>
@@ -169,9 +185,7 @@ export const PortalShell = ({ children, orgId, isAgency = false }: PortalShellPr
 
         {/* Page Content */}
         <main className="flex-1 mt-16 p-8 overflow-y-auto">
-          <div className="max-w-7xl mx-auto">
-            {children}
-          </div>
+          <div className="max-w-7xl mx-auto">{children}</div>
         </main>
       </div>
     </div>

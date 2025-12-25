@@ -1,96 +1,162 @@
-import { initializeApp, getApps, getApp } from 'firebase/app';
 import {
-  getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
   sendPasswordResetEmail,
   updateProfile,
-  type Auth,
   type User
 } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { getFirebaseAuth, getFirestoreDb } from '@/lib/firebase';
 
-// Firebase configuration from environment variables
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-};
-
-// Initialize Firebase only on client side
-let auth: Auth | null = null;
-
-function initializeFirebase() {
-  if (typeof window === 'undefined') {
-    return null;
-  }
-
-  const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-  return getAuth(app);
-}
-
-export function getAuthInstance(): Auth {
-  if (!auth) {
-    auth = initializeFirebase();
-  }
-
-  if (!auth) {
-    throw new Error('Firebase Auth not available on server side');
-  }
-
-  return auth;
+/**
+ * Get the Firebase Auth instance from the centralized Firebase configuration
+ * This ensures we use a single, properly configured Firebase app instance
+ */
+export function getAuthInstance() {
+  return getFirebaseAuth();
 }
 
 export async function loginWithEmail(email: string, password: string): Promise<User> {
-  const authInstance = getAuthInstance();
-  const userCredential = await signInWithEmailAndPassword(authInstance, email, password);
-  return userCredential.user;
+  try {
+    // Validate inputs
+    if (!email || !password) {
+      throw new Error('Email and password are required');
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      throw new Error('Invalid email format');
+    }
+
+    const authInstance = getAuthInstance();
+
+    // Check if Firebase is properly configured
+    if (!authInstance) {
+      throw new Error('Firebase Auth is not properly initialized. Please check your environment variables.');
+    }
+
+    const userCredential = await signInWithEmailAndPassword(authInstance, email, password);
+    return userCredential.user;
+  } catch (error: any) {
+    // Re-throw Firebase auth errors with more context
+    if (error.code) {
+      // Firebase Auth error codes
+      const errorMessage = error.message || 'Authentication failed';
+      const enhancedError = new Error(errorMessage);
+      (enhancedError as any).code = error.code;
+      throw enhancedError;
+    }
+    throw error;
+  }
 }
 
 export async function signUpWithEmail(email: string, password: string, name?: string): Promise<User> {
-  const authInstance = getAuthInstance();
-  const userCredential = await createUserWithEmailAndPassword(authInstance, email, password);
+  try {
+    // Validate inputs
+    if (!email || !password) {
+      throw new Error('Email and password are required');
+    }
 
-  // Update user profile with display name if provided
-  if (name && userCredential.user) {
-    await updateProfile(userCredential.user, {
-      displayName: name
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      throw new Error('Invalid email format');
+    }
+
+    // Validate password length
+    if (password.length < 6) {
+      throw new Error('Password must be at least 6 characters');
+    }
+
+    const authInstance = getAuthInstance();
+
+    // Check if Firebase is properly configured
+    if (!authInstance) {
+      throw new Error('Firebase Auth is not properly initialized. Please check your environment variables.');
+    }
+
+    const userCredential = await createUserWithEmailAndPassword(authInstance, email, password);
+
+    // Update user profile with display name if provided
+    if (name && userCredential.user) {
+      await updateProfile(userCredential.user, {
+        displayName: name
+      });
+    }
+
+    // Create portal user document
+    const user = userCredential.user;
+    const db = getFirestoreDb();
+    await setDoc(doc(db, 'portal_users', user.uid), {
+      email: user.email,
+      name: name || user.displayName || null,
+      photoUrl: user.photoURL || null,
+      isAgency: false,
+      organizations: [],
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
     });
+
+    return user;
+  } catch (error: any) {
+    // Re-throw Firebase auth errors with more context
+    if (error.code) {
+      const errorMessage = error.message || 'Registration failed';
+      const enhancedError = new Error(errorMessage);
+      (enhancedError as any).code = error.code;
+      throw enhancedError;
+    }
+    throw error;
   }
-
-  // Create portal user document
-  const user = userCredential.user;
-  await setDoc(doc(db, 'portal_users', user.uid), {
-    email: user.email,
-    name: name || user.displayName || null,
-    photoUrl: user.photoURL || null,
-    isAgency: false,
-    organizations: [],
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  });
-
-  return user;
 }
 
 export async function logout(): Promise<void> {
-  const authInstance = getAuthInstance();
-  await signOut(authInstance);
+  try {
+    const authInstance = getAuthInstance();
+    if (!authInstance) {
+      throw new Error('Firebase Auth is not properly initialized');
+    }
+    await signOut(authInstance);
+  } catch (error: any) {
+    console.error('Logout error:', error);
+    throw error;
+  }
 }
 
 export async function resetPassword(email: string): Promise<void> {
-  const authInstance = getAuthInstance();
-  await sendPasswordResetEmail(authInstance, email);
+  try {
+    if (!email) {
+      throw new Error('Email is required');
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      throw new Error('Invalid email format');
+    }
+
+    const authInstance = getAuthInstance();
+    if (!authInstance) {
+      throw new Error('Firebase Auth is not properly initialized');
+    }
+    await sendPasswordResetEmail(authInstance, email);
+  } catch (error: any) {
+    if (error.code) {
+      const errorMessage = error.message || 'Password reset failed';
+      const enhancedError = new Error(errorMessage);
+      (enhancedError as any).code = error.code;
+      throw enhancedError;
+    }
+    throw error;
+  }
 }
 
 export function getCurrentUser(): User | null {
   try {
     const authInstance = getAuthInstance();
-    return authInstance.currentUser;
+    return authInstance?.currentUser || null;
   } catch {
     return null;
   }

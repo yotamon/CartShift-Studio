@@ -16,9 +16,13 @@ import {
   serverTimestamp,
   Timestamp,
 } from 'firebase/firestore';
-import { storage, db } from '@/lib/firebase';
+import { getFirebaseStorage, getFirestoreDb } from '@/lib/firebase';
 import { FileAttachment } from '@/lib/types/portal';
 import { v4 as uuidv4 } from 'uuid';
+
+// Initialize Firebase services
+const storage = getFirebaseStorage();
+const db = getFirestoreDb();
 
 const FILES_COLLECTION = 'portal_files';
 

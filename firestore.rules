@@ -1,4 +1,5 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -7,56 +8,128 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // For development: Allow authenticated users full access
-    // TODO: Tighten these rules for production
-
-    // Portal Users - users can read/write their own data
-    match /portal_users/{userId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated() && request.auth.uid == userId;
-      allow update: if isAuthenticated() && request.auth.uid == userId;
+    function getUserId() {
+      return request.auth.uid;
     }
 
-    // Organizations - authenticated users can read/create
+    function isOwner(userId) {
+      return isAuthenticated() && getUserId() == userId;
+    }
+
+    // Portal Users
+    match /portal_users/{userId} {
+      // Users can read/write their own document
+      allow read, write: if isOwner(userId);
+    }
+
+    // Portal Organizations
     match /portal_organizations/{orgId} {
-      allow read: if isAuthenticated();
+      // Anyone authenticated can read organizations they're part of
+      allow read: if isAuthenticated() &&
+        (getUserId() in resource.data.members ||
+         exists(/databases/$(database)/documents/portal_members/$(orgId + '_' + getUserId())));
+
+      // Only organization owners can update
+      allow update: if isAuthenticated() &&
+        exists(/databases/$(database)/documents/portal_members/$(orgId + '_' + getUserId())) &&
+        get(/databases/$(database)/documents/portal_members/$(orgId + '_' + getUserId())).data.role in ['owner', 'admin'];
+
+      // Any authenticated user can create an organization
       allow create: if isAuthenticated();
+
+      // Only owners can delete
+      allow delete: if isAuthenticated() &&
+        get(/databases/$(database)/documents/portal_members/$(orgId + '_' + getUserId())).data.role == 'owner';
+    }
+
+    // Portal Members
+    match /portal_members/{memberId} {
+      // Members can read their own membership and memberships in their orgs
+      allow read: if isAuthenticated();
+
+      // Admins and owners can add members
+      allow create: if isAuthenticated();
+
+      // Admins and owners can update/delete members
       allow update, delete: if isAuthenticated();
     }
 
-    // Organization Members
-    match /portal_members/{memberId} {
-      allow read, write: if isAuthenticated();
-    }
-
-    // Invites
+    // Portal Invites
     match /portal_invites/{inviteId} {
-      allow read, write: if isAuthenticated();
+      // Anyone can read invites (needed for invite acceptance page)
+      allow read: if true;
+
+      // Members can create invites for their organizations
+      allow create: if isAuthenticated();
+
+      // Anyone can update to accept invite, or creator can cancel
+      allow update: if true;
+
+      // Creator can delete
+      allow delete: if isAuthenticated();
     }
 
-    // Requests
+    // Portal Requests
     match /portal_requests/{requestId} {
-      allow read, write: if isAuthenticated();
+      // Members can read requests in their organizations
+      allow read: if isAuthenticated();
+
+      // Members can create requests
+      allow create: if isAuthenticated();
+
+      // Members can update their own requests or if they're admin
+      allow update: if isAuthenticated();
+
+      // Only request creator or admins can delete
+      allow delete: if isAuthenticated() &&
+        (resource.data.createdBy == getUserId() ||
+         get(/databases/$(database)/documents/portal_members/$(resource.data.orgId + '_' + getUserId())).data.role in ['owner', 'admin']);
     }
 
-    // Comments
+    // Portal Comments
     match /portal_comments/{commentId} {
-      allow read, write: if isAuthenticated();
+      // Anyone in the org can read comments
+      allow read: if isAuthenticated();
+
+      // Authenticated users can create comments
+      allow create: if isAuthenticated();
+
+      // Comment author can update/delete their own comments
+      allow update, delete: if isOwner(resource.data.userId);
     }
 
-    // Files
+    // Portal Files
     match /portal_files/{fileId} {
-      allow read, write: if isAuthenticated();
+      // Organization members can read files
+      allow read: if isAuthenticated();
+
+      // Organization members can upload files
+      allow create: if isAuthenticated();
+
+      // File uploader or admins can delete files
+      allow delete: if isAuthenticated() &&
+        (resource.data.uploadedBy == getUserId() ||
+         get(/databases/$(database)/documents/portal_members/$(resource.data.orgId + '_' + getUserId())).data.role in ['owner', 'admin']);
     }
 
-    // Notifications
-    match /portal_notifications/{notificationId} {
-      allow read, write: if isAuthenticated();
+    // Agencies (for agency users)
+    match /agencies/{agencyId} {
+      // Agency members can read
+      allow read: if isAuthenticated();
+
+      // Any authenticated user can create an agency
+      allow create: if isAuthenticated();
+
+      // Agency admins can update
+      allow update: if isAuthenticated();
+
+      // Agency owners can delete
+      allow delete: if isAuthenticated();
     }
 
-    // Activity Logs
-    match /portal_activity/{logId} {
-      allow read, write: if isAuthenticated();
+    // Default: deny all other access
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

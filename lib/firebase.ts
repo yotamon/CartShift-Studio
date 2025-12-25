@@ -19,16 +19,50 @@ let authInstance: Auth | undefined;
 let dbInstance: Firestore | undefined;
 let storageInstance: FirebaseStorage | undefined;
 
+/**
+ * Validates that required Firebase configuration values are present
+ */
+function validateFirebaseConfig() {
+  if (typeof window === 'undefined') {
+    return; // Skip validation on server side
+  }
+
+  const requiredFields = ['apiKey', 'authDomain', 'projectId', 'appId'];
+  const missingFields = requiredFields.filter(
+    (field) => !firebaseConfig[field as keyof typeof firebaseConfig]
+  );
+
+  if (missingFields.length > 0) {
+    console.error(
+      'Firebase configuration is incomplete. Missing fields:',
+      missingFields.join(', ')
+    );
+    console.error(
+      'Please ensure all NEXT_PUBLIC_FIREBASE_* environment variables are set.'
+    );
+  }
+}
+
 function getFirebaseApp(): FirebaseApp {
   if (typeof window === 'undefined') {
     throw new Error('Firebase can only be initialized on the client side');
   }
+
+  // Validate configuration before initializing
+  validateFirebaseConfig();
 
   if (!app) {
     const existingApps = getApps();
     if (existingApps.length > 0) {
       app = existingApps[0];
     } else {
+      // Ensure we have minimum required config before initializing
+      if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId) {
+        throw new Error(
+          'Firebase configuration is incomplete. Please check your environment variables: ' +
+          'NEXT_PUBLIC_FIREBASE_API_KEY, NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN, NEXT_PUBLIC_FIREBASE_PROJECT_ID'
+        );
+      }
       app = initializeApp(firebaseConfig);
     }
   }

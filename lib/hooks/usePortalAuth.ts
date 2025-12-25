@@ -11,6 +11,7 @@ interface UserData {
   name?: string;
   isAgency?: boolean;
   organizations?: string[];
+  notificationPreferences?: PortalUser['notificationPreferences'];
 }
 
 export function usePortalAuth() {
@@ -41,6 +42,7 @@ export function usePortalAuth() {
                 name: data.name || currentUser.displayName || undefined,
                 isAgency: data.isAgency || false,
                 organizations: data.organizations || [],
+                notificationPreferences: data.notificationPreferences,
               });
             } else {
               // Fallback to auth user data if no Firestore doc

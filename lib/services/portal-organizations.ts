@@ -9,12 +9,13 @@ import {
   query,
   where,
   orderBy,
+  onSnapshot,
   serverTimestamp,
   Timestamp,
   arrayUnion,
   arrayRemove,
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { getFirestoreDb } from '@/lib/firebase';
 import {
   Organization,
   OrganizationMember,
@@ -23,6 +24,9 @@ import {
   USER_ROLE,
   UserRole,
 } from '@/lib/types/portal';
+
+// Initialize Firestore
+const db = getFirestoreDb();
 
 const ORGS_COLLECTION = 'portal_organizations';
 const MEMBERS_COLLECTION = 'portal_members';
@@ -124,7 +128,13 @@ export async function getAllOrganizations(): Promise<Organization[]> {
 
 export async function updateOrganization(
   orgId: string,
-  data: { name?: string; logoUrl?: string }
+  data: {
+    name?: string;
+    logoUrl?: string;
+    website?: string;
+    industry?: string;
+    bio?: string;
+  }
 ): Promise<void> {
   const docRef = doc(db, ORGS_COLLECTION, orgId);
   await updateDoc(docRef, {
@@ -369,3 +379,64 @@ export async function cancelInvite(inviteId: string): Promise<void> {
   const inviteRef = doc(db, INVITES_COLLECTION, inviteId);
   await updateDoc(inviteRef, { status: 'expired' });
 }
+
+/**
+ * Helper function to invite a team member
+ */
+export async function inviteTeamMember(
+  orgId: string,
+  email: string,
+  role: 'admin' | 'member' | 'viewer'
+): Promise<Invite> {
+  // In a real implementation, you'd get the current user from auth context
+  // For now, we'll use placeholder values that should be replaced
+  const invitedBy = 'current-user-id'; // Should come from auth
+  const invitedByName = 'Current User'; // Should come from auth
+
+  return createInvite(orgId, invitedBy, invitedByName, {
+    email,
+    role,
+  });
+}
+
+export function subscribeToInvites(
+  orgId: string,
+  callback: (invites: Invite[]) => void
+): () => void {
+  const q = query(
+    collection(db, INVITES_COLLECTION),
+    where('orgId', '==', orgId),
+    where('status', '==', 'pending'),
+    orderBy('createdAt', 'desc')
+  );
+
+  return onSnapshot(q, (snapshot) => {
+    const invites = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Invite[];
+    callback(invites);
+  });
+}
+
+export function subscribeToMembers(
+  orgId: string,
+  callback: (members: OrganizationMember[]) => void
+): () => void {
+  const q = query(
+    collection(db, MEMBERS_COLLECTION),
+    where('orgId', '==', orgId),
+    orderBy('joinedAt', 'asc')
+  );
+
+  return onSnapshot(q, (snapshot) => {
+    const members = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as OrganizationMember[];
+    callback(members);
+  });
+}
+
+
+

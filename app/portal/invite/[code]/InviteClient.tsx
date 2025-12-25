@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { doc, getDoc, setDoc, updateDoc, serverTimestamp, arrayUnion } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { getFirestoreDb } from '@/lib/firebase';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
@@ -29,6 +29,9 @@ export default function InviteClient() {
 
   useEffect(() => {
     async function fetchInvite() {
+      // Only run on client side
+      if (typeof window === 'undefined') return;
+
       if (!code || typeof code !== 'string') {
         setError('Invalid invite code');
         setLoading(false);
@@ -36,6 +39,7 @@ export default function InviteClient() {
       }
 
       try {
+        const db = getFirestoreDb();
         const inviteRef = doc(db, INVITES_COLLECTION, code);
         const inviteSnap = await getDoc(inviteRef);
 
@@ -55,7 +59,14 @@ export default function InviteClient() {
         if (inviteData.status !== 'pending') {
           setError(inviteData.status === 'accepted' ? 'This invite has already been accepted' : 'This invite has expired');
         } else if (inviteData.expiresAt.toDate() < new Date()) {
-          await updateDoc(inviteRef, { status: 'expired' });
+          // Update expired status if user is authenticated, otherwise just show error
+          if (isAuthenticated) {
+            try {
+              await updateDoc(inviteRef, { status: 'expired' });
+            } catch (err) {
+              console.error('Error updating invite status:', err);
+            }
+          }
           setError('This invite has expired');
         }
       } catch (err: any) {
@@ -78,6 +89,7 @@ export default function InviteClient() {
     setError(null);
 
     try {
+      const db = getFirestoreDb();
       const inviteRef = doc(db, INVITES_COLLECTION, invite.id);
       const inviteSnap = await getDoc(inviteRef);
 
@@ -237,13 +249,25 @@ export default function InviteClient() {
               )}
 
               {!isAuthenticated ? (
-                <div className="space-y-2">
-                  <p className="text-sm text-muted-foreground text-center">
-                    Please sign in to accept this invite
+                <div className="space-y-3">
+                  <p className="text-sm text-slate-600 dark:text-slate-400 text-center font-medium">
+                    To accept this invite, you need an account
                   </p>
-                  <Link href="/portal/login" className="block">
-                    <PortalButton className="w-full">Sign In</PortalButton>
-                  </Link>
+                  <div className="space-y-2">
+                    <Link href={`/portal/signup?email=${encodeURIComponent(invite.email)}&redirect=/portal/invite/${invite.id}`} className="block">
+                      <PortalButton className="w-full shadow-lg shadow-blue-500/20">
+                        Create Account
+                      </PortalButton>
+                    </Link>
+                    <Link href={`/portal/login?redirect=/portal/invite/${invite.id}`} className="block">
+                      <PortalButton variant="outline" className="w-full">
+                        Sign In
+                      </PortalButton>
+                    </Link>
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
+                    Already have an account? Click "Sign In" above
+                  </p>
                 </div>
               ) : !emailMatch ? (
                 <div className="p-3 bg-warning/10 border border-warning/20 rounded-md">

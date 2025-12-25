@@ -19,7 +19,7 @@ import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
 import Link from 'next/link';
-import { getRequest, updateRequestStatus } from '@/lib/services/portal-requests';
+import { getRequest, updateRequestStatus, subscribeToRequest } from '@/lib/services/portal-requests';
 import { createComment, subscribeToRequestComments } from '@/lib/services/portal-comments';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { Request, Comment } from '@/lib/types/portal';
@@ -36,29 +36,24 @@ export default function RequestDetailClient() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    async function fetchRequest() {
-      if (!requestId || typeof requestId !== 'string') return;
+    if (!requestId || typeof requestId !== 'string') return;
 
-      try {
-        const data = await getRequest(requestId);
-        setRequest(data);
-      } catch (error) {
-        console.error('Error fetching request:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
+    setLoading(true);
 
-    fetchRequest();
+    // Subscribe to request data
+    const unsubscribeRequest = subscribeToRequest(requestId, (data) => {
+      setRequest(data);
+      setLoading(false);
+    });
 
-    const unsubscribe = requestId && typeof requestId === 'string'
-      ? subscribeToRequestComments(requestId, (data) => {
-          setComments(data);
-        }, userData?.isAgency)
-      : undefined;
+    // Subscribe to comments
+    const unsubscribeComments = subscribeToRequestComments(requestId, (data) => {
+      setComments(data);
+    }, userData?.isAgency);
 
     return () => {
-      if (unsubscribe) unsubscribe();
+      unsubscribeRequest();
+      unsubscribeComments();
     };
   }, [requestId, userData?.isAgency]);
 

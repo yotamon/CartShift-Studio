@@ -18,15 +18,18 @@ import {
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
-import { getFilesByOrg, formatFileSize } from '@/lib/services/portal-files';
+import { getFilesByOrg, formatFileSize, deleteFile } from '@/lib/services/portal-files';
 import { FileAttachment } from '@/lib/types/portal';
 import { format } from 'date-fns';
+import { UploadFileForm } from '@/components/portal/forms/UploadFileForm';
 
 export default function FilesClient() {
   const { orgId } = useParams();
   const [files, setFiles] = useState<FileAttachment[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [deletingFile, setDeletingFile] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchFiles() {
@@ -58,6 +61,34 @@ export default function FilesClient() {
     return <File size={20} />;
   };
 
+  const handleUploadSuccess = async () => {
+    setShowUploadModal(false);
+    // Refresh files list
+    if (orgId && typeof orgId === 'string') {
+      const data = await getFilesByOrg(orgId);
+      setFiles(data);
+    }
+  };
+
+  const handleDeleteFile = async (fileId: string, storagePath: string) => {
+    if (!confirm('Are you sure you want to delete this file? This action cannot be undone.')) return;
+
+    setDeletingFile(fileId);
+    try {
+      await deleteFile(fileId, storagePath);
+      // Refresh files
+      if (orgId && typeof orgId === 'string') {
+        const data = await getFilesByOrg(orgId);
+        setFiles(data);
+      }
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      alert('Failed to delete file');
+    } finally {
+      setDeletingFile(null);
+    }
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -65,7 +96,10 @@ export default function FilesClient() {
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Files & Assets</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Unified storage for all your project documents and resources.</p>
         </div>
-        <PortalButton className="flex items-center gap-2 shadow-lg shadow-blue-500/20">
+        <PortalButton
+          onClick={() => setShowUploadModal(true)}
+          className="flex items-center gap-2 shadow-lg shadow-blue-500/20"
+        >
           <Upload size={18} />
           Upload Asset
         </PortalButton>
@@ -144,8 +178,16 @@ export default function FilesClient() {
                         <button className="p-2 text-slate-400 hover:text-emerald-500 transition-colors rounded-full hover:bg-emerald-50 dark:hover:bg-emerald-900/20">
                           <Share2 size={16} />
                         </button>
-                        <button className="p-2 text-slate-400 hover:text-rose-500 transition-colors rounded-full hover:bg-rose-50 dark:hover:bg-rose-900/20">
-                          <Trash2 size={16} />
+                        <button
+                          onClick={() => handleDeleteFile(file.id, file.storagePath)}
+                          disabled={deletingFile === file.id}
+                          className="p-2 text-slate-400 hover:text-rose-500 transition-colors rounded-full hover:bg-rose-50 dark:hover:bg-rose-900/20 disabled:opacity-50"
+                        >
+                          {deletingFile === file.id ? (
+                            <Loader2 size={16} className="animate-spin" />
+                          ) : (
+                            <Trash2 size={16} />
+                          )}
                         </button>
                       </div>
                     </td>
@@ -166,6 +208,14 @@ export default function FilesClient() {
           )}
         </div>
       </PortalCard>
+
+      {showUploadModal && orgId && typeof orgId === 'string' && (
+        <UploadFileForm
+          orgId={orgId}
+          onSuccess={handleUploadSuccess}
+          onCancel={() => setShowUploadModal(false)}
+        />
+      )}
     </div>
   );
 }
