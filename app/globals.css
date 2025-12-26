@@ -928,7 +928,7 @@ body {
   }
 
   .portal-sidebar {
-    @apply w-[280px] h-screen bg-[var(--portal-bg-secondary)] border-e rtl:border-e-0 rtl:border-s border-[var(--portal-border)] flex flex-col z-50 transition-transform duration-300 ease-in-out;
+    @apply h-screen bg-[var(--portal-bg-secondary)] border-e rtl:border-e-0 rtl:border-s border-[var(--portal-border)] flex flex-col z-50 transition-all duration-300 ease-in-out;
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.03);
   }
 

@@ -46,7 +46,7 @@ service cloud.firestore {
     match /portal_organizations/{orgId} {
       function isAgencyUser() {
         return exists(/databases/$(database)/documents/portal_users/$(getUserId())) &&
-          get(/databases/$(database)/documents/portal_users/$(getUserId())).data.isAgency == true;
+          get(/databases/$(database)/documents/portal_users/$(getUserId())).data.accountType == 'AGENCY';
       }
 
       // Agency users can read all organizations, regular users can read organizations they're part of
@@ -107,7 +107,7 @@ service cloud.firestore {
 
       function isAgencyUser() {
         return exists(/databases/$(database)/documents/portal_users/$(getUserId())) &&
-          get(/databases/$(database)/documents/portal_users/$(getUserId())).data.isAgency == true;
+          get(/databases/$(database)/documents/portal_users/$(getUserId())).data.accountType == 'AGENCY';
       }
 
       // Agency users can read all requests, regular users can read requests in their organizations

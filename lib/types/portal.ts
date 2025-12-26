@@ -59,12 +59,45 @@ export type RequestPriority = (typeof REQUEST_PRIORITY)[keyof typeof REQUEST_PRI
 export type RequestType = (typeof REQUEST_TYPE)[keyof typeof REQUEST_TYPE];
 export type UserRole = (typeof USER_ROLE)[keyof typeof USER_ROLE];
 export type AccountType = (typeof ACCOUNT_TYPE)[keyof typeof ACCOUNT_TYPE];
+export type Currency = (typeof CURRENCY)[keyof typeof CURRENCY];
 
 // Account type configuration for UI
 export const ACCOUNT_TYPE_CONFIG: Record<AccountType, { label: string; labelHe: string; color: string; badgeVariant: 'blue' | 'purple' }> = {
   CLIENT: { label: 'Client', labelHe: 'לקוח', color: 'blue', badgeVariant: 'blue' },
   AGENCY: { label: 'Agency', labelHe: 'סוכנות', color: 'purple', badgeVariant: 'purple' },
 };
+
+// Currency configuration
+export const CURRENCY_CONFIG: Record<Currency, { symbol: string; name: string }> = {
+  USD: { symbol: '$', name: 'US Dollar' },
+  ILS: { symbol: '₪', name: 'Israeli Shekel' },
+  EUR: { symbol: '€', name: 'Euro' },
+};
+
+// Pricing line item for billable requests
+export interface PricingLineItem {
+  id: string;
+  description: string;
+  quantity: number;
+  unitPrice: number; // in cents/smallest currency unit
+  notes?: string;
+}
+
+// Utility functions for pricing
+export function calculateTotalAmount(lineItems: PricingLineItem[]): number {
+  return lineItems.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
+}
+
+export function formatCurrency(amountInCents: number, currency: Currency): string {
+  const config = CURRENCY_CONFIG[currency];
+  const amount = amountInCents / 100;
+  return `${config.symbol}${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+export function generateLineItemId(): string {
+  return `item_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+}
+
 
 // ============================================
 // CORE TYPES
@@ -130,6 +163,24 @@ export interface Request {
   createdAt: Timestamp;
   updatedAt: Timestamp;
   closedAt?: Timestamp;
+
+  // Pricing fields (optional - for billable requests)
+  isBillable?: boolean;
+  lineItems?: PricingLineItem[];
+  totalAmount?: number;         // in cents
+  currency?: Currency;
+  validUntil?: Timestamp;
+  quotedAt?: Timestamp;
+
+  // Client response to quote
+  clientNotes?: string;
+  acceptedAt?: Timestamp;
+  declinedAt?: Timestamp;
+
+  // Payment info
+  paymentId?: string;           // PayPal transaction ID
+  paidAt?: Timestamp;
+  paymentMethod?: 'paypal';
 }
 
 export interface Comment {
@@ -255,6 +306,24 @@ export const STATUS_CONFIG: Record<RequestStatus, StatusConfig> = {
     bgClass: 'bg-amber-100 dark:bg-amber-500/20',
     textClass: 'text-amber-700 dark:text-amber-300',
   },
+  QUOTED: {
+    label: 'Quoted',
+    color: 'purple',
+    bgClass: 'bg-purple-100 dark:bg-purple-500/20',
+    textClass: 'text-purple-700 dark:text-purple-300',
+  },
+  ACCEPTED: {
+    label: 'Accepted',
+    color: 'green',
+    bgClass: 'bg-green-100 dark:bg-green-500/20',
+    textClass: 'text-green-700 dark:text-green-300',
+  },
+  DECLINED: {
+    label: 'Declined',
+    color: 'red',
+    bgClass: 'bg-red-100 dark:bg-red-500/20',
+    textClass: 'text-red-700 dark:text-red-300',
+  },
   QUEUED: {
     label: 'Queued',
     color: 'gray',
@@ -278,6 +347,12 @@ export const STATUS_CONFIG: Record<RequestStatus, StatusConfig> = {
     color: 'green',
     bgClass: 'bg-green-100 dark:bg-green-500/20',
     textClass: 'text-green-700 dark:text-green-300',
+  },
+  PAID: {
+    label: 'Paid',
+    color: 'emerald',
+    bgClass: 'bg-emerald-100 dark:bg-emerald-500/20',
+    textClass: 'text-emerald-700 dark:text-emerald-300',
   },
   CLOSED: {
     label: 'Closed',

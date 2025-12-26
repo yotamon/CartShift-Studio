@@ -288,30 +288,44 @@ export const PortalShell = ({
       {/* Sidebar - Mobile-first: hidden by default, shown on md+ */}
       <aside
         className={cn(
-          'portal-sidebar fixed top-0 left-0 rtl:left-auto rtl:right-0 bottom-0 z-50 transition-transform duration-300 ease-in-out bg-white dark:bg-surface-900 border-r rtl:border-r-0 rtl:border-l border-surface-200 dark:border-surface-800/50 shadow-2xl shadow-surface-900/5 flex flex-col',
+          'portal-sidebar fixed top-0 left-0 rtl:left-auto rtl:right-0 bottom-0 z-50 transition-all duration-300 ease-in-out bg-white dark:bg-surface-900 border-r rtl:border-r-0 rtl:border-l border-surface-200 dark:border-surface-800/50 shadow-2xl shadow-surface-900/5 flex flex-col',
           'w-[85vw] max-w-sm',
-          'md:w-72 md:translate-x-0',
-          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+          'md:translate-x-0',
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full',
+          isSidebarOpen ? 'md:w-72' : 'md:w-24'
         )}
         aria-label="Navigation"
       >
         <div className="h-16 md:h-20 flex items-center px-4 md:px-6 lg:px-8 border-b border-surface-100 dark:border-surface-800/50 flex-shrink-0">
-          <div className="flex items-center gap-3 md:gap-4 group w-full min-w-0">
+          <div className="flex items-center gap-3 md:gap-4 group w-full min-w-0 md:justify-center">
             <div className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-black shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
               <Zap size={18} className="md:w-5 md:h-5" fill="currentColor" />
             </div>
-            <div className="flex flex-col leading-none min-w-0 flex-1">
-              <span className="font-black text-base md:text-lg lg:text-xl tracking-tighter font-outfit text-surface-900 dark:text-white truncate">
-                {t('portal.sidebar.title')}
-              </span>
-              <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest mt-0.5 truncate">
-                {t('portal.sidebar.subtitle')}
-              </span>
-            </div>
+            <AnimatePresence>
+              {isSidebarOpen && (
+                <motion.div
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: 'auto' }}
+                  exit={{ opacity: 0, width: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="flex flex-col leading-none min-w-0 flex-1 md:flex-none"
+                >
+                  <span className="font-black text-base md:text-lg lg:text-xl tracking-tighter font-outfit text-surface-900 dark:text-white truncate">
+                    {t('portal.sidebar.title')}
+                  </span>
+                  <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest mt-0.5 truncate">
+                    {t('portal.sidebar.subtitle')}
+                  </span>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
-        <nav className="p-3 md:p-4 lg:p-6 space-y-1 md:space-y-1.5 lg:space-y-2 mt-2 md:mt-3 lg:mt-4 overflow-y-auto flex-1 min-h-0" aria-label="Main navigation">
+        <nav className={cn(
+          'p-3 md:p-4 lg:p-6 space-y-1 md:space-y-1.5 lg:space-y-2 mt-2 md:mt-3 lg:mt-4 overflow-y-auto flex-1 min-h-0',
+          !isSidebarOpen && 'md:px-2'
+        )} aria-label="Main navigation">
           {navItems.map(item => {
             const isActive = pathname?.startsWith(item.href);
             return (
@@ -326,11 +340,14 @@ export const PortalShell = ({
                 className={cn(
                   'h-11 md:h-12 flex items-center gap-3 md:gap-4 px-3 md:px-4 rounded-xl md:rounded-2xl transition-all duration-200 relative group font-outfit touch-manipulation',
                   'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-surface-900',
+                  'md:justify-center',
+                  !isSidebarOpen && 'md:px-2 md:gap-0',
                   isActive
                     ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 shadow-sm font-semibold'
                     : 'text-surface-500 hover:bg-surface-50 dark:hover:bg-surface-800/50 hover:text-surface-900 dark:hover:text-white active:bg-surface-100 dark:active:bg-surface-800'
                 )}
                 aria-current={isActive ? 'page' : undefined}
+                title={!isSidebarOpen ? item.label : undefined}
               >
                 <item.icon
                   size={18}
@@ -342,7 +359,19 @@ export const PortalShell = ({
                   )}
                   aria-hidden="true"
                 />
-                <span className="text-sm font-bold tracking-tight truncate flex-1">{item.label}</span>
+                <AnimatePresence>
+                  {isSidebarOpen && (
+                    <motion.span
+                      initial={{ opacity: 0, width: 0 }}
+                      animate={{ opacity: 1, width: 'auto' }}
+                      exit={{ opacity: 0, width: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="text-sm font-bold tracking-tight truncate flex-1 md:flex-none"
+                    >
+                      {item.label}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
                 {isActive && (
                   <div className="absolute left-0 rtl:left-auto rtl:right-0 w-1 h-6 bg-blue-600 rounded-full" aria-hidden="true" />
                 )}
@@ -351,7 +380,10 @@ export const PortalShell = ({
           })}
         </nav>
 
-        <div className="border-t border-surface-100 dark:border-surface-800/50 pt-3 pb-4 md:pb-6 lg:pb-8 px-3 md:px-4 lg:px-6 space-y-1.5 md:space-y-2 flex-shrink-0 bg-white dark:bg-surface-900">
+        <div className={cn(
+          'border-t border-surface-100 dark:border-surface-800/50 pt-3 pb-4 md:pb-6 lg:pb-8 px-3 md:px-4 lg:px-6 space-y-1.5 md:space-y-2 flex-shrink-0 bg-white dark:bg-surface-900',
+          !isSidebarOpen && 'md:px-2'
+        )}>
           <button
             onClick={() => {
               setIsSidebarOpen(!isSidebarOpen);
@@ -359,8 +391,12 @@ export const PortalShell = ({
                 setIsMobileMenuOpen(false);
               }
             }}
-            className="hidden md:flex items-center gap-3 md:gap-4 px-3 md:px-4 py-2.5 md:py-3 h-11 md:h-auto text-surface-500 hover:text-surface-900 dark:hover:text-white w-full transition-all rounded-xl md:rounded-2xl hover:bg-surface-50 dark:hover:bg-surface-800/50 group font-outfit touch-manipulation focus:outline-none focus:ring-2 focus:ring-surface-300 dark:focus:ring-surface-700"
+            className={cn(
+              'hidden md:flex items-center gap-3 md:gap-4 px-3 md:px-4 py-2.5 md:py-3 h-11 md:h-auto text-surface-500 hover:text-surface-900 dark:hover:text-white w-full transition-all rounded-xl md:rounded-2xl hover:bg-surface-50 dark:hover:bg-surface-800/50 group font-outfit touch-manipulation focus:outline-none focus:ring-2 focus:ring-surface-300 dark:focus:ring-surface-700 md:justify-center',
+              !isSidebarOpen && 'md:px-2 md:gap-0'
+            )}
             aria-label={isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+            title={!isSidebarOpen ? 'Expand sidebar' : undefined}
           >
             <div
               className={cn(
@@ -374,9 +410,19 @@ export const PortalShell = ({
             >
               <ChevronLeft size={18} />
             </div>
-            {isSidebarOpen && (
-              <span className="text-sm font-bold">{t('portal.sidebar.collapse')}</span>
-            )}
+            <AnimatePresence>
+              {isSidebarOpen && (
+                <motion.span
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: 'auto' }}
+                  exit={{ opacity: 0, width: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="text-sm font-bold"
+                >
+                  {t('portal.sidebar.collapse')}
+                </motion.span>
+              )}
+            </AnimatePresence>
           </button>
           <button
             onClick={() => setIsMobileMenuOpen(false)}
@@ -389,11 +435,27 @@ export const PortalShell = ({
 
           <button
             onClick={handleSignOut}
-            className="flex items-center gap-3 md:gap-4 px-3 md:px-4 py-2.5 md:py-3 h-11 md:h-auto text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl md:rounded-2xl w-full transition-all group font-outfit touch-manipulation active:bg-rose-100 dark:active:bg-rose-500/20 focus:outline-none focus:ring-2 focus:ring-rose-300 dark:focus:ring-rose-700"
+            className={cn(
+              'flex items-center gap-3 md:gap-4 px-3 md:px-4 py-2.5 md:py-3 h-11 md:h-auto text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl md:rounded-2xl w-full transition-all group font-outfit touch-manipulation active:bg-rose-100 dark:active:bg-rose-500/20 focus:outline-none focus:ring-2 focus:ring-rose-300 dark:focus:ring-rose-700 md:justify-center',
+              !isSidebarOpen && 'md:px-2 md:gap-0'
+            )}
             aria-label="Sign out"
+            title={!isSidebarOpen ? t('portal.sidebar.signOut') : undefined}
           >
             <LogOut size={18} className="flex-shrink-0 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" aria-hidden="true" />
-            <span className="text-sm font-bold">{t('portal.sidebar.signOut')}</span>
+            <AnimatePresence>
+              {isSidebarOpen && (
+                <motion.span
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: 'auto' }}
+                  exit={{ opacity: 0, width: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="text-sm font-bold"
+                >
+                  {t('portal.sidebar.signOut')}
+                </motion.span>
+              )}
+            </AnimatePresence>
           </button>
         </div>
       </aside>

@@ -341,7 +341,24 @@
         "messages": "Messages",
         "lifecycle": "Lifecycle Management",
         "markFulfilled": "Mark as Fulfilled",
-        "requestStrategicRevision": "Request Strategic Revision"
+        "requestStrategicRevision": "Request Strategic Revision",
+        "addPricing": "Add Pricing",
+        "addQuote": "Add Price Quote",
+        "startWork": "Start Work",
+        "payPayPal": "Pay with PayPal",
+        "paymentSuccess": "Payment Successful",
+        "paymentError": "Payment Failed",
+        "currency": "Currency",
+        "lineItems": "Line Items",
+        "descriptionPlaceholder": "Description...",
+        "qty": "Qty",
+        "price": "Price",
+        "addLineItem": "Add Line Item",
+        "total": "Total",
+        "sendQuote": "Send Quote",
+        "acceptQuote": "Accept Quote",
+        "decline": "Decline",
+        "pricingTitle": "Pricing"
       },
       "types": {
         "audit": "Strategic Audit",
@@ -350,6 +367,50 @@
         "feature": "New Store Feature",
         "migration": "Platform Migration",
         "general": "General Task"
+      }
+    },
+    "agency": {
+      "inbox": {
+        "title": "Agency Inbox",
+        "subtitle": "Global view of all client requests and communications.",
+        "searchPlaceholder": "Search requests...",
+        "activeItems": "Active Items",
+        "loading": "Loading agency inbox...",
+        "emptyTitle": "Your inbox is clear",
+        "emptyDesc": "All client requests have been processed or sorted.",
+        "clientOrg": "Client Org"
+      },
+      "workboard": {
+        "title": "Project Workboard",
+        "subtitle": "Real-time status of all active client projects across the agency.",
+        "loading": "Synchronizing Kanban Board...",
+        "roadmap": "Q4 Roadmap",
+        "assign": "Assign Item",
+        "emptyColumn": "No Active Tasks",
+        "columns": {
+          "backlog": "New & Backlog",
+          "inProgress": "In Progress",
+          "review": "Feedback & Review",
+          "delivered": "Delivered"
+        }
+      },
+      "clients": {
+        "title": "Client Portfolio",
+        "subtitle": "Direct access and management for all partner organizations.",
+        "onboard": "Onboard New Client",
+        "searchPlaceholder": "Search by company name...",
+        "activeAccounts": "Active Accounts",
+        "export": "Performance Export",
+        "loading": "Retrieving Client Portfolio...",
+        "tickets": "Open Tickets",
+        "members": "Members",
+        "dashboard": "Enter Dashboard",
+        "emptyTitle": "No clients found",
+        "emptyDesc": "Either you have no active clients or they don't match your search criteria.",
+        "badge": {
+          "active": "ACTIVE"
+        },
+        "enterprise": "Enterprise Partner"
       }
     },
     "team": {

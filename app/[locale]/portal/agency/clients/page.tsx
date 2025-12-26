@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { PortalShell } from '@/components/portal/PortalShell';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
@@ -19,8 +18,10 @@ import {
 import { getAllOrganizations } from '@/lib/services/portal-organizations';
 import { Organization } from '@/lib/types/portal';
 import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 
 export default function AgencyClientsPage() {
+  const t = useTranslations('portal');
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -46,27 +47,26 @@ export default function AgencyClientsPage() {
 
   if (loading) {
      return (
-       <PortalShell isAgency>
-         <div className="min-h-[400px] flex flex-col items-center justify-center space-y-4">
-           <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
-           <p className="text-surface-500 font-bold uppercase tracking-widest text-xs">Retrieving Client Portfolio...</p>
-         </div>
-       </PortalShell>
+       <div className="min-h-[400px] flex flex-col items-center justify-center space-y-4">
+         <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
+         <p className="text-surface-500 font-bold uppercase tracking-widest text-xs">{t('agency.clients.loading')}</p>
+       </div>
      );
   }
 
   return (
-    <PortalShell isAgency>
-      <div className="space-y-8 animate-in fade-in duration-700">
+    <div className="space-y-8 animate-in fade-in duration-700">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-surface-900 dark:text-white leading-tight">Client Portfolio</h1>
-            <p className="text-surface-500 dark:text-surface-400 mt-1">Direct access and management for all partner organizations.</p>
+            <h1 className="text-3xl font-bold tracking-tight text-surface-900 dark:text-white leading-tight">{t('agency.clients.title')}</h1>
+            <p className="text-surface-500 dark:text-surface-400 mt-1">{t('agency.clients.subtitle')}</p>
           </div>
-          <PortalButton className="flex items-center gap-2 shadow-lg shadow-blue-500/20">
-            <Plus size={18} />
-            Onboard New Client
-          </PortalButton>
+          <Link href="/portal/agency/clients/new/">
+            <PortalButton className="flex items-center gap-2 shadow-lg shadow-blue-500/20">
+              <Plus size={18} />
+              {t('agency.clients.onboard')}
+            </PortalButton>
+          </Link>
         </div>
 
         <div className="flex flex-col md:flex-row md:items-center gap-4 bg-white dark:bg-surface-900/50 p-4 rounded-2xl border border-surface-200 dark:border-surface-800 shadow-sm">
@@ -74,7 +74,7 @@ export default function AgencyClientsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400" size={18} />
             <input
               type="text"
-              placeholder="Search by company name..."
+              placeholder={t('agency.clients.searchPlaceholder')}
               className="portal-input pl-11 h-11 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900/50"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -82,10 +82,10 @@ export default function AgencyClientsPage() {
           </div>
           <div className="flex items-center gap-3">
              <div className="text-xs font-bold text-surface-400 uppercase tracking-widest px-2">
-                {filteredOrgs.length} Active Accounts
+                {filteredOrgs.length} {t('agency.clients.activeAccounts')}
              </div>
              <PortalButton variant="outline" className="h-11 border-surface-200 dark:border-surface-800">
-                Performance Export
+                {t('agency.clients.export')}
              </PortalButton>
           </div>
         </div>
@@ -100,7 +100,7 @@ export default function AgencyClientsPage() {
                       <Briefcase size={28} className="text-blue-600 opacity-80" />
                     </div>
                     <div className="flex items-center gap-2">
-                      <PortalBadge variant="green" className="text-[9px] font-black uppercase tracking-widest h-5">ACTIVE</PortalBadge>
+                      <PortalBadge variant="green" className="text-[9px] font-black uppercase tracking-widest h-5">{t('agency.clients.badge.active')}</PortalBadge>
                       <button className="text-surface-300 hover:text-surface-900 dark:hover:text-white transition-colors p-1">
                         <MoreVertical size={18} />
                       </button>
@@ -113,19 +113,19 @@ export default function AgencyClientsPage() {
 
                   <div className="flex items-center gap-2 mb-6">
                     <ShieldCheck size={14} className="text-emerald-500" />
-                    <span className="text-xs font-bold text-surface-500 uppercase tracking-widest">Enterprise Partner</span>
+                    <span className="text-xs font-bold text-surface-500 uppercase tracking-widest">{t('agency.clients.enterprise')}</span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 pt-6 border-t border-surface-50 dark:border-surface-800/50">
                     <div>
-                      <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-1">Open Tickets</p>
+                      <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-1">{t('agency.clients.tickets')}</p>
                       <div className="flex items-center gap-2">
                         <span className="text-lg font-bold text-surface-900 dark:text-white">12</span>
                         <TrendingUp size={14} className="text-emerald-500" />
                       </div>
                     </div>
                     <div>
-                      <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-1">Memebrs</p>
+                      <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-1">{t('agency.clients.members')}</p>
                       <div className="flex items-center gap-2 text-lg font-bold text-surface-900 dark:text-white">
                          <Users size={16} className="text-surface-400" />
                          <span>{(org as any).memberCount || 5}</span>
@@ -139,7 +139,7 @@ export default function AgencyClientsPage() {
                     href={`/portal/org/${org.id}/dashboard/`}
                     className="flex items-center justify-between group-hover:text-white text-blue-600 dark:text-blue-400 transition-colors"
                   >
-                    <span className="text-xs font-black uppercase tracking-widest">Enter Dashboard</span>
+                    <span className="text-xs font-black uppercase tracking-widest">{t('agency.clients.dashboard')}</span>
                     <ArrowUpRight size={18} />
                   </Link>
                 </div>
@@ -148,13 +148,12 @@ export default function AgencyClientsPage() {
           ) : (
             <div className="col-span-full py-20 text-center bg-white dark:bg-surface-950 rounded-3xl border border-surface-200 dark:border-surface-800">
                <Users className="w-16 h-16 text-surface-100 dark:text-surface-800 mx-auto mb-4" />
-               <h3 className="text-xl font-bold text-surface-900 dark:text-white">No clients found</h3>
-               <p className="text-surface-500 dark:text-surface-400 text-sm mt-1 max-w-sm mx-auto">Either you have no active clients or they don't match your search criteria.</p>
-               <PortalButton className="mt-8 h-11 px-8">Onboard New Client</PortalButton>
+               <h3 className="text-xl font-bold text-surface-900 dark:text-white">{t('agency.clients.emptyTitle')}</h3>
+               <p className="text-surface-500 dark:text-surface-400 text-sm mt-1 max-w-sm mx-auto">{t('agency.clients.emptyDesc')}</p>
+               <PortalButton className="mt-8 h-11 px-8">{t('agency.clients.onboard')}</PortalButton>
             </div>
           )}
         </div>
       </div>
-    </PortalShell>
   );
 }

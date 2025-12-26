@@ -1,43 +1,49 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link, useRouter, useSearchParams } from '@/i18n/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalInput } from '@/components/portal/ui/PortalInput';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import { signUpWithEmail } from '@/lib/services/auth';
-import { Suspense, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 
 type SignupData = z.infer<ReturnType<typeof getSignupSchema>>;
 
-const getSignupSchema = (t: (path: string) => string) => z
-  .object({
-    name: z.string().min(2, t('portal.auth.errors.invalidName')),
-    email: z.string().email(t('portal.auth.errors.invalidEmail')),
-    password: z.string().min(6, t('portal.auth.errors.weakPassword')),
-    confirmPassword: z.string().min(6, t('portal.auth.errors.weakPassword')),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: t('portal.auth.errors.mismatch'),
-    path: ['confirmPassword'],
-  });
+const getSignupSchema = (t: (path: string) => string) =>
+  z
+    .object({
+      name: z.string().min(2, t('portal.auth.errors.invalidName')),
+      email: z.string().email(t('portal.auth.errors.invalidEmail')),
+      password: z.string().min(6, t('portal.auth.errors.weakPassword')),
+      confirmPassword: z.string().min(6, t('portal.auth.errors.weakPassword')),
+    })
+    .refine(data => data.password === data.confirmPassword, {
+      message: t('portal.auth.errors.mismatch'),
+      path: ['confirmPassword'],
+    });
 
 function SignupForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations();
 
   const signupSchema = useMemo(() => getSignupSchema((path: string) => t(path as any)), [t]);
 
-  const prefilledEmail = searchParams.get('email');
-  const redirectPath = searchParams.get('redirect');
+  const prefilledEmail = searchParams?.get('email') || null;
+  const redirectPath = searchParams?.get('redirect') || null;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const {
     register,
@@ -63,17 +69,21 @@ function SignupForm() {
     setError(null);
     try {
       await signUpWithEmail(data.email, data.password, data.name);
-      router.push(redirectPath || '/portal/org/');
+      if (mounted && router) {
+        router.push(redirectPath || '/portal/org/');
+      } else {
+        window.location.href = redirectPath || '/portal/org/';
+      }
     } catch (err: any) {
       console.error('Signup error:', err);
       const errorMessage =
         err.code === 'auth/email-already-in-use'
           ? t('portal.auth.errors.emailInUse' as any)
           : err.code === 'auth/invalid-email'
-          ? t('portal.auth.errors.invalidEmail' as any)
-          : err.code === 'auth/weak-password'
-          ? t('portal.auth.errors.weakPassword' as any)
-          : err.message || t('portal.auth.errors.genericSignup' as any);
+            ? t('portal.auth.errors.invalidEmail' as any)
+            : err.code === 'auth/weak-password'
+              ? t('portal.auth.errors.weakPassword' as any)
+              : err.message || t('portal.auth.errors.genericSignup' as any);
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -88,8 +98,12 @@ function SignupForm() {
           C
         </div>
         <div className="text-center">
-          <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white">{t('portal.auth.signup.title')}</h1>
-          <p className="text-surface-500 dark:text-surface-400 mt-1">{t('portal.auth.signup.subtitle')}</p>
+          <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white">
+            {t('portal.auth.signup.title')}
+          </h1>
+          <p className="text-surface-500 dark:text-surface-400 mt-1">
+            {t('portal.auth.signup.subtitle')}
+          </p>
         </div>
       </div>
 
@@ -132,11 +146,7 @@ function SignupForm() {
             </div>
           )}
 
-          <PortalButton
-            type="submit"
-            isLoading={loading}
-            className="w-full h-11"
-          >
+          <PortalButton type="submit" isLoading={loading} className="w-full h-11">
             <span>{t('portal.auth.signup.createAccount')}</span>
             <ArrowRight size={16} />
           </PortalButton>
@@ -144,7 +154,11 @@ function SignupForm() {
           <p className="text-center text-sm text-surface-500 dark:text-surface-400 mt-6">
             {t('portal.auth.signup.alreadyHaveAccount')}{' '}
             <Link
-              href={redirectPath ? `/portal/login?redirect=${encodeURIComponent(redirectPath)}` : "/portal/login/"}
+              href={
+                redirectPath
+                  ? `/portal/login?redirect=${encodeURIComponent(redirectPath)}`
+                  : '/portal/login/'
+              }
               className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
             >
               {t('portal.auth.signup.signIn')}
@@ -164,17 +178,27 @@ function SignupForm() {
   );
 }
 
-export default function SignupPage() {
+function SignupFormWrapper() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-surface-50 dark:bg-surface-950">
-      <Suspense fallback={
-        <div className="flex flex-col items-center justify-center space-y-4">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-surface-500">Loading...</p>
-        </div>
-      }>
-        <SignupForm />
-      </Suspense>
+      <SignupForm />
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-surface-50 dark:bg-surface-950">
+          <div className="flex flex-col items-center justify-center space-y-4">
+            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+            <p className="text-surface-500">Loading...</p>
+          </div>
+        </div>
+      }
+    >
+      <SignupFormWrapper />
+    </Suspense>
   );
 }

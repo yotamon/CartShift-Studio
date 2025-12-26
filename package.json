@@ -10,8 +10,8 @@
     "lint:fix": "next lint --fix",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
-    "export": "next build",
-    "deploy": "pnpm run export && firebase deploy",
+    "build": "next build",
+    "deploy": "pnpm run build && firebase deploy",
     "deploy:hosting": "pnpm run export && firebase deploy --only hosting",
     "deploy:functions": "cd functions && pnpm install && cd .. && firebase deploy --only functions",
     "analyze": "ANALYZE=true next build"

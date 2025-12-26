@@ -444,7 +444,24 @@
         "messages": "הודעות",
         "lifecycle": "ניהול מחזור חיים",
         "markFulfilled": "סמן כבוצע",
-        "requestStrategicRevision": "בקש רביזיה אסטרטגית"
+        "requestStrategicRevision": "בקש רביזיה אסטרטגית",
+        "addPricing": "הוסף תמחור",
+        "addQuote": "הוסף הצעת מחיר",
+        "startWork": "התחל עבודה",
+        "payPayPal": "שלם באמצעות PayPal",
+        "paymentSuccess": "התשלום בוצע בהצלחה",
+        "paymentError": "התשלום נכשל",
+        "currency": "מטבע",
+        "lineItems": "פירוט",
+        "descriptionPlaceholder": "תיאור...",
+        "qty": "כמות",
+        "price": "מחיר",
+        "addLineItem": "הוסף שורה",
+        "total": "סה״כ",
+        "sendQuote": "שלח הצעת מחיר",
+        "acceptQuote": "אשר הצעת מחיר",
+        "decline": "דחה",
+        "pricingTitle": "תמחור"
       },
       "upload": {
         "title": "העלאת קובץ",
@@ -463,6 +480,50 @@
         "feature": "פיצ׳ר חדש לחנות",
         "migration": "מיגרציית פלטפורמה",
         "general": "משימה כללית"
+      }
+    },
+    "agency": {
+      "inbox": {
+        "title": "תיבת דואר סוכנות",
+        "subtitle": "מבט גלובלי על כל בקשות הלקוחות והתקשורת.",
+        "searchPlaceholder": "חיפוש בקשות...",
+        "activeItems": "פריטים פעילים",
+        "loading": "טוען תיבת דואר סוכנות...",
+        "emptyTitle": "תיבת הדואר שלך ריקה",
+        "emptyDesc": "כל בקשות הלקוחות טופלו או מוינו.",
+        "clientOrg": "ארגון לקוח"
+      },
+      "workboard": {
+        "title": "לוח עבודה פרויקטים",
+        "subtitle": "סטטוס בזמן אמת של כל פרויקטי הלקוחות הפעילים בסוכנות.",
+        "loading": "מסנכרן לוח קנבן...",
+        "roadmap": "מפת דרכים רבעון 4",
+        "assign": "הקצה פריט",
+        "emptyColumn": "אין משימות פעילות",
+        "columns": {
+          "backlog": "חדש וצבר",
+          "inProgress": "בטיפול",
+          "review": "משוב וסקירה",
+          "delivered": "נמסר"
+        }
+      },
+      "clients": {
+        "title": "תיק לקוחות",
+        "subtitle": "גישה ישירה וניהול לכל הארגונים השותפים.",
+        "onboard": "צרף לקוח חדש",
+        "searchPlaceholder": "חפש לפי שם חברה...",
+        "activeAccounts": "חשבונות פעילים",
+        "export": "ייצוא ביצועים",
+        "loading": "מאחזר תיק לקוחות...",
+        "tickets": "כרטיסים פתוחים",
+        "members": "חברים",
+        "dashboard": "כנס ללוח הבקרה",
+        "emptyTitle": "לא נמצאו לקוחות",
+        "emptyDesc": "או שאין לך לקוחות פעילים או שהם לא תואמים לקריטריוני החיפוש שלך.",
+        "badge": {
+          "active": "פעיל"
+        },
+        "enterprise": "שותף ארגוני"
       }
     },
     "team": {

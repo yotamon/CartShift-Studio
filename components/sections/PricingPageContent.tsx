@@ -118,7 +118,13 @@ export const PricingPageContent: React.FC = () => {
     trackPricingView();
   }, []);
 
-  const pricing = (t('pricing' as any) as unknown) as {
+  const pricingData = t.raw('pricing' as any) as any;
+
+  if (!pricingData || !pricingData.packages) {
+    throw new Error('Pricing translation data is missing or invalid');
+  }
+
+  const pricing = pricingData as {
     hero: { title: string; subtitle: string; description: string; badge: string };
     packages: {
       quickLaunch: {

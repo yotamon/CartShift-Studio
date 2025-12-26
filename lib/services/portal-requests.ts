@@ -22,6 +22,9 @@ import {
   UpdateRequestData,
   REQUEST_STATUS,
   RequestStatus,
+  PricingLineItem,
+  Currency,
+  calculateTotalAmount,
 } from '@/lib/types/portal';
 
 // Initialize Firestore
@@ -285,7 +288,106 @@ export async function getRequestStats(orgId: string): Promise<{
     ).length,
     inReview: requests.filter((r) => r.status === REQUEST_STATUS.IN_REVIEW).length,
     completed: requests.filter((r) =>
-      ([REQUEST_STATUS.DELIVERED, REQUEST_STATUS.CLOSED] as RequestStatus[]).includes(r.status)
+      ([REQUEST_STATUS.DELIVERED, REQUEST_STATUS.CLOSED, REQUEST_STATUS.PAID] as RequestStatus[]).includes(r.status)
     ).length,
   };
 }
+
+// ============================================
+// PRICING & BILLING
+// ============================================
+
+export interface AddPricingData {
+  lineItems: PricingLineItem[];
+  currency: Currency;
+  validUntil?: Date;
+}
+
+/**
+ * Agency adds pricing to a request (converts to billable)
+ */
+export async function addPricingToRequest(
+  requestId: string,
+  data: AddPricingData
+): Promise<void> {
+  const totalAmount = calculateTotalAmount(data.lineItems);
+
+  await updateDoc(doc(db, REQUESTS_COLLECTION, requestId), {
+    isBillable: true,
+    lineItems: data.lineItems,
+    totalAmount,
+    currency: data.currency,
+    validUntil: data.validUntil ? Timestamp.fromDate(data.validUntil) : null,
+    quotedAt: serverTimestamp(),
+    status: REQUEST_STATUS.QUOTED,
+    updatedAt: serverTimestamp(),
+  });
+}
+
+/**
+ * Client accepts the quoted price
+ */
+export async function acceptRequest(
+  requestId: string,
+  clientNotes?: string
+): Promise<void> {
+  const updateData: Record<string, unknown> = {
+    status: REQUEST_STATUS.ACCEPTED,
+    acceptedAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  };
+
+  if (clientNotes) {
+    updateData.clientNotes = clientNotes;
+  }
+
+  await updateDoc(doc(db, REQUESTS_COLLECTION, requestId), updateData);
+}
+
+/**
+ * Client declines the quoted price
+ */
+export async function declineRequest(
+  requestId: string,
+  clientNotes?: string
+): Promise<void> {
+  const updateData: Record<string, unknown> = {
+    status: REQUEST_STATUS.DECLINED,
+    declinedAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  };
+
+  if (clientNotes) {
+    updateData.clientNotes = clientNotes;
+  }
+
+  await updateDoc(doc(db, REQUESTS_COLLECTION, requestId), updateData);
+}
+
+/**
+ * Agency starts work on the request
+ */
+export async function startRequestWork(requestId: string): Promise<void> {
+  await updateDoc(doc(db, REQUESTS_COLLECTION, requestId), {
+    status: REQUEST_STATUS.IN_PROGRESS,
+    updatedAt: serverTimestamp(),
+  });
+}
+
+/**
+ * Mark request as paid after successful payment
+ */
+export async function markRequestPaid(
+  requestId: string,
+  paymentId: string,
+  paymentMethod: 'paypal' = 'paypal'
+): Promise<void> {
+  await updateDoc(doc(db, REQUESTS_COLLECTION, requestId), {
+    status: REQUEST_STATUS.PAID,
+    paymentId,
+    paymentMethod,
+    paidAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+}
+
