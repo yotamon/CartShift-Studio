@@ -6,11 +6,11 @@ import { Section, SectionHeader } from '@/components/ui/Section';
 import { Icon } from '@/components/ui/Icon';
 import { Parallax } from '@/components/ui/Parallax';
 
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useTranslations } from 'next-intl';
 
 export const Testimonials: React.FC = () => {
-  const { t } = useLanguage();
-  const testimonials = t('testimonials.items') as any[];
+  const t = useTranslations();
+  const testimonials = t.raw('testimonials.items') as any[];
 
   if (!testimonials || testimonials.length === 0) return null;
 
@@ -97,8 +97,8 @@ export const Testimonials: React.FC = () => {
       </div>
 
       <SectionHeader
-        title={t('testimonials.title') as string}
-        subtitle={t('testimonials.subtitle') as string}
+        title={t('testimonials.title')}
+        subtitle={t('testimonials.subtitle')}
       />
 
       {/* Featured Spotlight Testimonial */}
@@ -219,3 +219,4 @@ export const Testimonials: React.FC = () => {
     </Section>
   );
 };
+

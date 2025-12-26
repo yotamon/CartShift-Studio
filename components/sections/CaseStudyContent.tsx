@@ -2,11 +2,11 @@
 
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useLanguage } from '@/components/providers/LanguageProvider';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { trackPortfolioView, useScrollTracking } from '@/lib/analytics';
+import { useLocale } from 'next-intl';
 
 interface CaseStudy {
   slug: string;
@@ -29,8 +29,8 @@ interface CaseStudyContentProps {
 }
 
 export const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy }) => {
-  const { language } = useLanguage();
-  const isHe = language === 'he';
+  const locale = useLocale();
+  const isHe = locale === 'he';
 
   // Track case study view and scroll depth
   useEffect(() => {
@@ -235,3 +235,4 @@ export const CaseStudyContent: React.FC<CaseStudyContentProps> = ({ caseStudy })
     </div>
   );
 };
+

@@ -4,7 +4,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import { ParallaxLayer } from '@/components/ui/Parallax';
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useTranslations } from 'next-intl';
+import { useDirection } from '@/lib/i18n-utils';
 import { getScheduleUrl } from '@/lib/schedule';
 import { trackBookCallClick } from '@/lib/analytics';
 import { ArrowRight, ArrowDown, Sparkles } from 'lucide-react';
@@ -44,13 +45,14 @@ const platformIcons = [
 ];
 
 export const Hero: React.FC = () => {
-  const { t, direction } = useLanguage();
+  const t = useTranslations();
+  const direction = useDirection();
   const isRtl = direction === 'rtl';
 
   return (
     <section className="relative min-h-[100dvh] flex items-center justify-center py-16 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#f0f4f8] dark:bg-surface-950">
       {/* Background Ambience */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-100 via-[#e8f0f8] to-slate-200 dark:from-surface-950 dark:to-surface-900"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-surface-100 via-[#e8f0f8] to-surface-200 dark:from-surface-950 dark:to-surface-900"></div>
       <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid.svg')] opacity-[0.06] dark:opacity-5"></div>
 
       {/* Animated Orbs with Parallax - Dramatic 3D depth */}
@@ -279,14 +281,14 @@ export const Hero: React.FC = () => {
             >
               <Sparkles className="w-4 h-4 text-accent-500" />
               <span className="text-surface-700 dark:text-surface-200 text-sm font-semibold">
-                {t('hero.tag') as string}
+                {t('hero.tag')}
               </span>
             </motion.div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold leading-[1.1] tracking-tight text-surface-900 dark:text-white">
-              {t('hero.titleLine1') as string}
+              {t('hero.titleLine1')}
               <br />
-              {t('hero.titleLine2') as string}
+              {t('hero.titleLine2')}
             </h1>
 
             <motion.p
@@ -295,7 +297,7 @@ export const Hero: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              {t('hero.description') as string}
+              {t('hero.description')}
             </motion.p>
 
             <motion.div
@@ -316,7 +318,7 @@ export const Hero: React.FC = () => {
                   className="group text-base md:text-lg px-8 md:px-10 py-4 md:py-5 shadow-premium hover:shadow-premium-hover w-full sm:w-auto"
                 >
                   <span className="relative z-10 flex items-center gap-3 justify-center">
-                    {t('hero.primaryCta') as string}
+                    {t('hero.primaryCta')}
                     <motion.div
                       animate={{ x: isRtl ? [0, -5, 0] : [0, 5, 0] }}
                       transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
@@ -335,7 +337,7 @@ export const Hero: React.FC = () => {
                   size="lg"
                   className="text-base md:text-lg px-8 md:px-10 py-4 md:py-5 shadow-premium hover:shadow-premium-hover w-full sm:w-auto"
                 >
-                  {t('hero.secondaryCta') as string}
+                  {t('hero.secondaryCta')}
                 </Button>
               </a>
             </motion.div>
@@ -348,23 +350,23 @@ export const Hero: React.FC = () => {
             >
               <div className="flex flex-col">
                 <span className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-surface-900 dark:text-white mb-1">
-                  {t('hero.stats.clients.value') as string}
+                  {t('hero.stats.clients.value')}
                 </span>
                 <span className="text-xs sm:text-sm md:text-base text-surface-500 dark:text-surface-400 font-medium">
-                  {t('hero.stats.clients.label') as string}
+                  {t('hero.stats.clients.label')}
                 </span>
               </div>
               <div className="flex flex-col">
                 <span className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-surface-900 dark:text-white mb-1">
-                  {t('hero.stats.dedication.value') as string}
+                  {t('hero.stats.dedication.value')}
                 </span>
                 <span className="text-xs sm:text-sm md:text-base text-surface-500 dark:text-surface-400 font-medium">
-                  {t('hero.stats.dedication.label') as string}
+                  {t('hero.stats.dedication.label')}
                 </span>
               </div>
               <div className="flex flex-col">
                 <span className="text-xs uppercase tracking-wider text-surface-400 dark:text-surface-500 font-medium mb-4 block">
-                  {t('hero.platforms.label') as string}
+                  {t('hero.platforms.label')}
                 </span>
                 <div className="flex flex-wrap items-center gap-3 md:gap-4">
                   {platformIcons.map((platform, index) => (
@@ -435,7 +437,7 @@ export const Hero: React.FC = () => {
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
         >
           <span className="text-sm font-medium text-center">
-            {t('hero.scrollIndicator') as string}
+            {t('hero.scrollIndicator')}
           </span>
           <ArrowDown className="w-6 h-6" strokeWidth={2} />
         </motion.div>
@@ -446,3 +448,4 @@ export const Hero: React.FC = () => {
     </section>
   );
 };
+

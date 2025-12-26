@@ -4,7 +4,7 @@ import React from "react";
 import { PageHero } from "@/components/sections/PageHero";
 import { BlogPageContent } from "@/components/sections/BlogPageContent";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
-import { useLanguage } from "@/components/providers/LanguageProvider";
+import { useTranslations, useLocale } from "next-intl";
 
 interface BlogPost {
   slug: string;
@@ -25,8 +25,9 @@ interface BlogTemplateProps {
 }
 
 export const BlogTemplate: React.FC<BlogTemplateProps> = ({ posts, categories }) => {
-  const { t, language } = useLanguage();
-  const isHe = language === "he";
+  const t = useTranslations();
+  const locale = useLocale();
+  const isHe = locale === "he";
 
   const breadcrumbItems = [
     { name: isHe ? "ראשי" : "Home", url: "/" },
@@ -36,12 +37,12 @@ export const BlogTemplate: React.FC<BlogTemplateProps> = ({ posts, categories })
   return (
     <>
       <PageHero
-        title={t("blog.hero.title") as string}
-        subtitle={t("blog.hero.subtitle") as string}
+        title={t("blog.hero.title")}
+        subtitle={t("blog.hero.subtitle")}
         description=""
-        badge={t("blog.hero.badge") as string}
+        badge={t("blog.hero.badge")}
       />
-      <div className="bg-slate-50 dark:bg-surface-900 border-b border-slate-200 dark:border-transparent">
+      <div className="bg-surface-50 dark:bg-surface-900 border-b border-surface-200 dark:border-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <Breadcrumb items={breadcrumbItems} />
         </div>
@@ -50,3 +51,4 @@ export const BlogTemplate: React.FC<BlogTemplateProps> = ({ posts, categories })
     </>
   );
 };
+

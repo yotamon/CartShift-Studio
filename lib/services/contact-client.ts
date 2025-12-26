@@ -6,7 +6,7 @@ export async function submitContactFormClient(data: unknown): Promise<{ success:
   const validation = validateContactForm(data);
 
   if (!validation.success) {
-    const errorMessages = validation.errors.errors.map(err => `${err.path.join('.')}: ${err.message}`).join(', ');
+    const errorMessages = validation.errors.issues.map((err: any) => `${err.path.join('.')}: ${err.message}`).join(', ');
     return {
       success: false,
       error: `Invalid form data: ${errorMessages}`,

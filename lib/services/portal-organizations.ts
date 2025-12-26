@@ -118,12 +118,20 @@ export async function getUserOrganizations(userId: string): Promise<Organization
 }
 
 export async function getAllOrganizations(): Promise<Organization[]> {
-  const q = query(collection(db, ORGS_COLLECTION), orderBy('name', 'asc'));
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as Organization[];
+  try {
+    const q = query(collection(db, ORGS_COLLECTION), orderBy('name', 'asc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Organization[];
+  } catch (error: any) {
+    if (error.code === 'permission-denied') {
+      console.error('Permission denied accessing all organizations. User may need agency permissions.');
+      return [];
+    }
+    throw error;
+  }
 }
 
 export async function updateOrganization(
@@ -165,10 +173,12 @@ async function addMember(
     joinedAt: serverTimestamp(),
   };
 
-  const docRef = await addDoc(collection(db, MEMBERS_COLLECTION), memberData);
+  const memberId = `${orgId}_${userId}`;
+  const docRef = doc(db, MEMBERS_COLLECTION, memberId);
+  await setDoc(docRef, memberData);
 
   return {
-    id: docRef.id,
+    id: memberId,
     ...memberData,
     joinedAt: Timestamp.now(),
   } as OrganizationMember;
@@ -192,21 +202,17 @@ export async function getMemberByUserId(
   orgId: string,
   userId: string
 ): Promise<OrganizationMember | null> {
-  const q = query(
-    collection(db, MEMBERS_COLLECTION),
-    where('orgId', '==', orgId),
-    where('userId', '==', userId)
-  );
+  const memberId = `${orgId}_${userId}`;
+  const memberRef = doc(db, MEMBERS_COLLECTION, memberId);
+  const memberSnap = await getDoc(memberRef);
 
-  const snapshot = await getDocs(q);
-  if (snapshot.empty) {
+  if (!memberSnap.exists()) {
     return null;
   }
 
-  const doc = snapshot.docs[0];
   return {
-    id: doc.id,
-    ...doc.data(),
+    id: memberSnap.id,
+    ...memberSnap.data(),
   } as OrganizationMember;
 }
 
@@ -416,6 +422,9 @@ export function subscribeToInvites(
       ...doc.data(),
     })) as Invite[];
     callback(invites);
+  }, (error) => {
+    console.error('Error in invites snapshot:', error);
+    callback([]);
   });
 }
 
@@ -435,6 +444,9 @@ export function subscribeToMembers(
       ...doc.data(),
     })) as OrganizationMember[];
     callback(members);
+  }, (error) => {
+    console.error('Error in members snapshot:', error);
+    callback([]);
   });
 }
 

@@ -1,22 +1,23 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Section, SectionHeader } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { ParallaxText } from '@/components/ui/Parallax';
-
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
+import { useDirection } from '@/lib/i18n-utils';
 
 export const AboutPageContent: React.FC = () => {
-  const { t, direction } = useLanguage();
-  const storyContent = t('about.story.content') as string[];
-  const teamMembers = t('about.team.members') as any[];
-  const valuesItems = t('about.values.items') as any[];
-  const expectContent = t('about.expect.content') as string[];
+  const t = useTranslations();
+  const direction = useDirection();
+  const storyContent = t.raw('about.story.content') as string[];
+  const teamMembers = t.raw('about.team.members') as any[];
+  const valuesItems = t.raw('about.values.items') as any[];
+  const expectContent = t.raw('about.expect.content') as string[];
 
   return (
     <>
@@ -24,7 +25,7 @@ export const AboutPageContent: React.FC = () => {
         <div className="max-w-4xl mx-auto">
           <ParallaxText type="fade-up">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-surface-900 dark:text-white font-display mb-8 text-center leading-tight tracking-tight">
-              {t('about.story.title') as string}
+              {t('about.story.title')}
             </h2>
           </ParallaxText>
           <div className="space-y-6">
@@ -55,10 +56,10 @@ export const AboutPageContent: React.FC = () => {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-surface-900 dark:text-white mb-4">
-              {t('about.team.title') as string}
+              {t('about.team.title')}
             </h2>
             <p className="text-lg text-surface-600 dark:text-surface-400">
-              {t('about.team.subtitle') as string}
+              {t('about.team.subtitle')}
             </p>
           </motion.div>
 
@@ -111,8 +112,8 @@ export const AboutPageContent: React.FC = () => {
 
       <Section background="default" className="relative overflow-hidden">
         <SectionHeader
-          title={t('about.values.title') as string}
-          subtitle={t('about.values.subtitle') as string}
+          title={t('about.values.title')}
+          subtitle={t('about.values.subtitle')}
         />
         <div className="grid md:grid-cols-2 gap-8">
           {valuesItems.map((value, index) => (
@@ -140,8 +141,8 @@ export const AboutPageContent: React.FC = () => {
         <div className="max-w-4xl mx-auto">
           <ParallaxText type="fade-up">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-surface-900 dark:text-white font-display mb-8 text-center leading-tight tracking-tight">
-              {t('about.expect.title') as string}{' '}
-              <span className="gradient-text">{t('about.expect.titleSpan') as string}</span>
+              {t('about.expect.title')}{' '}
+              <span className="gradient-text">{t('about.expect.titleSpan')}</span>
             </h2>
           </ParallaxText>
           <div className="space-y-6">
@@ -170,16 +171,16 @@ export const AboutPageContent: React.FC = () => {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-surface-900 dark:text-white font-display mb-8 leading-tight tracking-tight">
-              {t('about.cta.title') as string}{' '}
-              <span className="gradient-text">{t('about.cta.titleSpan') as string}</span>
+              {t('about.cta.title')}{' '}
+              <span className="gradient-text">{t('about.cta.titleSpan')}</span>
             </h2>
             <p className="text-base md:text-lg text-surface-600 dark:text-surface-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-              {t('about.cta.description') as string}
+              {t('about.cta.description')}
             </p>
             <Link href="/contact">
               <Button size="lg" className="group">
                 <span className="relative z-10 flex items-center gap-2">
-                  {t('about.cta.button') as string}
+                  {t('about.cta.button')}
                   <svg
                     className="w-5 h-5 transition-transform rtl:rotate-180"
                     fill="none"
@@ -202,3 +203,4 @@ export const AboutPageContent: React.FC = () => {
     </>
   );
 };
+

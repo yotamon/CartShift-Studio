@@ -58,7 +58,7 @@ export const FAQ: React.FC<FAQProps> = ({
         <div className="flex justify-end mb-4">
           <button
             onClick={toggleAll}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-surface-400 hover:text-accent-600 dark:hover:text-accent-400 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-surface-800"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-surface-600 dark:text-surface-400 hover:text-accent-600 dark:hover:text-accent-400 transition-colors rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800"
           >
             <ChevronsUpDown className="w-4 h-4" />
             {allExpanded ? 'Collapse All' : 'Expand All'}
@@ -73,15 +73,15 @@ export const FAQ: React.FC<FAQProps> = ({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: index * 0.1 }}
-            className="border border-slate-200 dark:border-surface-700 rounded-xl overflow-hidden bg-white dark:bg-surface-800 shadow-sm hover:shadow-md transition-shadow"
+            className="border border-surface-200 dark:border-surface-700 rounded-xl overflow-hidden bg-white dark:bg-surface-800 shadow-sm hover:shadow-md transition-shadow"
           >
             <button
               onClick={() => toggleItem(index)}
-              className="w-full px-4 md:px-6 py-4 md:py-5 text-start flex items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-surface-700 transition-colors touch-manipulation"
+              className="w-full px-4 md:px-6 py-4 md:py-5 text-start flex items-center justify-between gap-4 hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors touch-manipulation"
               aria-expanded={isOpen(index)}
               aria-controls={`faq-answer-${index}`}
             >
-              <h3 className="text-base md:text-lg lg:text-xl font-bold text-slate-900 dark:text-white pe-4 md:pe-8 leading-snug md:leading-normal">
+              <h3 className="text-base md:text-lg lg:text-xl font-bold text-surface-900 dark:text-white pe-4 md:pe-8 leading-snug md:leading-normal">
                 {item.question}
               </h3>
               <motion.div
@@ -104,7 +104,7 @@ export const FAQ: React.FC<FAQProps> = ({
                   transition={{ duration: 0.3 }}
                   className="overflow-hidden"
                 >
-                  <div className="px-6 py-5 pt-0 text-slate-600 dark:text-surface-300 leading-relaxed">
+                  <div className="px-6 py-5 pt-0 text-surface-600 dark:text-surface-300 leading-relaxed">
                     {item.answer}
                   </div>
                 </motion.div>
@@ -116,3 +116,4 @@ export const FAQ: React.FC<FAQProps> = ({
     </div>
   );
 };
+

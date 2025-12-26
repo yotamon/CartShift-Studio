@@ -9,8 +9,8 @@ import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { PageHero } from '@/components/sections/PageHero';
-import Link from 'next/link';
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useTranslations, useLocale } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 
 interface PlanCardProps {
   name: string;
@@ -101,9 +101,10 @@ const PlanCard: React.FC<PlanCardProps> = ({
 );
 
 export const MaintenancePageContent: React.FC = () => {
-  const { t, language } = useLanguage();
+  const t = useTranslations();
+  const locale = useLocale();
 
-  const maintenance = t('maintenance') as {
+  const maintenance = t.raw('maintenance' as any) as {
     hero: { title: string; subtitle: string; description: string; badge: string };
     plans: {
       essential: {
@@ -158,7 +159,7 @@ export const MaintenancePageContent: React.FC = () => {
   }));
 
   const breadcrumbItems = [
-    { name: language === 'he' ? 'ראשי' : 'Home', url: '/' },
+    { name: locale === 'he' ? 'ראשי' : 'Home', url: '/' },
     { name: maintenance.hero.title, url: '/maintenance' },
   ];
 
@@ -316,3 +317,4 @@ export const MaintenancePageContent: React.FC = () => {
     </>
   );
 };
+

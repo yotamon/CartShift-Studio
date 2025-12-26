@@ -41,21 +41,21 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center px-4 bg-slate-50 dark:bg-surface-900">
+        <div className="min-h-screen flex items-center justify-center px-4 bg-surface-50 dark:bg-surface-900">
           <div className="max-w-md w-full text-center space-y-6">
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+              <h1 className="text-3xl font-bold text-surface-900 dark:text-white">
                 Something went wrong
               </h1>
-              <p className="text-slate-600 dark:text-surface-300">
+              <p className="text-surface-600 dark:text-surface-300">
                 We encountered an unexpected error. Please try refreshing the page.
               </p>
               {process.env.NODE_ENV !== "production" && this.state.error && (
                 <details className="mt-4 text-start">
-                  <summary className="cursor-pointer text-sm text-slate-500 dark:text-surface-400">
+                  <summary className="cursor-pointer text-sm text-surface-500 dark:text-surface-400">
                     Error details
                   </summary>
-                  <pre className="mt-2 p-4 bg-slate-100 dark:bg-surface-800 rounded text-xs overflow-auto">
+                  <pre className="mt-2 p-4 bg-surface-100 dark:bg-surface-800 rounded text-xs overflow-auto">
                     {this.state.error.toString()}
                     {this.state.error.stack && `\n\n${this.state.error.stack}`}
                   </pre>
@@ -81,4 +81,5 @@ export class ErrorBoundary extends Component<Props, State> {
     return this.props.children;
   }
 }
+
 

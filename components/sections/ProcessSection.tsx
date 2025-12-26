@@ -4,15 +4,15 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { useLanguage } from "@/components/providers/LanguageProvider";
+import { useTranslations } from "next-intl";
 
 interface ProcessSectionProps {
   processPath: string;
 }
 
 export const ProcessSection: React.FC<ProcessSectionProps> = ({ processPath }) => {
-  const { t } = useLanguage();
-  const processData = t(processPath) as {
+  const t = useTranslations();
+  const processData = t.raw(processPath as any) as {
     title: string;
     subtitle: string;
     steps: Array<{ title: string; description: string }>;
@@ -40,7 +40,7 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ processPath }) =
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-base md:text-lg text-slate-600 dark:text-surface-300 leading-relaxed">
+                <p className="text-base md:text-lg text-surface-600 dark:text-surface-300 leading-relaxed">
                   {step.description}
                 </p>
               </CardContent>
@@ -51,4 +51,5 @@ export const ProcessSection: React.FC<ProcessSectionProps> = ({ processPath }) =
     </Section>
   );
 };
+
 

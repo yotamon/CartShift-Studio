@@ -76,15 +76,15 @@ export const CreateOrganizationForm = ({ onSuccess, onCancel }: CreateOrganizati
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-lg w-full border border-slate-200 dark:border-slate-800">
-        <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
-          <h3 className="text-xl font-bold text-slate-900 dark:text-white">Create New Organization</h3>
+      <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-2xl max-w-lg w-full border border-surface-200 dark:border-surface-800">
+        <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-800">
+          <h3 className="text-xl font-bold text-surface-900 dark:text-white">Create New Organization</h3>
           <button
             onClick={onCancel}
             disabled={loading}
-            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors disabled:opacity-50"
+            className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-lg transition-colors disabled:opacity-50"
           >
-            <X size={20} className="text-slate-500" />
+            <X size={20} className="text-surface-500" />
           </button>
         </div>
 
@@ -142,3 +142,4 @@ export const CreateOrganizationForm = ({ onSuccess, onCancel }: CreateOrganizati
     </div>
   );
 };
+

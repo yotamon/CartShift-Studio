@@ -2,10 +2,10 @@
 
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Search, Clock, ArrowRight, Sparkles, Calendar } from 'lucide-react';
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useLocale } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 
 interface BlogPost {
   slug: string;
@@ -29,8 +29,8 @@ interface BlogPageContentProps {
 type SortOption = 'newest' | 'oldest' | 'popular';
 
 export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categories }) => {
-  const { language } = useLanguage();
-  const isHe = language === 'he';
+  const locale = useLocale();
+  const isHe = locale === 'he';
 
   // State management
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -123,7 +123,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                 const category =
                   isHe && post.translation?.category ? post.translation.category : post.category;
                 const formattedDate = new Date(post.date).toLocaleDateString(
-                  language === 'he' ? 'he-IL' : 'en-US',
+                  locale === 'he' ? 'he-IL' : 'en-US',
                   {
                     month: 'short',
                     day: 'numeric',
@@ -259,7 +259,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                     const excerpt =
                       isHe && post.translation?.excerpt ? post.translation.excerpt : post.excerpt;
                     const formattedDate = new Date(post.date).toLocaleDateString(
-                      language === 'he' ? 'he-IL' : 'en-US',
+                      locale === 'he' ? 'he-IL' : 'en-US',
                       {
                         month: 'short',
                         day: 'numeric',
@@ -437,3 +437,4 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
     </section>
   );
 };
+

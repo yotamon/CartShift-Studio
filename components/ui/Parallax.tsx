@@ -197,3 +197,4 @@ export const FloatingElement: React.FC<FloatingElementProps> = ({
     </motion.div>
   );
 };
+

@@ -10,7 +10,7 @@ export const PortalSkeleton: React.FC<PortalSkeletonProps> = ({ className, child
   return (
     <div
       className={cn(
-        'animate-pulse bg-slate-200 dark:bg-white/10 rounded-xl',
+        'animate-pulse bg-surface-200 dark:bg-white/10 rounded-xl',
         className
       )}
     >
@@ -50,3 +50,4 @@ export const SkeletonAvatar = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) =
 
   return <PortalSkeleton className={cn('rounded-full', sizes[size])} />;
 };
+

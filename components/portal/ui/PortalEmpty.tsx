@@ -17,7 +17,7 @@ export const PortalEmpty: React.FC<PortalEmptyProps> = ({
   action,
 }) => {
   const variantStyles = {
-    default: 'text-slate-400 dark:text-slate-500',
+    default: 'text-surface-400 dark:text-surface-500',
     success: 'text-green-500 dark:text-green-400',
     warning: 'text-amber-500 dark:text-amber-400',
     error: 'text-red-500 dark:text-red-400',
@@ -39,11 +39,11 @@ export const PortalEmpty: React.FC<PortalEmptyProps> = ({
   return (
     <div className="text-center py-12">
       {renderIcon()}
-      <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+      <h3 className="font-semibold text-surface-900 dark:text-white mb-2">
         {title || 'No items found'}
       </h3>
       {description && (
-        <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+        <p className="text-sm text-surface-500 dark:text-surface-400 max-w-sm mx-auto">
           {description}
         </p>
       )}
@@ -51,3 +51,4 @@ export const PortalEmpty: React.FC<PortalEmptyProps> = ({
     </div>
   );
 };
+

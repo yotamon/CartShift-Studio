@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useTranslations, useLocale } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { logError } from '@/lib/logger';
 
 interface RelatedPost {
@@ -38,8 +38,9 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
   category,
   readingTime,
 }) => {
-  const { t, language } = useLanguage();
-  const isHe = language === 'he';
+  const t = useTranslations();
+  const locale = useLocale();
+  const isHe = locale === 'he';
   const [readingProgress, setReadingProgress] = useState(0);
   const [headings, setHeadings] = useState<Array<{ id: string; text: string; level: number }>>([]);
   const [mobileTocOpen, setMobileTocOpen] = useState(false);
@@ -594,17 +595,17 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                         <div className="flex-1">
                           <h3 className="text-lg md:text-xl font-bold text-surface-900 dark:text-white mb-2">
                             {category === 'Shopify'
-                              ? (t('blogPost.relatedServices.shopifyTitle') as string)
+                              ? t('blogPost.relatedServices.shopifyTitle')
                               : category === 'WordPress'
-                                ? (t('blogPost.relatedServices.wordpressTitle') as string)
-                                : (t('blogPost.relatedServices.title') as string)}
+                                ? t('blogPost.relatedServices.wordpressTitle')
+                                : category}
                           </h3>
                           <p className="text-surface-600 dark:text-surface-300 mb-4 text-sm md:text-base">
                             {category === 'Shopify'
-                              ? (t('blogPost.relatedServices.shopifyDescription') as string)
+                              ? t('blogPost.relatedServices.shopifyDescription')
                               : category === 'WordPress'
-                                ? (t('blogPost.relatedServices.wordpressDescription') as string)
-                                : (t('blogPost.relatedServices.description') as string)}
+                                ? t('blogPost.relatedServices.wordpressDescription')
+                                : t('blogPost.relatedServices.description')}
                           </p>
                           <div className="flex flex-wrap gap-3">
                             {category === 'Shopify' ? (
@@ -612,7 +613,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                                 href="/solutions/shopify"
                                 className="inline-flex items-center gap-2 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-semibold text-sm group"
                               >
-                                {t('blogPost.relatedServices.shopifyLink') as string}
+                                {t('blogPost.relatedServices.shopifyLink')}
                                 <svg
                                   className="w-4 h-4 group-hover:translate-x-1 transition-transform rtl:rotate-180 rtl:group-hover:-translate-x-1"
                                   fill="none"
@@ -632,7 +633,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                                 href="/solutions/wordpress"
                                 className="inline-flex items-center gap-2 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-semibold text-sm group"
                               >
-                                {t('blogPost.relatedServices.wordpressLink') as string}
+                                {t('blogPost.relatedServices.wordpressLink')}
                                 <svg
                                   className="w-4 h-4 group-hover:translate-x-1 transition-transform rtl:rotate-180 rtl:group-hover:-translate-x-1"
                                   fill="none"
@@ -653,7 +654,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                                   href="/solutions/shopify"
                                   className="inline-flex items-center gap-2 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-semibold text-sm group"
                                 >
-                                  {t('blogPost.relatedServices.shopifyServices') as string}
+                                  {t('blogPost.relatedServices.shopifyServices')}
                                   <svg
                                     className="w-4 h-4 group-hover:translate-x-1 transition-transform rtl:rotate-180 rtl:group-hover:-translate-x-1"
                                     fill="none"
@@ -673,7 +674,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                                   href="/solutions/wordpress"
                                   className="inline-flex items-center gap-2 text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 font-semibold text-sm group"
                                 >
-                                  {t('blogPost.relatedServices.wordpressServices') as string}
+                                  {t('blogPost.relatedServices.wordpressServices')}
                                   <svg
                                     className="w-4 h-4 group-hover:translate-x-1 transition-transform rtl:rotate-180 rtl:group-hover:-translate-x-1"
                                     fill="none"
@@ -751,14 +752,14 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                       </div>
 
                       <h3 className="text-2xl md:text-3xl lg:text-4xl font-display font-bold text-surface-900 dark:text-white leading-[1.1] tracking-tight">
-                        {t('blogPost.cta.title') as string}{' '}
+                        {t('blogPost.cta.title')}{' '}
                         <span className="gradient-text text-glow-subtle">
-                          {t('blogPost.cta.titleSpan') as string}
+                          {t('blogPost.cta.titleSpan')}
                         </span>
                       </h3>
 
                       <p className="text-base md:text-lg text-surface-600 dark:text-surface-300 font-light leading-relaxed max-w-2xl mx-auto">
-                        {t('blogPost.cta.description') as string}
+                        {t('blogPost.cta.description')}
                       </p>
 
                       <div className="pt-2">
@@ -769,7 +770,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                             className="text-base md:text-lg px-8 md:px-12 py-4 md:py-5 font-bold shadow-glow-primary group"
                           >
                             <span className="flex items-center gap-3 justify-center">
-                              {t('blogPost.cta.button') as string}
+                              {t('blogPost.cta.button')}
                               <motion.svg
                                 className="w-5 h-5 rtl:rotate-180"
                                 animate={{ x: isHe ? [-5, 0] : [0, 5, 0] }}
@@ -810,8 +811,8 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                   {isHe ? 'המשך לקרוא' : 'Keep Reading'}
                 </span>
                 <h2 className="text-3xl md:text-4xl font-bold text-surface-900 dark:text-white font-display leading-tight tracking-tight">
-                  {t('blog.relatedPosts.title') as string}{' '}
-                  <span className="gradient-text">{t('blog.relatedPosts.span') as string}</span>
+                  {t('blog.relatedPosts.title')}{' '}
+                  <span className="gradient-text">{t('blog.relatedPosts.span')}</span>
                 </h2>
               </div>
               <div className="grid md:grid-cols-3 gap-6 md:gap-8">
@@ -829,7 +830,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                       ? relatedPost.translation.excerpt
                       : relatedPost.excerpt;
                   const formattedDate = new Date(relatedPost.date).toLocaleDateString(
-                    language === 'he' ? 'he-IL' : 'en-US'
+                    locale === 'he' ? 'he-IL' : 'en-US'
                   );
 
                   return (
@@ -860,7 +861,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                               {postExcerpt}
                             </p>
                             <span className="inline-flex items-center gap-2 text-primary-600 dark:text-primary-400 font-semibold text-sm">
-                              {t('blog.readMore') as string}
+                              {t('blog.readMore')}
                               <svg
                                 className="w-4 h-4 rtl:rotate-180"
                                 fill="none"
@@ -889,3 +890,4 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
     </>
   );
 };
+

@@ -1,26 +1,45 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useTheme } from "@/components/providers/ThemeProvider";
+import { useTheme } from "next-themes";
 import { Sun, Moon } from "lucide-react";
 
 export const ThemeToggle: React.FC = () => {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <button
+        className="relative p-2.5 rounded-xl bg-white/5 dark:bg-white/5 border border-white/10 dark:border-white/10 transition-all duration-300 shadow-premium"
+        aria-label="Toggle theme"
+      >
+        <div className="relative w-6 h-6" />
+      </button>
+    );
+  }
+
+  const currentTheme = resolvedTheme || theme;
+  const isDark = currentTheme === "dark";
 
   return (
     <button
-      onClick={toggleTheme}
+      onClick={() => setTheme(isDark ? "light" : "dark")}
       className="relative p-2.5 rounded-xl bg-white/5 dark:bg-white/5 border border-white/10 dark:border-white/10 hover:bg-white/10 dark:hover:bg-white/10 transition-all duration-300 shadow-premium"
-      aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+      aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
     >
       <div className="relative w-6 h-6">
         <motion.div
           initial={false}
           animate={{
-            scale: theme === "light" ? 1 : 0,
-            opacity: theme === "light" ? 1 : 0,
-            rotate: theme === "light" ? 0 : 180,
+            scale: isDark ? 0 : 1,
+            opacity: isDark ? 0 : 1,
+            rotate: isDark ? 180 : 0,
           }}
           transition={{ duration: 0.3 }}
           className="absolute inset-0 flex items-center justify-center"
@@ -31,9 +50,9 @@ export const ThemeToggle: React.FC = () => {
         <motion.div
           initial={false}
           animate={{
-            scale: theme === "dark" ? 1 : 0,
-            opacity: theme === "dark" ? 1 : 0,
-            rotate: theme === "dark" ? 0 : -180,
+            scale: isDark ? 1 : 0,
+            opacity: isDark ? 1 : 0,
+            rotate: isDark ? 0 : -180,
           }}
           transition={{ duration: 0.3 }}
           className="absolute inset-0 flex items-center justify-center"
@@ -44,3 +63,4 @@ export const ThemeToggle: React.FC = () => {
     </button>
   );
 };
+

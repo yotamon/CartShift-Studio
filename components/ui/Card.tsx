@@ -54,7 +54,7 @@ export const CardTitle: React.FC<CardTitleProps> = ({ children, className }) => 
   return (
     <h3
       className={cn(
-        'text-xl md:text-2xl lg:text-3xl font-display font-bold text-slate-900 dark:text-white leading-tight tracking-tight',
+        'text-xl md:text-2xl lg:text-3xl font-display font-bold text-surface-900 dark:text-white leading-tight tracking-tight',
         className
       )}
     >
@@ -70,8 +70,9 @@ interface CardContentProps {
 
 export const CardContent: React.FC<CardContentProps> = ({ children, className }) => {
   return (
-    <div className={cn('text-slate-600 dark:text-surface-300 leading-relaxed', className)}>
+    <div className={cn('text-surface-600 dark:text-surface-300 leading-relaxed', className)}>
       {children}
     </div>
   );
 };
+

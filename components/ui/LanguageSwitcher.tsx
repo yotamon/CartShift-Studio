@@ -2,8 +2,10 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useLocale } from 'next-intl';
+import { useRouter, usePathname } from '@/i18n/navigation';
 import { ChevronDown } from 'lucide-react';
+import { trackLanguageSwitch } from '@/lib/analytics';
 
 const USFlag = () => (
   <svg
@@ -66,7 +68,9 @@ const ILFlag = () => (
 );
 
 export const LanguageSwitcher = () => {
-  const { language, setLanguage, mounted } = useLanguage();
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -84,11 +88,12 @@ export const LanguageSwitcher = () => {
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const handleLanguageChange = (lang: 'en' | 'he') => {
-    setLanguage(lang);
+    trackLanguageSwitch(lang);
+    router.replace(pathname, { locale: lang });
     setIsOpen(false);
   };
 
-  const currentLanguage = mounted ? language : 'en';
+  const currentLanguage = locale as 'en' | 'he';
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -145,3 +150,4 @@ export const LanguageSwitcher = () => {
     </div>
   );
 };
+

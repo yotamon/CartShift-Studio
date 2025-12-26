@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Section, SectionHeader } from '@/components/ui/Section';
 import { Icon } from '@/components/ui/Icon';
 
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useTranslations } from 'next-intl';
 
 interface ProcessStep {
   number: string;
@@ -15,39 +15,31 @@ interface ProcessStep {
 }
 
 export const Process: React.FC = () => {
-  const { t } = useLanguage();
+  const t = useTranslations();
 
   const steps: ProcessStep[] = [
     {
       number: '01',
-      title: (t('process.steps.discovery.title') as string) || 'Discovery',
-      description:
-        (t('process.steps.discovery.description') as string) ||
-        'We learn about your business, goals, and vision to create a tailored strategy.',
+      title: t('process.steps.discovery.title'),
+      description: t('process.steps.discovery.description'),
       icon: 'search',
     },
     {
       number: '02',
-      title: (t('process.steps.design.title') as string) || 'Design',
-      description:
-        (t('process.steps.design.description') as string) ||
-        'Our designers craft stunning visuals that capture your brand identity.',
+      title: t('process.steps.design.title'),
+      description: t('process.steps.design.description'),
       icon: 'palette',
     },
     {
       number: '03',
-      title: (t('process.steps.develop.title') as string) || 'Develop',
-      description:
-        (t('process.steps.develop.description') as string) ||
-        'We build your store with clean code and optimized performance.',
+      title: t('process.steps.develop.title'),
+      description: t('process.steps.develop.description'),
       icon: 'code',
     },
     {
       number: '04',
-      title: (t('process.steps.launch.title') as string) || 'Launch',
-      description:
-        (t('process.steps.launch.description') as string) ||
-        'Your store goes live with full support and ongoing optimization.',
+      title: t('process.steps.launch.title'),
+      description: t('process.steps.launch.description'),
       icon: 'rocket',
     },
   ];
@@ -60,14 +52,14 @@ export const Process: React.FC = () => {
       </div>
 
       <SectionHeader
-        title={(t('process.title') as string) || 'How We Work'}
-        subtitle={(t('process.subtitle') as string) || 'A streamlined process designed for success'}
+        title={t('process.title')}
+        subtitle={t('process.subtitle')}
       />
 
       {/* Process Timeline */}
       <div className="relative">
         {/* Connection Line - Desktop */}
-        <div className="hidden lg:block absolute top-24 start-0 end-0 h-0.5 bg-gradient-to-r from-transparent via-slate-300 dark:via-surface-700 to-transparent rtl:bg-gradient-to-l"></div>
+        <div className="hidden lg:block absolute top-24 start-0 end-0 h-0.5 bg-gradient-to-r from-transparent via-surface-300 dark:via-surface-700 to-transparent rtl:bg-gradient-to-l"></div>
 
         {/* Animated line overlay */}
         <motion.div
@@ -97,7 +89,7 @@ export const Process: React.FC = () => {
                   transition={{ type: 'spring', stiffness: 300 }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl opacity-20 blur-lg group-hover:opacity-40 transition-opacity"></div>
-                  <div className="relative w-full h-full bg-white dark:bg-surface-900 border-2 border-slate-300/70 dark:border-surface-700 group-hover:border-accent-500/50 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-lg">
+                  <div className="relative w-full h-full bg-white dark:bg-surface-900 border-2 border-surface-300/70 dark:border-surface-700 group-hover:border-accent-500/50 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-lg">
                     <span className="text-2xl font-display font-bold bg-gradient-to-br from-primary-600 to-accent-600 bg-clip-text text-transparent">
                       {step.number}
                     </span>
@@ -111,10 +103,10 @@ export const Process: React.FC = () => {
 
                 {/* Content */}
                 <div className="text-center">
-                  <h3 className="text-xl md:text-2xl font-display font-bold text-slate-900 dark:text-white mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                  <h3 className="text-xl md:text-2xl font-display font-bold text-surface-900 dark:text-white mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                     {step.title}
                   </h3>
-                  <p className="text-sm md:text-base text-slate-600 dark:text-surface-300 leading-relaxed max-w-xs mx-auto">
+                  <p className="text-sm md:text-base text-surface-600 dark:text-surface-300 leading-relaxed max-w-xs mx-auto">
                     {step.description}
                   </p>
                 </div>
@@ -147,3 +139,4 @@ export const Process: React.FC = () => {
     </Section>
   );
 };
+

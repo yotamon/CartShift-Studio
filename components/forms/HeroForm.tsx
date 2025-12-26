@@ -6,7 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { trackFormSubmission } from '@/components/analytics/GoogleAnalytics';
 import { logError } from '@/lib/error-handler';
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useTranslations } from 'next-intl';
 import { submitContactFormClient } from '@/lib/services/contact-client';
 
 interface FormData {
@@ -24,7 +24,7 @@ export const HeroForm: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
-  const { t } = useLanguage();
+  const t = useTranslations();
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
@@ -41,7 +41,7 @@ export const HeroForm: React.FC = () => {
       setSubmitted(true);
     } catch (error) {
       logError('Form submission error', error);
-      setError(error instanceof Error ? error.message : (t('heroForm.error') as string));
+      setError(error instanceof Error ? error.message : t('heroForm.errors.generic' as any));
     } finally {
       setLoading(false);
     }
@@ -55,10 +55,10 @@ export const HeroForm: React.FC = () => {
             ✓
           </div>
           <h3 className="text-lg md:text-xl font-bold text-surface-900 dark:text-white mb-2 leading-tight tracking-tight">
-            {t('heroForm.successTitle') as string}
+            {t('heroForm.successTitle')}
           </h3>
           <p className="text-surface-600 dark:text-surface-300 text-base md:text-lg leading-relaxed">
-            {t('heroForm.successText') as string}
+            {t('heroForm.successText')}
           </p>
         </CardContent>
       </Card>
@@ -68,9 +68,9 @@ export const HeroForm: React.FC = () => {
   return (
     <Card className="border-2 border-accent-500/30">
       <CardHeader>
-        <CardTitle className="text-xl md:text-2xl mb-2">{t('heroForm.title') as string}</CardTitle>
+        <CardTitle className="text-xl md:text-2xl mb-2">{t('heroForm.title')}</CardTitle>
         <p className="text-surface-600 dark:text-surface-400 text-xs md:text-sm leading-relaxed">
-          {t('heroForm.subtitle') as string}
+          {t('heroForm.subtitle')}
         </p>
       </CardHeader>
       <CardContent>
@@ -80,14 +80,14 @@ export const HeroForm: React.FC = () => {
               htmlFor="name"
               className="block text-sm font-semibold text-surface-700 dark:text-surface-300 mb-2"
             >
-              {t('heroForm.fields.name') as string}
+              {t('heroForm.fields.name')}
             </label>
             <input
               id="name"
               type="text"
-              {...register('name', { required: t('heroForm.fields.nameRequired') as string })}
+              {...register('name', { required: t('heroForm.fields.nameRequired') })}
               className="w-full px-4 py-4 md:py-3 text-base glass-effect rounded-xl text-surface-900 dark:text-white placeholder:text-surface-500 dark:placeholder:text-surface-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all touch-manipulation"
-              placeholder={t('heroForm.fields.namePlaceholder') as string}
+              placeholder={t('heroForm.fields.namePlaceholder')}
               aria-required="true"
               aria-invalid={errors.name ? 'true' : 'false'}
               aria-describedby={errors.name ? 'name-error' : undefined}
@@ -104,21 +104,21 @@ export const HeroForm: React.FC = () => {
               htmlFor="email"
               className="block text-sm font-semibold text-surface-700 dark:text-surface-300 mb-2"
             >
-              {t('heroForm.fields.email') as string}
+              {t('heroForm.fields.email')}
             </label>
             <input
               id="email"
               type="email"
               autoComplete="email"
               {...register('email', {
-                required: t('heroForm.fields.emailRequired') as string,
+                required: t('heroForm.fields.emailRequired'),
                 pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: t('heroForm.fields.emailInvalid') as string,
+                  message: t('heroForm.fields.emailInvalid'),
                 },
               })}
               className="w-full px-4 py-4 md:py-3 text-base glass-effect rounded-xl text-surface-900 dark:text-white placeholder:text-surface-500 dark:placeholder:text-surface-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all touch-manipulation"
-              placeholder={t('heroForm.fields.emailPlaceholder') as string}
+              placeholder={t('heroForm.fields.emailPlaceholder')}
               aria-required="true"
               aria-invalid={errors.email ? 'true' : 'false'}
               aria-describedby={errors.email ? 'email-error' : undefined}
@@ -135,12 +135,12 @@ export const HeroForm: React.FC = () => {
               htmlFor="interest"
               className="block text-sm font-semibold text-surface-700 dark:text-surface-300 mb-2"
             >
-              {t('heroForm.fields.interest') as string}
+              {t('heroForm.fields.interest')}
             </label>
             <select
               id="interest"
               {...register('interest', {
-                required: t('heroForm.fields.interestRequired') as string,
+                required: t('heroForm.fields.interestRequired'),
               })}
               className="w-full px-4 py-4 md:py-3 text-base glass-effect rounded-xl text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all bg-white/50 dark:bg-surface-900/50 touch-manipulation"
               aria-required="true"
@@ -151,25 +151,25 @@ export const HeroForm: React.FC = () => {
                 value=""
                 className="bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
               >
-                {t('heroForm.fields.selectOption') as string}
+                {t('heroForm.fields.selectOption')}
               </option>
               <option
                 value="shopify"
                 className="bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
               >
-                {t('heroForm.fields.options.shopify') as string}
+                {t('heroForm.fields.options.shopify')}
               </option>
               <option
                 value="wordpress"
                 className="bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
               >
-                {t('heroForm.fields.options.wordpress') as string}
+                {t('heroForm.fields.options.wordpress')}
               </option>
               <option
                 value="consultation"
                 className="bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
               >
-                {t('heroForm.fields.options.consultation') as string}
+                {t('heroForm.fields.options.consultation')}
               </option>
             </select>
             {errors.interest && (
@@ -186,10 +186,11 @@ export const HeroForm: React.FC = () => {
           )}
 
           <Button type="submit" className="w-full" size="md" variant="primary" disabled={loading}>
-            {loading ? (t('heroForm.submitting') as string) : (t('heroForm.submit') as string)}
+            {loading ? t('heroForm.submitting' as any) : t('heroForm.submit' as any)}
           </Button>
         </form>
       </CardContent>
     </Card>
   );
 };
+

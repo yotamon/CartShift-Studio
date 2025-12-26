@@ -96,31 +96,47 @@ export async function uploadMultipleFiles(
 // ============================================
 
 export async function getFilesByOrg(orgId: string): Promise<FileAttachment[]> {
-  const q = query(
-    collection(db, FILES_COLLECTION),
-    where('orgId', '==', orgId),
-    orderBy('uploadedAt', 'desc')
-  );
+  try {
+    const q = query(
+      collection(db, FILES_COLLECTION),
+      where('orgId', '==', orgId),
+      orderBy('uploadedAt', 'desc')
+    );
 
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as FileAttachment[];
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as FileAttachment[];
+  } catch (error: any) {
+    if (error.code === 'permission-denied') {
+      console.error('Permission denied accessing files for org:', orgId);
+      return [];
+    }
+    throw error;
+  }
 }
 
 export async function getFilesByRequest(requestId: string): Promise<FileAttachment[]> {
-  const q = query(
-    collection(db, FILES_COLLECTION),
-    where('requestId', '==', requestId),
-    orderBy('uploadedAt', 'desc')
-  );
+  try {
+    const q = query(
+      collection(db, FILES_COLLECTION),
+      where('requestId', '==', requestId),
+      orderBy('uploadedAt', 'desc')
+    );
 
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as FileAttachment[];
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as FileAttachment[];
+  } catch (error: any) {
+    if (error.code === 'permission-denied') {
+      console.error('Permission denied accessing files for request:', requestId);
+      return [];
+    }
+    throw error;
+  }
 }
 
 // ============================================

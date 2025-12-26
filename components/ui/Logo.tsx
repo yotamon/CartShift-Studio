@@ -1,6 +1,6 @@
-import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { Link } from "@/i18n/navigation";
 
 interface LogoProps {
   className?: string;
@@ -9,6 +9,7 @@ interface LogoProps {
 }
 
 export const Logo: React.FC<LogoProps> = ({ className, size = "md", disableLink = false }) => {
+
   // 3.3:1 aspect ratio (1989x601) after cropping
   const sizeConfig = {
     sm: {
@@ -63,3 +64,4 @@ export const Logo: React.FC<LogoProps> = ({ className, size = "md", disableLink 
     </Link>
   );
 };
+

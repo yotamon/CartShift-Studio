@@ -78,13 +78,14 @@ export const PortalAvatarGroup: React.FC<PortalAvatarGroupProps> = ({
     <div className={cn('flex -space-x-2', className)}>
       {visibleChildren}
       {overflow > 0 && (
-        <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs flex items-center justify-center border-2 border-white dark:border-slate-800">
+        <div className="w-10 h-10 rounded-full bg-surface-200 dark:bg-surface-700 text-surface-600 dark:text-surface-300 text-xs flex items-center justify-center border-2 border-white dark:border-surface-800">
           +{overflow}
         </div>
       )}
     </div>
   );
 };
+
 
 
 

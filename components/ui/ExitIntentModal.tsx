@@ -4,8 +4,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './Button';
 import { Icon } from './Icon';
-import { useLanguage } from '@/components/providers/LanguageProvider';
-import Link from 'next/link';
+import { useLocale } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { trackExitIntentShown, trackExitIntentClosed, trackBookCallClick } from '@/lib/analytics';
 
 interface ExitIntentModalProps {
@@ -18,8 +18,8 @@ export const ExitIntentModal: React.FC<ExitIntentModalProps> = ({
   storageKey = 'exitIntentShown',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { language } = useLanguage();
-  const isHe = language === 'he';
+  const locale = useLocale();
+  const isHe = locale === 'he';
 
   const content = {
     title: isHe ? 'רגע לפני שהולכים...' : 'Before you go...',
@@ -124,7 +124,7 @@ export const ExitIntentModal: React.FC<ExitIntentModalProps> = ({
                 </div>
               </div>
               <div className="p-6">
-                <p className="text-slate-600 dark:text-surface-400 text-center mb-6">
+                <p className="text-surface-600 dark:text-surface-400 text-center mb-6">
                   {content.description}
                 </p>
                 <div className="space-y-3">
@@ -136,7 +136,7 @@ export const ExitIntentModal: React.FC<ExitIntentModalProps> = ({
                   </Link>
                   <button
                     onClick={handleCloseClick}
-                    className="w-full py-2 text-sm text-slate-500 dark:text-surface-500 hover:text-slate-700 dark:hover:text-surface-300 transition-colors"
+                    className="w-full py-2 text-sm text-surface-500 dark:text-surface-500 hover:text-surface-700 dark:hover:text-surface-300 transition-colors"
                   >
                     {content.dismiss}
                   </button>
@@ -149,3 +149,4 @@ export const ExitIntentModal: React.FC<ExitIntentModalProps> = ({
     </AnimatePresence>
   );
 };
+

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
+import { Link } from '@/i18n/navigation';
 import { generateBreadcrumbSchema } from "@/lib/seo";
 import Script from "next/script";
 
@@ -43,13 +43,13 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className = "" })
                   <Link
                     href={item.url}
                     itemProp="item"
-                    className="text-slate-600 dark:text-surface-400 hover:text-accent-600 dark:hover:text-accent-400 transition-colors"
+                    className="text-surface-600 dark:text-surface-400 hover:text-accent-600 dark:hover:text-accent-400 transition-colors"
                   >
                     <span itemProp="name">{item.name}</span>
                   </Link>
                   <meta itemProp="position" content={String(index + 1)} />
                   <svg
-                    className="w-4 h-4 text-slate-400 dark:text-surface-500 rtl:rotate-180"
+                    className="w-4 h-4 text-surface-400 dark:text-surface-500 rtl:rotate-180"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -60,7 +60,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className = "" })
               ) : (
                 <span
                   itemProp="name"
-                  className="text-slate-900 dark:text-white font-medium"
+                  className="text-surface-900 dark:text-white font-medium"
                   aria-current="page"
                 >
                   {item.name}
@@ -73,4 +73,5 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className = "" })
     </>
   );
 };
+
 

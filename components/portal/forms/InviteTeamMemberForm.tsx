@@ -8,13 +8,13 @@ import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalInput } from '@/components/portal/ui/PortalInput';
 import { X } from 'lucide-react';
 import { inviteTeamMember } from '@/lib/services/portal-organizations';
+import { useTranslations } from 'next-intl';
+import { useMemo } from 'react';
 
-const inviteSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
-  role: z.enum(['admin', 'member', 'viewer']),
-});
-
-type InviteFormData = z.infer<typeof inviteSchema>;
+type InviteFormData = {
+  email: string;
+  role: 'admin' | 'member' | 'viewer';
+};
 
 interface InviteTeamMemberFormProps {
   orgId: string;
@@ -25,6 +25,12 @@ interface InviteTeamMemberFormProps {
 export const InviteTeamMemberForm = ({ orgId, onSuccess, onCancel }: InviteTeamMemberFormProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const t = useTranslations();
+
+  const inviteSchema = useMemo(() => z.object({
+    email: z.string().email(t('portal.team.inviteForm.errors.email')),
+    role: z.enum(['admin', 'member', 'viewer']),
+  }), [t]);
 
   const {
     register,
@@ -44,45 +50,45 @@ export const InviteTeamMemberForm = ({ orgId, onSuccess, onCancel }: InviteTeamM
     try {
       await inviteTeamMember(orgId, data.email, data.role);
       onSuccess();
-    } catch (err: any) {
-      console.error('Invite error:', err);
-      setError(err.message || 'Failed to send invite. Please try again.');
+      } catch (err: any) {
+        console.error('Invite error:', err);
+        setError(err.message || t('portal.team.inviteForm.errors.generic'));
     } finally {
       setLoading(false);
     }
   };
 
   const roleOptions = [
-    { value: 'admin', label: 'Admin - Full access' },
-    { value: 'member', label: 'Member - Standard access' },
-    { value: 'viewer', label: 'Viewer - Read-only access' },
+    { value: 'admin', label: t('portal.team.inviteForm.roles.admin') },
+    { value: 'member', label: t('portal.team.inviteForm.roles.member') },
+    { value: 'viewer', label: t('portal.team.inviteForm.roles.viewer') },
   ];
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 dark:border-slate-800">
-        <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
-          <h3 className="text-xl font-bold text-slate-900 dark:text-white">Invite Team Member</h3>
+      <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-2xl max-w-md w-full border border-surface-200 dark:border-surface-800">
+        <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-800">
+          <h3 className="text-xl font-bold text-surface-900 dark:text-white">{t('portal.team.inviteForm.title')}</h3>
           <button
             onClick={onCancel}
-            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-lg transition-colors"
           >
-            <X size={20} className="text-slate-500" />
+            <X size={20} className="text-surface-500" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-5">
           <PortalInput
-            label="Email Address"
+            label={t('portal.team.inviteForm.emailLabel')}
             type="email"
-            placeholder="colleague@company.com"
+            placeholder={t('portal.team.inviteForm.emailPlaceholder')}
             error={errors.email?.message}
             {...register('email')}
           />
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-              Role & Permissions
+            <label className="block text-sm font-semibold text-surface-700 dark:text-surface-300 mb-2">
+              {t('portal.team.inviteForm.roleLabel')}
             </label>
             <select
               {...register('role')}
@@ -105,10 +111,10 @@ export const InviteTeamMemberForm = ({ orgId, onSuccess, onCancel }: InviteTeamM
 
           <div className="flex gap-3 pt-4">
             <PortalButton type="button" variant="outline" onClick={onCancel} className="flex-1">
-              Cancel
+              {t('portal.team.inviteForm.cancel')}
             </PortalButton>
             <PortalButton type="submit" isLoading={loading} className="flex-1">
-              {loading ? 'Sending...' : 'Send Invite'}
+              {loading ? t('portal.team.inviteForm.sending') : t('portal.team.inviteForm.submit')}
             </PortalButton>
           </div>
         </form>
@@ -116,3 +122,4 @@ export const InviteTeamMemberForm = ({ orgId, onSuccess, onCancel }: InviteTeamM
     </div>
   );
 };
+

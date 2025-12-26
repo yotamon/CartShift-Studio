@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from './Icon';
 import { cn } from '@/lib/utils';
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useLocale } from 'next-intl';
 import { trackBookCallClick, trackWhatsAppClick } from '@/lib/analytics';
 import { getScheduleUrl } from '@/lib/schedule';
 import { Calendar, X } from 'lucide-react';
@@ -20,8 +20,8 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const { language } = useLanguage();
-  const isHe = language === 'he';
+  const locale = useLocale();
+  const isHe = locale === 'he';
 
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '972503591552';
   const whatsappMessage = isHe
@@ -212,3 +212,4 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
     </AnimatePresence>
   );
 };
+

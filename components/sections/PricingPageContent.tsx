@@ -9,8 +9,8 @@ import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { PageHero } from '@/components/sections/PageHero';
-import Link from 'next/link';
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useTranslations, useLocale } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { trackPricingView, trackPackageClick } from '@/lib/analytics';
 
 interface PackageCardProps {
@@ -109,15 +109,16 @@ const PackageCard: React.FC<PackageCardProps> = ({
 );
 
 export const PricingPageContent: React.FC = () => {
-  const { t, language } = useLanguage();
-  const isHe = language === 'he';
+  const t = useTranslations();
+  const locale = useLocale();
+  const isHe = locale === 'he';
 
   // Track pricing page view
   useEffect(() => {
     trackPricingView();
   }, []);
 
-  const pricing = t('pricing') as {
+  const pricing = (t('pricing' as any) as unknown) as {
     hero: { title: string; subtitle: string; description: string; badge: string };
     packages: {
       quickLaunch: {
@@ -318,3 +319,4 @@ export const PricingPageContent: React.FC = () => {
     </>
   );
 };
+

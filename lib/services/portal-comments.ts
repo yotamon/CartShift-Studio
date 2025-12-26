@@ -65,21 +65,29 @@ export async function getCommentsByRequest(
   requestId: string,
   includeInternal = false
 ): Promise<Comment[]> {
-  let q = query(
-    collection(db, COMMENTS_COLLECTION),
-    where('requestId', '==', requestId),
-    orderBy('createdAt', 'asc')
-  );
+  try {
+    let q = query(
+      collection(db, COMMENTS_COLLECTION),
+      where('requestId', '==', requestId),
+      orderBy('createdAt', 'asc')
+    );
 
-  if (!includeInternal) {
-    q = query(q, where('isInternal', '==', false));
+    if (!includeInternal) {
+      q = query(q, where('isInternal', '==', false));
+    }
+
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Comment[];
+  } catch (error: any) {
+    if (error.code === 'permission-denied') {
+      console.error('Permission denied accessing comments for request:', requestId);
+      return [];
+    }
+    throw error;
   }
-
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as Comment[];
 }
 
 // ============================================
@@ -132,5 +140,8 @@ export function subscribeToRequestComments(
     }
 
     callback(comments);
+  }, (error) => {
+    console.error('Error in comments snapshot:', error);
+    callback([]);
   });
 }

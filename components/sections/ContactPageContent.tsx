@@ -7,7 +7,8 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Parallax } from '@/components/ui/Parallax';
 import { trackFormSubmission } from '@/components/analytics/GoogleAnalytics';
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useTranslations } from 'next-intl';
+import { useDirection } from '@/lib/i18n-utils';
 import { logError } from '@/lib/error-handler';
 import { getScheduleUrl } from '@/lib/schedule';
 import { Icon } from '@/components/ui/Icon';
@@ -31,7 +32,8 @@ export const ContactPageContent: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<ContactFormData>();
-  const { t, direction } = useLanguage();
+  const t = useTranslations();
+  const direction = useDirection();
 
   const onSubmit = async (data: ContactFormData) => {
     setLoading(true);
@@ -71,7 +73,7 @@ export const ContactPageContent: React.FC = () => {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-2xl md:text-3xl font-bold text-surface-900 dark:text-white font-display mb-8 text-center md:text-start leading-tight tracking-tight">
-              {t('contact.title') as string}
+              {t('contact.title')}
             </h2>
             <div className="space-y-6 text-start">
               <div className="flex items-start gap-4">
@@ -82,7 +84,7 @@ export const ContactPageContent: React.FC = () => {
                 </Parallax>
                 <div>
                   <h3 className="font-semibold text-surface-900 dark:text-white mb-2 text-base md:text-lg">
-                    {t('contact.emailLabel') as string}
+                    {t('contact.emailLabel')}
                   </h3>
                   <a
                     href="mailto:hello@cartshiftstudio.com"
@@ -100,10 +102,10 @@ export const ContactPageContent: React.FC = () => {
                 </Parallax>
                 <div>
                   <h3 className="font-semibold text-surface-900 dark:text-white mb-2 text-base md:text-lg">
-                    {t('contact.quickResponseTitle') as string}
+                    {t('contact.quickResponseTitle')}
                   </h3>
                   <p className="text-surface-600 dark:text-surface-300 text-base md:text-lg leading-relaxed">
-                    {t('contact.quickResponseText') as string}
+                    {t('contact.quickResponseText')}
                   </p>
                 </div>
               </div>
@@ -115,10 +117,10 @@ export const ContactPageContent: React.FC = () => {
                 </Parallax>
                 <div>
                   <h3 className="font-semibold text-surface-900 dark:text-white mb-2 text-base md:text-lg">
-                    {t('contact.scheduleTitle') as string}
+                    {t('contact.scheduleTitle')}
                   </h3>
                   <p className="text-surface-600 dark:text-surface-300 mb-3 text-base md:text-lg leading-relaxed">
-                    {t('contact.scheduleText1') as string}
+                    {t('contact.scheduleText1')}
                   </p>
                   <a
                     href={getScheduleUrl()}
@@ -175,10 +177,10 @@ export const ContactPageContent: React.FC = () => {
                     <CheckCircle className="w-12 h-12" strokeWidth={2} />
                   </div>
                   <h3 className="text-xl md:text-2xl font-bold text-surface-900 dark:text-white mb-4 leading-tight tracking-tight">
-                    {t('contact.form.successTitle') as string}
+                    {t('contact.form.successTitle')}
                   </h3>
                   <p className="text-surface-600 dark:text-surface-300 mb-6 text-base md:text-lg leading-relaxed">
-                    {t('contact.form.successText') as string}
+                    {t('contact.form.successText')}
                   </p>
                   <p className="text-surface-600 dark:text-surface-300 mb-6 text-base md:text-lg leading-relaxed">
                     {isRtl
@@ -202,7 +204,7 @@ export const ContactPageContent: React.FC = () => {
                       onClick={() => setSubmitted(false)}
                       className="w-full sm:w-auto"
                     >
-                      {t('contact.form.sendAnother') as string}
+                      {t('contact.form.sendAnother')}
                     </Button>
                   </div>
                 </CardContent>
@@ -211,7 +213,7 @@ export const ContactPageContent: React.FC = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-xl md:text-2xl text-start">
-                    {t('contact.form.title') as string}
+                    {t('contact.form.title')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -221,7 +223,7 @@ export const ContactPageContent: React.FC = () => {
                         htmlFor="name"
                         className="block text-sm font-medium text-surface-700 dark:text-surface-200 mb-2"
                       >
-                        {t('contact.form.nameLabel') as string}{' '}
+                        {t('contact.form.nameLabel')}{' '}
                         <span className="text-error">*</span>
                       </label>
                       <input
@@ -229,7 +231,7 @@ export const ContactPageContent: React.FC = () => {
                         type="text"
                         {...register('name', { required: 'Name is required' })}
                         className="w-full px-4 py-4 md:py-3 rounded-xl glass-effect text-surface-900 dark:text-white placeholder:text-surface-500 dark:placeholder:text-surface-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all touch-manipulation"
-                        placeholder={t('contact.form.namePlaceholder') as string}
+                        placeholder={t('contact.form.namePlaceholder')}
                         aria-required="true"
                         aria-invalid={errors.name ? 'true' : 'false'}
                         aria-describedby={errors.name ? 'contact-name-error' : undefined}
@@ -246,7 +248,7 @@ export const ContactPageContent: React.FC = () => {
                         htmlFor="email"
                         className="block text-sm font-medium text-surface-700 dark:text-surface-200 mb-2"
                       >
-                        {t('contact.form.emailLabel') as string}{' '}
+                        {t('contact.form.emailLabel')}{' '}
                         <span className="text-error">*</span>
                       </label>
                       <input
@@ -261,7 +263,7 @@ export const ContactPageContent: React.FC = () => {
                         })}
                         className="w-full px-4 py-4 md:py-3 rounded-xl glass-effect text-surface-900 dark:text-white placeholder:text-surface-500 dark:placeholder:text-surface-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all text-start touch-manipulation"
                         style={{ direction: 'ltr' }}
-                        placeholder={t('contact.form.emailPlaceholder') as string}
+                        placeholder={t('contact.form.emailPlaceholder')}
                         aria-required="true"
                         aria-invalid={errors.email ? 'true' : 'false'}
                         aria-describedby={errors.email ? 'contact-email-error' : undefined}
@@ -282,14 +284,14 @@ export const ContactPageContent: React.FC = () => {
                         htmlFor="company"
                         className="block text-sm font-medium text-surface-700 dark:text-surface-200 mb-2"
                       >
-                        {t('contact.form.companyLabel') as string}
+                        {t('contact.form.companyLabel')}
                       </label>
                       <input
                         id="company"
                         type="text"
                         {...register('company')}
                         className="w-full px-4 py-4 md:py-3 rounded-xl glass-effect text-surface-900 dark:text-white placeholder:text-surface-500 dark:placeholder:text-surface-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all touch-manipulation"
-                        placeholder={t('contact.form.companyPlaceholder') as string}
+                        placeholder={t('contact.form.companyPlaceholder')}
                       />
                     </div>
 
@@ -298,7 +300,7 @@ export const ContactPageContent: React.FC = () => {
                         htmlFor="projectType"
                         className="block text-sm font-medium text-surface-700 dark:text-surface-200 mb-2"
                       >
-                        {t('contact.form.projectTypeLabel') as string}{' '}
+                        {t('contact.form.projectTypeLabel')}{' '}
                         <span className="text-error">*</span>
                       </label>
                       <select
@@ -311,17 +313,17 @@ export const ContactPageContent: React.FC = () => {
                           errors.projectType ? 'contact-projectType-error' : undefined
                         }
                       >
-                        <option value="">{t('contact.form.selectOption') as string}</option>
+                        <option value="">{t('contact.form.selectOption')}</option>
                         <option value="shopify">
-                          {t('contact.form.options.shopify') as string}
+                          {t('contact.form.options.shopify')}
                         </option>
                         <option value="wordpress">
-                          {t('contact.form.options.wordpress') as string}
+                          {t('contact.form.options.wordpress')}
                         </option>
                         <option value="consultation">
-                          {t('contact.form.options.consultation') as string}
+                          {t('contact.form.options.consultation')}
                         </option>
-                        <option value="other">{t('contact.form.options.other') as string}</option>
+                        <option value="other">{t('contact.form.options.other')}</option>
                       </select>
                       {errors.projectType && (
                         <p
@@ -339,7 +341,7 @@ export const ContactPageContent: React.FC = () => {
                         htmlFor="message"
                         className="block text-sm font-medium text-surface-700 dark:text-surface-200 mb-2"
                       >
-                        {t('contact.form.messageLabel') as string}{' '}
+                        {t('contact.form.messageLabel')}{' '}
                         <span className="text-error">*</span>
                       </label>
                       <textarea
@@ -347,7 +349,7 @@ export const ContactPageContent: React.FC = () => {
                         rows={6}
                         {...register('message', { required: 'Message is required' })}
                         className="w-full px-4 py-4 md:py-3 rounded-xl glass-effect text-surface-900 dark:text-white placeholder:text-surface-500 dark:placeholder:text-surface-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all resize-none touch-manipulation"
-                        placeholder={t('contact.form.messagePlaceholder') as string}
+                        placeholder={t('contact.form.messagePlaceholder')}
                         aria-required="true"
                         aria-invalid={errors.message ? 'true' : 'false'}
                         aria-describedby={errors.message ? 'contact-message-error' : undefined}
@@ -371,12 +373,12 @@ export const ContactPageContent: React.FC = () => {
 
                     <Button type="submit" className="w-full" size="md" disabled={loading}>
                       {loading
-                        ? (t('contact.form.submitting') as string) || 'Submitting...'
-                        : (t('contact.form.submitButton') as string)}
+                        ? t('contact.form.submitting') || 'Submitting...'
+                        : t('contact.form.submitButton')}
                     </Button>
 
                     <p className="text-xs text-surface-400 text-center">
-                      {t('contact.form.privacy') as string}
+                      {t('contact.form.privacy')}
                     </p>
                   </form>
                 </CardContent>
@@ -388,3 +390,4 @@ export const ContactPageContent: React.FC = () => {
     </section>
   );
 };
+

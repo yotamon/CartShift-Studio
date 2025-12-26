@@ -7,29 +7,23 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { FAQ, FAQItem } from '@/components/ui/FAQ';
 import { ProcessSection } from '@/components/sections/ProcessSection';
-import Link from 'next/link';
-
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 
 export const ShopifyPageContent: React.FC = () => {
-  const { t } = useLanguage();
+  const t = useTranslations();
 
-  const getString = (path: string): string => {
-    const value = t(path);
-    return typeof value === 'string' ? value : String(value);
-  };
-
-  const services = t('shopify.services.items') as unknown as Array<{
+  const services = t.raw('shopify.services.items') as Array<{
     title: string;
     description: string;
   }>;
-  const whyItems = t('shopify.why.items') as unknown as string[];
-  const learnMoreData = t('shopify.learnMore') as unknown as {
+  const whyItems = t.raw('shopify.why.items') as string[];
+  const learnMoreData = t.raw('shopify.learnMore' as any) as {
     title: string;
     description: string;
     links: Array<{ title: string; href: string }>;
   };
-  const faqData = t('shopify.faq') as unknown as {
+  const faqData = t.raw('shopify.faq' as any) as {
     title: string;
     subtitle: string;
     items: FAQItem[];
@@ -40,8 +34,8 @@ export const ShopifyPageContent: React.FC = () => {
     <>
       <Section background="default" className="relative overflow-hidden">
         <SectionHeader
-          title={getString('shopify.services.title')}
-          subtitle={getString('shopify.services.subtitle')}
+          title={t('shopify.services.title')}
+          subtitle={t('shopify.services.subtitle')}
         />
         <div className="grid md:grid-cols-2 gap-8">
           {services.map((service, index) => (
@@ -74,8 +68,8 @@ export const ShopifyPageContent: React.FC = () => {
             transition={{ duration: 0.6 }}
             className="text-3xl md:text-4xl lg:text-5xl font-bold text-surface-900 dark:text-white font-display mb-8 text-center leading-tight tracking-tight"
           >
-            {getString('shopify.why.title')}{' '}
-            <span className="gradient-text">{getString('shopify.why.titleSpan')}</span>
+            {t('shopify.why.title')}{' '}
+            <span className="gradient-text">{t('shopify.why.titleSpan')}</span>
           </motion.h2>
           <div className="space-y-6">
             {whyItems.map((text, index) => (
@@ -167,16 +161,16 @@ export const ShopifyPageContent: React.FC = () => {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-surface-900 dark:text-white font-display mb-8 leading-tight tracking-tight">
-              {getString('shopify.cta.title')}{' '}
-              <span className="gradient-text">{getString('shopify.cta.titleSpan')}</span>
+              {t('shopify.cta.title')}{' '}
+              <span className="gradient-text">{t('shopify.cta.titleSpan')}</span>
             </h2>
             <p className="text-base md:text-lg text-surface-600 dark:text-surface-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-              {getString('shopify.cta.description')}
+              {t('shopify.cta.description')}
             </p>
             <Link href="/contact">
               <Button size="lg" className="group">
                 <span className="relative z-10 flex items-center gap-2">
-                  {getString('shopify.cta.button')}
+                  {t('shopify.cta.button')}
                   <svg
                     className="w-5 h-5 transition-transform rtl:rotate-180"
                     fill="none"
@@ -199,3 +193,4 @@ export const ShopifyPageContent: React.FC = () => {
     </>
   );
 };
+

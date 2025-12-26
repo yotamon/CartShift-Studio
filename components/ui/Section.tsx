@@ -22,7 +22,7 @@ export const Section: React.FC<SectionProps> = ({
     default: 'bg-[#f0f4f8] dark:bg-surface-900',
     light: 'bg-white/80 dark:bg-surface-800',
     white: 'bg-[#e2e8f0] dark:bg-surface-850',
-    glass: 'bg-gradient-to-br from-slate-50 to-slate-100 dark:bg-surface-800',
+    glass: 'bg-gradient-to-br from-surface-50 to-surface-100 dark:bg-surface-800',
   };
 
   const isGlass = background === 'glass';
@@ -171,14 +171,15 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
         className
       )}
     >
-      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold text-slate-900 dark:text-white mb-6 md:mb-8 leading-tight tracking-tight">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold text-surface-900 dark:text-white mb-6 md:mb-8 leading-tight tracking-tight">
         {title}
       </h2>
       {subtitle && (
-        <p className="text-sm sm:text-base md:text-lg text-slate-600 dark:text-surface-300 max-w-4xl mx-auto leading-relaxed font-light">
+        <p className="text-sm sm:text-base md:text-lg text-surface-600 dark:text-surface-300 max-w-4xl mx-auto leading-relaxed font-light">
           {subtitle}
         </p>
       )}
     </div>
   );
 };
+

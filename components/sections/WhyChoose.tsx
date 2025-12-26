@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { SectionHeader } from '@/components/ui/Section';
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useTranslations } from 'next-intl';
 import { Parallax } from '@/components/ui/Parallax';
 import { Icon } from '@/components/ui/Icon';
 
@@ -14,8 +14,8 @@ interface WhyItem {
 }
 
 export const WhyChoose: React.FC = () => {
-  const { t } = useLanguage();
-  const values = (t('whyChoose.items') as WhyItem[]) || [];
+  const t = useTranslations();
+  const values = t.raw('whyChoose.items') as WhyItem[];
 
   // Card variants for staggered animations
   const containerVariants = {
@@ -54,7 +54,7 @@ export const WhyChoose: React.FC = () => {
   const isFeature = (index: number) => index === 0;
 
   return (
-    <section className="py-20 md:py-32 px-4 sm:px-6 lg:px-8 relative bg-gradient-to-b from-white via-slate-50 to-white dark:from-surface-800 dark:via-surface-800 dark:to-surface-800 overflow-hidden">
+    <section className="py-20 md:py-32 px-4 sm:px-6 lg:px-8 relative bg-gradient-to-b from-white via-surface-50 to-white dark:from-surface-800 dark:via-surface-800 dark:to-surface-800 overflow-hidden">
       {/* Parallax background elements */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Ambient glow orbs with parallax */}
@@ -135,8 +135,8 @@ export const WhyChoose: React.FC = () => {
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="relative">
           <SectionHeader
-            title={t('whyChoose.title') as string}
-            subtitle={t('whyChoose.subtitle') as string}
+            title={t('whyChoose.title')}
+            subtitle={t('whyChoose.subtitle')}
           />
 
           {/* Bento Grid */}
@@ -212,7 +212,7 @@ export const WhyChoose: React.FC = () => {
                         ${
                           isFeature(index)
                             ? 'text-2xl md:text-3xl text-white'
-                            : 'text-lg md:text-xl text-slate-900 dark:text-white'
+                            : 'text-lg md:text-xl text-surface-900 dark:text-white'
                         }
                       `}
                       >
@@ -224,7 +224,7 @@ export const WhyChoose: React.FC = () => {
                         ${
                           isFeature(index)
                             ? 'text-base md:text-lg text-white'
-                            : 'text-sm md:text-base text-slate-600 dark:text-surface-300'
+                            : 'text-sm md:text-base text-surface-600 dark:text-surface-300'
                         }
                       `}
                       >
@@ -241,3 +241,4 @@ export const WhyChoose: React.FC = () => {
     </section>
   );
 };
+

@@ -2,13 +2,15 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
+import { useDirection } from '@/lib/i18n-utils';
 import { ArrowRight } from 'lucide-react';
 
 export const CTABanner: React.FC = () => {
-  const { t, direction } = useLanguage();
+  const t = useTranslations();
+  const direction = useDirection();
   const isRtl = direction === 'rtl';
 
   return (
@@ -91,10 +93,10 @@ export const CTABanner: React.FC = () => {
             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-b from-primary-500/10 to-transparent rounded-full blur-3xl"></div>
 
             <div className="relative z-10 space-y-6 md:space-y-8">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold text-slate-900 dark:text-white leading-[1.1] tracking-tight">
-                {t('ctaBanner.titlePart1') as string}{' '}
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold text-surface-900 dark:text-white leading-[1.1] tracking-tight">
+                {t('ctaBanner.titlePart1')}{' '}
                 <span className="gradient-text text-glow-subtle">
-                  {t('ctaBanner.titlePart2') as string}
+                  {t('ctaBanner.titlePart2')}
                 </span>
               </h2>
 
@@ -103,9 +105,9 @@ export const CTABanner: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2, duration: 0.8 }}
-                className="text-base md:text-lg lg:text-xl text-slate-600 dark:text-surface-300 font-light leading-relaxed max-w-2xl mx-auto"
+                className="text-base md:text-lg lg:text-xl text-surface-600 dark:text-surface-300 font-light leading-relaxed max-w-2xl mx-auto"
               >
-                {t('ctaBanner.description') as string}
+                {t('ctaBanner.description')}
               </motion.p>
 
               <motion.div
@@ -122,7 +124,7 @@ export const CTABanner: React.FC = () => {
                     className="text-lg md:text-xl px-10 md:px-14 py-5 md:py-6 font-black shadow-glow-primary group w-full sm:w-auto"
                   >
                     <span className="flex items-center gap-3 justify-center">
-                      {t('ctaBanner.button') as string}
+                      {t('ctaBanner.button')}
                       <motion.div
                         animate={{ x: isRtl ? [0, -5, 0] : [0, 5, 0] }}
                         transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
@@ -143,3 +145,4 @@ export const CTABanner: React.FC = () => {
     </section>
   );
 };
+

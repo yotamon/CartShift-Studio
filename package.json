@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -11,21 +11,30 @@
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "export": "next build",
-    "deploy": "npm run export && firebase deploy",
-    "deploy:hosting": "npm run export && firebase deploy --only hosting",
-    "deploy:functions": "cd functions && npm install && cd .. && firebase deploy --only functions",
+    "deploy": "pnpm run export && firebase deploy",
+    "deploy:hosting": "pnpm run export && firebase deploy --only hosting",
+    "deploy:functions": "cd functions && pnpm install && cd .. && firebase deploy --only functions",
     "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
     "@hookform/resolvers": "^5.2.2",
+    "@next/bundle-analyzer": "^16.0.10",
+    "@paypal/react-paypal-js": "^8.9.2",
+    "@shopify/cli": "^3.78.0",
+    "@types/dompurify": "^3.0.5",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "dompurify": "^3.3.1",
+    "eslint-config-next": "^16.0.10",
     "firebase": "^11.10.0",
     "framer-motion": "^11.3.0",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.561.0",
+    "magnitude-test": "^0.0.21",
     "next": "^16.0.10",
+    "next-intl": "^4.6.1",
+    "next-themes": "^0.4.6",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-dropzone": "^14.3.8",
@@ -33,10 +42,10 @@
     "remark": "^15.0.1",
     "remark-gfm": "^4.0.1",
     "remark-html": "^16.0.1",
-    "sanitize-html": "^2.13.0",
+    "sanitize-html": "^2.17.0",
     "tailwind-merge": "^2.4.0",
     "uuid": "^13.0.0",
-    "zod": "^3.23.8"
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",
@@ -47,9 +56,11 @@
     "autoprefixer": "^10.4.19",
     "eslint": "^9.0.0",
     "eslint-config-next": "^16.0.10",
+    "mini-css-extract-plugin": "^2.9.4",
     "postcss": "^8.4.39",
     "prettier": "^3.2.5",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.5.3"
-  }
+  },
+  "packageManager": "pnpm@10.13.1+sha512.37ebf1a5c7a30d5fabe0c5df44ee8da4c965ca0c5af3dbab28c3a1681b70a256218d05c81c9c0dcf767ef6b8551eb5b960042b9ed4300c59242336377e01cfad"
 }

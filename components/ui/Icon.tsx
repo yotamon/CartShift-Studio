@@ -145,3 +145,4 @@ export const Icon: React.FC<IconProps> = ({ name, className = '', size = 24 }) =
 
   return <IconComponent size={size} className={cn(className)} aria-hidden="true" />;
 };
+

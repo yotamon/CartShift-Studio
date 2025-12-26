@@ -7,10 +7,14 @@ import { Timestamp } from 'firebase/firestore';
 export const REQUEST_STATUS = {
   NEW: 'NEW',
   NEEDS_INFO: 'NEEDS_INFO',
+  QUOTED: 'QUOTED',           // Agency added pricing, awaiting client response
+  ACCEPTED: 'ACCEPTED',       // Client accepted the quote
+  DECLINED: 'DECLINED',       // Client declined the quote
   QUEUED: 'QUEUED',
   IN_PROGRESS: 'IN_PROGRESS',
   IN_REVIEW: 'IN_REVIEW',
   DELIVERED: 'DELIVERED',
+  PAID: 'PAID',               // Client paid for billable request
   CLOSED: 'CLOSED',
   CANCELED: 'CANCELED',
 } as const;
@@ -38,10 +42,29 @@ export const USER_ROLE = {
   VIEWER: 'viewer',
 } as const;
 
-export type RequestStatus = typeof REQUEST_STATUS[keyof typeof REQUEST_STATUS];
-export type RequestPriority = typeof REQUEST_PRIORITY[keyof typeof REQUEST_PRIORITY];
-export type RequestType = typeof REQUEST_TYPE[keyof typeof REQUEST_TYPE];
-export type UserRole = typeof USER_ROLE[keyof typeof USER_ROLE];
+export const ACCOUNT_TYPE = {
+  CLIENT: 'CLIENT',
+  AGENCY: 'AGENCY',
+} as const;
+
+export const CURRENCY = {
+  USD: 'USD',
+  ILS: 'ILS',
+  EUR: 'EUR',
+} as const;
+
+
+export type RequestStatus = (typeof REQUEST_STATUS)[keyof typeof REQUEST_STATUS];
+export type RequestPriority = (typeof REQUEST_PRIORITY)[keyof typeof REQUEST_PRIORITY];
+export type RequestType = (typeof REQUEST_TYPE)[keyof typeof REQUEST_TYPE];
+export type UserRole = (typeof USER_ROLE)[keyof typeof USER_ROLE];
+export type AccountType = (typeof ACCOUNT_TYPE)[keyof typeof ACCOUNT_TYPE];
+
+// Account type configuration for UI
+export const ACCOUNT_TYPE_CONFIG: Record<AccountType, { label: string; labelHe: string; color: string; badgeVariant: 'blue' | 'purple' }> = {
+  CLIENT: { label: 'Client', labelHe: 'לקוח', color: 'blue', badgeVariant: 'blue' },
+  AGENCY: { label: 'Agency', labelHe: 'סוכנות', color: 'purple', badgeVariant: 'purple' },
+};
 
 // ============================================
 // CORE TYPES
@@ -75,7 +98,8 @@ export interface PortalUser {
   email: string;
   name?: string;
   photoUrl?: string;
-  isAgency: boolean;
+  accountType: AccountType;  // New: PRIMARY account type field
+  isAgency: boolean;         // Kept for backward compatibility (derived from accountType)
   organizations: string[]; // org IDs
   notificationPreferences?: {
     emailOnRequestUpdate: boolean;
@@ -234,8 +258,8 @@ export const STATUS_CONFIG: Record<RequestStatus, StatusConfig> = {
   QUEUED: {
     label: 'Queued',
     color: 'gray',
-    bgClass: 'bg-slate-100 dark:bg-slate-500/20',
-    textClass: 'text-slate-700 dark:text-slate-300',
+    bgClass: 'bg-surface-100 dark:bg-surface-500/20',
+    textClass: 'text-surface-700 dark:text-surface-300',
   },
   IN_PROGRESS: {
     label: 'In Progress',

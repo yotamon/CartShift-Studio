@@ -21,12 +21,12 @@ export const PortalSwitch = ({
     <div className="flex items-start justify-between gap-4 py-2">
       <div className="flex-1">
         {label && (
-          <label className="text-sm font-bold text-slate-900 dark:text-white block mb-0.5">
+          <label className="text-sm font-bold text-surface-900 dark:text-white block mb-0.5">
             {label}
           </label>
         )}
         {description && (
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+          <p className="text-xs text-surface-500 dark:text-surface-400 font-medium">
             {description}
           </p>
         )}
@@ -38,17 +38,18 @@ export const PortalSwitch = ({
         onClick={() => !disabled && onChange(!checked)}
         className={cn(
           "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2",
-          checked ? "bg-blue-600" : "bg-slate-200 dark:bg-slate-800",
+          checked ? "bg-blue-600" : "bg-surface-200 dark:bg-surface-800",
           disabled && "opacity-50 cursor-not-allowed"
         )}
       >
         <span
           className={cn(
             "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
-            checked ? "translate-x-5" : "translate-x-0"
+            checked ? "translate-x-5 rtl:-translate-x-5" : "translate-x-0"
           )}
         />
       </button>
     </div>
   );
 };
+

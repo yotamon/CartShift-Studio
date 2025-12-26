@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Logo } from '@/components/ui/Logo';
 import { Button } from '@/components/ui/Button';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { Icon } from '@/components/ui/Icon';
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
-import { useTheme } from '@/components/providers/ThemeProvider';
+import { useTheme } from 'next-themes';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 
 export const Header: React.FC = () => {
@@ -18,10 +18,10 @@ export const Header: React.FC = () => {
   const [companyOpen, setCompanyOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [isAtTop, setIsAtTop] = useState(true);
-  const { t, mounted } = useLanguage();
-  const { theme } = useTheme();
+  const t = useTranslations();
+  const { resolvedTheme } = useTheme();
   const { user } = usePortalAuth();
-  const isDark = theme === 'dark';
+  const isDark = resolvedTheme === 'dark';
   const isLoggedIn = !!user;
   const dropdownRef = useRef<HTMLDivElement>(null);
   const companyDropdownRef = useRef<HTMLDivElement>(null);
@@ -112,53 +112,29 @@ export const Header: React.FC = () => {
     };
   }, [solutionsOpen, companyOpen]);
 
-  const navigation = mounted
-    ? [
-        { name: t('nav.home') as string, href: '/' },
-        {
-          name: t('nav.services') as string,
-          href: '#',
-          submenu: [
-            { name: t('servicesOverview.shopify.title') as string, href: '/solutions/shopify' },
-            { name: t('servicesOverview.wordpress.title') as string, href: '/solutions/wordpress' },
-            { name: (t('nav.maintenance') as string) || 'Maintenance', href: '/maintenance' },
-          ],
-        },
-        {
-          name: t('nav.company') as string,
-          href: '#',
-          submenu: [
-            { name: (t('nav.work') as string) || 'Work', href: '/work' },
-            { name: (t('nav.pricing') as string) || 'Pricing', href: '/pricing' },
-            { name: t('nav.about') as string, href: '/about' },
-          ],
-        },
-        { name: t('nav.blog') as string, href: '/blog' },
-        { name: t('nav.contact') as string, href: '/contact' },
-      ]
-    : [
-        { name: 'Home', href: '/' },
-        {
-          name: 'Services',
-          href: '#',
-          submenu: [
-            { name: 'Shopify Solutions', href: '/solutions/shopify' },
-            { name: 'WordPress Solutions', href: '/solutions/wordpress' },
-            { name: 'Maintenance', href: '/maintenance' },
-          ],
-        },
-        {
-          name: 'Company',
-          href: '#',
-          submenu: [
-            { name: 'Work', href: '/work' },
-            { name: 'Pricing', href: '/pricing' },
-            { name: 'About', href: '/about' },
-          ],
-        },
-        { name: 'Blog', href: '/blog' },
-        { name: 'Contact', href: '/contact' },
-      ];
+  const navigation = [
+    { name: t('nav.home'), href: '/' },
+    {
+      name: t('nav.services'),
+      href: '#',
+      submenu: [
+        { name: t('servicesOverview.shopify.title'), href: '/solutions/shopify' },
+        { name: t('servicesOverview.wordpress.title'), href: '/solutions/wordpress' },
+        { name: t('nav.maintenance'), href: '/maintenance' },
+      ],
+    },
+    {
+      name: t('nav.company'),
+      href: '#',
+      submenu: [
+        { name: t('nav.work'), href: '/work' },
+        { name: t('nav.pricing'), href: '/pricing' },
+        { name: t('nav.about'), href: '/about' },
+      ],
+    },
+    { name: t('nav.blog'), href: '/blog' },
+    { name: t('nav.contact'), href: '/contact' },
+  ];
 
   return (
     <motion.header
@@ -202,8 +178,7 @@ export const Header: React.FC = () => {
           <div className="hidden md:flex md:items-center md:gap-6 lg:gap-8">
             {navigation.map(item => {
               if (item.submenu) {
-                const isCompany =
-                  item.name === (mounted ? (t('nav.company') as string) : 'Company');
+                const isCompany = item.name === t('nav.company');
                 const isOpen = isCompany ? companyOpen : solutionsOpen;
                 const setIsOpen = isCompany ? setCompanyOpen : setSolutionsOpen;
                 const ref = isCompany ? companyDropdownRef : dropdownRef;
@@ -305,19 +280,13 @@ export const Header: React.FC = () => {
                 href={isLoggedIn ? '/portal/org' : '/portal/login'}
                 className="text-surface-600 dark:text-surface-300 hover:text-surface-900 dark:hover:text-white font-medium transition-colors px-2 py-1"
               >
-                {mounted
-                  ? isLoggedIn
-                    ? (t('nav.portal') as string)
-                    : (t('nav.login') as string)
-                  : isLoggedIn
-                    ? 'Portal'
-                    : 'Login'}
+                {isLoggedIn ? t('nav.portal') : t('nav.login')}
               </Link>
               <LanguageSwitcher />
               <ThemeToggle />
               <Link href="/contact">
                 <Button size="sm" className="shadow-premium hover:shadow-premium-hover">
-                  {mounted ? (t('common.getStarted') as string) : 'Get Started'}
+                  {t('common.getStarted')}
                 </Button>
               </Link>
             </div>
@@ -391,13 +360,7 @@ export const Header: React.FC = () => {
                       className="block px-4 py-2.5 text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-accent-500/10 hover:text-accent-600 dark:hover:text-accent-400 transition-colors font-medium text-start"
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      {mounted
-                        ? isLoggedIn
-                          ? (t('nav.portal') as string)
-                          : (t('nav.login') as string)
-                        : isLoggedIn
-                          ? 'Portal'
-                          : 'Login'}
+                      {isLoggedIn ? t('nav.portal') : t('nav.login')}
                     </Link>
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-surface-600 dark:text-surface-400">
@@ -410,7 +373,7 @@ export const Header: React.FC = () => {
                     </div>
                     <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>
                       <Button size="sm" className="w-full">
-                        {mounted ? (t('common.getStarted') as string) : 'Get Started'}
+                        {t('common.getStarted')}
                       </Button>
                     </Link>
                   </div>
@@ -423,3 +386,4 @@ export const Header: React.FC = () => {
     </motion.header>
   );
 };
+

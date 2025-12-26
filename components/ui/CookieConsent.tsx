@@ -3,15 +3,15 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./Button";
-import { useLanguage } from "@/components/providers/LanguageProvider";
-import Link from "next/link";
+import { useLocale } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 const COOKIE_CONSENT_KEY = "cookie_consent";
 
 export const CookieConsent: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const { language } = useLanguage();
-  const isHe = language === "he";
+  const locale = useLocale();
+  const isHe = locale === "he";
 
   useEffect(() => {
     const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
@@ -51,10 +51,10 @@ export const CookieConsent: React.FC = () => {
           transition={{ duration: 0.3 }}
           className="fixed bottom-0 inset-x-0 z-[150] p-4 md:p-6"
         >
-          <div className="max-w-4xl mx-auto bg-white dark:bg-surface-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-surface-700 p-4 md:p-6">
+          <div className="max-w-4xl mx-auto bg-white dark:bg-surface-800 rounded-2xl shadow-2xl border border-surface-200 dark:border-surface-700 p-4 md:p-6">
             <div className="flex flex-col md:flex-row md:items-center gap-4">
               <div className="flex-1">
-                <p className="text-slate-600 dark:text-surface-400 text-sm md:text-base">
+                <p className="text-surface-600 dark:text-surface-400 text-sm md:text-base">
                   {content.message}{" "}
                   <Link
                     href="/privacy"
@@ -67,7 +67,7 @@ export const CookieConsent: React.FC = () => {
               <div className="flex items-center gap-3">
                 <button
                   onClick={handleDecline}
-                  className="px-4 py-2 text-sm font-medium text-slate-600 dark:text-surface-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-white transition-colors"
                 >
                   {content.decline}
                 </button>
@@ -82,5 +82,6 @@ export const CookieConsent: React.FC = () => {
     </AnimatePresence>
   );
 };
+
 
 

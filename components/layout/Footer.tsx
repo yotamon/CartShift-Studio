@@ -1,34 +1,35 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { Logo } from '@/components/ui/Logo';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useTranslations, useLocale } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { trackNewsletterSignup } from '@/lib/analytics';
 import { subscribeNewsletterClient } from '@/lib/services/newsletter-client';
 
 export const Footer: React.FC = () => {
-  const { t, language } = useLanguage();
+  const t = useTranslations();
+  const locale = useLocale();
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const isHe = language === 'he';
+  const isHe = locale === 'he';
 
   const footerLinks = {
     solutions: [
-      { name: t('footer.links.shopify') as string, href: '/solutions/shopify' },
-      { name: t('footer.links.wordpress') as string, href: '/solutions/wordpress' },
-      { name: t('nav.pricing') as string, href: '/pricing' },
-      { name: t('nav.maintenance') as string, href: '/maintenance' },
+      { name: t('footer.links.shopify'), href: '/solutions/shopify' },
+      { name: t('footer.links.wordpress'), href: '/solutions/wordpress' },
+      { name: t('nav.pricing'), href: '/pricing' },
+      { name: t('nav.maintenance'), href: '/maintenance' },
     ],
     company: [
-      { name: t('footer.links.about') as string, href: '/about' },
-      { name: t('nav.work') as string, href: '/work' },
-      { name: t('footer.links.blog') as string, href: '/blog' },
-      { name: t('footer.links.contact') as string, href: '/contact' },
+      { name: t('footer.links.about'), href: '/about' },
+      { name: t('nav.work'), href: '/work' },
+      { name: t('footer.links.blog'), href: '/blog' },
+      { name: t('footer.links.contact'), href: '/contact' },
     ],
   };
 
@@ -62,13 +63,13 @@ export const Footer: React.FC = () => {
 
   return (
     <footer className="relative border-t border-surface-300/60 dark:border-white/10 bg-white dark:bg-surface-950">
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-200/80 dark:from-black/50 via-white/60 dark:via-surface-950/50 to-transparent"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-surface-200/80 dark:from-black/50 via-white/60 dark:via-surface-950/50 to-transparent"></div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           <div className="lg:col-span-1 text-start">
             <Logo size="lg" className="mb-6" />
             <p className="text-surface-600 dark:text-surface-400 max-w-md mb-6 text-sm md:text-base leading-relaxed">
-              {t('footer.description') as string}
+              {t('footer.description')}
             </p>
             <div className="flex items-center gap-4">
               {socialLinks.map(social => (
@@ -88,7 +89,7 @@ export const Footer: React.FC = () => {
 
           <div className="text-start">
             <h3 className="text-surface-900 dark:text-white font-bold mb-6 text-base md:text-lg leading-tight">
-              {t('footer.solutions') as string}
+              {t('footer.solutions')}
             </h3>
             <ul className="space-y-3">
               {footerLinks.solutions.map(link => (
@@ -106,7 +107,7 @@ export const Footer: React.FC = () => {
 
           <div className="text-start">
             <h3 className="text-surface-900 dark:text-white font-bold mb-6 text-base md:text-lg leading-tight">
-              {t('footer.company') as string}
+              {t('footer.company')}
             </h3>
             <ul className="space-y-3">
               {footerLinks.company.map(link => (
@@ -175,7 +176,7 @@ export const Footer: React.FC = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
               <p className="text-xs md:text-sm text-surface-500 dark:text-surface-500 leading-relaxed text-center md:text-start">
-                © {new Date().getFullYear()} CartShift Studio. {t('footer.rights') as string}
+                © {new Date().getFullYear()} CartShift Studio. {t('footer.rights')}
               </p>
               <div className="flex items-center gap-3 text-xs md:text-sm">
                 <Link
@@ -209,3 +210,4 @@ export const Footer: React.FC = () => {
     </footer>
   );
 };
+

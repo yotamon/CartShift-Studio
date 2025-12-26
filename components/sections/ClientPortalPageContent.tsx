@@ -6,31 +6,26 @@ import { Section, SectionHeader } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { FAQ, FAQItem } from '@/components/ui/FAQ';
-import Link from 'next/link';
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { trackCTAClick } from '@/lib/analytics';
 
 export const ClientPortalPageContent: React.FC = () => {
-  const { t } = useLanguage();
+  const t = useTranslations();
 
-  const getString = (path: string): string => {
-    const value = t(path);
-    return typeof value === 'string' ? value : String(value);
-  };
-
-  const highlights = t('clientPortal.hero.highlights') as unknown as string[];
-  const painItems = t('clientPortal.pain.items') as unknown as string[];
-  const cards = t('clientPortal.differentiation.cards') as unknown as Array<{
+  const highlights = t.raw('clientPortal.hero.highlights' as any) as string[];
+  const painItems = t.raw('clientPortal.pain.items' as any) as string[];
+  const cards = t.raw('clientPortal.differentiation.cards' as any) as Array<{
     title: string;
     description: string;
   }>;
-  const steps = t('clientPortal.process.steps') as unknown as Array<{
+  const steps = t.raw('clientPortal.process.steps' as any) as Array<{
     title: string;
     description: string;
   }>;
-  const features = t('clientPortal.features.items') as unknown as string[];
-  const lanes = t('clientPortal.services.lanes') as unknown as string[];
-  const faqItems = t('clientPortal.faq.items') as unknown as FAQItem[];
+  const features = t.raw('clientPortal.features.items' as any) as string[];
+  const lanes = t.raw('clientPortal.services.lanes' as any) as string[];
+  const faqItems = t.raw('clientPortal.faq.items' as any) as FAQItem[];
 
   const iconMap: Record<string, React.ReactElement> = {
     0: (
@@ -117,8 +112,8 @@ export const ClientPortalPageContent: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white font-display mb-6 leading-tight tracking-tight">
-              {getString('clientPortal.pain.title')}
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-surface-900 dark:text-white font-display mb-6 leading-tight tracking-tight">
+              {t('clientPortal.pain.title' as any)}
             </h2>
           </motion.div>
 
@@ -173,10 +168,10 @@ export const ClientPortalPageContent: React.FC = () => {
             className="text-center max-w-4xl mx-auto mb-16"
           >
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-surface-900 dark:text-white font-display mb-6 leading-tight">
-              {getString('clientPortal.differentiation.title')}
+              {t('clientPortal.differentiation.title' as any)}
             </h2>
             <p className="text-xl md:text-2xl text-surface-600 dark:text-surface-300 font-light">
-              {getString('clientPortal.differentiation.description')}
+              {t('clientPortal.differentiation.description' as any)}
             </p>
           </motion.div>
 
@@ -221,8 +216,8 @@ export const ClientPortalPageContent: React.FC = () => {
       <Section background="light" className="relative overflow-hidden">
         <div className="max-w-6xl mx-auto">
           <SectionHeader
-            title={getString('clientPortal.process.title')}
-            subtitle={getString('clientPortal.process.subtitle')}
+            title={t('clientPortal.process.title' as any)}
+            subtitle={t('clientPortal.process.subtitle' as any)}
           />
 
           <div className="relative mt-16">
@@ -297,7 +292,7 @@ export const ClientPortalPageContent: React.FC = () => {
               transition={{ duration: 0.8 }}
             >
               <h2 className="text-4xl md:text-5xl font-bold text-surface-900 dark:text-white font-display mb-8 leading-tight">
-                {getString('clientPortal.features.title')}
+                {t('clientPortal.features.title' as any)}
               </h2>
               <div className="space-y-6">
                 {features.map((feature, i) => (
@@ -343,7 +338,7 @@ export const ClientPortalPageContent: React.FC = () => {
               <div className="absolute -inset-4 bg-gradient-to-r from-primary-500/20 via-accent-500/20 to-primary-500/20 rounded-3xl blur-2xl opacity-50" />
 
               {/* Mock Dashboard */}
-              <div className="relative aspect-[4/3] bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl overflow-hidden shadow-2xl border border-white/10">
+              <div className="relative aspect-[4/3] bg-gradient-to-br from-surface-900 to-surface-800 rounded-3xl overflow-hidden shadow-2xl border border-white/10">
                 <div className="absolute inset-0 p-8 flex flex-col gap-6">
                   {/* Header */}
                   <div className="flex items-center justify-between">
@@ -401,7 +396,7 @@ export const ClientPortalPageContent: React.FC = () => {
                 </div>
 
                 {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-surface-900 via-transparent to-transparent pointer-events-none" />
               </div>
             </motion.div>
           </div>
@@ -418,8 +413,8 @@ export const ClientPortalPageContent: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white font-display mb-6 leading-tight">
-              {getString('clientPortal.services.title')}
+            <h2 className="text-4xl md:text-5xl font-bold text-surface-900 dark:text-white font-display mb-6 leading-tight">
+              {t('clientPortal.services.title' as any)}
             </h2>
           </motion.div>
 
@@ -448,7 +443,7 @@ export const ClientPortalPageContent: React.FC = () => {
             transition={{ delay: 0.5 }}
             className="text-lg text-primary-600 dark:text-primary-400 font-semibold"
           >
-            ✨ {getString('clientPortal.services.footer')}
+            ✨ {t('clientPortal.services.footer' as any)}
           </motion.p>
         </div>
       </Section>
@@ -457,8 +452,8 @@ export const ClientPortalPageContent: React.FC = () => {
       <Section background="default">
         <div className="max-w-4xl mx-auto">
           <SectionHeader
-            title={getString('clientPortal.faq.title')}
-            subtitle={getString('clientPortal.faq.subtitle')}
+            title={t('clientPortal.faq.title' as any)}
+            subtitle={t('clientPortal.faq.subtitle' as any)}
           />
           <FAQ items={faqItems} />
         </div>
@@ -488,11 +483,11 @@ export const ClientPortalPageContent: React.FC = () => {
             </div>
 
             <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold text-surface-900 dark:text-white font-display mb-8 leading-tight tracking-tight">
-              {getString('clientPortal.cta.title')}
+              {t('clientPortal.cta.title' as any)}
             </h2>
 
             <p className="text-xl md:text-2xl text-surface-600 dark:text-surface-300 mb-12 max-w-3xl mx-auto font-light leading-relaxed">
-              {getString('clientPortal.cta.description')}
+              {t('clientPortal.cta.description' as any)}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
@@ -501,7 +496,7 @@ export const ClientPortalPageContent: React.FC = () => {
                   size="lg"
                   className="w-full sm:w-auto text-lg px-10 py-7 shadow-2xl hover:shadow-accent-500/50 transition-shadow duration-300"
                 >
-                  {getString('clientPortal.cta.buttonText')}
+                  {t('clientPortal.cta.buttonText' as any)}
                 </Button>
               </Link>
               <Link href="/contact" onClick={() => trackCTAClick('Demo', 'clientPortal')}>
@@ -510,7 +505,7 @@ export const ClientPortalPageContent: React.FC = () => {
                   variant="secondary"
                   className="w-full sm:w-auto text-lg px-10 py-7"
                 >
-                  {getString('clientPortal.cta.secondaryButtonText')}
+                  {t('clientPortal.cta.secondaryButtonText' as any)}
                 </Button>
               </Link>
             </div>
@@ -530,3 +525,4 @@ export const ClientPortalPageContent: React.FC = () => {
     </>
   );
 };
+

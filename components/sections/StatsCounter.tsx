@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { ParallaxLayer } from "@/components/ui/Parallax";
-import { useLanguage } from "@/components/providers/LanguageProvider";
+import { useTranslations } from "next-intl";
 import { Briefcase, ThumbsUp, Award, Clock } from "lucide-react";
 
 interface Stat {
@@ -48,7 +48,7 @@ const AnimatedCounter: React.FC<{ value: number; suffix: string; inView: boolean
 };
 
 export const StatsCounter: React.FC = () => {
-	const { t } = useLanguage();
+	const t = useTranslations();
 	const ref = useRef(null);
 	const isInView = useInView(ref, { once: true, margin: "0px" });
 
@@ -56,25 +56,25 @@ export const StatsCounter: React.FC = () => {
 		{
 			value: 50,
 			suffix: "+",
-			label: (t("stats.projects.label") as string) || "Projects Delivered",
+			label: t("stats.projects.label"),
 			icon: <Briefcase className="w-8 h-8 md:w-10 md:h-10" strokeWidth={1.5} />
 		},
 		{
 			value: 98,
 			suffix: "%",
-			label: (t("stats.satisfaction.label") as string) || "Client Satisfaction",
+			label: t("stats.satisfaction.label"),
 			icon: <ThumbsUp className="w-8 h-8 md:w-10 md:h-10" strokeWidth={1.5} />
 		},
 		{
 			value: 12,
 			suffix: "+",
-			label: (t("stats.years.label") as string) || "Years Experience",
+			label: t("stats.years.label"),
 			icon: <Award className="w-8 h-8 md:w-10 md:h-10" strokeWidth={1.5} />
 		},
 		{
 			value: 24,
 			suffix: "/7",
-			label: (t("stats.support.label") as string) || "Support Available",
+			label: t("stats.support.label"),
 			icon: <Clock className="w-8 h-8 md:w-10 md:h-10" strokeWidth={1.5} />
 		}
 	];
@@ -127,8 +127,8 @@ export const StatsCounter: React.FC = () => {
 
 			<div className="max-w-7xl mx-auto relative z-10">
 				<motion.div initial={{ opacity: 0, y: 20 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-16">
-					<h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white mb-4 tracking-tight">{(t("stats.title") as string) || "Our Impact"}</h2>
-					<p className="text-lg text-white max-w-2xl mx-auto">{(t("stats.subtitle") as string) || "Numbers that speak for themselves"}</p>
+					<h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white mb-4 tracking-tight">{t("stats.title")}</h2>
+					<p className="text-lg text-white max-w-2xl mx-auto">{t("stats.subtitle")}</p>
 				</motion.div>
 
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
@@ -160,3 +160,4 @@ export const StatsCounter: React.FC = () => {
 		</section>
 	);
 };
+

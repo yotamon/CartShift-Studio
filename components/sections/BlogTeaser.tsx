@@ -2,14 +2,14 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import { SectionHeader } from '@/components/ui/Section';
-
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useTranslations, useLocale } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 
 export const BlogTeaser: React.FC = () => {
-  const { t, language } = useLanguage();
-  const latestPosts = t('blogTeaser.posts') as any[];
+  const t = useTranslations();
+  const locale = useLocale();
+  const latestPosts = t.raw('blogTeaser.posts') as any[];
 
   if (!latestPosts || latestPosts.length === 0) return null;
 
@@ -17,7 +17,7 @@ export const BlogTeaser: React.FC = () => {
   const secondaryPosts = latestPosts.slice(1);
 
   // Calculate approximate read time
-  const getReadTime = () => (language === 'he' ? '5 דקות קריאה' : '5 min read');
+  const getReadTime = () => (locale === 'he' ? '5 דקות קריאה' : '5 min read');
 
   return (
     <section className="py-20 md:py-32 px-4 sm:px-6 lg:px-8 relative bg-surface-50 dark:bg-surface-900 overflow-hidden">
@@ -28,8 +28,8 @@ export const BlogTeaser: React.FC = () => {
       </div>
       <div className="max-w-7xl mx-auto relative z-10">
         <SectionHeader
-          title={t('blogTeaser.title') as string}
-          subtitle={t('blogTeaser.subtitle') as string}
+          title={t('blogTeaser.title')}
+          subtitle={t('blogTeaser.subtitle')}
         />
 
         {/* Featured Post - Full Width */}
@@ -50,7 +50,7 @@ export const BlogTeaser: React.FC = () => {
                 transition={{ delay: 0.3 }}
                 className="absolute top-6 end-6 px-3 py-1.5 bg-accent-500 text-white text-xs font-bold uppercase rounded-full shadow-lg"
               >
-                {language === 'he' ? 'חדש' : 'New'}
+                {locale === 'he' ? 'חדש' : 'New'}
               </motion.span>
 
               {/* Decorative accent line */}
@@ -61,7 +61,7 @@ export const BlogTeaser: React.FC = () => {
                   {/* Category tag */}
                   <div className="inline-flex items-center gap-2 mb-5">
                     <span className="px-4 py-1.5 bg-primary-500/10 dark:bg-primary-500/20 text-primary-600 dark:text-primary-400 text-sm font-semibold rounded-full">
-                      {language === 'he' ? 'מאמר מומלץ' : 'Featured'}
+                      {locale === 'he' ? 'מאמר מומלץ' : 'Featured'}
                     </span>
                     <span className="text-xs text-surface-500 dark:text-surface-400">
                       {getReadTime()}
@@ -79,7 +79,7 @@ export const BlogTeaser: React.FC = () => {
                   <div className="flex items-center gap-4">
                     <span className="text-sm text-surface-500 dark:text-surface-400">
                       {new Date(featuredPost.date).toLocaleDateString(
-                        language === 'he' ? 'he-IL' : 'en-US',
+                        locale === 'he' ? 'he-IL' : 'en-US',
                         {
                           year: 'numeric',
                           month: 'long',
@@ -88,7 +88,7 @@ export const BlogTeaser: React.FC = () => {
                       )}
                     </span>
                     <span className="inline-flex items-center gap-2 text-accent-600 dark:text-accent-400 font-bold group-hover:gap-3 transition-all">
-                      {t('blogTeaser.readMore') as string}
+                      {t('blogTeaser.readMore')}
                       <svg
                         className="w-5 h-5 rtl:rotate-180"
                         fill="none"
@@ -126,7 +126,7 @@ export const BlogTeaser: React.FC = () => {
                     <div className="flex items-center gap-3 mb-4">
                       <span className="text-xs text-surface-500 dark:text-surface-400 uppercase tracking-wider">
                         {new Date(post.date).toLocaleDateString(
-                          language === 'he' ? 'he-IL' : 'en-US'
+                          locale === 'he' ? 'he-IL' : 'en-US'
                         )}
                       </span>
                       <span className="w-1 h-1 rounded-full bg-surface-300 dark:bg-surface-600"></span>
@@ -143,7 +143,7 @@ export const BlogTeaser: React.FC = () => {
                       {post.excerpt}
                     </p>
                     <span className="inline-flex items-center gap-2 text-accent-600 dark:text-accent-400 font-semibold text-sm group-hover:gap-3 transition-all">
-                      {t('blogTeaser.readMore') as string}
+                      {t('blogTeaser.readMore')}
                       <svg
                         className="w-4 h-4 rtl:rotate-180"
                         fill="none"
@@ -175,7 +175,7 @@ export const BlogTeaser: React.FC = () => {
         >
           <Link href="/blog">
             <button className="px-8 py-4 rounded-xl border-2 border-surface-300 dark:border-white/10 bg-white dark:bg-white/5 text-surface-900 dark:text-white font-bold transition-all hover:bg-surface-50 dark:hover:bg-white/10 hover:border-accent-500/50 backdrop-blur-md shadow-premium hover:shadow-premium-hover flex items-center gap-3 mx-auto group">
-              {t('blogTeaser.viewAll') as string}
+              {t('blogTeaser.viewAll')}
               <svg
                 className="w-5 h-5 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1 rtl:rotate-180"
                 fill="none"
@@ -192,3 +192,4 @@ export const BlogTeaser: React.FC = () => {
     </section>
   );
 };
+

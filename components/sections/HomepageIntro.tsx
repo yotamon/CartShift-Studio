@@ -3,11 +3,15 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Section } from "@/components/ui/Section";
-import { useLanguage } from "@/components/providers/LanguageProvider";
+import { useTranslations } from "next-intl";
 
 export const HomepageIntro: React.FC = () => {
-  const { t } = useLanguage();
-  const introData = t("hero.intro") as { title: string; paragraphs: string[] };
+  const t = useTranslations();
+  const introData = t.raw("hero.intro" as any) as { title: string; paragraphs: string[] };
+
+  if (!introData || typeof introData !== 'object' || !introData.title || !Array.isArray(introData.paragraphs)) {
+    throw new Error(`Invalid translation structure for "hero.intro". Expected { title: string, paragraphs: string[] }, got: ${JSON.stringify(introData)}`);
+  }
 
   return (
     <Section background="light" className="relative overflow-hidden">
@@ -17,7 +21,7 @@ export const HomepageIntro: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white font-display mb-8 text-center leading-tight tracking-tight"
+          className="text-3xl md:text-4xl lg:text-5xl font-bold text-surface-900 dark:text-white font-display mb-8 text-center leading-tight tracking-tight"
         >
           {introData.title}
         </motion.h2>
@@ -29,7 +33,7 @@ export const HomepageIntro: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.15 }}
-              className="text-base md:text-lg text-slate-600 dark:text-surface-300 leading-relaxed"
+              className="text-base md:text-lg text-surface-600 dark:text-surface-300 leading-relaxed"
             >
               {paragraph}
             </motion.p>
@@ -39,6 +43,7 @@ export const HomepageIntro: React.FC = () => {
     </Section>
   );
 };
+
 
 
 

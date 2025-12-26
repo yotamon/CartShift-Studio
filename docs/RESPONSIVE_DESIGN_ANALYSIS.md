@@ -42,10 +42,10 @@ The website demonstrates strong responsive design fundamentals with the followin
 
 **Fixed Components:**
 
-- ✅ [WhatsAppFloatingButton.tsx](components/ui/WhatsAppFloatingButton.tsx) - Increased from 56px to 64px on mobile
 - ✅ [Header.tsx](components/layout/Header.tsx) - Mobile menu toggle increased padding from 8px to 12px
 - ✅ All [Button.tsx](components/ui/Button.tsx) components - Added `touch-manipulation` CSS property
 - ✅ [FAQ.tsx](components/ui/FAQ.tsx) - Improved button padding and spacing
+- ✅ [FloatingActions.tsx](components/ui/FloatingActions.tsx) - Replaced WhatsAppFloatingButton with improved touch targets
 
 **Impact:**
 
@@ -314,7 +314,7 @@ html {
 | FAQ                    | ✅               | ✅             | N/A             | Touch targets increased |
 | Icon                   | ✅               | ✅             | N/A             | Already optimal         |
 | Logo                   | ✅               | N/A            | N/A             | Scales properly         |
-| WhatsAppFloatingButton | ✅               | ✅             | N/A             | Size increased          |
+| FloatingActions        | ✅               | ✅             | N/A             | Replaced WhatsAppFloatingButton |
 
 ### Layout Components
 

@@ -277,7 +277,7 @@ export const LiquidGlassButton: React.FC<LiquidGlassButtonProps> = ({
     default: {
       bg: "bg-white/60 dark:bg-white/10",
       hoverBg: "hover:bg-white/80 dark:hover:bg-white/20",
-      text: "text-slate-900 dark:text-white",
+      text: "text-surface-900 dark:text-white",
     },
     primary: {
       bg: "bg-primary-500/80 dark:bg-primary-600/60",
@@ -336,3 +336,4 @@ export const LiquidGlassButton: React.FC<LiquidGlassButtonProps> = ({
 };
 
 export default LiquidGlassCard;
+

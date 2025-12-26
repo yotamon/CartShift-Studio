@@ -4,7 +4,7 @@ import React from 'react';
 import { PageHero } from '@/components/sections/PageHero';
 import { BlogPostContent } from '@/components/sections/BlogPostContent';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useLocale } from 'next-intl';
 import { BlogPost } from '@/lib/markdown';
 
 interface BlogPostTemplateProps {
@@ -24,8 +24,8 @@ interface BlogPostTemplateProps {
 }
 
 export const BlogPostTemplate: React.FC<BlogPostTemplateProps> = ({ post, relatedPosts }) => {
-  const { language } = useLanguage();
-  const isHe = language === 'he';
+  const locale = useLocale();
+  const isHe = locale === 'he';
 
   const title = isHe && post.translation?.title ? post.translation.title : post.title;
   const subtitle = isHe && post.translation?.category ? post.translation.category : post.category;
@@ -34,7 +34,7 @@ export const BlogPostTemplate: React.FC<BlogPostTemplateProps> = ({ post, relate
 
   // Format date correctly based on locale
   const formattedDate = new Date(post.date).toLocaleDateString(
-    language === 'he' ? 'he-IL' : 'en-US'
+    locale === 'he' ? 'he-IL' : 'en-US'
   );
   const readingTimeText = post.readingTime
     ? isHe
@@ -70,7 +70,7 @@ export const BlogPostTemplate: React.FC<BlogPostTemplateProps> = ({ post, relate
         highlightLastWord={false}
         compact
       />
-      <div className="bg-slate-50 dark:bg-surface-900 border-b border-slate-200 dark:border-transparent">
+      <div className="bg-surface-50 dark:bg-surface-900 border-b border-surface-200 dark:border-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <Breadcrumb items={breadcrumbItems} />
         </div>
@@ -86,3 +86,4 @@ export const BlogPostTemplate: React.FC<BlogPostTemplateProps> = ({ post, relate
     </>
   );
 };
+
