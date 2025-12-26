@@ -6,7 +6,21 @@ import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalInput } from '@/components/portal/ui/PortalInput';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
-import { User, Bell, Shield, CreditCard, Save, Loader2, Trash2, Plus, CheckCircle2, ShieldCheck } from 'lucide-react';
+import {
+  User,
+  Bell,
+  Shield,
+  CreditCard,
+  Save,
+  Loader2,
+  Trash2,
+  Plus,
+  CheckCircle2,
+  ShieldCheck,
+  Globe,
+  Building2,
+  AlertCircle
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getOrganization, updateOrganization } from '@/lib/services/portal-organizations';
 import { updatePortalUser } from '@/lib/services/portal-users';
@@ -24,6 +38,9 @@ export default function SettingsClient() {
   const [loading, setLoading] = useState(true);
   const [showCreateOrgModal, setShowCreateOrgModal] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     name: '',
     website: '',
@@ -75,18 +92,21 @@ export default function SettingsClient() {
     }
   }, [orgId, userData]);
 
+  const showFeedback = (type: 'success' | 'error', message: string) => {
+    if (type === 'success') {
+      setSuccessMessage(message);
+      setTimeout(() => setSuccessMessage(null), 5000);
+    } else {
+      setErrorMessage(message);
+      setTimeout(() => setErrorMessage(null), 5000);
+    }
+  };
+
   const handleSave = async () => {
     if (!orgId || typeof orgId !== 'string') return;
 
-    // Check if we're using the default placeholder org
     if (orgId === 'default-org') {
-      alert(
-        'Default Organization Notice:\n\n' +
-        'You are viewing a placeholder organization. To save settings:\n\n' +
-        '1. Create a real organization by signing up\n' +
-        '2. Or create an organization manually in Firestore\n\n' +
-        'The "default-org" is just for preview purposes and cannot be modified.'
-      );
+      showFeedback('error', 'Default organization cannot be modified.');
       return;
     }
 
@@ -98,22 +118,10 @@ export default function SettingsClient() {
         industry: formData.industry,
         bio: formData.bio,
       });
-      alert('Settings saved successfully!');
+      showFeedback('success', 'Profile updated successfully!');
     } catch (error: any) {
       console.error('Error saving settings:', error);
-
-      // Provide helpful error message based on error type
-      if (error.code === 'not-found' || error.message?.includes('No document to update')) {
-        alert(
-          'Organization Not Found\n\n' +
-          `The organization "${orgId}" does not exist in the database yet.\n\n` +
-          'Please create the organization first before updating its settings.'
-        );
-      } else if (error.code === 'permission-denied') {
-        alert('Permission denied. You do not have access to update this organization.');
-      } else {
-        alert(`Failed to save settings: ${error.message || 'Unknown error'}`);
-      }
+      showFeedback('error', error.message || 'Failed to save settings');
     } finally {
       setSaving(false);
     }
@@ -140,12 +148,12 @@ export default function SettingsClient() {
       setTimeout(() => setResetSent(false), 5000);
     } catch (error) {
       console.error('Error sending reset email:', error);
-      alert('Failed to send reset email. Please try again.');
+      showFeedback('error', 'Failed to send reset email.');
     }
   };
 
   const tabs = [
-    { id: 'general', label: 'General', icon: User },
+    { id: 'general', label: 'General', icon: Building2 },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'security', label: 'Security', icon: Shield },
     { id: 'billing', label: 'Billing', icon: CreditCard },
@@ -153,31 +161,34 @@ export default function SettingsClient() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
+      <div className="flex flex-col items-center justify-center py-40 space-y-4">
         <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+        <p className="text-slate-500 font-bold font-outfit uppercase tracking-widest text-xs">Loading preferences...</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Settings</h1>
-        <p className="text-slate-500 dark:text-slate-400 mt-1">Manage your organization and workspace preferences.</p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">Settings</h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">Manage your organization and workspace preferences.</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <aside className="lg:col-span-1">
-          <nav className="space-y-1">
+          <nav className="space-y-1.5 sticky top-24">
             {tabs.map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  'w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-xl transition-colors',
+                  'w-full flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-2xl transition-all font-outfit',
                   activeTab === tab.id
-                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 shadow-sm'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20 translate-x-1'
+                    : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
                 )}
               >
                 <tab.icon size={18} />
@@ -188,146 +199,178 @@ export default function SettingsClient() {
         </aside>
 
         <div className="lg:col-span-3 space-y-6">
+          {/* Notifications */}
+          {successMessage && (
+            <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 rounded-2xl flex items-center gap-3 text-emerald-600 dark:text-emerald-400 text-sm font-bold animate-in slide-in-from-top-2 duration-300">
+              <CheckCircle2 size={18} />
+              {successMessage}
+            </div>
+          )}
+          {errorMessage && (
+            <div className="p-4 bg-rose-50 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-900/30 rounded-2xl flex items-center gap-3 text-rose-600 dark:text-rose-400 text-sm font-bold animate-in slide-in-from-top-2 duration-300">
+              <AlertCircle size={18} />
+              {errorMessage}
+            </div>
+          )}
+
           {activeTab === 'general' && (
-            <>
-              <PortalCard className="border-slate-200 dark:border-slate-800 shadow-sm">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6">Organization Profile</h3>
-                <div className="space-y-5">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="space-y-8">
+              <PortalCard className="border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-950">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-400">
+                    <Building2 size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit">Organization Profile</h3>
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5">Basic info & Appearance</p>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <PortalInput
                       label="Organization Name"
                       value={formData.name}
                       onChange={e => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Your Organization Name"
+                      placeholder="e.g. Acme Corp"
+                      icon={<Building2 size={16} />}
                     />
                     <PortalInput
-                      label="Industry"
+                      label="Industry / Niche"
                       value={formData.industry}
                       onChange={e => setFormData({ ...formData, industry: e.target.value })}
-                      placeholder="e.g. E-commerce, SaaS, Marketing"
+                      placeholder="e.g. Technology, SaaS"
                     />
                   </div>
                   <PortalInput
-                    label="Website URL"
+                    label="Business Website"
                     type="url"
                     value={formData.website}
                     onChange={e => setFormData({ ...formData, website: e.target.value })}
-                    placeholder="https://yourwebsite.com"
+                    placeholder="https://acme.com"
+                    icon={<Globe size={16} />}
                   />
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                      Business Description
+                    <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2.5">
+                      Business Overview
                     </label>
                     <textarea
                       value={formData.bio}
                       onChange={e => setFormData({ ...formData, bio: e.target.value })}
                       rows={4}
-                      className="w-full px-4 py-3 rounded-xl bg-surface-50 dark:bg-surface-950 border border-surface-200 dark:border-white/10 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none text-surface-900 dark:text-white"
-                      placeholder="Tell us about your business..."
+                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-950 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none text-slate-900 dark:text-white text-sm font-medium leading-relaxed"
+                      placeholder="Give us a brief context about what you do..."
                     />
                   </div>
                 </div>
-                <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end">
+                <div className="mt-10 pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-end">
                   <PortalButton
                     onClick={handleSave}
                     isLoading={saving}
-                    className="flex items-center gap-2 shadow-lg shadow-blue-500/20"
+                    className="flex items-center gap-2 shadow-xl shadow-blue-500/20 font-outfit px-8"
                   >
                     <Save size={18} />
-                    {saving ? 'Saving...' : 'Save Changes'}
+                    {saving ? 'Processing...' : 'Save Profile'}
                   </PortalButton>
                 </div>
               </PortalCard>
 
-              <PortalCard className="border-red-200 dark:border-red-900/20 bg-red-50/50 dark:bg-red-900/5 shadow-sm">
-                <h3 className="text-lg font-bold text-red-600 dark:text-red-400 mb-2 flex items-center gap-2">
-                  <Trash2 size={20} />
-                  Danger Zone
-                </h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mb-6 font-medium leading-relaxed">
-                  Once you delete your organization, there is no going back. All data, requests, files, and team members will be permanently removed. Please be certain.
-                </p>
-                <PortalButton variant="danger" size="sm" className="shadow-lg shadow-red-500/20">
-                  Delete Organization
-                </PortalButton>
-              </PortalCard>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <PortalCard className="border-emerald-200 dark:border-emerald-900/20 bg-emerald-50/20 dark:bg-emerald-900/5 shadow-sm">
+                  <h3 className="text-lg font-bold text-emerald-600 dark:text-emerald-400 mb-2 flex items-center gap-2 font-outfit">
+                    <Plus size={20} />
+                    New Workspace
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 font-medium leading-relaxed">
+                    Need another workspace? Create a separate organization for a different team.
+                  </p>
+                  <PortalButton
+                    onClick={() => setShowCreateOrgModal(true)}
+                    className="w-full shadow-lg shadow-emerald-500/10 bg-emerald-600 hover:bg-emerald-700 font-outfit"
+                  >
+                    <Plus size={18} className="mr-2" />
+                    Create Organization
+                  </PortalButton>
+                </PortalCard>
 
-              <PortalCard className="border-emerald-200 dark:border-emerald-900/20 bg-emerald-50/50 dark:bg-emerald-900/5 shadow-sm">
-                <h3 className="text-lg font-bold text-emerald-600 dark:text-emerald-400 mb-2 flex items-center gap-2">
-                  <Plus size={20} />
-                  Create New Organization
-                </h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mb-6 font-medium leading-relaxed">
-                  Need another workspace? Create a new organization for a different team or project. You'll be the owner and can invite members separately.
-                </p>
-                <PortalButton
-                  onClick={() => setShowCreateOrgModal(true)}
-                  className="shadow-lg shadow-emerald-500/20 bg-emerald-600 hover:bg-emerald-700"
-                >
-                  <Plus size={18} />
-                  Create Organization
-                </PortalButton>
-              </PortalCard>
-            </>
+                <PortalCard className="border-rose-200 dark:border-rose-900/20 bg-rose-50/20 dark:bg-rose-900/5 shadow-sm">
+                  <h3 className="text-lg font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2 font-outfit">
+                    <Trash2 size={20} />
+                    Danger Zone
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 font-medium leading-relaxed">
+                    Permanently delete this organization and all its data. This cannot be undone.
+                  </p>
+                  <PortalButton variant="danger" size="sm" className="w-full shadow-lg shadow-rose-500/10 font-outfit">
+                    Delete Workspace
+                  </PortalButton>
+                </PortalCard>
+              </div>
+            </div>
           )}
 
           {activeTab === 'notifications' && (
             <div className="space-y-6">
-              <PortalCard className="border-slate-200 dark:border-slate-800 shadow-sm">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600">
+              <PortalCard className="border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-950">
+                <div className="flex items-center gap-3 mb-10">
+                  <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 border border-blue-100 dark:border-blue-900/30">
                     <Bell size={20} />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">Email Notifications</h3>
-                    <p className="text-xs font-medium text-slate-500">Choose when you want to receive emails from us.</p>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit">Channels & Alerts</h3>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Email Delivery Settings</p>
                   </div>
                 </div>
 
-                <div className="space-y-4 divide-y divide-slate-100 dark:divide-slate-800">
+                <div className="space-y-6">
                   <PortalSwitch
-                    label="Request Updates"
-                    description="Receive an email when a request status changes or is updated."
+                    label="Request Milestone Updates"
+                    description="Notifications for every movement in your project's lifecycle."
                     checked={notificationPrefs.emailOnRequestUpdate}
                     onChange={(checked) => handleSaveNotificationPrefs({...notificationPrefs, emailOnRequestUpdate: checked})}
                   />
-                  <div className="pt-4">
-                    <PortalSwitch
-                      label="New Comments"
-                      description="Get notified when a specialist or team member leaves a comment."
-                      checked={notificationPrefs.emailOnNewComment}
-                      onChange={(checked) => handleSaveNotificationPrefs({...notificationPrefs, emailOnNewComment: checked})}
-                    />
-                  </div>
-                  <div className="pt-4">
-                    <PortalSwitch
-                      label="Status Milestone"
-                      description="Special alerts when requests reach 'Delivered' or 'Completed' status."
-                      checked={notificationPrefs.emailOnStatusChange}
-                      onChange={(checked) => handleSaveNotificationPrefs({...notificationPrefs, emailOnStatusChange: checked})}
-                    />
-                  </div>
-                  <div className="pt-4">
-                    <PortalSwitch
-                      label="Marketing & Tips"
-                      description="Occasional emails with design tips, case studies, and studio news."
-                      checked={notificationPrefs.marketingEmails}
-                      onChange={(checked) => handleSaveNotificationPrefs({...notificationPrefs, marketingEmails: checked})}
-                    />
-                  </div>
+                  <div className="h-px bg-slate-50 dark:bg-slate-900" />
+                  <PortalSwitch
+                    label="Real-time Comment Alerts"
+                    description="Stay in the loop when specialists or team members engage."
+                    checked={notificationPrefs.emailOnNewComment}
+                    onChange={(checked) => handleSaveNotificationPrefs({...notificationPrefs, emailOnNewComment: checked})}
+                  />
+                   <div className="h-px bg-slate-50 dark:bg-slate-900" />
+                  <PortalSwitch
+                    label="Direct Delivery Status"
+                    description="High-priority alerts for 'Delivered' and 'In Review' statuses."
+                    checked={notificationPrefs.emailOnStatusChange}
+                    onChange={(checked) => handleSaveNotificationPrefs({...notificationPrefs, emailOnStatusChange: checked})}
+                  />
+                   <div className="h-px bg-slate-50 dark:bg-slate-900" />
+                  <PortalSwitch
+                    label="Product & Design News"
+                    description="Occasional insights from our studio on scaling your business."
+                    checked={notificationPrefs.marketingEmails}
+                    onChange={(checked) => handleSaveNotificationPrefs({...notificationPrefs, marketingEmails: checked})}
+                  />
                 </div>
 
-                {notifSaving && (
-                  <div className="mt-6 flex items-center gap-2 text-xs font-bold text-blue-600 animate-pulse">
-                    <Loader2 size={12} className="animate-spin" />
-                    SAVING PREFERENCES...
-                  </div>
-                )}
+                <div className="mt-10 pt-6 border-t border-slate-100 dark:border-slate-800">
+                    {notifSaving ? (
+                      <div className="flex items-center gap-2 text-[10px] font-black text-blue-600 animate-pulse tracking-widest uppercase">
+                        <Loader2 size={12} className="animate-spin" />
+                        Syncing changes...
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 tracking-widest uppercase">
+                        <CheckCircle2 size={12} className="text-emerald-500" />
+                        Settings are live
+                      </div>
+                    )}
+                </div>
               </PortalCard>
 
-              <PortalCard className="bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 text-center py-8">
-                 <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
-                   Looking for push notifications? We're working on mobile and browser alerts. Stay tuned!
+              <PortalCard className="bg-slate-50/50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 text-center py-10 rounded-3xl">
+                 <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 max-w-sm mx-auto uppercase tracking-widest leading-relaxed">
+                   Looking for browser push notifications? <br/>
+                   <span className="text-blue-500 mt-2 block">Beta testing starting early 2026</span>
                  </p>
               </PortalCard>
             </div>
@@ -335,58 +378,64 @@ export default function SettingsClient() {
 
           {activeTab === 'security' && (
             <div className="space-y-6">
-              <PortalCard className="border-slate-200 dark:border-slate-800 shadow-sm">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-600">
+              <PortalCard className="border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-950">
+                <div className="flex items-center gap-3 mb-10">
+                  <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-900/20 text-amber-600 border border-amber-100 dark:border-amber-900/30">
                     <Shield size={20} />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">Security & Access</h3>
-                    <p className="text-xs font-medium text-slate-500">Manage how you access your account.</p>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit">Security Layer</h3>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Control your access</p>
                   </div>
                 </div>
 
                 <div className="space-y-6">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
-                    <div>
-                      <h4 className="font-bold text-slate-900 dark:text-white text-sm">Update Password</h4>
-                      <p className="text-xs text-slate-500 mt-1">We'll send you a secure link to change your password.</p>
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 rounded-3xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 group hover:border-blue-200 dark:hover:border-blue-900/30 transition-colors">
+                    <div className="space-y-1">
+                      <h4 className="font-bold text-slate-900 dark:text-white text-base font-outfit">Change Password</h4>
+                      <p className="text-xs font-medium text-slate-500 leading-relaxed">Reset your password via a secure verification link sent to your email.</p>
                     </div>
                     <PortalButton
                       variant="outline"
                       size="sm"
                       onClick={handlePasswordReset}
                       disabled={resetSent}
-                      className={cn(resetSent && "text-emerald-500 border-emerald-500 hover:bg-emerald-50")}
+                      className={cn(
+                        "font-outfit whitespace-nowrap px-6",
+                        resetSent && "text-emerald-500 border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20"
+                      )}
                     >
                       {resetSent ? (
                         <div className="flex items-center gap-2">
-                          <CheckCircle2 size={16} /> Link Sent
+                          <CheckCircle2 size={16} /> Link Dispatched
                         </div>
-                      ) : "Reset via Email"}
+                      ) : "Request Reset Link"}
                     </PortalButton>
                   </div>
 
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 opacity-60">
-                    <div>
-                      <h4 className="font-bold text-slate-900 dark:text-white text-sm">Two-Factor Authentication</h4>
-                      <p className="text-xs text-slate-500 mt-1">Add an extra layer of security to your account.</p>
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 rounded-3xl bg-slate-50/50 dark:bg-slate-900/20 border border-slate-100/50 dark:border-slate-800/50 opacity-60">
+                    <div className="space-y-1">
+                      <h4 className="font-bold text-slate-900 dark:text-white text-base font-outfit">Multi-Factor Auth (MFA)</h4>
+                      <p className="text-xs font-medium text-slate-500 leading-relaxed">Add a mobile authenticator app for ultimate account protection.</p>
                     </div>
-                    <PortalBadge variant="gray">Coming Soon</PortalBadge>
+                    <PortalBadge variant="gray" className="font-black uppercase tracking-widest text-[9px]">Pipeline 2026</PortalBadge>
                   </div>
                 </div>
               </PortalCard>
 
-              <PortalCard className="border-slate-200 dark:border-slate-800 shadow-sm">
-                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Account Information</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <PortalCard className="border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-950">
+                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 px-1">Active Session Info</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-1">
                    <div>
-                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Email Address</p>
-                     <p className="text-sm font-bold text-slate-900 dark:text-white">{user?.email}</p>
+                     <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2.5">Email Identifier</p>
+                     <p className="text-sm font-bold text-slate-900 dark:text-white font-outfit">{user?.email}</p>
                    </div>
                    <div>
-                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Auth Provider</p>
-                     <p className="text-sm font-bold text-slate-900 dark:text-white capitalize">{user?.providerData[0]?.providerId.split('.')[0] || 'Email'}</p>
+                     <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2.5">Identity Provider</p>
+                     <p className="text-sm font-bold text-slate-900 dark:text-white capitalize font-outfit flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                        {user?.providerData[0]?.providerId.split('.')[0] || 'Mail Service'}
+                     </p>
                    </div>
                 </div>
               </PortalCard>
@@ -395,52 +444,57 @@ export default function SettingsClient() {
 
           {activeTab === 'billing' && (
             <div className="space-y-6">
-              <PortalCard className="border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden p-0">
-                <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white">
-                  <div className="flex items-center justify-between mb-4">
-                    <PortalBadge className="bg-white/20 text-white border-white/20 uppercase font-black tracking-widest text-[10px]">Active Plan</PortalBadge>
-                    <span className="text-xs font-bold text-blue-100 uppercase tracking-widest">Client Pro</span>
+              <PortalCard className="border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden p-0 bg-white dark:bg-slate-950">
+                <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 p-8 text-white relative">
+                  <div className="absolute right-0 top-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-6">
+                      <PortalBadge className="bg-white/20 text-white border-white/20 uppercase font-black tracking-widest text-[9px] px-3">Priority Ecosystem</PortalBadge>
+                      <span className="text-[10px] font-black text-blue-100 uppercase tracking-widest bg-blue-500/30 px-3 py-1 rounded-full">Pro Status</span>
+                    </div>
+                    <h3 className="text-3xl font-bold mb-1 font-outfit">Premium Subscription</h3>
+                    <p className="text-sm text-blue-100/70 font-medium font-outfit">Next payment cycle cycles on Jan 15, 2026</p>
                   </div>
-                  <h3 className="text-2xl font-bold mb-1">Premium Unlimited</h3>
-                  <p className="text-sm text-blue-100/80">Next billing date: January 15, 2026</p>
                 </div>
 
-                <div className="p-6 space-y-6">
-                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      <div className="space-y-1">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Monthly Cost</p>
-                        <p className="text-lg font-bold text-slate-900 dark:text-white">$2,499.00</p>
+                <div className="p-8 space-y-8">
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                      <div className="space-y-1.5">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Investment</p>
+                        <p className="text-2xl font-bold text-slate-900 dark:text-white font-outfit tracking-tight">$2,499<span className="text-sm font-medium opacity-40">/mo</span></p>
                       </div>
-                      <div className="space-y-1">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Requests</p>
-                        <p className="text-lg font-bold text-emerald-500">Unlimited</p>
+                      <div className="space-y-1.5">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Workflow limit</p>
+                        <p className="text-2xl font-bold text-emerald-500 font-outfit flex items-center gap-2">
+                           Unlimited
+                        </p>
                       </div>
-                      <div className="space-y-1">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Team Seats</p>
-                        <p className="text-lg font-bold text-slate-900 dark:text-white">Up to 10</p>
+                      <div className="space-y-1.5">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Team Availability</p>
+                        <p className="text-2xl font-bold text-slate-900 dark:text-white font-outfit tracking-tight">10 Seats</p>
                       </div>
                    </div>
 
-                   <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-4">
-                      <PortalButton size="sm" className="flex items-center gap-2">
-                        <CreditCard size={16} /> Manage Billing
+                   <div className="pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-4">
+                      <PortalButton className="flex items-center gap-2 font-outfit px-8 shadow-xl shadow-blue-500/10 h-11">
+                        <CreditCard size={18} /> Stripe Dashboard
                       </PortalButton>
-                      <PortalButton variant="outline" size="sm" className="flex items-center gap-2">
-                        View Past Invoices
+                      <PortalButton variant="outline" className="flex items-center gap-2 font-outfit px-8 border-slate-200 dark:border-slate-800 h-11">
+                        Invoicing History
                       </PortalButton>
                    </div>
                 </div>
               </PortalCard>
 
-              <PortalCard className="border-blue-100 dark:border-blue-900/20 bg-blue-50/30 dark:bg-blue-900/5 shadow-sm">
+              <PortalCard className="border-blue-100 dark:border-blue-900/20 bg-blue-50/20 dark:bg-blue-900/5 shadow-sm rounded-3xl">
                  <div className="flex items-start gap-4">
-                    <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 mt-1">
+                    <div className="p-2.5 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 border border-blue-200/50 dark:border-blue-900/30">
                       <ShieldCheck size={20} />
                     </div>
                     <div>
-                      <h4 className="font-bold text-slate-900 dark:text-white mb-1">Secure Billing</h4>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                        All payments are processed securely through Stripe. Your card information never touches our servers. We use 256-bit SSL encryption to protect your data.
+                      <h4 className="font-bold text-slate-900 dark:text-white mb-1.5 font-outfit">Encrypted Billing Pipeline</h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+                        Transactions are handled exclusively via Stripe's certified PCI Level 1 infrastructure. Your financial signatures never leave the Stripe ecosystem.
                       </p>
                     </div>
                  </div>
@@ -462,3 +516,4 @@ export default function SettingsClient() {
     </div>
   );
 }
+
