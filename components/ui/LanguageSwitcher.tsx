@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocale } from 'next-intl';
 import { useRouter, usePathname } from '@/i18n/navigation';
 import { ChevronDown } from 'lucide-react';
 import { trackLanguageSwitch } from '@/lib/analytics';
+import { setUserLocalePreference } from '@/components/providers/GeoLocaleRedirect';
 
 const USFlag = () => (
   <svg
@@ -72,22 +74,63 @@ export const LanguageSwitcher = () => {
   const router = useRouter();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [position, setPosition] = useState({ top: 0, right: 0 });
+  const [mounted, setMounted] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const updatePosition = () => {
+      if (buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        setPosition({
+          top: rect.bottom + 8,
+          right: window.innerWidth - rect.right,
+        });
+      }
+    };
+
+    if (isOpen) {
+      updatePosition();
+      window.addEventListener('scroll', updatePosition, true);
+      window.addEventListener('resize', updatePosition);
+    }
+
+    return () => {
+      window.removeEventListener('scroll', updatePosition, true);
+      window.removeEventListener('resize', updatePosition);
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const handleLanguageChange = (lang: 'en' | 'he') => {
+    setUserLocalePreference(lang);
     trackLanguageSwitch(lang);
     router.replace(pathname, { locale: lang });
     setIsOpen(false);
@@ -95,9 +138,54 @@ export const LanguageSwitcher = () => {
 
   const currentLanguage = locale as 'en' | 'he';
 
+  const dropdownContent = (
+    <AnimatePresence>
+      {isOpen && mounted && (
+        <motion.div
+          ref={dropdownRef}
+          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+          transition={{ duration: 0.2 }}
+          className="fixed w-36 bg-white dark:bg-surface-800 rounded-xl shadow-lg border border-surface-200 dark:border-white/10 overflow-hidden z-[60]"
+          style={{
+            top: `${position.top}px`,
+            right: `${position.right}px`,
+          }}
+        >
+          <div className="p-1">
+            <button
+              onClick={() => handleLanguageChange('en')}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                currentLanguage === 'en'
+                  ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
+                  : 'text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-white/5'
+              }`}
+            >
+              <USFlag />
+              English
+            </button>
+            <button
+              onClick={() => handleLanguageChange('he')}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                currentLanguage === 'he'
+                  ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
+                  : 'text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-white/5'
+              }`}
+            >
+              <ILFlag />
+              עברית
+            </button>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
   return (
-    <div className="relative" ref={dropdownRef}>
+    <>
       <button
+        ref={buttonRef}
         onClick={toggleDropdown}
         className="flex items-center gap-2 px-3 py-2 rounded-full bg-surface-100 dark:bg-white/10 border border-surface-200 dark:border-white/20 hover:border-surface-300 dark:hover:border-white/30 transition-colors"
         aria-label="Select Language"
@@ -110,44 +198,8 @@ export const LanguageSwitcher = () => {
           className={`w-3 h-3 text-surface-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
         />
       </button>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="absolute top-full mt-2 w-36 bg-white dark:bg-surface-800 rounded-xl shadow-lg border border-surface-200 dark:border-white/10 overflow-hidden z-50 end-0"
-          >
-            <div className="p-1">
-              <button
-                onClick={() => handleLanguageChange('en')}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  currentLanguage === 'en'
-                    ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
-                    : 'text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-white/5'
-                }`}
-              >
-                <USFlag />
-                English
-              </button>
-              <button
-                onClick={() => handleLanguageChange('he')}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  currentLanguage === 'he'
-                    ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
-                    : 'text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-white/5'
-                }`}
-              >
-                <ILFlag />
-                עברית
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+      {mounted && createPortal(dropdownContent, document.body)}
+    </>
   );
 };
 

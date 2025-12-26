@@ -1,14 +1,15 @@
 'use client';
 
 import { HomeIcon, ArrowLeft } from 'lucide-react';
-import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
-export default function NotFoundClient() {
-  const pathname = usePathname();
+interface NotFoundClientProps {
+  isPortalRoute?: boolean;
+}
+
+export default function NotFoundClient({ isPortalRoute = false }: NotFoundClientProps) {
   const t = useTranslations();
-  const isPortalRoute = pathname?.includes('/portal');
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-surface-50 dark:bg-surface-950">
@@ -52,7 +53,10 @@ export default function NotFoundClient() {
 
         <p className="text-sm text-surface-500 dark:text-surface-400 pt-4">
           {t('notFound.needHelp')}{' '}
-          <Link href="/contact/" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 font-semibold">
+          <Link
+            href="/contact/"
+            className="text-blue-600 hover:text-blue-700 dark:text-blue-400 font-semibold"
+          >
             {t('notFound.contactTeam')}
           </Link>
         </p>
@@ -60,4 +64,3 @@ export default function NotFoundClient() {
     </div>
   );
 }
-

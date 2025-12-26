@@ -18,10 +18,11 @@ service cloud.firestore {
 
     // Portal Users
     match /portal_users/{userId} {
-      // Helper to check if current user is agency
+      // Helper to check if current user is agency (checks both accountType and isAgency for backward compatibility)
       function isAgencyUser() {
+        let userDoc = get(/databases/$(database)/documents/portal_users/$(getUserId()));
         return exists(/databases/$(database)/documents/portal_users/$(getUserId())) &&
-          get(/databases/$(database)/documents/portal_users/$(getUserId())).data.accountType == 'AGENCY';
+          (userDoc.data.accountType == 'AGENCY' || userDoc.data.isAgency == true);
       }
 
       // Users can read their own document, agency users can read all
@@ -45,8 +46,9 @@ service cloud.firestore {
     // Portal Organizations
     match /portal_organizations/{orgId} {
       function isAgencyUser() {
+        let userDoc = get(/databases/$(database)/documents/portal_users/$(getUserId()));
         return exists(/databases/$(database)/documents/portal_users/$(getUserId())) &&
-          get(/databases/$(database)/documents/portal_users/$(getUserId())).data.accountType == 'AGENCY';
+          (userDoc.data.accountType == 'AGENCY' || userDoc.data.isAgency == true);
       }
 
       // Agency users can read all organizations, regular users can read organizations they're part of
@@ -106,8 +108,9 @@ service cloud.firestore {
       }
 
       function isAgencyUser() {
+        let userDoc = get(/databases/$(database)/documents/portal_users/$(getUserId()));
         return exists(/databases/$(database)/documents/portal_users/$(getUserId())) &&
-          get(/databases/$(database)/documents/portal_users/$(getUserId())).data.accountType == 'AGENCY';
+          (userDoc.data.accountType == 'AGENCY' || userDoc.data.isAgency == true);
       }
 
       // Agency users can read all requests, regular users can read requests in their organizations
@@ -139,8 +142,9 @@ service cloud.firestore {
       }
 
       function isAgencyUser() {
+        let userDoc = get(/databases/$(database)/documents/portal_users/$(getUserId()));
         return exists(/databases/$(database)/documents/portal_users/$(getUserId())) &&
-          get(/databases/$(database)/documents/portal_users/$(getUserId())).data.isAgency == true;
+          (userDoc.data.accountType == 'AGENCY' || userDoc.data.isAgency == true);
       }
 
       // Agency users can read all comments, regular users can read comments in their organizations
@@ -169,8 +173,9 @@ service cloud.firestore {
       }
 
       function isAgencyUser() {
+        let userDoc = get(/databases/$(database)/documents/portal_users/$(getUserId()));
         return exists(/databases/$(database)/documents/portal_users/$(getUserId())) &&
-          get(/databases/$(database)/documents/portal_users/$(getUserId())).data.isAgency == true;
+          (userDoc.data.accountType == 'AGENCY' || userDoc.data.isAgency == true);
       }
 
       // Agency users can read all files, regular users can read files in their organizations
@@ -210,8 +215,9 @@ service cloud.firestore {
       }
 
       function isAgencyUser() {
+        let userDoc = get(/databases/$(database)/documents/portal_users/$(getUserId()));
         return exists(/databases/$(database)/documents/portal_users/$(getUserId())) &&
-          get(/databases/$(database)/documents/portal_users/$(getUserId())).data.isAgency == true;
+          (userDoc.data.accountType == 'AGENCY' || userDoc.data.isAgency == true);
       }
 
       // Agency users can read all pricing requests, org members can read pricing requests for their organizations

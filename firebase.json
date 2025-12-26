@@ -7,11 +7,215 @@
     "rules": "storage.rules"
   },
   "hosting": {
-    "public": "out",
+    "public": "build_out",
+    "cleanUrls": true,
+    "trailingSlash": true,
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/",
+        "destination": "/en/index.html"
+      },
+      {
+        "source": "/about/**",
+        "destination": "/en/about/index.html"
+      },
+      {
+        "source": "/contact/**",
+        "destination": "/en/contact/index.html"
+      },
+      {
+        "source": "/blog/**",
+        "destination": "/en/blog/index.html"
+      },
+      {
+        "source": "/work/**",
+        "destination": "/en/work/index.html"
+      },
+      {
+        "source": "/pricing/**",
+        "destination": "/en/pricing/index.html"
+      },
+      {
+        "source": "/maintenance/**",
+        "destination": "/en/maintenance/index.html"
+      },
+      {
+        "source": "/privacy/**",
+        "destination": "/en/privacy/index.html"
+      },
+      {
+        "source": "/terms/**",
+        "destination": "/en/terms/index.html"
+      },
+      {
+        "source": "/solutions/shopify/**",
+        "destination": "/en/solutions/shopify/index.html"
+      },
+      {
+        "source": "/solutions/wordpress/**",
+        "destination": "/en/solutions/wordpress/index.html"
+      },
+      {
+        "source": "/portal/login",
+        "destination": "/en/portal/login/index.html"
+      },
+      {
+        "source": "/portal/login/**",
+        "destination": "/en/portal/login/index.html"
+      },
+      {
+        "source": "/portal/signup",
+        "destination": "/en/portal/signup/index.html"
+      },
+      {
+        "source": "/portal/signup/**",
+        "destination": "/en/portal/signup/index.html"
+      },
+      {
+        "source": "/portal/org",
+        "destination": "/en/portal/org/template/dashboard/index.html"
+      },
+      {
+        "source": "/portal/org/**",
+        "destination": "/en/portal/org/template/dashboard/index.html"
+      },
+      {
+        "source": "/portal/invite",
+        "destination": "/en/portal/invite/template/index.html"
+      },
+      {
+        "source": "/portal/invite/**",
+        "destination": "/en/portal/invite/template/index.html"
+      },
+      {
+        "source": "/en/portal/org/*/dashboard",
+        "destination": "/en/portal/org/template/dashboard/index.html"
+      },
+      {
+        "source": "/en/portal/org/*/dashboard/**",
+        "destination": "/en/portal/org/template/dashboard/index.html"
+      },
+      {
+        "source": "/en/portal/org/*/requests",
+        "destination": "/en/portal/org/template/requests/index.html"
+      },
+      {
+        "source": "/en/portal/org/*/requests/**",
+        "destination": "/en/portal/org/template/requests/index.html"
+      },
+      {
+        "source": "/en/portal/org/*/team",
+        "destination": "/en/portal/org/template/team/index.html"
+      },
+      {
+        "source": "/en/portal/org/*/team/**",
+        "destination": "/en/portal/org/template/team/index.html"
+      },
+      {
+        "source": "/en/portal/org/*/files",
+        "destination": "/en/portal/org/template/files/index.html"
+      },
+      {
+        "source": "/en/portal/org/*/files/**",
+        "destination": "/en/portal/org/template/files/index.html"
+      },
+      {
+        "source": "/en/portal/org/*/settings",
+        "destination": "/en/portal/org/template/settings/index.html"
+      },
+      {
+        "source": "/en/portal/org/*/settings/**",
+        "destination": "/en/portal/org/template/settings/index.html"
+      },
+      {
+        "source": "/en/portal/org/*/pricing",
+        "destination": "/en/portal/org/template/pricing/index.html"
+      },
+      {
+        "source": "/en/portal/org/*/pricing/**",
+        "destination": "/en/portal/org/template/pricing/index.html"
+      },
+      {
+        "source": "/en/portal/org/*",
+        "destination": "/en/portal/org/template/dashboard/index.html"
+      },
+      {
+        "source": "/en/portal/invite/*",
+        "destination": "/en/portal/invite/template/index.html"
+      },
+      {
+        "source": "/en/portal/invite/**",
+        "destination": "/en/portal/invite/template/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/dashboard",
+        "destination": "/he/portal/org/template/dashboard/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/dashboard/**",
+        "destination": "/he/portal/org/template/dashboard/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/requests",
+        "destination": "/he/portal/org/template/requests/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/requests/**",
+        "destination": "/he/portal/org/template/requests/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/team",
+        "destination": "/he/portal/org/template/team/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/team/**",
+        "destination": "/he/portal/org/template/team/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/files",
+        "destination": "/he/portal/org/template/files/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/files/**",
+        "destination": "/he/portal/org/template/files/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/settings",
+        "destination": "/he/portal/org/template/settings/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/settings/**",
+        "destination": "/he/portal/org/template/settings/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/pricing",
+        "destination": "/he/portal/org/template/pricing/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/pricing/**",
+        "destination": "/he/portal/org/template/pricing/index.html"
+      },
+      {
+        "source": "/he/portal/org/*",
+        "destination": "/he/portal/org/template/dashboard/index.html"
+      },
+      {
+        "source": "/he/portal/invite/*",
+        "destination": "/he/portal/invite/template/index.html"
+      },
+      {
+        "source": "/he/portal/invite/**",
+        "destination": "/he/portal/invite/template/index.html"
+      },
+      {
+        "source": "**",
+        "destination": "/404.html"
+      }
     ],
     "headers": [
       {

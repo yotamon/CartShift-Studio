@@ -8,6 +8,7 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { getFirebaseAuth, getFirestoreDb } from '@/lib/firebase';
+import { ACCOUNT_TYPE } from '@/lib/types/portal';
 
 /**
  * Get the Firebase Auth instance from the centralized Firebase configuration
@@ -93,6 +94,7 @@ export async function signUpWithEmail(email: string, password: string, name?: st
       email: user.email,
       name: name || user.displayName || null,
       photoUrl: user.photoURL || null,
+      accountType: ACCOUNT_TYPE.CLIENT,
       isAgency: false,
       organizations: [],
       createdAt: serverTimestamp(),

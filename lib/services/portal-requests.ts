@@ -73,25 +73,17 @@ export async function createRequest(
 // ============================================
 
 export async function getRequest(requestId: string): Promise<Request | null> {
-  try {
-    const docRef = doc(db, REQUESTS_COLLECTION, requestId);
-    const docSnap = await getDoc(docRef);
+  const docRef = doc(db, REQUESTS_COLLECTION, requestId);
+  const docSnap = await getDoc(docRef);
 
-    if (!docSnap.exists()) {
-      return null;
-    }
-
-    return {
-      id: docSnap.id,
-      ...docSnap.data(),
-    } as Request;
-  } catch (error: any) {
-    if (error.code === 'permission-denied') {
-      console.error('Permission denied accessing request:', requestId);
-      return null;
-    }
-    throw error;
+  if (!docSnap.exists()) {
+    return null;
   }
+
+  return {
+    id: docSnap.id,
+    ...docSnap.data(),
+  } as Request;
 }
 
 export async function getRequestsByOrg(
@@ -116,36 +108,20 @@ export async function getRequestsByOrg(
     q = query(q, limit(options.limit));
   }
 
-  try {
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Request[];
-  } catch (error: any) {
-    if (error.code === 'permission-denied') {
-      console.error('Permission denied accessing requests for org:', orgId);
-      return [];
-    }
-    throw error;
-  }
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as Request[];
 }
 
 export async function getAllRequests(): Promise<Request[]> {
-  try {
-    const q = query(collection(db, REQUESTS_COLLECTION), orderBy('createdAt', 'desc'));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Request[];
-  } catch (error: any) {
-    if (error.code === 'permission-denied') {
-      console.error('Permission denied accessing all requests. User may need agency permissions.');
-      return [];
-    }
-    throw error;
-  }
+  const q = query(collection(db, REQUESTS_COLLECTION), orderBy('createdAt', 'desc'));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as Request[];
 }
 
 export async function getRecentRequestsByOrg(orgId: string, count = 5): Promise<Request[]> {

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { usePathname, useRouter } from '@/i18n/navigation';
 import { Link } from '@/i18n/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -59,6 +60,8 @@ export const PortalShell = ({
   const [isMobile, setIsMobile] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [notificationPosition, setNotificationPosition] = useState({ top: 0, right: 0, left: 0 });
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const { userData, loading, isAuthenticated, accountType } = usePortalAuth();
@@ -66,6 +69,8 @@ export const PortalShell = ({
   const t = useTranslations();
   const locale = useLocale();
   const notificationRef = useRef<HTMLDivElement>(null);
+  const notificationButtonRef = useRef<HTMLButtonElement>(null);
+  const notificationDropdownRef = useRef<HTMLDivElement>(null);
 
   const userId = userData?.id ?? null;
 
@@ -89,8 +94,42 @@ export const PortalShell = ({
   }, [loading, isAuthenticated, userData, orgId, isAgencyPage, router]);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const updatePosition = () => {
+      if (notificationButtonRef.current) {
+        const rect = notificationButtonRef.current.getBoundingClientRect();
+        const isRTL = document.documentElement.dir === 'rtl';
+        setNotificationPosition({
+          top: rect.bottom + 8,
+          right: isRTL ? undefined : window.innerWidth - rect.right,
+          left: isRTL ? rect.left : undefined,
+        });
+      }
+    };
+
+    if (isNotificationOpen) {
+      updatePosition();
+      window.addEventListener('scroll', updatePosition, true);
+      window.addEventListener('resize', updatePosition);
+    }
+
+    return () => {
+      window.removeEventListener('scroll', updatePosition, true);
+      window.removeEventListener('resize', updatePosition);
+    };
+  }, [isNotificationOpen]);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+      if (
+        notificationButtonRef.current &&
+        !notificationButtonRef.current.contains(event.target as Node) &&
+        notificationDropdownRef.current &&
+        !notificationDropdownRef.current.contains(event.target as Node)
+      ) {
         setIsNotificationOpen(false);
       }
     };
@@ -524,6 +563,7 @@ export const PortalShell = ({
               </button>
               <div className="relative" ref={notificationRef}>
                 <button
+                  ref={notificationButtonRef}
                   onClick={() => setIsNotificationOpen(!isNotificationOpen)}
                   className="p-2 md:p-2.5 text-surface-400 hover:text-surface-900 dark:hover:text-white transition-all relative rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800/50 group touch-manipulation active:bg-surface-200 dark:active:bg-surface-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   aria-label="Notifications"
@@ -534,94 +574,6 @@ export const PortalShell = ({
                     <span className="absolute top-1 right-1 md:top-2.5 md:right-2.5 rtl:right-auto rtl:left-1 md:rtl:left-2.5 w-2 h-2 bg-blue-600 rounded-full border-2 border-white dark:border-surface-950"></span>
                   )}
                 </button>
-
-                <AnimatePresence>
-                  {isNotificationOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute top-full mt-2 end-0 rtl:end-auto rtl:start-0 w-[calc(100vw-1rem)] sm:w-[calc(100vw-2rem)] max-w-sm md:w-96 bg-white dark:bg-surface-900 rounded-2xl shadow-xl border border-surface-200 dark:border-surface-800 overflow-hidden z-50"
-                    >
-                      <div className="p-4 border-b border-surface-100 dark:border-surface-800 flex items-center justify-between">
-                        <h3 className="text-sm font-bold text-surface-900 dark:text-white font-outfit">
-                          {t('portal.header.notifications' as any) || 'Notifications'}
-                        </h3>
-                        {unreadCount > 0 && (
-                          <button
-                            onClick={handleMarkAllAsRead}
-                            className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium flex items-center gap-1.5"
-                          >
-                            <CheckCheck size={14} />
-                            Mark all as read
-                          </button>
-                        )}
-                      </div>
-                      <div className="max-h-96 overflow-y-auto">
-                        {notifications.length === 0 ? (
-                          <div className="p-8 text-center">
-                            <Bell
-                              size={32}
-                              className="mx-auto text-surface-300 dark:text-surface-700 mb-3"
-                            />
-                            <p className="text-sm text-surface-500 dark:text-surface-400 font-medium">
-                              {t('portal.header.noNotifications' as any) || 'No notifications'}
-                            </p>
-                          </div>
-                        ) : (
-                          <div className="divide-y divide-surface-100 dark:divide-surface-800">
-                            {notifications.map(notification => {
-                              const createdAt = notification.createdAt?.toDate
-                                ? notification.createdAt.toDate()
-                                : new Date();
-                              return (
-                                <button
-                                  key={notification.id}
-                                  onClick={() => handleNotificationClick(notification)}
-                                  className={cn(
-                                    'w-full p-4 text-left rtl:text-right hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors',
-                                    !notification.read && 'bg-blue-50/50 dark:bg-blue-900/10'
-                                  )}
-                                >
-                                  <div className="flex items-start gap-3">
-                                    <div
-                                      className={cn(
-                                        'w-2 h-2 rounded-full mt-2 flex-shrink-0',
-                                        !notification.read ? 'bg-blue-600' : 'bg-transparent'
-                                      )}
-                                    />
-                                    <div className="flex-1 min-w-0">
-                                      <p
-                                        className={cn(
-                                          'text-sm font-bold mb-1 font-outfit',
-                                          !notification.read
-                                            ? 'text-surface-900 dark:text-white'
-                                            : 'text-surface-600 dark:text-surface-400'
-                                        )}
-                                      >
-                                        {notification.title}
-                                      </p>
-                                      <p className="text-xs text-surface-500 dark:text-surface-500 mb-2 line-clamp-2">
-                                        {notification.body}
-                                      </p>
-                                      <p className="text-[10px] text-surface-400 dark:text-surface-600 uppercase tracking-wider font-black">
-                                        {formatDistanceToNow(createdAt, {
-                                          addSuffix: true,
-                                          locale: locale === 'he' ? he : enUS,
-                                        })}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </button>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </div>
             </div>
 
@@ -664,6 +616,103 @@ export const PortalShell = ({
           </div>
         </main>
       </div>
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {isNotificationOpen && (
+              <motion.div
+                ref={notificationDropdownRef}
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="fixed w-[calc(100vw-1rem)] sm:w-[calc(100vw-2rem)] max-w-sm md:w-96 bg-white dark:bg-surface-900 rounded-2xl shadow-xl border border-surface-200 dark:border-surface-800 overflow-hidden z-[60]"
+                style={{
+                  top: `${notificationPosition.top}px`,
+                  right: notificationPosition.right !== undefined ? `${notificationPosition.right}px` : undefined,
+                  left: notificationPosition.left !== undefined ? `${notificationPosition.left}px` : undefined,
+                }}
+              >
+                <div className="p-4 border-b border-surface-100 dark:border-surface-800 flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-surface-900 dark:text-white font-outfit">
+                    {t('portal.header.notifications' as any) || 'Notifications'}
+                  </h3>
+                  {unreadCount > 0 && (
+                    <button
+                      onClick={handleMarkAllAsRead}
+                      className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium flex items-center gap-1.5"
+                    >
+                      <CheckCheck size={14} />
+                      Mark all as read
+                    </button>
+                  )}
+                </div>
+                <div className="max-h-96 overflow-y-auto">
+                  {notifications.length === 0 ? (
+                    <div className="p-8 text-center">
+                      <Bell
+                        size={32}
+                        className="mx-auto text-surface-300 dark:text-surface-700 mb-3"
+                      />
+                      <p className="text-sm text-surface-500 dark:text-surface-400 font-medium">
+                        {t('portal.header.noNotifications' as any) || 'No notifications'}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-surface-100 dark:divide-surface-800">
+                      {notifications.map(notification => {
+                        const createdAt = notification.createdAt?.toDate
+                          ? notification.createdAt.toDate()
+                          : new Date();
+                        return (
+                          <button
+                            key={notification.id}
+                            onClick={() => handleNotificationClick(notification)}
+                            className={cn(
+                              'w-full p-4 text-left rtl:text-right hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors',
+                              !notification.read && 'bg-blue-50/50 dark:bg-blue-900/10'
+                            )}
+                          >
+                            <div className="flex items-start gap-3">
+                              <div
+                                className={cn(
+                                  'w-2 h-2 rounded-full mt-2 flex-shrink-0',
+                                  !notification.read ? 'bg-blue-600' : 'bg-transparent'
+                                )}
+                              />
+                              <div className="flex-1 min-w-0">
+                                <p
+                                  className={cn(
+                                    'text-sm font-bold mb-1 font-outfit',
+                                    !notification.read
+                                      ? 'text-surface-900 dark:text-white'
+                                      : 'text-surface-600 dark:text-surface-400'
+                                  )}
+                                >
+                                  {notification.title}
+                                </p>
+                                <p className="text-xs text-surface-500 dark:text-surface-500 mb-2 line-clamp-2">
+                                  {notification.body}
+                                </p>
+                                <p className="text-[10px] text-surface-400 dark:text-surface-600 uppercase tracking-wider font-black">
+                                  {formatDistanceToNow(createdAt, {
+                                    addSuffix: true,
+                                    locale: locale === 'he' ? he : enUS,
+                                  })}
+                                </p>
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
+        )}
     </div>
   );
 };

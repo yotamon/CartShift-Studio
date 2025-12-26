@@ -118,20 +118,12 @@ export async function getUserOrganizations(userId: string): Promise<Organization
 }
 
 export async function getAllOrganizations(): Promise<Organization[]> {
-  try {
-    const q = query(collection(db, ORGS_COLLECTION), orderBy('name', 'asc'));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Organization[];
-  } catch (error: any) {
-    if (error.code === 'permission-denied') {
-      console.error('Permission denied accessing all organizations. User may need agency permissions.');
-      return [];
-    }
-    throw error;
-  }
+  const q = query(collection(db, ORGS_COLLECTION), orderBy('name', 'asc'));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as Organization[];
 }
 
 export async function updateOrganization(

@@ -1,22 +1,13 @@
-import { NextIntlClientProvider } from 'next-intl';
-import { routing } from '@/i18n/routing';
-import NotFoundClient from '@/components/NotFoundClient';
-import enMessages from '@/messages/en.json';
-import heMessages from '@/messages/he.json';
+'use client';
 
-const messages = {
-  en: enMessages,
-  he: heMessages,
-};
+import Error from 'next/error';
 
 export default function NotFound() {
-  const locale = routing.defaultLocale;
-  const localeMessages = messages[locale as 'en' | 'he'];
-
   return (
-    <NextIntlClientProvider messages={localeMessages} locale={locale}>
-      <NotFoundClient />
-    </NextIntlClientProvider>
+    <html lang="en">
+      <body>
+        <Error statusCode={404} />
+      </body>
+    </html>
   );
 }
-

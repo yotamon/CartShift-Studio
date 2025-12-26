@@ -12,19 +12,25 @@ import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 
 export default function AgencyInboxPage() {
-  const t = useTranslations();
+  const t = useTranslations('portal');
   const [requests, setRequests] = useState<Request[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
+      setError(null);
       try {
         const data = await getAllRequests();
         setRequests(data);
-      } catch (error) {
-        console.error('Error fetching agency inbox:', error);
+      } catch (err: any) {
+        const errorMessage = err?.code === 'permission-denied'
+          ? 'You do not have permission to access all requests. Agency permissions are required.'
+          : 'Failed to load requests. Please try again later.';
+        setError(errorMessage);
+        console.error('Error fetching agency inbox:', err);
       } finally {
         setLoading(false);
       }
@@ -85,6 +91,16 @@ export default function AgencyInboxPage() {
             <div className="py-20 flex flex-col items-center justify-center space-y-3">
               <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
               <p className="text-sm font-medium text-surface-400">{t('agency.inbox.loading')}</p>
+            </div>
+          ) : error ? (
+            <div className="py-20 text-center">
+              <Mail className="w-16 h-16 text-red-100 dark:text-red-900/20 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-red-600 dark:text-red-400">
+                Permission Error
+              </h3>
+              <p className="text-surface-500 dark:text-surface-400 text-sm mt-1 max-w-sm mx-auto">
+                {error}
+              </p>
             </div>
           ) : filteredRequests.length > 0 ? (
             filteredRequests.map(req => (

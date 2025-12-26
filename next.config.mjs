@@ -5,10 +5,10 @@ const withNextIntl = createNextIntlPlugin();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // output: process.env.NODE_ENV === 'production' ? 'export' : undefined, // Using regular build for deployment
+  ...(process.env.NODE_ENV === 'production' && { output: 'export' }),
   trailingSlash: true,
   skipTrailingSlashRedirect: true,
-  distDir: 'out',
+  distDir: 'build_out',
   assetPrefix: '',
 
   transpilePackages: ['firebase', 'next-intl'],
@@ -53,13 +53,13 @@ const nextConfig = {
       {
         message: /Build dependencies behind this expression are ignored/,
       },
-      (warning) => {
+      warning => {
         const message = warning.message || warning.toString();
         const module = warning.module?.resource || warning.module?.identifier || '';
         return (
-          (message.includes("Parsing of") && message.includes("import(t)")) ||
-          message.includes("Build dependencies behind this expression") ||
-          (module.includes("next-intl") && module.includes("extractor"))
+          (message.includes('Parsing of') && message.includes('import(t)')) ||
+          message.includes('Build dependencies behind this expression') ||
+          (module.includes('next-intl') && module.includes('extractor'))
         );
       },
     ];

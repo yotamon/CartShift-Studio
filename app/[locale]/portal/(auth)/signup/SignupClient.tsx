@@ -1,0 +1,179 @@
+'use client';
+
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter, useSearchParams } from '@/i18n/navigation';
+import { PortalButton } from '@/components/portal/ui/PortalButton';
+import { PortalInput } from '@/components/portal/ui/PortalInput';
+import { PortalCard } from '@/components/portal/ui/PortalCard';
+import { ArrowRight, ShieldCheck } from 'lucide-react';
+import { signUpWithEmail } from '@/lib/services/auth';
+import { Suspense, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
+
+type SignupData = z.infer<ReturnType<typeof getSignupSchema>>;
+
+const getSignupSchema = (t: (path: string) => string) =>
+  z
+    .object({
+      name: z.string().min(2, 'Name must be at least 2 characters'),
+      email: z.string().email(t('portal.auth.errors.invalidEmail')),
+      password: z.string().min(6, t('portal.auth.errors.weakPassword')),
+      confirmPassword: z.string().min(6, t('portal.auth.errors.weakPassword')),
+    })
+    .refine(data => data.password === data.confirmPassword, {
+      message: t('portal.auth.errors.matchPassword'),
+      path: ['confirmPassword'],
+    });
+
+function SignupForm() {
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const t = useTranslations();
+  const redirectPath = searchParams.get('redirect');
+
+  const signupSchema = useMemo(() => getSignupSchema((path: string) => t(path as any)), [t]);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignupData>({
+    resolver: zodResolver(signupSchema),
+  });
+
+  const onSubmit = async (data: SignupData) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await signUpWithEmail(data.email, data.password, data.name);
+      router.push(redirectPath || '/portal/org/');
+    } catch (err: any) {
+      console.error('Signup error:', err);
+      const errorMessage =
+        err.code === 'auth/email-already-in-use'
+          ? t('portal.auth.errors.emailInUse' as any)
+          : err.code === 'auth/invalid-email'
+            ? t('portal.auth.errors.invalidEmail' as any)
+            : err.code === 'auth/weak-password'
+              ? t('portal.auth.errors.weakPassword' as any)
+              : err.message || t('portal.auth.errors.generic' as any);
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="w-full max-w-[400px] space-y-8">
+      {/* Logo */}
+      <div className="flex flex-col items-center justify-center space-y-4">
+        <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-blue-500/20">
+          C
+        </div>
+        <div className="text-center">
+          <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white">
+            {t('portal.auth.signup.title')}
+          </h1>
+          <p className="text-surface-500 dark:text-surface-400 mt-1">
+            {t('portal.auth.signup.subtitle')}
+          </p>
+        </div>
+      </div>
+
+      <PortalCard className="p-8 shadow-xl">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-4">
+            <PortalInput
+              label={t('portal.auth.signup.fullName')}
+              type="text"
+              placeholder="John Doe"
+              error={errors.name?.message}
+              {...register('name')}
+            />
+
+            <PortalInput
+              label={t('portal.auth.signup.email')}
+              type="email"
+              placeholder="yours@example.com"
+              error={errors.email?.message}
+              {...register('email')}
+            />
+
+            <PortalInput
+              label={t('portal.auth.signup.password')}
+              type="password"
+              placeholder="••••••••"
+              error={errors.password?.message}
+              {...register('password')}
+            />
+
+            <PortalInput
+              label={t('portal.auth.signup.confirmPassword')}
+              type="password"
+              placeholder="••••••••"
+              error={errors.confirmPassword?.message}
+              {...register('confirmPassword')}
+            />
+          </div>
+
+          {error && (
+            <div className="p-3 rounded-md bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/20 text-xs text-red-600 dark:text-red-400">
+              {error}
+            </div>
+          )}
+
+          <PortalButton type="submit" isLoading={loading} className="w-full h-11">
+            <span>{t('portal.auth.signup.createAccount')}</span>
+            <ArrowRight size={16} />
+          </PortalButton>
+        </form>
+
+        <p className="text-center text-sm text-surface-500 dark:text-surface-400 mt-6">
+          {t('portal.auth.signup.alreadyHaveAccount')}{' '}
+          <Link
+            href={
+              redirectPath
+                ? `/portal/login?redirect=${encodeURIComponent(redirectPath)}`
+                : '/portal/login/'
+            }
+            className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+          >
+            {t('portal.auth.signup.signIn')}
+          </Link>
+        </p>
+      </PortalCard>
+
+      {/* Footer */}
+      <div className="flex items-center justify-center gap-2 text-surface-400 text-xs mt-8">
+        <ShieldCheck size={14} />
+        <span>{t('portal.auth.signup.secure')}</span>
+        <span className="mx-1">•</span>
+        <span>&copy; {new Date().getFullYear()} CartShift Studio</span>
+      </div>
+    </div>
+  );
+}
+
+export default function SignupClient() {
+  const t = useTranslations();
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-surface-50 dark:bg-surface-950">
+      <Suspense
+        fallback={
+          <div className="flex flex-col items-center justify-center space-y-4">
+            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+            <p className="text-surface-500">{t('portal.loading.auth.signup')}</p>
+          </div>
+        }
+      >
+        <SignupForm />
+      </Suspense>
+    </div>
+  );
+}
