@@ -36,4 +36,3 @@ export function validateNewsletterSubscription(data: unknown): { success: true; 
 
   return { success: false, errors: result.error };
 }
-

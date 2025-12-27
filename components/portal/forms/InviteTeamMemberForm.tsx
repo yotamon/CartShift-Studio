@@ -7,7 +7,8 @@ import { z } from 'zod';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalInput } from '@/components/portal/ui/PortalInput';
 import { X } from 'lucide-react';
-import { inviteTeamMember } from '@/lib/services/portal-organizations';
+import { inviteTeamMember, inviteAgencyMember } from '@/lib/services/portal-organizations';
+import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 
@@ -17,14 +18,16 @@ type InviteFormData = {
 };
 
 interface InviteTeamMemberFormProps {
-  orgId: string;
+  orgId?: string;
+  isAgency?: boolean;
   onSuccess: () => void;
   onCancel: () => void;
 }
 
-export const InviteTeamMemberForm = ({ orgId, onSuccess, onCancel }: InviteTeamMemberFormProps) => {
+export const InviteTeamMemberForm = ({ orgId, isAgency = false, onSuccess, onCancel }: InviteTeamMemberFormProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { userData } = usePortalAuth();
   const t = useTranslations();
 
   const inviteSchema = useMemo(() => z.object({
@@ -48,9 +51,18 @@ export const InviteTeamMemberForm = ({ orgId, onSuccess, onCancel }: InviteTeamM
     setError(null);
 
     try {
-      await inviteTeamMember(orgId, data.email, data.role);
+      if (!userData) throw new Error('Not authenticated');
+
+      if (isAgency) {
+        await inviteAgencyMember(data.email, data.role, userData.id, userData.name || userData.email);
+      } else if (orgId) {
+        await inviteTeamMember(orgId, data.email, data.role, userData.id, userData.name || userData.email);
+      } else {
+        throw new Error('Organization ID is required for client invites');
+      }
+
       onSuccess();
-      } catch (err: any) {
+    } catch (err: any) {
         console.error('Invite error:', err);
         setError(err.message || t('portal.team.inviteForm.errors.generic'));
     } finally {

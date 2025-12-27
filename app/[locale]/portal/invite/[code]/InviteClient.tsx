@@ -275,9 +275,7 @@ export default function InviteClient() {
               ) : !emailMatch ? (
                 <div className="p-3 bg-warning/10 border border-warning/20 rounded-md">
                   <p className="text-sm text-warning">
-                    {t('portal.invite.emailMismatch')
-                      .replace('{email}', invite.email)
-                      .replace('{userEmail}', user?.email || '')}
+                    {t('portal.invite.emailMismatch', { email: invite.email, userEmail: user?.email || '' })}
                   </p>
                 </div>
               ) : !isExpired && !isAccepted ? (

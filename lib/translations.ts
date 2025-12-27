@@ -253,6 +253,7 @@ export const translations = {
         },
         status: {
           new: 'New',
+          quoted: 'Quoted',
           queued: 'Queued',
           in_progress: 'In Progress',
           in_review: 'In Review',

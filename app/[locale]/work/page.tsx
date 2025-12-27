@@ -1,5 +1,6 @@
 import { WorkPageContent } from "@/components/sections/WorkPageContent";
 import { generateMetadata as genMeta, generateBreadcrumbSchema } from "@/lib/seo";
+import { getAllCaseStudies } from "@/lib/case-studies";
 import Script from "next/script";
 import type { Metadata } from "next";
 
@@ -10,6 +11,8 @@ export const metadata: Metadata = genMeta({
 });
 
 export default function WorkPage() {
+  const caseStudies = getAllCaseStudies();
+
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Home", url: "/" },
     { name: "Work", url: "/work" }
@@ -22,9 +25,7 @@ export default function WorkPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <WorkPageContent />
+      <WorkPageContent caseStudies={caseStudies} />
     </>
   );
 }
-
-

@@ -6,14 +6,19 @@ import { PortalBadge } from '@/components/portal/ui/PortalBadge';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { Search, Mail, Filter, MoreVertical, Star, Loader2 } from 'lucide-react';
 import { getAllRequests } from '@/lib/services/portal-requests';
-import { Request } from '@/lib/types/portal';
-import { format } from 'date-fns';
+import { getAllOrganizations } from '@/lib/services/portal-organizations';
+import { Request, Organization, STATUS_CONFIG } from '@/lib/types/portal';
+import { formatDistanceToNow } from 'date-fns';
+import { enUS, he } from 'date-fns/locale';
 import { Link } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
+import { PortalAvatar } from '@/components/portal/ui/PortalAvatar';
 
 export default function AgencyInboxPage() {
   const t = useTranslations('portal');
+  const locale = useLocale();
   const [requests, setRequests] = useState<Request[]>([]);
+  const [organizations, setOrganizations] = useState<Record<string, Organization>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -23,8 +28,18 @@ export default function AgencyInboxPage() {
       setLoading(true);
       setError(null);
       try {
-        const data = await getAllRequests();
-        setRequests(data);
+        const [requestsData, orgsData] = await Promise.all([
+          getAllRequests(),
+          getAllOrganizations(),
+        ]);
+
+        setRequests(requestsData);
+
+        const orgsMap: Record<string, Organization> = {};
+        orgsData.forEach(org => {
+          orgsMap[org.id] = org;
+        });
+        setOrganizations(orgsMap);
       } catch (err: any) {
         const errorMessage = err?.code === 'permission-denied'
           ? 'You do not have permission to access all requests. Agency permissions are required.'
@@ -103,7 +118,9 @@ export default function AgencyInboxPage() {
               </p>
             </div>
           ) : filteredRequests.length > 0 ? (
-            filteredRequests.map(req => (
+            filteredRequests.map(req => {
+              if (!req.orgId || !req.id) return null;
+              return (
               <Link
                 key={req.id}
                 href={`/portal/org/${req.orgId}/requests/${req.id}/`}
@@ -114,9 +131,7 @@ export default function AgencyInboxPage() {
                     <button className="p-1 text-surface-300 group-hover:text-amber-400 transition-colors">
                       <Star size={18} />
                     </button>
-                    <div className="w-11 h-11 rounded-2xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/30 flex items-center justify-center font-bold text-blue-600 shadow-sm">
-                      {req.createdByName ? req.createdByName[0] : 'U'}
-                    </div>
+                    <PortalAvatar name={req.createdByName || 'User'} size="md" className="ring-2 ring-white dark:ring-surface-900 shadow-sm" />
                   </div>
 
                   <div className="min-w-0 flex-1 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
@@ -125,16 +140,16 @@ export default function AgencyInboxPage() {
                         {req.createdByName || 'User'}
                       </p>
                       <p className="text-[10px] font-bold text-surface-400 uppercase tracking-tighter truncate">
-                        {t('agency.inbox.clientOrg')}
+                        {organizations[req.orgId]?.name || t('agency.inbox.clientOrg')}
                       </p>
                     </div>
                     <div className="md:col-span-2">
                       <div className="flex items-center gap-2">
-                        <p className="text-sm font-bold text-surface-900 dark:text-white truncate group-hover:text-blue-600 transition-colors">
+                        <p className="text-sm font-bold text-surface-900 dark:text-white truncate group-hover:text-blue-600 transition-colors font-outfit">
                           {req.title}
                         </p>
                         <PortalBadge
-                          variant={req.status === 'IN_PROGRESS' ? 'blue' : 'yellow'}
+                          variant={STATUS_CONFIG[req.status]?.color as any || 'gray'}
                           className="text-[9px] h-4"
                         >
                           {req.status}
@@ -147,12 +162,9 @@ export default function AgencyInboxPage() {
                     <div className="md:col-span-1 text-right flex items-center justify-end gap-4">
                       <div className="flex flex-col items-end">
                         <span className="text-[10px] font-bold text-surface-500 whitespace-nowrap uppercase tracking-widest leading-none mb-1">
-                          {req.createdAt?.toDate ? format(req.createdAt.toDate(), 'h:mm a') : 'Now'}
-                        </span>
-                        <span className="text-[9px] font-black text-surface-400 uppercase tracking-widest leading-none">
                           {req.createdAt?.toDate
-                            ? format(req.createdAt.toDate(), 'MMM d')
-                            : 'Today'}
+                            ? formatDistanceToNow(req.createdAt.toDate(), { addSuffix: true, locale: locale === 'he' ? he : enUS })
+                            : t('common.recently' as any)}
                         </span>
                       </div>
                       <button className="opacity-0 group-hover:opacity-100 p-2 text-surface-400 hover:text-surface-900 dark:hover:text-white transition-all rounded-full hover:bg-surface-100 dark:hover:bg-surface-800">
@@ -162,7 +174,8 @@ export default function AgencyInboxPage() {
                   </div>
                 </div>
               </Link>
-            ))
+              );
+            }).filter(Boolean)
           ) : (
             <div className="py-20 text-center">
               <Mail className="w-16 h-16 text-surface-100 dark:text-surface-800 mx-auto mb-4" />

@@ -21,7 +21,7 @@ export const Card: React.FC<CardProps> = ({
   return (
     <div
       className={cn(
-        'liquid-glass liquid-glass-intense liquid-glass-highlight rounded-2xl md:rounded-3xl p-4 relative overflow-hidden transition-all duration-300',
+        'liquid-glass liquid-glass-intense liquid-glass-highlight rounded-2xl md:rounded-3xl p-6 md:p-8 relative overflow-hidden transition-all duration-300',
         glow === 'glow' && 'liquid-glass-glow',
         accent && 'border-accent-500/30',
         hover && 'hover:scale-[1.02] hover:-translate-y-1',

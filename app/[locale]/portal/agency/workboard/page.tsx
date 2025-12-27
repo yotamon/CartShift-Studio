@@ -15,13 +15,17 @@ import {
   MoreHorizontal,
   PlusCircle,
 } from 'lucide-react';
+import { PortalAvatar, PortalAvatarGroup } from '@/components/portal/ui/PortalAvatar';
 import { getAllRequests } from '@/lib/services/portal-requests';
 import { Request } from '@/lib/types/portal';
 import { Link } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
+import { formatDistanceToNow } from 'date-fns';
+import { enUS, he } from 'date-fns/locale';
 
 export default function AgencyWorkboardPage() {
   const t = useTranslations('portal');
+  const locale = useLocale();
   const [requests, setRequests] = useState<Request[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -86,17 +90,10 @@ export default function AgencyWorkboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="flex -space-x-2 mr-4">
-            {[1, 2, 3, 4].map(i => (
-              <div
-                key={i}
-                className="w-8 h-8 rounded-full bg-surface-200 dark:bg-surface-800 border-2 border-white dark:border-surface-900 ring-1 ring-slate-100 dark:ring-slate-800"
-              />
-            ))}
-            <div className="w-8 h-8 rounded-full bg-blue-600 border-2 border-white dark:border-surface-900 flex items-center justify-center text-[10px] text-white font-bold">
-              +2
-            </div>
-          </div>
+          <PortalAvatarGroup max={3} className="mr-2">
+            <PortalAvatar name="CartShift Studio" size="sm" />
+            <PortalAvatar name="John Doe" size="sm" />
+          </PortalAvatarGroup>
           <PortalButton
             size="sm"
             variant="outline"
@@ -158,19 +155,27 @@ export default function AgencyWorkboardPage() {
 
                       <div className="flex items-center justify-between pt-4 border-t border-surface-50 dark:border-surface-800/50">
                         <div className="flex items-center gap-3">
+                          {req.assignedToName && (
+                            <PortalAvatar name={req.assignedToName} size="xs" className="ring-2 ring-white dark:ring-surface-900" />
+                          )}
                           <div className="flex items-center gap-1 text-surface-400">
                             <MessageSquare size={12} />
-                            <span className="text-[10px] font-bold">3</span>
+                            <span className="text-[10px] font-bold">{req.commentCount || 0}</span>
                           </div>
-                          <div className="flex items-center gap-1 text-surface-400">
-                            <Paperclip size={12} />
-                            <span className="text-[10px] font-bold">1</span>
-                          </div>
+                          {req.attachmentIds && req.attachmentIds.length > 0 && (
+                            <div className="flex items-center gap-1 text-surface-400">
+                              <Paperclip size={12} />
+                              <span className="text-[10px] font-bold">{req.attachmentIds.length}</span>
+                            </div>
+                          )}
                         </div>
                         <div className="flex items-center gap-1.5 text-surface-400">
                           <Clock size={12} className="text-surface-300" />
                           <span className="text-[10px] font-bold uppercase tracking-tighter">
-                            2d ago
+                            {req.createdAt?.toDate ? formatDistanceToNow(req.createdAt.toDate(), {
+                              addSuffix: true,
+                              locale: locale === 'he' ? he : enUS,
+                            }) : 'now'}
                           </span>
                         </div>
                       </div>

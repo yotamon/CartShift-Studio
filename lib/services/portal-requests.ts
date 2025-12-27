@@ -15,7 +15,8 @@ import {
   increment,
   serverTimestamp,
 } from 'firebase/firestore';
-import { getFirestoreDb } from '@/lib/firebase';
+import { getFirestoreDb, getFirebaseAuth } from '@/lib/firebase';
+import { getPortalUser } from './portal-users';
 import {
   Request,
   CreateRequestData,
@@ -25,7 +26,11 @@ import {
   PricingLineItem,
   Currency,
   calculateTotalAmount,
+  Milestone,
+  MilestoneStatus,
+  MILESTONE_STATUS,
 } from '@/lib/types/portal';
+import { logActivity } from './portal-activities';
 
 // Initialize Firestore
 const db = getFirestoreDb();
@@ -59,6 +64,15 @@ export async function createRequest(
   };
 
   const docRef = await addDoc(collection(db, REQUESTS_COLLECTION), requestData);
+
+  await logActivity({
+    orgId,
+    requestId: docRef.id,
+    userId,
+    userName,
+    action: 'CREATED_REQUEST',
+    details: { title: data.title },
+  });
 
   return {
     id: docRef.id,
@@ -109,16 +123,28 @@ export async function getRequestsByOrg(
   }
 
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({
+  return snapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data(),
   })) as Request[];
 }
 
 export async function getAllRequests(): Promise<Request[]> {
+  const auth = getFirebaseAuth();
+  const currentUser = auth.currentUser;
+
+  if (!currentUser) {
+    throw new Error('User must be authenticated to access all requests');
+  }
+
+  const userData = await getPortalUser(currentUser.uid);
+  if (!userData || (userData.accountType !== 'AGENCY' && !userData.isAgency)) {
+    throw new Error('Agency permissions required to access all requests');
+  }
+
   const q = query(collection(db, REQUESTS_COLLECTION), orderBy('createdAt', 'desc'));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({
+  return snapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data(),
   })) as Request[];
@@ -144,10 +170,7 @@ export async function getActiveRequestsByOrg(orgId: string): Promise<Request[]> 
 // UPDATE
 // ============================================
 
-export async function updateRequest(
-  requestId: string,
-  data: UpdateRequestData
-): Promise<void> {
+export async function updateRequest(requestId: string, data: UpdateRequestData): Promise<void> {
   const docRef = doc(db, REQUESTS_COLLECTION, requestId);
   const updateData: Record<string, unknown> = {
     ...data,
@@ -162,15 +185,15 @@ export async function updateRequest(
   await updateDoc(docRef, updateData);
 }
 
-export async function updateRequestStatus(
-  requestId: string,
-  status: RequestStatus
-): Promise<void> {
+export async function updateRequestStatus(requestId: string, status: RequestStatus): Promise<void> {
   return updateRequest(requestId, { status });
 }
 
 export async function assignRequest(
   requestId: string,
+  orgId: string,
+  userId: string,
+  userName: string,
   assignedTo: string,
   assignedToName: string
 ): Promise<void> {
@@ -179,6 +202,15 @@ export async function assignRequest(
     assignedTo,
     assignedToName,
     updatedAt: serverTimestamp(),
+  });
+
+  await logActivity({
+    orgId,
+    requestId,
+    userId,
+    userName,
+    action: 'ASSIGNED_REQUEST',
+    details: { assignedTo, assignedToName },
   });
 }
 
@@ -208,19 +240,23 @@ export function subscribeToRequest(
   callback: (request: Request | null) => void
 ): () => void {
   const docRef = doc(db, REQUESTS_COLLECTION, requestId);
-  return onSnapshot(docRef, (snapshot) => {
-    if (!snapshot.exists()) {
+  return onSnapshot(
+    docRef,
+    snapshot => {
+      if (!snapshot.exists()) {
+        callback(null);
+        return;
+      }
+      callback({
+        id: snapshot.id,
+        ...snapshot.data(),
+      } as Request);
+    },
+    error => {
+      console.error('Error in request snapshot:', error);
       callback(null);
-      return;
     }
-    callback({
-      id: snapshot.id,
-      ...snapshot.data(),
-    } as Request);
-  }, (error) => {
-    console.error('Error in request snapshot:', error);
-    callback(null);
-  });
+  );
 }
 
 export function subscribeToOrgRequests(
@@ -233,16 +269,20 @@ export function subscribeToOrgRequests(
     orderBy('createdAt', 'desc')
   );
 
-  return onSnapshot(q, (snapshot) => {
-    const requests = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Request[];
-    callback(requests);
-  }, (error) => {
-    console.error('Error in org requests snapshot:', error);
-    callback([]);
-  });
+  return onSnapshot(
+    q,
+    snapshot => {
+      const requests = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Request[];
+      callback(requests);
+    },
+    error => {
+      console.error('Error in org requests snapshot:', error);
+      callback([]);
+    }
+  );
 }
 
 // ============================================
@@ -259,12 +299,16 @@ export async function getRequestStats(orgId: string): Promise<{
 
   return {
     total: requests.length,
-    active: requests.filter((r) =>
-      ([REQUEST_STATUS.NEW, REQUEST_STATUS.QUEUED, REQUEST_STATUS.IN_PROGRESS] as RequestStatus[]).includes(r.status)
+    active: requests.filter(r =>
+      (
+        [REQUEST_STATUS.NEW, REQUEST_STATUS.QUEUED, REQUEST_STATUS.IN_PROGRESS] as RequestStatus[]
+      ).includes(r.status)
     ).length,
-    inReview: requests.filter((r) => r.status === REQUEST_STATUS.IN_REVIEW).length,
-    completed: requests.filter((r) =>
-      ([REQUEST_STATUS.DELIVERED, REQUEST_STATUS.CLOSED, REQUEST_STATUS.PAID] as RequestStatus[]).includes(r.status)
+    inReview: requests.filter(r => r.status === REQUEST_STATUS.IN_REVIEW).length,
+    completed: requests.filter(r =>
+      (
+        [REQUEST_STATUS.DELIVERED, REQUEST_STATUS.CLOSED, REQUEST_STATUS.PAID] as RequestStatus[]
+      ).includes(r.status)
     ).length,
   };
 }
@@ -284,6 +328,9 @@ export interface AddPricingData {
  */
 export async function addPricingToRequest(
   requestId: string,
+  orgId: string,
+  userId: string,
+  userName: string,
   data: AddPricingData
 ): Promise<void> {
   const totalAmount = calculateTotalAmount(data.lineItems);
@@ -298,6 +345,15 @@ export async function addPricingToRequest(
     status: REQUEST_STATUS.QUOTED,
     updatedAt: serverTimestamp(),
   });
+
+  await logActivity({
+    orgId,
+    requestId,
+    userId,
+    userName,
+    action: 'ADDED_PRICING',
+    details: { totalAmount, currency: data.currency },
+  });
 }
 
 /**
@@ -305,6 +361,9 @@ export async function addPricingToRequest(
  */
 export async function acceptRequest(
   requestId: string,
+  orgId: string,
+  userId: string,
+  userName: string,
   clientNotes?: string
 ): Promise<void> {
   const updateData: Record<string, unknown> = {
@@ -318,6 +377,14 @@ export async function acceptRequest(
   }
 
   await updateDoc(doc(db, REQUESTS_COLLECTION, requestId), updateData);
+
+  await logActivity({
+    orgId,
+    requestId,
+    userId,
+    userName,
+    action: 'ACCEPTED_QUOTE',
+  });
 }
 
 /**
@@ -325,6 +392,9 @@ export async function acceptRequest(
  */
 export async function declineRequest(
   requestId: string,
+  orgId: string,
+  userId: string,
+  userName: string,
   clientNotes?: string
 ): Promise<void> {
   const updateData: Record<string, unknown> = {
@@ -338,15 +408,36 @@ export async function declineRequest(
   }
 
   await updateDoc(doc(db, REQUESTS_COLLECTION, requestId), updateData);
+
+  await logActivity({
+    orgId,
+    requestId,
+    userId,
+    userName,
+    action: 'DECLINED_QUOTE',
+  });
 }
 
 /**
  * Agency starts work on the request
  */
-export async function startRequestWork(requestId: string): Promise<void> {
+export async function startRequestWork(
+  requestId: string,
+  orgId: string,
+  userId: string,
+  userName: string
+): Promise<void> {
   await updateDoc(doc(db, REQUESTS_COLLECTION, requestId), {
     status: REQUEST_STATUS.IN_PROGRESS,
     updatedAt: serverTimestamp(),
+  });
+
+  await logActivity({
+    orgId,
+    requestId,
+    userId,
+    userName,
+    action: 'STARTED_WORK',
   });
 }
 
@@ -355,6 +446,9 @@ export async function startRequestWork(requestId: string): Promise<void> {
  */
 export async function markRequestPaid(
   requestId: string,
+  orgId: string,
+  userId: string,
+  userName: string,
   paymentId: string,
   paymentMethod: 'paypal' = 'paypal'
 ): Promise<void> {
@@ -365,5 +459,105 @@ export async function markRequestPaid(
     paidAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
+
+  await logActivity({
+    orgId,
+    requestId,
+    userId,
+    userName,
+    action: 'PAID_REQUEST',
+    details: { paymentId, paymentMethod },
+  });
 }
 
+// ============================================
+// MILESTONES
+// ============================================
+
+/**
+ * Update all milestones for a request
+ */
+export async function updateRequestMilestones(
+  requestId: string,
+  milestones: Milestone[]
+): Promise<void> {
+  // Find the current milestone (first non-completed, non-pending)
+  const sortedMilestones = [...milestones].sort((a, b) => a.order - b.order);
+  const currentMilestone =
+    sortedMilestones.find(m => m.status === MILESTONE_STATUS.IN_PROGRESS) ||
+    sortedMilestones.find(m => m.status === MILESTONE_STATUS.PENDING);
+
+  await updateDoc(doc(db, REQUESTS_COLLECTION, requestId), {
+    milestones,
+    currentMilestoneId: currentMilestone?.id || null,
+    updatedAt: serverTimestamp(),
+  });
+}
+
+/**
+ * Update a single milestone's status
+ */
+export async function updateMilestoneStatus(
+  requestId: string,
+  milestoneId: string,
+  status: MilestoneStatus,
+  completedBy?: string
+): Promise<void> {
+  const request = await getRequest(requestId);
+  if (!request?.milestones) return;
+
+  const updatedMilestones = request.milestones.map(m => {
+    if (m.id === milestoneId) {
+      const updates: Partial<Milestone> = {
+        status,
+        updatedAt: Timestamp.now(),
+      };
+
+      if (status === MILESTONE_STATUS.COMPLETED) {
+        updates.completedAt = Timestamp.now();
+        updates.completedBy = completedBy;
+      }
+
+      return { ...m, ...updates };
+    }
+    return m;
+  });
+
+  await updateRequestMilestones(requestId, updatedMilestones);
+}
+
+/**
+ * Calculate milestone progress percentage
+ */
+export function calculateMilestoneProgress(milestones: Milestone[]): number {
+  if (!milestones || milestones.length === 0) return 0;
+  const completed = milestones.filter(m => m.status === MILESTONE_STATUS.COMPLETED).length;
+  return Math.round((completed / milestones.length) * 100);
+}
+
+/**
+ * Client requests a revision
+ */
+export async function requestRevision(
+  requestId: string,
+  orgId: string,
+  userId: string,
+  userName: string,
+  revisionNotes: string
+): Promise<void> {
+  const db = getFirestoreDb();
+  await updateDoc(doc(db, REQUESTS_COLLECTION, requestId), {
+    status: REQUEST_STATUS.IN_PROGRESS,
+    updatedAt: serverTimestamp(),
+  });
+
+  // Log activity
+  await logActivity({
+    orgId,
+    requestId,
+    userId,
+    userName,
+    action: 'REQUESTED_REVISION',
+    details: { notes: revisionNotes }
+  });
+}

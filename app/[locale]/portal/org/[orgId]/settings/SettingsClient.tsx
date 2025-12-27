@@ -40,6 +40,7 @@ export default function SettingsClient() {
   const [saving, setSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [organization, setOrganization] = useState<any>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -66,6 +67,7 @@ export default function SettingsClient() {
       try {
         const org = await getOrganization(orgId);
         if (org) {
+          setOrganization(org);
           setFormData({
             name: org.name || '',
             website: org.website || '',
@@ -528,7 +530,7 @@ export default function SettingsClient() {
                       {t('portal.settings.security.session.provider')}
                     </p>
                     <p className="text-sm font-bold text-surface-900 dark:text-white capitalize font-outfit flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
                       {user?.providerData[0]?.providerId.split('.')[0] ||
                         t('portal.settings.security.session.mailService')}
                     </p>
@@ -540,23 +542,25 @@ export default function SettingsClient() {
 
           {activeTab === 'billing' && (
             <div className="space-y-6">
-              <PortalCard className="border-surface-200 dark:border-surface-800 shadow-xl overflow-hidden p-0 bg-white dark:bg-surface-950">
+              <PortalCard className="border-surface-200 dark:border-surface-800 shadow-xl overflow-hidden p-0 bg-white dark:bg-slate-950">
                 <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 p-8 text-white relative">
                   <div className="absolute right-0 top-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
                   <div className="relative z-10">
                     <div className="flex items-center justify-between mb-6">
                       <PortalBadge className="bg-white/20 text-white border-white/20 uppercase font-black tracking-widest text-[9px] px-3">
-                        {t('portal.settings.billing.priority')}
+                        {formData.name}
                       </PortalBadge>
                       <span className="text-[10px] font-black text-blue-100 uppercase tracking-widest bg-blue-500/30 px-3 py-1 rounded-full">
-                        {t('portal.settings.billing.proStatus')}
+                        {organization?.plan?.toUpperCase() || 'FREE'}
                       </span>
                     </div>
-                    <h3 className="text-3xl font-bold mb-1 font-outfit">
-                      {t('portal.settings.billing.title')}
+                    <h3 className="text-3xl font-bold mb-1 font-outfit uppercase tracking-tight">
+                      {organization?.plan ? t(`portal.settings.billing.plans.${organization.plan}` as any) : t('portal.settings.billing.plans.free' as any)}
                     </h3>
-                    <p className="text-sm text-blue-100/70 font-medium font-outfit">
-                      {t('portal.settings.billing.nextPayment')}
+                    <p className="text-sm text-blue-100/70 font-medium font-outfit uppercase tracking-wider">
+                      {organization?.plan === 'enterprise'
+                        ? t('portal.settings.billing.enterpriseStatus')
+                        : t('portal.settings.billing.activeSubscription')}
                     </p>
                   </div>
                 </div>
@@ -568,9 +572,9 @@ export default function SettingsClient() {
                         {t('portal.settings.billing.investment')}
                       </p>
                       <p className="text-2xl font-bold text-surface-900 dark:text-white font-outfit tracking-tight">
-                        $2,499
-                        <span className="text-sm font-medium opacity-40">
-                          {t('portal.settings.billing.perMonth')}
+                        {organization?.plan === 'pro' ? '$2,499' : organization?.plan === 'enterprise' ? 'Custom' : '$0'}
+                        <span className="text-sm font-medium opacity-40 ml-1">
+                          {organization?.plan === 'enterprise' ? '' : t('portal.settings.billing.perMonth')}
                         </span>
                       </p>
                     </div>
@@ -579,7 +583,9 @@ export default function SettingsClient() {
                         {t('portal.settings.billing.workflowLimit')}
                       </p>
                       <p className="text-2xl font-bold text-emerald-500 font-outfit flex items-center gap-2">
-                        {t('portal.settings.billing.unlimited')}
+                        {organization?.plan === 'pro' || organization?.plan === 'enterprise'
+                          ? t('portal.settings.billing.unlimited')
+                          : '1 Request'}
                       </p>
                     </div>
                     <div className="space-y-1.5">
@@ -587,12 +593,12 @@ export default function SettingsClient() {
                         {t('portal.settings.billing.teamAvailability')}
                       </p>
                       <p className="text-2xl font-bold text-surface-900 dark:text-white font-outfit tracking-tight">
-                        {t('portal.settings.billing.seats')}
+                        {organization?.plan === 'free' ? '2 Seats' : organization?.plan === 'pro' ? '10 Seats' : t('portal.settings.billing.unlimited')}
                       </p>
                     </div>
                   </div>
 
-                  <div className="pt-8 border-t border-surface-100 dark:border-surface-800 flex flex-wrap gap-4">
+                  <div className="pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-4">
                     <PortalButton className="flex items-center gap-2 font-outfit px-8 shadow-xl shadow-blue-500/10 h-11">
                       <CreditCard size={18} /> {t('portal.settings.billing.stripeDashboard')}
                     </PortalButton>

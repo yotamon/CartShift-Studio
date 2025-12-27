@@ -16,9 +16,6 @@ import { getFirestoreDb } from '@/lib/firebase';
 import { Comment, CreateCommentData } from '@/lib/types/portal';
 import { incrementCommentCount } from './portal-requests';
 
-// Initialize Firestore
-const db = getFirestoreDb();
-
 const COMMENTS_COLLECTION = 'portal_comments';
 
 // ============================================
@@ -33,6 +30,7 @@ export async function createComment(
   userPhotoUrl: string | undefined,
   data: CreateCommentData
 ): Promise<Comment> {
+  const db = getFirestoreDb();
   const commentData = {
     requestId,
     orgId,
@@ -45,16 +43,23 @@ export async function createComment(
     createdAt: serverTimestamp(),
   };
 
-  const docRef = await addDoc(collection(db, COMMENTS_COLLECTION), commentData);
+  try {
+    const docRef = await addDoc(collection(db, COMMENTS_COLLECTION), commentData);
 
-  // Increment comment count on request
-  await incrementCommentCount(requestId);
+    // Increment comment count on request
+    await incrementCommentCount(requestId);
 
-  return {
-    id: docRef.id,
-    ...commentData,
-    createdAt: Timestamp.now(),
-  } as Comment;
+    return {
+      id: docRef.id,
+      ...commentData,
+      createdAt: Timestamp.now(),
+    } as Comment;
+  } catch (error: any) {
+    if (error.code === 'permission-denied') {
+      throw new Error('Permission denied: You do not have permission to create comments on this request.');
+    }
+    throw error;
+  }
 }
 
 // ============================================
@@ -65,6 +70,7 @@ export async function getCommentsByRequest(
   requestId: string,
   includeInternal = false
 ): Promise<Comment[]> {
+  const db = getFirestoreDb();
   try {
     let q = query(
       collection(db, COMMENTS_COLLECTION),
@@ -98,6 +104,7 @@ export async function updateComment(
   commentId: string,
   content: string
 ): Promise<void> {
+  const db = getFirestoreDb();
   const docRef = doc(db, COMMENTS_COLLECTION, commentId);
   await updateDoc(docRef, {
     content: content.trim(),
@@ -110,6 +117,7 @@ export async function updateComment(
 // ============================================
 
 export async function deleteComment(commentId: string): Promise<void> {
+  const db = getFirestoreDb();
   const docRef = doc(db, COMMENTS_COLLECTION, commentId);
   await deleteDoc(docRef);
 }
@@ -121,27 +129,53 @@ export async function deleteComment(commentId: string): Promise<void> {
 export function subscribeToRequestComments(
   requestId: string,
   callback: (comments: Comment[]) => void,
-  includeInternal = false
+  includeInternal = false,
+  orgId?: string
 ): () => void {
-  let q = query(
-    collection(db, COMMENTS_COLLECTION),
-    where('requestId', '==', requestId),
-    orderBy('createdAt', 'asc')
-  );
+  const db = getFirestoreDb();
+  const isAgency = Boolean(includeInternal);
+
+  let q;
+
+  if (orgId) {
+    q = query(
+      collection(db, COMMENTS_COLLECTION),
+      where('requestId', '==', requestId),
+      where('orgId', '==', orgId),
+      orderBy('createdAt', 'asc')
+    );
+  } else {
+    q = query(
+      collection(db, COMMENTS_COLLECTION),
+      where('requestId', '==', requestId),
+      orderBy('createdAt', 'asc')
+    );
+  }
 
   return onSnapshot(q, (snapshot) => {
-    let comments = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Comment[];
+    let comments = snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+      } as Comment;
+    });
 
-    if (!includeInternal) {
+    if (!isAgency) {
       comments = comments.filter((c) => !c.isInternal);
     }
 
     callback(comments);
   }, (error) => {
     console.error('Error in comments snapshot:', error);
+    if (error.code === 'failed-precondition') {
+      console.error('Missing Firestore index. Please create a composite index for:', {
+        collection: COMMENTS_COLLECTION,
+        fields: orgId ? ['requestId', 'orgId', 'createdAt'] : ['requestId', 'createdAt']
+      });
+    } else if (error.code === 'permission-denied') {
+      console.error('Permission denied accessing comments. User may not have access to this request.');
+    }
     callback([]);
   });
 }

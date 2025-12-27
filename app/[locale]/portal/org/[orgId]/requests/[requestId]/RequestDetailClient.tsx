@@ -8,7 +8,6 @@ import {
   Paperclip,
   CheckCircle2,
   AlertCircle,
-  MoreVertical,
   Send,
   Loader2,
   Calendar,
@@ -19,10 +18,17 @@ import {
   X,
   Plus,
   Trash2,
+  Clock,
+  RotateCcw,
 } from 'lucide-react';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
+import { RequestMilestones } from '@/components/portal/requests/RequestMilestones';
+import { RequestAttachments } from '@/components/portal/requests/RequestAttachments';
+import { InvoiceDownloadButton } from '@/components/portal/invoices/InvoiceDownloadButton';
+import { ActivityTimeline } from '@/components/portal/ActivityTimeline';
+import { getOrganization } from '@/lib/services/portal-organizations';
 import {
   updateRequestStatus,
   subscribeToRequest,
@@ -30,12 +36,20 @@ import {
   declineRequest,
   markRequestPaid,
   startRequestWork,
+  addPricingToRequest,
+  assignRequest,
+  requestRevision,
 } from '@/lib/services/portal-requests';
+import { getAgencyTeam } from '@/lib/services/portal-agency';
+import { logActivity, subscribeToRequestActivities } from '@/lib/services/portal-activities';
 import { createComment, subscribeToRequestComments } from '@/lib/services/portal-comments';
+import { uploadFile } from '@/lib/services/portal-files';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
+import { Timestamp } from 'firebase/firestore';
 import {
   Request,
   Comment,
+  PortalUser,
   STATUS_CONFIG,
   PRIORITY_CONFIG,
   RequestStatus,
@@ -45,6 +59,8 @@ import {
   CURRENCY_CONFIG,
   generateLineItemId,
   calculateTotalAmount,
+  Organization,
+  ActivityLog,
 } from '@/lib/types/portal';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
@@ -65,6 +81,7 @@ const mapStatusColor = (color: string): 'blue' | 'green' | 'yellow' | 'red' | 'g
 export default function RequestDetailClient() {
   const { orgId, requestId } = useParams();
   const { userData, isAgency } = usePortalAuth();
+  const [activeTab, setActiveTab] = useState<'overview' | 'discussion' | 'history'>('overview');
   const [request, setRequest] = useState<Request | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,6 +96,14 @@ export default function RequestDetailClient() {
   ]);
   const [pricingCurrency, setPricingCurrency] = useState<Currency>('USD');
   const [isAddingPricing, setIsAddingPricing] = useState(false);
+  const [organization, setOrganization] = useState<Organization | null>(null);
+  const [agencyTeam, setAgencyTeam] = useState<PortalUser[]>([]);
+  const [isAssigning, setIsAssigning] = useState(false);
+  const [showRevisionModal, setShowRevisionModal] = useState(false);
+  const [revisionNotes, setRevisionNotes] = useState('');
+  const [isSubmittingRevision, setIsSubmittingRevision] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [activities, setActivities] = useState<ActivityLog[]>([]);
   const t = useTranslations('portal');
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -117,11 +142,16 @@ export default function RequestDetailClient() {
 
     setIsAddingPricing(true);
     try {
-      const { addPricingToRequest } = await import('@/lib/services/portal-requests');
-      await addPricingToRequest(requestId, {
-        lineItems: validItems,
-        currency: pricingCurrency,
-      });
+      await addPricingToRequest(
+        requestId,
+        orgId as string,
+        userData!.id,
+        userData!.name || userData!.email,
+        {
+          lineItems: validItems,
+          currency: pricingCurrency,
+        }
+      );
       setShowPricingForm(false);
       setPricingLineItems([{ id: generateLineItemId(), description: '', quantity: 1, unitPrice: 0 }]);
     } catch (err) {
@@ -136,7 +166,12 @@ export default function RequestDetailClient() {
     if (!requestId || typeof requestId !== 'string') return;
     setIsAccepting(true);
     try {
-      await acceptRequest(requestId);
+      await acceptRequest(
+        requestId,
+        orgId as string,
+        userData!.id,
+        userData!.name || userData!.email
+      );
     } catch (err) {
       console.error('Error accepting quote:', err);
     } finally {
@@ -148,7 +183,12 @@ export default function RequestDetailClient() {
     if (!requestId || typeof requestId !== 'string') return;
     setIsDeclining(true);
     try {
-      await declineRequest(requestId);
+      await declineRequest(
+        requestId,
+        orgId as string,
+        userData!.id,
+        userData!.name || userData!.email
+      );
     } catch (err) {
       console.error('Error declining quote:', err);
     } finally {
@@ -159,7 +199,12 @@ export default function RequestDetailClient() {
   const handleStartWork = async () => {
     if (!requestId || typeof requestId !== 'string') return;
     try {
-      await startRequestWork(requestId);
+      await startRequestWork(
+        requestId,
+        orgId as string,
+        userData!.id,
+        userData!.name || userData!.email
+      );
     } catch (err) {
       console.error('Error starting work:', err);
     }
@@ -168,14 +213,40 @@ export default function RequestDetailClient() {
   const handlePaymentSuccess = async (result: { paymentId?: string }) => {
     if (!requestId || typeof requestId !== 'string' || !result.paymentId) return;
     try {
-      await markRequestPaid(requestId, result.paymentId);
+      await markRequestPaid(
+        requestId,
+        orgId as string,
+        userData!.id,
+        userData!.name || userData!.email,
+        result.paymentId
+      );
     } catch (err) {
       console.error('Error marking as paid:', err);
     }
   };
 
+  const handleAssignSpecialist = async (specialistId: string, specialistName: string) => {
+    if (!requestId || typeof requestId !== 'string' || !userData || !orgId) return;
+    setIsAssigning(true);
+    try {
+      await assignRequest(
+        requestId,
+        orgId as string,
+        userData.id,
+        userData.name || userData.email,
+        specialistId,
+        specialistName
+      );
+    } catch (err) {
+      console.error('Error assigning specialist:', err);
+    } finally {
+      setIsAssigning(false);
+    }
+  };
+
   useEffect(() => {
     if (!requestId || typeof requestId !== 'string') return undefined;
+    if (userData === undefined) return undefined;
 
     setLoading(true);
     setError(null);
@@ -184,7 +255,7 @@ export default function RequestDetailClient() {
       // Subscribe to request data
       const unsubscribeRequest = subscribeToRequest(requestId, data => {
         if (!data) {
-          setError(t('portal.requests.detail.notFound'));
+          setError(t('requests.detail.notFound'));
           setLoading(false);
           return;
         }
@@ -192,26 +263,97 @@ export default function RequestDetailClient() {
         setLoading(false);
       });
 
-      // Subscribe to comments
+      // Subscribe to comments - only after userData is available
       const unsubscribeComments = subscribeToRequestComments(
         requestId,
         data => {
           setComments(data);
         },
-        userData?.isAgency
+        Boolean(userData?.isAgency),
+        orgId as string
       );
+
+      // Subscribe to activities
+      const unsubscribeActivities = subscribeToRequestActivities(requestId, (data) => {
+        setActivities(data);
+      });
 
       return () => {
         unsubscribeRequest();
         unsubscribeComments();
+        unsubscribeActivities();
       };
     } catch (err) {
       console.error('Failed to subscribe to request details:', err);
-      setError(t('portal.common.error'));
+      setError(t('common.error'));
       setLoading(false);
       return undefined;
     }
-  }, [requestId, userData?.isAgency]);
+  }, [requestId, userData, t]);
+
+  // Fetch organization details for invoice generation
+  useEffect(() => {
+    if (orgId && typeof orgId === 'string') {
+      getOrganization(orgId).then(org => {
+        if (org) setOrganization(org);
+      }).catch(console.error);
+    }
+  }, [orgId]);
+
+  const handleRequestRevision = async () => {
+    if (!revisionNotes.trim() || !requestId || !orgId || !userData) return;
+    setIsSubmittingRevision(true);
+    try {
+      await requestRevision(
+        requestId as string,
+        orgId as string,
+        userData.id,
+        userData.name || userData.email,
+        revisionNotes.trim()
+      );
+      setShowRevisionModal(false);
+      setRevisionNotes('');
+    } catch (err) {
+      console.error('Failed to request revision:', err);
+    } finally {
+      setIsSubmittingRevision(false);
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !requestId || !orgId || !userData) return;
+
+    setIsUploading(true);
+    try {
+      await uploadFile(orgId as string, userData.id, userData.name || userData.email, file, {
+        requestId: requestId as string,
+      });
+      // Activity is logged by the upload service potentially?
+      // Actually portal-files.ts doesn't log activity yet.
+      // I should add activity logging to portal-files.ts or here.
+      await logActivity({
+        orgId: orgId as string,
+        requestId: requestId as string,
+        userId: userData.id,
+        userName: userData.name || userData.email,
+        action: 'ADDED_ATTACHMENT',
+        details: { fileName: file.name }
+      });
+    } catch (err) {
+      console.error('Failed to upload file:', err);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isAgency) {
+      getAgencyTeam().then(team => {
+        setAgencyTeam(team);
+      }).catch(console.error);
+    }
+  }, [isAgency]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -223,28 +365,71 @@ export default function RequestDetailClient() {
     e.preventDefault();
     if (!newComment.trim() || !requestId || !orgId || !userData) return;
 
+    const commentContent = newComment.trim();
     setIsSubmitting(true);
+
+    const tempId = `temp-${Date.now()}`;
+    const optimisticComment: Comment = {
+      id: tempId,
+      requestId: requestId as string,
+      orgId: orgId as string,
+      userId: userData.id,
+      userName: userData.name || userData.email,
+      userPhotoUrl: undefined,
+      content: commentContent,
+      attachmentIds: [],
+      isInternal: false,
+      createdAt: Timestamp.now(),
+    };
+
+    setComments(prev => [...prev, optimisticComment]);
+    setNewComment('');
+
     try {
-      await createComment(
+      const createdComment = await createComment(
         requestId as string,
         orgId as string,
         userData.id,
         userData.name || userData.email,
         undefined,
-        { content: newComment.trim() }
+        { content: commentContent }
       );
-      setNewComment('');
+
+      // Replace optimistic comment with real one if subscription hasn't updated yet
+      setTimeout(() => {
+        setComments(prev => {
+          const hasRealComment = prev.some(c => c.id === createdComment.id);
+          if (!hasRealComment) {
+            return prev.map(c => c.id === tempId ? createdComment : c);
+          }
+          return prev.filter(c => c.id !== tempId);
+        });
+      }, 1000);
     } catch (error) {
       console.error('Error sending comment:', error);
+      setComments(prev => prev.filter(c => c.id !== tempId));
+      setNewComment(commentContent);
+      alert(error instanceof Error ? error.message : 'Failed to send comment. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleStatusChange = async (newStatus: RequestStatus) => {
-    if (!requestId || typeof requestId !== 'string') return;
+    if (!requestId || typeof requestId !== 'string' || !userData) return;
     try {
       await updateRequestStatus(requestId, newStatus);
+      // We could also log activity here if updateRequestStatus took user info
+      // For now, these specific actions (started work, etc) handle logging themselves
+      // But for generic status changes (e.g. Needs Info), we might want a logActivity call
+      await logActivity({
+        orgId: orgId as string,
+        requestId: requestId,
+        userId: userData.id,
+        userName: userData.name || userData.email,
+        action: 'STATUS_CHANGED',
+        details: { status: newStatus }
+      });
     } catch (error) {
       console.error('Error updating status:', error);
     }
@@ -255,7 +440,7 @@ export default function RequestDetailClient() {
       <div className="flex flex-col items-center justify-center py-40 space-y-4">
         <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
         <p className="text-surface-500 font-bold font-outfit uppercase tracking-widest text-xs">
-          {t('portal.requests.detail.loading')}
+          {t('requests.detail.loading')}
         </p>
       </div>
     );
@@ -268,14 +453,14 @@ export default function RequestDetailClient() {
           <AlertCircle size={40} className="text-rose-500" />
         </div>
         <h2 className="text-2xl font-bold text-surface-900 dark:text-white font-outfit">
-          {error || t('portal.requests.detail.notFound')}
+          {error || t('requests.detail.notFound')}
         </h2>
         <p className="text-surface-500 mt-2 max-w-sm mx-auto font-medium">
-          {t('portal.requests.detail.notFoundDesc')}
+          {t('requests.detail.notFoundDesc')}
         </p>
         <Link href={`/portal/org/${orgId}/requests/`} className="mt-8 inline-block">
           <PortalButton variant="outline" className="font-outfit">
-            {t('portal.requests.detail.backToRequests')}
+            {t('requests.detail.backToRequests')}
           </PortalButton>
         </Link>
       </div>
@@ -306,71 +491,128 @@ export default function RequestDetailClient() {
             </p>
             <span className="w-1 h-1 rounded-full bg-surface-300" />
             <p className="text-xs font-black text-surface-400 uppercase tracking-widest">
-              {request.type || t('portal.requests.detail.designRequest')}
+              {request.type || t('requests.detail.designRequest')}
             </p>
           </div>
         </div>
       </div>
 
+      <div className="flex items-center gap-1 p-1 bg-surface-100 dark:bg-surface-900 rounded-2xl w-fit">
+        <button
+          onClick={() => setActiveTab('overview')}
+          className={cn(
+            "px-6 py-2.5 rounded-xl text-sm font-bold transition-all font-outfit",
+            activeTab === 'overview'
+              ? "bg-white dark:bg-surface-800 text-blue-600 shadow-sm"
+              : "text-surface-500 hover:text-surface-700 dark:hover:text-surface-300"
+          )}
+        >
+          {t('requests.detail.overview') || 'Overview'}
+        </button>
+        <button
+          onClick={() => setActiveTab('discussion')}
+          className={cn(
+            "px-6 py-2.5 rounded-xl text-sm font-bold transition-all font-outfit flex items-center gap-2",
+            activeTab === 'discussion'
+              ? "bg-white dark:bg-surface-800 text-blue-600 shadow-sm"
+              : "text-surface-500 hover:text-surface-700 dark:hover:text-surface-300"
+          )}
+        >
+          {t('requests.detail.discussion') || 'Discussion'}
+          {comments.length > 0 && (
+            <span className="bg-blue-100 dark:bg-blue-900 text-blue-600 px-1.5 py-0.5 rounded-md text-[10px]">
+              {comments.length}
+            </span>
+          )}
+        </button>
+        <button
+          onClick={() => setActiveTab('history')}
+          className={cn(
+            "px-6 py-2.5 rounded-xl text-sm font-bold transition-all font-outfit flex items-center gap-2",
+            activeTab === 'history'
+              ? "bg-white dark:bg-surface-800 text-blue-600 shadow-sm"
+              : "text-surface-500 hover:text-surface-700 dark:hover:text-surface-300"
+          )}
+        >
+          <Clock size={16} />
+          {t('requests.detail.history') || 'History'}
+        </button>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950">
-            <h3 className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest mb-4">
-              {t('portal.requests.detail.details')}
-            </h3>
-            <div className="text-surface-600 dark:text-surface-300 leading-relaxed whitespace-pre-wrap font-medium">
-              {request.description}
-            </div>
-            <div className="mt-10 pt-6 border-t border-surface-100 dark:border-surface-800 grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-surface-50 dark:bg-surface-900 border border-surface-100 dark:border-surface-800 shadow-sm">
-                  <Calendar size={16} className="text-surface-400" />
+          {activeTab === 'overview' ? (
+            <div className="space-y-8 animate-in slide-in-from-left-4 duration-500">
+              <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950">
+                <h3 className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest mb-4">
+                  {t('requests.detail.details')}
+                </h3>
+                <div className="text-surface-600 dark:text-surface-300 leading-relaxed whitespace-pre-wrap font-medium">
+                  {request.description}
                 </div>
-                <div>
-                  <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest">
-                    {t('portal.requests.detail.submissionDate')}
-                  </p>
-                  <p className="text-sm font-bold text-surface-900 dark:text-white font-outfit">
-                    {request.createdAt?.toDate
-                      ? format(request.createdAt.toDate(), 'MMMM d, yyyy')
-                      : t('portal.common.recently')}
-                  </p>
+                <div className="mt-10 pt-6 border-t border-surface-100 dark:border-surface-800 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-xl bg-surface-50 dark:bg-surface-900 border border-surface-100 dark:border-surface-800 shadow-sm">
+                      <Calendar size={16} className="text-surface-400" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest">
+                        {t('requests.detail.submissionDate')}
+                      </p>
+                      <p className="text-sm font-bold text-surface-900 dark:text-white font-outfit">
+                        {request.createdAt?.toDate
+                          ? format(request.createdAt.toDate(), 'MMMM d, yyyy')
+                          : t('common.recently')}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-xl bg-surface-50 dark:bg-surface-900 border border-surface-100 dark:border-surface-800 shadow-sm">
+                      <Zap
+                        size={16}
+                        className={cn(
+                          request.priority === 'HIGH' || request.priority === 'URGENT'
+                            ? 'text-rose-500'
+                            : 'text-amber-500'
+                        )}
+                      />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest">
+                        {t('requests.detail.priorityStatus')}
+                      </p>
+                      <p className="text-sm font-bold text-surface-900 dark:text-white capitalize font-outfit">
+                        {PRIORITY_CONFIG[request.priority]?.label ||
+                          request.priority ||
+                          t('requests.priority.normal')}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-surface-50 dark:bg-surface-900 border border-surface-100 dark:border-surface-800 shadow-sm">
-                  <Zap
-                    size={16}
-                    className={cn(
-                      request.priority === 'HIGH' || request.priority === 'URGENT'
-                        ? 'text-rose-500'
-                        : 'text-amber-500'
-                    )}
-                  />
-                </div>
-                <div>
-                  <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest">
-                    {t('requests.detail.priorityStatus')}
-                  </p>
-                  <p className="text-sm font-bold text-surface-900 dark:text-white capitalize font-outfit">
-                    {PRIORITY_CONFIG[request.priority]?.label ||
-                      request.priority ||
-                      t('requests.priority.normal')}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </PortalCard>
+              </PortalCard>
 
-          <div className="space-y-4">
-            <h3 className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest flex items-center gap-2 px-1">
-              <MessageSquare size={14} className="text-blue-500" />{' '}
-              {t('requests.detail.discussion')}
-            </h3>
-            <PortalCard
-              noPadding
-              className="flex flex-col border-surface-200 dark:border-surface-800 shadow-sm bg-surface-50/50 dark:bg-surface-900/10 min-h-[500px] overflow-hidden"
-            >
+              {/* Milestones Section */}
+              <RequestMilestones
+                request={request}
+                isAgency={isAgency}
+              />
+
+              {/* Assets Section */}
+              <RequestAttachments
+                request={request}
+                isAgency={isAgency}
+              />
+            </div>
+          ) : activeTab === 'discussion' ? (
+            <div className="space-y-4 animate-in slide-in-from-right-4 duration-500">
+              <h3 className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest flex items-center gap-2 px-1">
+                <MessageSquare size={14} className="text-blue-500" />{' '}
+                {t('requests.detail.discussion')}
+              </h3>
+              <PortalCard
+                noPadding
+                className="flex flex-col border-surface-200 dark:border-surface-800 shadow-sm bg-surface-50/50 dark:bg-surface-900/10 min-h-[500px] overflow-hidden"
+              >
               <div
                 ref={scrollRef}
                 className="flex-1 overflow-y-auto p-6 space-y-6 max-h-[600px] scrollbar-hide"
@@ -440,8 +682,19 @@ export default function RequestDetailClient() {
                   </button>
                 </form>
               </div>
-            </PortalCard>
-          </div>
+              </PortalCard>
+            </div>
+          ) : (
+            <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-500">
+              <h3 className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest flex items-center gap-2 px-1">
+                <Clock size={14} className="text-blue-500" />{' '}
+                {t('requests.detail.historyTitle') || 'Request Timeline'}
+              </h3>
+              <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950 p-6">
+                <ActivityTimeline activities={activities} orgId={orgId as string} />
+              </PortalCard>
+            </div>
+          )}
         </div>
 
         <div className="space-y-6">
@@ -627,6 +880,17 @@ export default function RequestDetailClient() {
                     {formatCurrency(request.totalAmount || 0, request.currency || 'USD')}
                   </span>
                 </div>
+
+                {/* Invoice Download (for paid requests) */}
+                {request.paidAt && organization && (
+                  <div className="mt-4">
+                    <InvoiceDownloadButton
+                      request={request}
+                      organization={organization}
+                      className="w-full"
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Client Accept/Decline Buttons - Only for QUOTED status */}
@@ -717,34 +981,84 @@ export default function RequestDetailClient() {
                   {t('requests.detail.closeRequest')}
                 </PortalButton>
               )}
+              <div className="relative">
+                <input
+                  type="file"
+                  id="file-upload"
+                  className="hidden"
+                  onChange={handleFileUpload}
+                  disabled={isUploading}
+                />
+                <PortalButton
+                  variant="outline"
+                  className="w-full justify-start h-12 border-surface-200 dark:border-surface-800 text-sm font-bold font-outfit"
+                  onClick={() => document.getElementById('file-upload')?.click()}
+                  disabled={isUploading}
+                >
+                  {isUploading ? (
+                    <Loader2 size={16} className="mr-3 animate-spin text-blue-500" />
+                  ) : (
+                    <Paperclip size={16} className="mr-3 text-blue-500" />
+                  )}
+                  {t('requests.detail.addAttachment') || 'Upload Deliverable'}
+                </PortalButton>
+              </div>
               <PortalButton
                 variant="outline"
                 className="w-full justify-start h-12 border-surface-200 dark:border-surface-800 text-sm font-bold font-outfit"
+                onClick={() => setShowRevisionModal(true)}
               >
-                <Paperclip size={16} className="mr-3 text-blue-500" />{' '}
-                {t('requests.detail.addAttachment')}
+                <RotateCcw size={16} className="mr-3 text-amber-500" />{' '}
+                {t('requests.detail.requestRevision') || 'Request Revision'}
               </PortalButton>
-              <button className="w-full flex items-center justify-start h-12 px-4 text-sm font-bold text-surface-500 hover:text-surface-900 dark:hover:text-white transition-colors rounded-xl hover:bg-surface-50 dark:hover:bg-surface-900 font-outfit">
-                <MoreVertical size={16} className="mr-3" />{' '}
-                {t('requests.detail.requestRevision')}
-              </button>
             </div>
           </PortalCard>
 
           <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950">
-            <h4 className="text-[10px] font-black text-surface-400 dark:text-surface-500 mb-6 uppercase tracking-widest">
-              {t('requests.detail.assignedSpecialist')}
-            </h4>
+            <div className="flex items-center justify-between mb-6">
+              <h4 className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest">
+                {t('requests.detail.assignedSpecialist')}
+              </h4>
+              {isAgency && (
+                <div className="relative group/assign">
+                  <select
+                    className="absolute inset-0 opacity-0 cursor-pointer w-full"
+                    onChange={(e) => {
+                      const selected = agencyTeam.find(m => m.id === e.target.value);
+                      if (selected) handleAssignSpecialist(selected.id, selected.name || selected.email);
+                    }}
+                    value={request.assignedTo || ''}
+                    disabled={isAssigning}
+                  >
+                    <option value="" disabled>{t('common.filter')}</option>
+                    {agencyTeam.map(member => (
+                      <option key={member.id} value={member.id}>
+                        {member.name || member.email}
+                      </option>
+                    ))}
+                  </select>
+                  <PortalButton variant="outline" size="sm" className="h-7 px-2 text-[9px] font-black uppercase tracking-widest" isLoading={isAssigning}>
+                    {t('common.edit')}
+                  </PortalButton>
+                </div>
+              )}
+            </div>
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 flex items-center justify-center text-blue-600 shadow-sm">
-                <UserIcon size={20} />
+              <div className="w-12 h-12 rounded-2xl bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 flex items-center justify-center text-blue-600 shadow-sm overflow-hidden">
+                {request.assignedTo ? (
+                  <div className="w-full h-full flex items-center justify-center bg-blue-50 dark:bg-blue-900/30 text-blue-600 font-bold text-lg">
+                    {request.assignedToName?.charAt(0) || 'S'}
+                  </div>
+                ) : (
+                  <UserIcon size={20} />
+                )}
               </div>
               <div>
                 <p className="text-sm font-bold text-surface-900 dark:text-white font-outfit">
                   {request.assignedToName || t('requests.detail.productTeam')}
                 </p>
-                <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">
-                  {t('requests.detail.specialist')}
+                <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest">
+                   {request.assignedTo ? t('requests.detail.specialist') : t('common.all')}
                 </p>
               </div>
             </div>
@@ -763,6 +1077,59 @@ export default function RequestDetailClient() {
           </PortalCard>
         </div>
       </div>
+
+      {/* Revision Modal */}
+      {showRevisionModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-surface-950/80 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-surface-950 rounded-3xl border border-surface-200 dark:border-surface-800 w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+            <div className="p-8 border-b border-surface-100 dark:border-surface-900">
+              <h3 className="text-2xl font-bold text-surface-900 dark:text-white font-outfit">
+                {t('requests.detail.requestRevision') || 'Request Revision'}
+              </h3>
+              <p className="text-surface-500 dark:text-surface-400 mt-2 text-sm font-medium">
+                {t('requests.detail.revisionDesc') || 'Please describe the changes you would like to see. Be as specific as possible to help our team deliver the perfect result.'}
+              </p>
+            </div>
+
+            <div className="p-8 space-y-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest">
+                  {t('requests.detail.revisionNotes') || 'Revision Details'}
+                </label>
+                <textarea
+                  className="portal-input min-h-[160px] p-4 bg-surface-50 dark:bg-surface-900 border-surface-200 dark:border-surface-800 focus:bg-white dark:focus:bg-surface-950 transition-all font-medium resize-none text-sm"
+                  placeholder={t('requests.detail.revisionPlaceholder') || "E.g., Please change the main color to cobalt blue and update the typography on the hero section..."}
+                  value={revisionNotes}
+                  onChange={(e) => setRevisionNotes(e.target.value)}
+                />
+              </div>
+
+              <div className="flex gap-4">
+                <PortalButton
+                  variant="outline"
+                  className="flex-1 h-12"
+                  onClick={() => setShowRevisionModal(false)}
+                >
+                  {t('common.cancel') || 'Cancel'}
+                </PortalButton>
+                <PortalButton
+                  variant="primary"
+                  className="flex-1 h-12"
+                  onClick={handleRequestRevision}
+                  disabled={isSubmittingRevision || !revisionNotes.trim()}
+                >
+                  {isSubmittingRevision ? (
+                    <Loader2 size={18} className="animate-spin mr-2" />
+                  ) : (
+                    <RotateCcw size={18} className="mr-2" />
+                  )}
+                  {t('requests.detail.submitRevision') || 'Submit Revision'}
+                </PortalButton>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -15,7 +15,8 @@ import {
   arrayUnion,
   arrayRemove,
 } from 'firebase/firestore';
-import { getFirestoreDb } from '@/lib/firebase';
+import { getFirestoreDb, getFirebaseAuth } from '@/lib/firebase';
+import { getPortalUser } from './portal-users';
 import {
   Organization,
   OrganizationMember,
@@ -24,9 +25,6 @@ import {
   USER_ROLE,
   UserRole,
 } from '@/lib/types/portal';
-
-// Initialize Firestore
-const db = getFirestoreDb();
 
 const ORGS_COLLECTION = 'portal_organizations';
 const MEMBERS_COLLECTION = 'portal_members';
@@ -43,7 +41,11 @@ export async function createOrganization(
   userEmail: string,
   userName?: string
 ): Promise<Organization> {
-  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  const db = getFirestoreDb();
+  const slug = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
 
   const orgData = {
     name: name.trim(),
@@ -60,12 +62,16 @@ export async function createOrganization(
 
   // Update user's organizations array
   const userRef = doc(db, USERS_COLLECTION, userId);
-  await setDoc(userRef, {
-    email: userEmail,
-    name: userName || null,
-    organizations: arrayUnion(orgId),
-    updatedAt: serverTimestamp(),
-  }, { merge: true });
+  await setDoc(
+    userRef,
+    {
+      email: userEmail,
+      name: userName || null,
+      organizations: arrayUnion(orgId),
+      updatedAt: serverTimestamp(),
+    },
+    { merge: true }
+  );
 
   return {
     id: orgId,
@@ -76,6 +82,7 @@ export async function createOrganization(
 }
 
 export async function getOrganization(orgId: string): Promise<Organization | null> {
+  const db = getFirestoreDb();
   const docRef = doc(db, ORGS_COLLECTION, orgId);
   const docSnap = await getDoc(docRef);
 
@@ -90,6 +97,7 @@ export async function getOrganization(orgId: string): Promise<Organization | nul
 }
 
 export async function getUserOrganizations(userId: string): Promise<Organization[]> {
+  const db = getFirestoreDb();
   // Get user's org IDs
   const userRef = doc(db, USERS_COLLECTION, userId);
   const userSnap = await getDoc(userRef);
@@ -118,9 +126,22 @@ export async function getUserOrganizations(userId: string): Promise<Organization
 }
 
 export async function getAllOrganizations(): Promise<Organization[]> {
+  const auth = getFirebaseAuth();
+  const currentUser = auth.currentUser;
+
+  if (!currentUser) {
+    throw new Error('User must be authenticated to access all organizations');
+  }
+
+  const userData = await getPortalUser(currentUser.uid);
+  if (!userData || (userData.accountType !== 'AGENCY' && !userData.isAgency)) {
+    throw new Error('Agency permissions required to access all organizations');
+  }
+
+  const db = getFirestoreDb();
   const q = query(collection(db, ORGS_COLLECTION), orderBy('name', 'asc'));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({
+  return snapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data(),
   })) as Organization[];
@@ -136,11 +157,48 @@ export async function updateOrganization(
     bio?: string;
   }
 ): Promise<void> {
+  const db = getFirestoreDb();
   const docRef = doc(db, ORGS_COLLECTION, orgId);
   await updateDoc(docRef, {
     ...data,
     updatedAt: serverTimestamp(),
   });
+}
+
+/**
+ * Get all organizations with their member and request counts
+ */
+export async function getOrganizationsWithStats(): Promise<
+  (Organization & { memberCount: number; requestCount: number })[]
+> {
+  const db = getFirestoreDb();
+  const orgs = await getAllOrganizations();
+
+  // Get all members and requests to count them
+  const requestsSnap = await getDocs(collection(db, 'portal_requests'));
+  const membersSnap = await getDocs(collection(db, MEMBERS_COLLECTION));
+
+  const requestCounts: Record<string, number> = {};
+  requestsSnap.forEach(doc => {
+    const orgId = doc.data().orgId;
+    if (orgId) {
+      requestCounts[orgId] = (requestCounts[orgId] || 0) + 1;
+    }
+  });
+
+  const memberCounts: Record<string, number> = {};
+  membersSnap.forEach(doc => {
+    const orgId = doc.data().orgId;
+    if (orgId) {
+      memberCounts[orgId] = (memberCounts[orgId] || 0) + 1;
+    }
+  });
+
+  return orgs.map(org => ({
+    ...org,
+    memberCount: memberCounts[org.id] || 0,
+    requestCount: requestCounts[org.id] || 0,
+  }));
 }
 
 // ============================================
@@ -155,6 +213,7 @@ async function addMember(
   name?: string,
   invitedBy?: string
 ): Promise<OrganizationMember> {
+  const db = getFirestoreDb();
   const memberData = {
     orgId,
     userId,
@@ -177,6 +236,7 @@ async function addMember(
 }
 
 export async function getOrganizationMembers(orgId: string): Promise<OrganizationMember[]> {
+  const db = getFirestoreDb();
   const q = query(
     collection(db, MEMBERS_COLLECTION),
     where('orgId', '==', orgId),
@@ -184,7 +244,7 @@ export async function getOrganizationMembers(orgId: string): Promise<Organizatio
   );
 
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({
+  return snapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data(),
   })) as OrganizationMember[];
@@ -194,43 +254,54 @@ export async function getMemberByUserId(
   orgId: string,
   userId: string
 ): Promise<OrganizationMember | null> {
-  const memberId = `${orgId}_${userId}`;
-  const memberRef = doc(db, MEMBERS_COLLECTION, memberId);
-  const memberSnap = await getDoc(memberRef);
+  const db = getFirestoreDb();
+  try {
+    const memberId = `${orgId}_${userId}`;
+    const memberRef = doc(db, MEMBERS_COLLECTION, memberId);
+    const memberSnap = await getDoc(memberRef);
 
-  if (!memberSnap.exists()) {
-    return null;
+    if (!memberSnap.exists()) {
+      return null;
+    }
+
+    return {
+      id: memberSnap.id,
+      ...memberSnap.data(),
+    } as OrganizationMember;
+  } catch (error: any) {
+    if (error?.code === 'permission-denied') {
+      console.warn(
+        `[getMemberByUserId] Permission denied checking membership for orgId: ${orgId}, userId: ${userId}`
+      );
+      return null;
+    }
+    console.error(`[getMemberByUserId] Error checking membership:`, error);
+    throw error;
   }
-
-  return {
-    id: memberSnap.id,
-    ...memberSnap.data(),
-  } as OrganizationMember;
 }
 
-export async function updateMemberRole(
-  memberId: string,
-  role: UserRole
-): Promise<void> {
+export async function updateMemberRole(memberId: string, role: UserRole): Promise<void> {
+  const db = getFirestoreDb();
   const docRef = doc(db, MEMBERS_COLLECTION, memberId);
   await updateDoc(docRef, { role });
 }
 
-export async function removeMember(
-  memberId: string,
-  orgId: string,
-  userId: string
-): Promise<void> {
+export async function removeMember(memberId: string, orgId: string, userId: string): Promise<void> {
+  const db = getFirestoreDb();
   // Remove from members
   const memberRef = doc(db, MEMBERS_COLLECTION, memberId);
   await updateDoc(memberRef, { removedAt: serverTimestamp() });
 
   // Remove org from user's list
   const userRef = doc(db, USERS_COLLECTION, userId);
-  await setDoc(userRef, {
-    organizations: arrayRemove(orgId),
-    updatedAt: serverTimestamp(),
-  }, { merge: true });
+  await setDoc(
+    userRef,
+    {
+      organizations: arrayRemove(orgId),
+      updatedAt: serverTimestamp(),
+    },
+    { merge: true }
+  );
 }
 
 // ============================================
@@ -238,20 +309,37 @@ export async function removeMember(
 // ============================================
 
 export async function createInvite(
-  orgId: string,
+  orgId: string | undefined,
   invitedBy: string,
   invitedByName: string,
   data: InviteMemberData
 ): Promise<Invite> {
-  // Check if already a member
-  const existingMembers = await getOrganizationMembers(orgId);
-  if (existingMembers.some((m) => m.email === data.email)) {
-    throw new Error('This user is already a member of this organization');
+  // Check if already a member if orgId exists
+  if (orgId) {
+    const existingMembers = await getOrganizationMembers(orgId);
+    if (existingMembers.some(m => m.email === data.email)) {
+      throw new Error('This user is already a member of this organization');
+    }
   }
 
   // Check for existing pending invite
-  const existingInvite = await getPendingInviteByEmail(orgId, data.email);
-  if (existingInvite) {
+  const db = getFirestoreDb();
+  const qInvite = orgId
+    ? query(
+        collection(db, INVITES_COLLECTION),
+        where('orgId', '==', orgId),
+        where('email', '==', data.email.toLowerCase().trim()),
+        where('status', '==', 'pending')
+      )
+    : query(
+        collection(db, INVITES_COLLECTION),
+        where('isAgency', '==', true),
+        where('email', '==', data.email.toLowerCase().trim()),
+        where('status', '==', 'pending')
+      );
+
+  const existingInviteSnap = await getDocs(qInvite);
+  if (!existingInviteSnap.empty) {
     throw new Error('An invite has already been sent to this email');
   }
 
@@ -259,9 +347,10 @@ export async function createInvite(
   expiresAt.setDate(expiresAt.getDate() + 7); // 7 day expiry
 
   const inviteData = {
-    orgId,
+    orgId: orgId || null,
     email: data.email.toLowerCase().trim(),
     role: data.role,
+    isAgency: data.isAgency || false,
     invitedBy,
     invitedByName,
     status: 'pending' as const,
@@ -282,6 +371,7 @@ export async function getPendingInviteByEmail(
   orgId: string,
   email: string
 ): Promise<Invite | null> {
+  const db = getFirestoreDb();
   const q = query(
     collection(db, INVITES_COLLECTION),
     where('orgId', '==', orgId),
@@ -302,6 +392,7 @@ export async function getPendingInviteByEmail(
 }
 
 export async function getInvitesByOrg(orgId: string): Promise<Invite[]> {
+  const db = getFirestoreDb();
   const q = query(
     collection(db, INVITES_COLLECTION),
     where('orgId', '==', orgId),
@@ -310,13 +401,14 @@ export async function getInvitesByOrg(orgId: string): Promise<Invite[]> {
   );
 
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({
+  return snapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data(),
   })) as Invite[];
 }
 
 export async function getInvitesByEmail(email: string): Promise<Invite[]> {
+  const db = getFirestoreDb();
   const q = query(
     collection(db, INVITES_COLLECTION),
     where('email', '==', email.toLowerCase()),
@@ -324,7 +416,7 @@ export async function getInvitesByEmail(email: string): Promise<Invite[]> {
   );
 
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({
+  return snapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data(),
   })) as Invite[];
@@ -335,6 +427,7 @@ export async function acceptInvite(
   userId: string,
   userName?: string
 ): Promise<void> {
+  const db = getFirestoreDb();
   const inviteRef = doc(db, INVITES_COLLECTION, inviteId);
   const inviteSnap = await getDoc(inviteRef);
 
@@ -354,17 +447,43 @@ export async function acceptInvite(
     throw new Error('This invite has expired');
   }
 
-  // Add as member
-  await addMember(invite.orgId, userId, invite.email, invite.role, userName, invite.invitedBy);
+  // Handle based on invite type
+  if (invite.isAgency) {
+    const userRef = doc(db, USERS_COLLECTION, userId);
+    await setDoc(
+      userRef,
+      {
+        email: invite.email,
+        name: userName || null,
+        accountType: 'agency',
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
+  } else if (invite.orgId) {
+    // Add as member of organization
+    await addMember(
+      invite.orgId,
+      userId,
+      invite.email,
+      invite.role,
+      userName || 'User',
+      invite.invitedBy
+    );
 
-  // Update user's organizations
-  const userRef = doc(db, USERS_COLLECTION, userId);
-  await setDoc(userRef, {
-    email: invite.email,
-    name: userName || null,
-    organizations: arrayUnion(invite.orgId),
-    updatedAt: serverTimestamp(),
-  }, { merge: true });
+    // Update user's organizations
+    const userRef = doc(db, USERS_COLLECTION, userId);
+    await setDoc(
+      userRef,
+      {
+        email: invite.email,
+        name: userName || null,
+        organizations: arrayUnion(invite.orgId),
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
+  }
 
   // Mark invite as accepted
   await updateDoc(inviteRef, {
@@ -374,6 +493,7 @@ export async function acceptInvite(
 }
 
 export async function cancelInvite(inviteId: string): Promise<void> {
+  const db = getFirestoreDb();
   const inviteRef = doc(db, INVITES_COLLECTION, inviteId);
   await updateDoc(inviteRef, { status: 'expired' });
 }
@@ -384,16 +504,26 @@ export async function cancelInvite(inviteId: string): Promise<void> {
 export async function inviteTeamMember(
   orgId: string,
   email: string,
-  role: 'admin' | 'member' | 'viewer'
+  role: 'admin' | 'member' | 'viewer',
+  invitedBy: string = 'current-user-id',
+  invitedByName: string = 'Current User'
 ): Promise<Invite> {
-  // In a real implementation, you'd get the current user from auth context
-  // For now, we'll use placeholder values that should be replaced
-  const invitedBy = 'current-user-id'; // Should come from auth
-  const invitedByName = 'Current User'; // Should come from auth
-
   return createInvite(orgId, invitedBy, invitedByName, {
     email,
     role,
+  });
+}
+
+export async function inviteAgencyMember(
+  email: string,
+  role: 'admin' | 'member' | 'viewer',
+  invitedBy: string,
+  invitedByName: string
+): Promise<Invite> {
+  return createInvite(undefined, invitedBy, invitedByName, {
+    email,
+    role,
+    isAgency: true,
   });
 }
 
@@ -401,6 +531,7 @@ export function subscribeToInvites(
   orgId: string,
   callback: (invites: Invite[]) => void
 ): () => void {
+  const db = getFirestoreDb();
   const q = query(
     collection(db, INVITES_COLLECTION),
     where('orgId', '==', orgId),
@@ -408,39 +539,97 @@ export function subscribeToInvites(
     orderBy('createdAt', 'desc')
   );
 
-  return onSnapshot(q, (snapshot) => {
-    const invites = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Invite[];
-    callback(invites);
-  }, (error) => {
-    console.error('Error in invites snapshot:', error);
-    callback([]);
-  });
+  return onSnapshot(
+    q,
+    snapshot => {
+      const invites = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Invite[];
+      callback(invites);
+    },
+    error => {
+      console.error('Error in invites snapshot:', error);
+      callback([]);
+    }
+  );
+}
+
+export function subscribeToAgencyInvites(
+  callback: (invites: Invite[]) => void
+): () => void {
+  const db = getFirestoreDb();
+  const q = query(
+    collection(db, INVITES_COLLECTION),
+    where('isAgency', '==', true),
+    where('status', '==', 'pending'),
+    orderBy('createdAt', 'desc')
+  );
+
+  return onSnapshot(
+    q,
+    snapshot => {
+      const invites = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Invite[];
+      callback(invites);
+    },
+    error => {
+      console.error('Error in agency invites snapshot:', error);
+      callback([]);
+    }
+  );
 }
 
 export function subscribeToMembers(
   orgId: string,
   callback: (members: OrganizationMember[]) => void
 ): () => void {
+  const db = getFirestoreDb();
   const q = query(
     collection(db, MEMBERS_COLLECTION),
     where('orgId', '==', orgId),
     orderBy('joinedAt', 'asc')
   );
 
-  return onSnapshot(q, (snapshot) => {
-    const members = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as OrganizationMember[];
-    callback(members);
-  }, (error) => {
-    console.error('Error in members snapshot:', error);
-    callback([]);
-  });
+  return onSnapshot(
+    q,
+    snapshot => {
+      const members = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as OrganizationMember[];
+      callback(members);
+    },
+    error => {
+      console.error('Error in members snapshot:', error);
+      callback([]);
+    }
+  );
 }
 
-
-
+export function subscribeToOrganization(
+  orgId: string,
+  callback: (org: Organization | null) => void
+): () => void {
+  const db = getFirestoreDb();
+  const docRef = doc(db, ORGS_COLLECTION, orgId);
+  return onSnapshot(
+    docRef,
+    snapshot => {
+      if (snapshot.exists()) {
+        callback({
+          id: snapshot.id,
+          ...snapshot.data(),
+        } as Organization);
+      } else {
+        callback(null);
+      }
+    },
+    error => {
+      console.error('Error in organization snapshot:', error);
+      callback(null);
+    }
+  );
+}

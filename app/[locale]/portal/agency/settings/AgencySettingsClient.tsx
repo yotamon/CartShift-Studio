@@ -9,6 +9,19 @@ import { cn } from '@/lib/utils';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/services/firebase-client';
+import { getAgencyTeam } from '@/lib/services/portal-agency';
+import { PortalUser, Invite } from '@/lib/types/portal';
+import {
+  subscribeToAgencyInvites,
+  cancelInvite,
+} from '@/lib/services/portal-organizations';
+import { useTranslations } from 'next-intl';
+import { PortalAvatar } from '@/components/portal/ui/PortalAvatar';
+import { InviteTeamMemberForm } from '@/components/portal/forms/InviteTeamMemberForm';
+import { ManageServiceForm } from '@/components/portal/forms/ManageServiceForm';
+import { subscribeToServices, deleteService } from '@/lib/services/portal-services';
+import { Service, formatCurrency } from '@/lib/types/portal';
+import { Plus, Edit2, Trash2, Tag } from 'lucide-react';
 
 interface AgencyProfile {
   name: string;
@@ -19,6 +32,7 @@ interface AgencyProfile {
 }
 
 export default function AgencySettingsClient() {
+  const t = useTranslations('portal');
   const { user } = usePortalAuth();
   const [activeTab, setActiveTab] = useState('profile');
   const [loading, setLoading] = useState(true);
@@ -30,6 +44,15 @@ export default function AgencySettingsClient() {
     phone: '',
     description: '',
   });
+  const [team, setTeam] = useState<PortalUser[]>([]);
+  const [invites, setInvites] = useState<Invite[]>([]);
+  const [loadingTeam, setLoadingTeam] = useState(false);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+  const [editingService, setEditingService] = useState<Service | undefined>(undefined);
+  const [services, setServices] = useState<Service[]>([]);
+  const [loadingServices, setLoadingServices] = useState(false);
+  const [cancellingInvite, setCancellingInvite] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchAgencyProfile() {
@@ -58,6 +81,59 @@ export default function AgencySettingsClient() {
     fetchAgencyProfile();
   }, [user]);
 
+  useEffect(() => {
+    if (activeTab === 'team') {
+      const fetchTeam = async () => {
+        setLoadingTeam(true);
+        try {
+          const members = await getAgencyTeam();
+          setTeam(members);
+        } catch (error) {
+          console.error('Error fetching agency team:', error);
+        } finally {
+          setLoadingTeam(false);
+        }
+      };
+
+      fetchTeam();
+
+      // Also subscribe to agency invites
+      const unsubscribeInvites = subscribeToAgencyInvites((data) => {
+        setInvites(data);
+      });
+
+      return () => {
+        unsubscribeInvites();
+      };
+    }
+
+    if (activeTab === 'services') {
+      setLoadingServices(true);
+      const unsubscribeServices = subscribeToServices((data) => {
+        setServices(data);
+        setLoadingServices(false);
+      });
+
+      return () => {
+        unsubscribeServices();
+      };
+    }
+
+    return undefined;
+  }, [activeTab]);
+
+  const handleCancelInvite = async (inviteId: string) => {
+    if (!confirm(t('common.confirm') || 'Are you sure?')) return;
+    setCancellingInvite(inviteId);
+    try {
+      await cancelInvite(inviteId);
+    } catch (error) {
+      console.error('Error cancelling invite:', error);
+    } finally {
+      setCancellingInvite(null);
+    }
+  };
+
   const handleSave = async () => {
     if (!user?.uid) return;
 
@@ -71,7 +147,7 @@ export default function AgencySettingsClient() {
         description: profile.description,
         updatedAt: new Date(),
       });
-      alert('Settings saved successfully!');
+      alert(t('agency.settings.profile.success'));
     } catch (error) {
       console.error('Error saving agency profile:', error);
       alert('Failed to save settings. Please try again.');
@@ -80,12 +156,45 @@ export default function AgencySettingsClient() {
     }
   };
 
+  const handleServiceSuccess = () => {
+    setIsServiceModalOpen(false);
+    setEditingService(undefined);
+  };
+
+  const handleDeleteService = async (serviceId: string) => {
+    if (!confirm(t('common.confirm') || 'Are you sure?')) return;
+    try {
+      await deleteService(serviceId);
+    } catch (error) {
+      console.error('Error deleting service:', error);
+    }
+  };
+
+  const handleInviteSuccess = () => {
+    setIsInviteModalOpen(false);
+    // Refresh team if we are on team tab
+    if (activeTab === 'team') {
+      const fetchTeam = async () => {
+        setLoadingTeam(true);
+        try {
+          const members = await getAgencyTeam();
+          setTeam(members);
+        } catch (error) {
+          console.error('Error refreshing agency team:', error);
+        } finally {
+          setLoadingTeam(false);
+        }
+      };
+      fetchTeam();
+    }
+  };
+
   const tabs = [
-    { id: 'profile', label: 'Agency Profile', icon: Building2 },
-    { id: 'services', label: 'Service Packages', icon: Settings2 },
-    { id: 'team', label: 'Internal Team', icon: User },
-    { id: 'integrations', label: 'Integrations', icon: Shield },
-    { id: 'billing', label: 'Payouts', icon: CreditCard },
+    { id: 'profile', label: t('agency.settings.tabs.profile'), icon: Building2 },
+    { id: 'services', label: t('agency.settings.tabs.services'), icon: Settings2 },
+    { id: 'team', label: t('agency.settings.tabs.team'), icon: User },
+    { id: 'integrations', label: t('agency.settings.tabs.integrations'), icon: Shield },
+    { id: 'billing', label: t('agency.settings.tabs.billing'), icon: CreditCard },
   ];
 
   if (loading) {
@@ -99,11 +208,11 @@ export default function AgencySettingsClient() {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-surface-900 dark:text-white">
-          Agency Settings
+        <h1 className="text-3xl font-bold tracking-tight text-surface-900 dark:text-white font-outfit">
+          {t('agency.settings.title')}
         </h1>
         <p className="text-surface-500 dark:text-surface-400 mt-1">
-          Manage global agency configurations and team defaults.
+          {t('agency.settings.subtitle')}
         </p>
       </div>
 
@@ -115,7 +224,7 @@ export default function AgencySettingsClient() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  'w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-xl transition-colors',
+                  'w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-xl transition-colors font-outfit',
                   activeTab === tab.id
                     ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 shadow-sm'
                     : 'text-surface-600 dark:text-surface-400 hover:bg-surface-50 dark:hover:bg-surface-800'
@@ -131,51 +240,55 @@ export default function AgencySettingsClient() {
         <div className="lg:col-span-3 space-y-6">
           {activeTab === 'profile' && (
             <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm">
-              <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-6">
-                Agency Profile
+              <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-6 font-outfit">
+                {t('agency.settings.profile.title')}
               </h3>
               <div className="space-y-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <PortalInput
-                    label="Agency Name"
+                    label={t('agency.settings.profile.nameLabel')}
                     value={profile.name}
                     onChange={e => setProfile({ ...profile, name: e.target.value })}
-                    placeholder="Your Agency Name"
+                    placeholder={t('agency.settings.profile.namePlaceholder')}
+                    className="font-outfit"
                   />
                   <PortalInput
-                    label="Support Email"
+                    label={t('agency.settings.profile.emailLabel')}
                     type="email"
                     value={profile.email}
                     onChange={e => setProfile({ ...profile, email: e.target.value })}
-                    placeholder="support@agency.com"
+                    placeholder={t('agency.settings.profile.emailPlaceholder')}
+                    className="font-outfit"
                   />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <PortalInput
-                    label="Agency Website"
+                    label={t('agency.settings.profile.websiteLabel')}
                     type="url"
                     value={profile.website}
                     onChange={e => setProfile({ ...profile, website: e.target.value })}
-                    placeholder="https://agency.com"
+                    placeholder={t('agency.settings.profile.websitePlaceholder')}
+                    className="font-outfit"
                   />
                   <PortalInput
-                    label="Phone Number"
+                    label={t('agency.settings.profile.phoneLabel')}
                     type="tel"
                     value={profile.phone}
                     onChange={e => setProfile({ ...profile, phone: e.target.value })}
-                    placeholder="+1 (555) 123-4567"
+                    placeholder={t('agency.settings.profile.phonePlaceholder')}
+                    className="font-outfit"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-surface-700 dark:text-surface-300 mb-2">
-                    Agency Description
+                  <label className="block text-sm font-semibold text-surface-700 dark:text-surface-300 mb-2 font-outfit">
+                    {t('agency.settings.profile.descLabel')}
                   </label>
                   <textarea
                     value={profile.description}
                     onChange={e => setProfile({ ...profile, description: e.target.value })}
                     rows={4}
-                    className="w-full px-4 py-3 rounded-xl bg-surface-50 dark:bg-surface-950 border border-surface-200 dark:border-white/10 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none text-surface-900 dark:text-white"
-                    placeholder="Brief description of your agency and services..."
+                    className="w-full px-4 py-3 rounded-xl bg-surface-50 dark:bg-surface-950 border border-surface-200 dark:border-white/10 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none text-surface-900 dark:text-white font-medium"
+                    placeholder={t('agency.settings.profile.descPlaceholder')}
                   />
                 </div>
               </div>
@@ -183,10 +296,10 @@ export default function AgencySettingsClient() {
                 <PortalButton
                   onClick={handleSave}
                   isLoading={saving}
-                  className="flex items-center gap-2 shadow-lg shadow-blue-500/20"
+                  className="flex items-center gap-2 shadow-lg shadow-blue-500/20 font-outfit"
                 >
                   <Save size={18} />
-                  {saving ? 'Saving...' : 'Save Changes'}
+                  {saving ? t('agency.settings.profile.saving') : t('agency.settings.profile.save')}
                 </PortalButton>
               </div>
             </PortalCard>
@@ -194,65 +307,291 @@ export default function AgencySettingsClient() {
 
           {activeTab === 'services' && (
             <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm">
-              <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-4">
-                Service Packages
-              </h3>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-6">
-                Configure your service offerings and pricing tiers.
-              </p>
-              <div className="py-12 text-center">
-                <Settings2 className="w-12 h-12 text-surface-300 dark:text-surface-700 mx-auto mb-3" />
-                <p className="text-surface-500 dark:text-surface-400">Service configuration coming soon</p>
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h3 className="text-lg font-bold text-surface-900 dark:text-white font-outfit">
+                    {t('agency.settings.tabs.services')}
+                  </h3>
+                  <p className="text-sm text-surface-500 dark:text-surface-400">
+                    Configure your service offerings and pricing tiers.
+                  </p>
+                </div>
+                <PortalButton
+                  size="sm"
+                  className="h-10 font-outfit"
+                  onClick={() => {
+                    setEditingService(undefined);
+                    setIsServiceModalOpen(true);
+                  }}
+                >
+                  <Plus size={18} className="mr-2" />
+                  Add Service
+                </PortalButton>
               </div>
+
+              {loadingServices ? (
+                <div className="py-20 flex justify-center">
+                  <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+                </div>
+              ) : services.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {services.map(service => (
+                    <div
+                      key={service.id}
+                      className={cn(
+                        "p-5 rounded-2xl border transition-all hover:shadow-md group",
+                        service.isActive
+                          ? "bg-white dark:bg-surface-950 border-surface-200 dark:border-surface-800"
+                          : "bg-surface-50/50 dark:bg-surface-900/30 border-surface-100 dark:border-surface-800/50 opacity-60"
+                      )}
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 border border-blue-100 dark:border-blue-900/30">
+                          <Tag size={18} />
+                        </div>
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={() => {
+                              setEditingService(service);
+                              setIsServiceModalOpen(true);
+                            }}
+                            className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all"
+                          >
+                            <Edit2 size={14} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteService(service.id)}
+                            className="p-2 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-all"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <h4 className="font-bold text-surface-900 dark:text-white font-outfit flex items-center gap-2">
+                          {service.name}
+                          {!service.isActive && (
+                            <span className="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-surface-200 dark:bg-surface-800 text-surface-500">
+                              Inactive
+                            </span>
+                          )}
+                        </h4>
+                        <p className="text-xs text-surface-500 line-clamp-2 min-h-[2rem]">
+                          {service.description || 'No description provided.'}
+                        </p>
+                      </div>
+
+                      <div className="mt-6 pt-4 border-t border-surface-100 dark:border-surface-800 flex items-center justify-between">
+                        <div className="flex flex-col">
+                          <span className="text-[9px] font-black text-surface-400 uppercase tracking-widest">Base Price</span>
+                          <span className="text-sm font-black text-surface-900 dark:text-white font-outfit">
+                            {formatCurrency(service.basePrice, service.currency)}
+                          </span>
+                        </div>
+                        {service.category && (
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-surface-100 dark:bg-surface-800 text-surface-500 dark:text-surface-400 font-outfit">
+                            {service.category}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-20 text-center bg-surface-50/50 dark:bg-surface-900/30 rounded-3xl border-2 border-dashed border-surface-200 dark:border-surface-800">
+                  <Tag className="w-12 h-12 text-surface-300 dark:text-surface-700 mx-auto mb-4 opacity-20" />
+                  <h4 className="text-lg font-bold text-surface-900 dark:text-white font-outfit mb-1">Your Catalog is Empty</h4>
+                  <p className="text-sm text-surface-500 dark:text-surface-400 max-w-sm mx-auto mb-8">
+                    Add services to your catalog to quickly create pricing offers for client requests.
+                  </p>
+                  <PortalButton
+                    variant="outline"
+                    onClick={() => {
+                      setEditingService(undefined);
+                      setIsServiceModalOpen(true);
+                    }}
+                  >
+                    Create Your First Service
+                  </PortalButton>
+                </div>
+              )}
             </PortalCard>
           )}
 
           {activeTab === 'team' && (
             <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm">
-              <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-4">
-                Internal Team
-              </h3>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-6">
-                Manage your agency team members and permissions.
-              </p>
-              <div className="py-12 text-center">
-                <User className="w-12 h-12 text-surface-300 dark:text-surface-700 mx-auto mb-3" />
-                <p className="text-surface-500 dark:text-surface-400">Team management coming soon</p>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="text-lg font-bold text-surface-900 dark:text-white font-outfit">
+                    {t('agency.settings.team.title')}
+                  </h3>
+                  <p className="text-sm text-surface-500 dark:text-surface-400">
+                    {t('agency.settings.team.subtitle')}
+                  </p>
+                </div>
+                <PortalButton
+                  size="sm"
+                  variant="outline"
+                  className="h-10 font-outfit"
+                  onClick={() => setIsInviteModalOpen(true)}
+                >
+                   {t('agency.settings.team.invite')}
+                </PortalButton>
+              </div>
+
+              {loadingTeam ? (
+                <div className="py-12 flex justify-center">
+                  <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+                </div>
+              ) : team.length > 0 ? (
+                <div className="overflow-hidden rounded-xl border border-surface-100 dark:border-surface-800">
+                  <table className="w-full text-left">
+                    <thead className="bg-surface-50 dark:bg-surface-900/50 text-[10px] font-black text-surface-400 uppercase tracking-widest">
+                      <tr>
+                        <th className="px-6 py-4">{t('agency.settings.team.table.member')}</th>
+                        <th className="px-6 py-4">{t('agency.settings.team.table.status')}</th>
+                        <th className="px-6 py-4">{t('agency.settings.team.table.joined')}</th>
+                        <th className="px-6 py-4 text-right">{t('agency.settings.team.table.action')}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
+                      {team.map((member: PortalUser) => (
+                        <tr key={member.id} className="hover:bg-surface-50/50 dark:hover:bg-surface-800/20 transition-all group">
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <PortalAvatar name={member.name || 'User'} size="sm" className="ring-2 ring-white dark:ring-surface-900 shadow-sm" />
+                              <div>
+                                <p className="text-sm font-bold text-surface-900 dark:text-white font-outfit">{member.name || 'Unnamed User'}</p>
+                                <p className="text-[10px] font-bold text-surface-400 uppercase tracking-tight">{member.email}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className={cn(
+                              "inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border",
+                              member.status === 'inactive'
+                                ? "bg-slate-50 dark:bg-slate-900/20 text-slate-600 dark:text-slate-400 border-slate-100 dark:border-slate-800"
+                                : member.status === 'suspended'
+                                  ? "bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-900/30"
+                                  : "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/30"
+                            )}>
+                              {t(`agency.settings.team.${member.status || 'active'}` as never)}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="text-[10px] font-bold text-surface-500 uppercase tracking-tighter">
+                              {member.createdAt?.toDate ? member.createdAt.toDate().toLocaleDateString() : 'N/A'}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <button className="text-xs font-bold text-surface-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors uppercase tracking-widest">
+                               {t('agency.settings.team.edit')}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="py-12 text-center opacity-30">
+                  <User className="w-12 h-12 text-surface-300 dark:text-surface-700 mx-auto mb-3" />
+                  <p className="text-[10px] font-black uppercase tracking-widest">{t('agency.settings.team.noMembers')}</p>
+                </div>
+              )}
+
+              {/* Pending Invites Section */}
+              <div className="mt-10">
+                <div className="flex items-center gap-2 mb-4 px-1">
+                  <User className="text-blue-500" size={16} />
+                  <h4 className="text-[10px] font-black text-surface-400 uppercase tracking-widest">
+                    {t('agency.settings.team.pendingInvites') || 'Pending Invitations'}
+                  </h4>
+                </div>
+
+                {invites.length > 0 ? (
+                  <div className="space-y-3">
+                    {invites.map(invite => (
+                      <div key={invite.id} className="p-4 rounded-xl bg-surface-50 dark:bg-surface-900 border border-surface-100 dark:border-surface-800 flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-bold text-surface-900 dark:text-white font-outfit">{invite.email}</p>
+                          <p className="text-[10px] font-bold text-surface-400 uppercase tracking-tight">{invite.role}</p>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <span className="text-[10px] font-bold text-surface-400 uppercase tracking-tighter">
+                            {invite.createdAt?.toDate ? invite.createdAt.toDate().toLocaleDateString() : 'Sent recently'}
+                          </span>
+                          <button
+                            onClick={() => handleCancelInvite(invite.id)}
+                            disabled={cancellingInvite === invite.id}
+                            className="text-[10px] font-black text-rose-500 uppercase tracking-widest hover:text-rose-600 disabled:opacity-50"
+                          >
+                            {cancellingInvite === invite.id ? '...' : (t('agency.settings.team.cancelInvite') || 'Cancel')}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="py-8 text-center bg-surface-50/50 dark:bg-surface-900/30 rounded-xl border border-dashed border-surface-200 dark:border-surface-800">
+                    <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest">No pending invitations</p>
+                  </div>
+                )}
               </div>
             </PortalCard>
           )}
 
           {activeTab === 'integrations' && (
             <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm">
-              <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-4">
-                Integrations
+              <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-4 font-outfit">
+                {t('agency.settings.tabs.integrations')}
               </h3>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-6">
+              <p className="text-sm text-surface-500 dark:text-surface-400 mb-6 underline-offset-4">
                 Connect third-party tools and services.
               </p>
-              <div className="py-12 text-center">
+              <div className="py-12 text-center opacity-40">
                 <Shield className="w-12 h-12 text-surface-300 dark:text-surface-700 mx-auto mb-3" />
-                <p className="text-surface-500 dark:text-surface-400">Integrations coming soon</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-surface-500 dark:text-surface-400">Integrations coming soon</p>
               </div>
             </PortalCard>
           )}
 
           {activeTab === 'billing' && (
             <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm">
-              <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-4">
-                Payouts & Billing
+              <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-4 font-outfit">
+                {t('agency.settings.tabs.billing')}
               </h3>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-6">
+              <p className="text-sm text-surface-500 dark:text-surface-400 mb-6 underline-offset-4">
                 Configure payment methods and billing information.
               </p>
-              <div className="py-12 text-center">
+              <div className="py-12 text-center opacity-40">
                 <CreditCard className="w-12 h-12 text-surface-300 dark:text-surface-700 mx-auto mb-3" />
-                <p className="text-surface-500 dark:text-surface-400">Billing configuration coming soon</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-surface-500 dark:text-surface-400">Billing configuration coming soon</p>
               </div>
             </PortalCard>
           )}
         </div>
       </div>
+
+      {isInviteModalOpen && (
+        <InviteTeamMemberForm
+          isAgency={true}
+          onSuccess={handleInviteSuccess}
+          onCancel={() => setIsInviteModalOpen(false)}
+        />
+      )}
+
+      {isServiceModalOpen && (
+        <ManageServiceForm
+          service={editingService}
+          onSuccess={handleServiceSuccess}
+          onCancel={() => {
+            setIsServiceModalOpen(false);
+            setEditingService(undefined);
+          }}
+        />
+      )}
     </div>
   );
 }

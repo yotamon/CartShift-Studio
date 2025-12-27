@@ -32,6 +32,7 @@ import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { logout } from '@/lib/services/auth';
 import { PortalButton } from './ui/PortalButton';
 import { useTranslations, useLocale } from 'next-intl';
+import { getMemberByUserId } from '@/lib/services/portal-organizations';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import {
   subscribeToNotifications,
@@ -42,6 +43,7 @@ import {
 import { Notification, ACCOUNT_TYPE } from '@/lib/types/portal';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS, he } from 'date-fns/locale';
+import { OnboardingTour } from './OnboardingTour';
 
 interface PortalShellProps {
   children: React.ReactNode;
@@ -62,6 +64,7 @@ export const PortalShell = ({
   const [unreadCount, setUnreadCount] = useState(0);
   const [notificationPosition, setNotificationPosition] = useState({ top: 0, right: 0, left: 0 });
   const [mounted, setMounted] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const { userData, loading, isAuthenticated, accountType } = usePortalAuth();
@@ -81,15 +84,36 @@ export const PortalShell = ({
         return;
       }
 
-      // Check if user has access to this organization
-      if (orgId && userData) {
-        const hasAccess = userData.isAgency || userData.organizations?.includes(orgId);
-        setIsAuthorized(hasAccess ?? false);
-      } else if (isAgencyPage && userData) {
-        setIsAuthorized(userData.isAgency ?? false);
-      } else {
-        setIsAuthorized(true);
-      }
+      const checkAccess = async () => {
+        try {
+          if (orgId && userData) {
+            if (userData.isAgency) {
+              setIsAuthorized(true);
+              return;
+            }
+
+            const member = await getMemberByUserId(orgId, userData.id);
+            setIsAuthorized(member !== null);
+
+            if (!member) {
+              console.warn(`[PortalShell] No membership found for orgId: ${orgId}, userId: ${userData.id}`);
+            }
+          } else if (isAgencyPage && userData) {
+            setIsAuthorized(userData.isAgency ?? false);
+          } else {
+            setIsAuthorized(true);
+          }
+        } catch (error) {
+          console.error('[PortalShell] Error checking access:', error);
+          setIsAuthorized(false);
+        }
+      };
+
+      checkAccess();
+    }
+
+    if (userData && !userData.isAgency && !userData.onboardingComplete) {
+      setShowOnboarding(true);
     }
   }, [loading, isAuthenticated, userData, orgId, isAgencyPage, router]);
 
@@ -713,6 +737,15 @@ export const PortalShell = ({
           </AnimatePresence>,
           document.body
         )}
+
+      {/* Onboarding Tour for new users */}
+      {showOnboarding && userData?.id && (
+        <OnboardingTour
+          userId={userData.id}
+          onComplete={() => setShowOnboarding(false)}
+          onSkip={() => setShowOnboarding(false)}
+        />
+      )}
     </div>
   );
 };

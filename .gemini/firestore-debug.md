@@ -23,6 +23,24 @@ allow read: if isAuthenticated() &&
   (resource == null || isOrgMember(resource.data.orgId));
 ```
 
+## Frontend Permission Check Fix
+
+### Issue: Access Restricted Error Despite Valid Membership
+
+**Problem**: Users were seeing "Access Restricted" error even when they had valid membership documents in `portal_members`. This was caused by a mismatch between:
+- **Frontend check**: Used `userData.organizations` array from `portal_users` document
+- **Firestore rules**: Checked for membership document in `portal_members` collection
+
+**Root Cause**: The `organizations` array in `portal_users` could be out of sync with actual membership documents, causing false negatives.
+
+**Solution**: Updated permission checks in `PortalShell.tsx` and `DashboardClient.tsx` to verify membership directly from `portal_members` collection using `getMemberByUserId()`, matching what Firestore security rules do.
+
+**Files Updated**:
+- `components/portal/PortalShell.tsx` - Now checks membership via `getMemberByUserId()`
+- `app/[locale]/portal/org/[orgId]/dashboard/DashboardClient.tsx` - Now checks membership via `getMemberByUserId()`
+
+This ensures frontend permission checks are consistent with Firestore security rules.
+
 ## Still Getting Errors?
 
 ### Checklist:
@@ -87,6 +105,13 @@ FirebaseError: PERMISSION_DENIED: Missing or insufficient permissions
 1. Sign out completely
 2. Clear browser cache
 3. Sign back in
+
+##### Scenario D: Frontend permission check mismatch
+**Symptom:** "Access Restricted" error even though membership document exists
+**Fix:** This has been fixed in the codebase. The frontend now checks membership directly from `portal_members` collection, matching Firestore rules. If you still see this:
+1. Hard refresh the browser (Ctrl+Shift+R / Cmd+Shift+R)
+2. Clear browser cache
+3. Verify membership document exists: `{orgId}_{userId}` in `portal_members` collection
 
 ## Quick Diagnostics
 

@@ -11,13 +11,15 @@ import { X } from 'lucide-react';
 import { createOrganization } from '@/lib/services/portal-organizations';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 
-const orgSchema = z.object({
-  name: z.string().min(3, 'Organization name must be at least 3 characters').max(100, 'Name is too long'),
-  website: z.string().url('Please enter a valid URL').optional().or(z.literal('')),
-  industry: z.string().min(2, 'Industry must be at least 2 characters').optional().or(z.literal('')),
+import { useTranslations } from 'next-intl';
+
+const orgSchema = (t: any) => z.object({
+  name: z.string().min(3, t('organization.createForm.errors.name')).max(100, t('organization.createForm.errors.nameLong')),
+  website: z.string().url(t('organization.createForm.errors.website')).optional().or(z.literal('')),
+  industry: z.string().min(2, t('organization.createForm.errors.industry')).optional().or(z.literal('')),
 });
 
-type OrgFormData = z.infer<typeof orgSchema>;
+type OrgFormData = z.infer<ReturnType<typeof orgSchema>>;
 
 interface CreateOrganizationFormProps {
   onSuccess: (orgId: string) => void;
@@ -29,18 +31,19 @@ export const CreateOrganizationForm = ({ onSuccess, onCancel }: CreateOrganizati
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const t = useTranslations('portal');
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<OrgFormData>({
-    resolver: zodResolver(orgSchema),
+    resolver: zodResolver(orgSchema(t)),
   });
 
   const onSubmit = async (data: OrgFormData) => {
     if (!user || !userData) {
-      setError('You must be logged in to create an organization');
+      setError(t('organization.createForm.errors.auth'));
       return;
     }
 
@@ -68,7 +71,7 @@ export const CreateOrganizationForm = ({ onSuccess, onCancel }: CreateOrganizati
       router.push(`/portal/org/${org.id}/dashboard`);
     } catch (err: any) {
       console.error('Create organization error:', err);
-      setError(err.message || 'Failed to create organization. Please try again.');
+      setError(err.message || t('organization.createForm.errors.generic'));
     } finally {
       setLoading(false);
     }
@@ -78,7 +81,7 @@ export const CreateOrganizationForm = ({ onSuccess, onCancel }: CreateOrganizati
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-2xl max-w-lg w-full border border-surface-200 dark:border-surface-800">
         <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-800">
-          <h3 className="text-xl font-bold text-surface-900 dark:text-white">Create New Organization</h3>
+          <h3 className="text-xl font-bold text-surface-900 dark:text-white font-outfit">{t('organization.createForm.title')}</h3>
           <button
             onClick={onCancel}
             disabled={loading}
@@ -90,36 +93,39 @@ export const CreateOrganizationForm = ({ onSuccess, onCancel }: CreateOrganizati
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-5">
           <PortalInput
-            label="Organization Name *"
-            placeholder="e.g. Acme Corporation"
+            label={t('organization.createForm.nameLabel')}
+            placeholder={t('organization.createForm.namePlaceholder')}
             error={errors.name?.message}
             {...register('name')}
+            className="font-outfit"
           />
 
           <PortalInput
-            label="Website"
+            label={t('organization.createForm.websiteLabel')}
             type="url"
-            placeholder="https://example.com"
+            placeholder={t('organization.createForm.websitePlaceholder')}
             error={errors.website?.message}
             {...register('website')}
+            className="font-outfit"
           />
 
           <PortalInput
-            label="Industry"
-            placeholder="e.g. E-commerce, SaaS, Marketing"
+            label={t('organization.createForm.industryLabel')}
+            placeholder={t('organization.createForm.industryPlaceholder')}
             error={errors.industry?.message}
             {...register('industry')}
+            className="font-outfit"
           />
 
           <div className="bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-900/20 rounded-xl p-4">
-            <p className="text-xs text-blue-800 dark:text-blue-300 leading-relaxed">
-              <strong>Note:</strong> You will be set as the owner of this organization and can invite team members later.
+            <p className="text-xs text-blue-800 dark:text-blue-300 leading-relaxed font-medium">
+              <strong className="font-bold">{t('organization.createForm.note')}</strong> {t('organization.createForm.noteText')}
             </p>
           </div>
 
           {error && (
             <div className="p-4 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20">
-              <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+              <p className="text-sm text-red-600 dark:text-red-400 font-medium">{error}</p>
             </div>
           )}
 
@@ -129,12 +135,12 @@ export const CreateOrganizationForm = ({ onSuccess, onCancel }: CreateOrganizati
               variant="outline"
               onClick={onCancel}
               disabled={loading}
-              className="flex-1"
+              className="flex-1 font-outfit"
             >
-              Cancel
+              {t('organization.createForm.cancel')}
             </PortalButton>
-            <PortalButton type="submit" isLoading={loading} className="flex-1">
-              {loading ? 'Creating...' : 'Create Organization'}
+            <PortalButton type="submit" isLoading={loading} className="flex-1 font-outfit">
+              {loading ? t('organization.createForm.submitting') : t('organization.createForm.submit')}
             </PortalButton>
           </div>
         </form>

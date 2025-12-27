@@ -98,6 +98,21 @@ export function generateLineItemId(): string {
   return `item_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 }
 
+// ============================================
+// SERVICE CATALOG
+// ============================================
+
+export interface Service {
+  id: string;
+  name: string;
+  description: string;
+  basePrice: number; // in cents
+  currency: Currency;
+  category?: string;
+  isActive: boolean;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
 
 // ============================================
 // CORE TYPES
@@ -111,6 +126,8 @@ export interface Organization {
   website?: string;
   industry?: string;
   bio?: string;
+  status?: 'active' | 'inactive' | 'suspended';
+  plan?: 'free' | 'pro' | 'enterprise';
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
@@ -133,6 +150,7 @@ export interface PortalUser {
   photoUrl?: string;
   accountType: AccountType;  // New: PRIMARY account type field
   isAgency: boolean;         // Kept for backward compatibility (derived from accountType)
+  status?: 'active' | 'inactive' | 'suspended';
   organizations: string[]; // org IDs
   notificationPreferences?: {
     emailOnRequestUpdate: boolean;
@@ -140,9 +158,74 @@ export interface PortalUser {
     emailOnStatusChange: boolean;
     marketingEmails: boolean;
   };
+  // Onboarding tracking
+  onboardingComplete?: boolean;
+  onboardingSkipped?: boolean;
+  onboardingCompletedAt?: Timestamp;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
+
+// Milestone status for project tracking
+export const MILESTONE_STATUS = {
+  PENDING: 'pending',
+  IN_PROGRESS: 'in_progress',
+  COMPLETED: 'completed',
+  BLOCKED: 'blocked',
+} as const;
+
+export type MilestoneStatus = (typeof MILESTONE_STATUS)[keyof typeof MILESTONE_STATUS];
+
+export interface Milestone {
+  id: string;
+  title: string;
+  description?: string;
+  status: MilestoneStatus;
+  order: number;
+  dueDate?: Timestamp;
+  completedAt?: Timestamp;
+  completedBy?: string;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
+
+// Milestone status configuration for UI
+export const MILESTONE_STATUS_CONFIG: Record<MilestoneStatus, {
+  label: string;
+  labelHe: string;
+  color: string;
+  bgColor: string;
+  icon: string;
+}> = {
+  pending: {
+    label: 'Pending',
+    labelHe: 'ממתין',
+    color: 'text-surface-500',
+    bgColor: 'bg-surface-100 dark:bg-surface-800',
+    icon: 'circle'
+  },
+  in_progress: {
+    label: 'In Progress',
+    labelHe: 'בתהליך',
+    color: 'text-blue-600 dark:text-blue-400',
+    bgColor: 'bg-blue-100 dark:bg-blue-900/30',
+    icon: 'loader'
+  },
+  completed: {
+    label: 'Completed',
+    labelHe: 'הושלם',
+    color: 'text-green-600 dark:text-green-400',
+    bgColor: 'bg-green-100 dark:bg-green-900/30',
+    icon: 'check-circle'
+  },
+  blocked: {
+    label: 'Blocked',
+    labelHe: 'חסום',
+    color: 'text-red-600 dark:text-red-400',
+    bgColor: 'bg-red-100 dark:bg-red-900/30',
+    icon: 'alert-circle'
+  },
+};
 
 export interface Request {
   id: string;
@@ -163,6 +246,10 @@ export interface Request {
   createdAt: Timestamp;
   updatedAt: Timestamp;
   closedAt?: Timestamp;
+
+  // Milestones for project tracking
+  milestones?: Milestone[];
+  currentMilestoneId?: string;
 
   // Pricing fields (optional - for billable requests)
   isBillable?: boolean;
@@ -208,6 +295,8 @@ export interface FileAttachment {
   size: number;
   url: string;
   storagePath: string;
+  version: number;          // New: Version number
+  previousVersionId?: string; // New: Reference to previous version
   uploadedBy: string;
   uploadedByName: string;
   uploadedAt: Timestamp;
@@ -215,9 +304,10 @@ export interface FileAttachment {
 
 export interface Invite {
   id: string;
-  orgId: string;
+  orgId?: string; // Optional for agency invites
   email: string;
   role: UserRole;
+  isAgency?: boolean;
   invitedBy: string;
   invitedByName: string;
   status: 'pending' | 'accepted' | 'expired';
@@ -280,6 +370,7 @@ export interface CreateCommentData {
 export interface InviteMemberData {
   email: string;
   role: UserRole;
+  isAgency?: boolean;
 }
 
 // ============================================

@@ -13,16 +13,13 @@ import {
   query,
   where,
   orderBy,
+  onSnapshot,
   serverTimestamp,
   Timestamp,
 } from 'firebase/firestore';
 import { getFirebaseStorage, getFirestoreDb } from '@/lib/firebase';
 import { FileAttachment } from '@/lib/types/portal';
 import { v4 as uuidv4 } from 'uuid';
-
-// Initialize Firebase services
-const storage = getFirebaseStorage();
-const db = getFirestoreDb();
 
 const FILES_COLLECTION = 'portal_files';
 
@@ -38,8 +35,12 @@ export async function uploadFile(
   options?: {
     requestId?: string;
     commentId?: string;
+    version?: number;
+    previousVersionId?: string;
   }
 ): Promise<FileAttachment> {
+  const storage = getFirebaseStorage();
+  const db = getFirestoreDb();
   // Generate unique filename
   const fileId = uuidv4();
   const extension = file.name.split('.').pop() || '';
@@ -61,6 +62,8 @@ export async function uploadFile(
     size: file.size,
     url,
     storagePath,
+    version: options?.version || 1,
+    previousVersionId: options?.previousVersionId || null,
     uploadedBy: userId,
     uploadedByName: userName,
     uploadedAt: serverTimestamp(),
@@ -83,6 +86,8 @@ export async function uploadMultipleFiles(
   options?: {
     requestId?: string;
     commentId?: string;
+    version?: number;
+    previousVersionId?: string;
   }
 ): Promise<FileAttachment[]> {
   const results = await Promise.all(
@@ -96,6 +101,7 @@ export async function uploadMultipleFiles(
 // ============================================
 
 export async function getFilesByOrg(orgId: string): Promise<FileAttachment[]> {
+  const db = getFirestoreDb();
   try {
     const q = query(
       collection(db, FILES_COLLECTION),
@@ -118,6 +124,7 @@ export async function getFilesByOrg(orgId: string): Promise<FileAttachment[]> {
 }
 
 export async function getFilesByRequest(requestId: string): Promise<FileAttachment[]> {
+  const db = getFirestoreDb();
   try {
     const q = query(
       collection(db, FILES_COLLECTION),
@@ -144,6 +151,8 @@ export async function getFilesByRequest(requestId: string): Promise<FileAttachme
 // ============================================
 
 export async function deleteFile(fileId: string, storagePath: string): Promise<void> {
+  const storage = getFirebaseStorage();
+  const db = getFirestoreDb();
   // Delete from Storage
   const storageRef = ref(storage, storagePath);
   try {
@@ -178,4 +187,31 @@ export function getFileIcon(mimeType: string): string {
   if (mimeType.includes('document') || mimeType.includes('word')) return 'FileText';
   if (mimeType.includes('zip') || mimeType.includes('archive')) return 'Archive';
   return 'File';
+}
+
+export function subscribeToRequestFiles(
+  requestId: string,
+  callback: (files: FileAttachment[]) => void
+): () => void {
+  const db = getFirestoreDb();
+  const q = query(
+    collection(db, FILES_COLLECTION),
+    where('requestId', '==', requestId),
+    orderBy('uploadedAt', 'desc')
+  );
+
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const files = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as FileAttachment[];
+      callback(files);
+    },
+    (error) => {
+      console.error('Error in request files subscription:', error);
+      callback([]);
+    }
+  );
 }

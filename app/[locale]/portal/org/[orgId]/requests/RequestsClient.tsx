@@ -40,6 +40,8 @@ export default function RequestsClient() {
   const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
   const t = useTranslations();
   const locale = useLocale();
 
@@ -71,6 +73,11 @@ export default function RequestsClient() {
     }
   }, [orgId, authLoading, isAuthenticated, userData, t]);
 
+  // Reset to page 1 when filter or search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeFilter, searchQuery]);
+
   const filteredRequests = requests.filter(req => {
     const matchesFilter = activeFilter === 'All' || req.status === activeFilter;
     const matchesSearch = req.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -78,11 +85,17 @@ export default function RequestsClient() {
     return matchesFilter && matchesSearch;
   });
 
+  const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
+  const paginatedRequests = filteredRequests.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const handlePrevPage = () => setCurrentPage(p => Math.max(1, p - 1));
+  const handleNextPage = () => setCurrentPage(p => Math.min(totalPages, p + 1));
+
   if (error) {
     return (
       <div className="py-20 flex flex-col items-center justify-center text-center space-y-4">
         <AlertCircle className="w-12 h-12 text-rose-500" />
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white">{t('portal.common.error')}</h2>
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">{t('portal.common.error')}</h2>
         <p className="text-slate-500 dark:text-slate-400 max-w-sm">{error}</p>
         <PortalButton onClick={() => window.location.reload()}>{t('portal.common.retry')}</PortalButton>
       </div>
@@ -94,7 +107,7 @@ export default function RequestsClient() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 min-w-0">
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit truncate">{t('portal.requests.title')}</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium truncate">{t('portal.dashboard.subtitle')}</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium truncate font-outfit">{t('portal.dashboard.subtitle')}</p>
         </div>
         <Link href={`/portal/org/${orgId}/requests/new/`} className="flex-shrink-0">
           <PortalButton className="flex items-center gap-2 shadow-lg shadow-blue-500/20 font-outfit whitespace-nowrap">
@@ -112,7 +125,7 @@ export default function RequestsClient() {
             <input
               type="text"
               placeholder={t('portal.header.searchPlaceholder')}
-              className="portal-input pl-10 h-10 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 font-medium w-full min-w-0"
+              className="portal-input pl-10 h-10 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 font-medium w-full min-w-0 font-outfit"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -148,8 +161,8 @@ export default function RequestsClient() {
           ) : filteredRequests.length > 0 ? (
             <table className="w-full text-left border-collapse min-w-[600px]">
               <thead>
-                <tr className="bg-slate-50/50 dark:bg-slate-900/50">
-                  <th className="px-3 md:px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest cursor-default min-w-[200px]">{t('portal.requests.table.title')}</th>
+                <tr className="bg-slate-50/50 dark:bg-slate-900/50 cursor-default">
+                  <th className="px-3 md:px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest min-w-[200px]">{t('portal.requests.table.title')}</th>
                   <th className="px-3 md:px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center whitespace-nowrap">{t('portal.requests.table.status')}</th>
                   <th className="px-3 md:px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center whitespace-nowrap">{t('portal.requests.table.priority')}</th>
                   <th className="px-3 md:px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center whitespace-nowrap hidden md:table-cell">{t('portal.requests.table.created')}</th>
@@ -157,8 +170,8 @@ export default function RequestsClient() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {filteredRequests.map((req) => (
-                  <tr key={req.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors group">
+                {paginatedRequests.map((req) => (
+                  <tr key={req.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all group">
                     <td className="px-3 md:px-6 py-4 min-w-0">
                       <Link href={`/portal/org/${orgId}/requests/${req.id}/`} className="flex flex-col min-w-0">
                         <span className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate font-outfit">
@@ -220,11 +233,11 @@ export default function RequestsClient() {
                 <Search className="text-slate-200 dark:text-slate-800" size={36} />
               </div>
               <div className="space-y-1">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">{t('portal.common.noData')}</h3>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">{t('portal.requests.emptyTitle')}</h3>
                 <p className="text-slate-500 dark:text-slate-400 text-sm max-w-sm font-medium">
                   {searchQuery || activeFilter !== 'All'
-                    ? t('portal.dashboard.pipeline.emptyDescription' as any)
-                    : t('portal.dashboard.pipeline.emptyDescription' as any)}
+                    ? t('portal.requests.emptySearch')
+                    : t('portal.requests.emptyDescription')}
                 </p>
               </div>
               {!searchQuery && activeFilter === 'All' && (
@@ -238,16 +251,29 @@ export default function RequestsClient() {
 
         {/* Footer info */}
         {!loading && filteredRequests.length > 0 && (
-          <div className="p-4 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-black text-slate-400 bg-slate-50/50 dark:bg-slate-900/50 min-w-0">
-            <span className="uppercase tracking-widest truncate min-w-0">
-              {t('portal.common.showing')
-                .replace('{count}', filteredRequests.length.toString())
-                .replace('{total}', requests.length.toString())}
+          <div className="p-5 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/30 dark:bg-slate-900/30 min-w-0">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest truncate min-w-0">
+              {t('portal.common.showing', { count: paginatedRequests.length, total: filteredRequests.length })}
             </span>
-            <div className="flex items-center gap-3 shrink-0">
-               <button className="hover:text-slate-900 dark:hover:text-slate-200 transition-colors uppercase tracking-widest p-1 border-b-2 border-transparent disabled:opacity-30 whitespace-nowrap" disabled>{t('portal.common.prev')}</button>
-               <span className="w-1 h-1 rounded-full bg-slate-300 shrink-0" />
-               <button className="hover:text-slate-900 dark:hover:text-slate-200 transition-colors uppercase tracking-widest p-1 border-b-2 border-transparent disabled:opacity-30 whitespace-nowrap" disabled={filteredRequests.length < 10}>{t('portal.common.next')}</button>
+            <div className="flex items-center gap-2 shrink-0">
+               <PortalButton
+                 variant="outline"
+                 size="sm"
+                 className="h-8 px-4 text-[10px] font-black uppercase tracking-widest"
+                 onClick={handlePrevPage}
+                 disabled={currentPage === 1}
+               >
+                 {t('portal.common.prev')}
+               </PortalButton>
+               <PortalButton
+                 variant="outline"
+                 size="sm"
+                 className="h-8 px-4 text-[10px] font-black uppercase tracking-widest"
+                 onClick={handleNextPage}
+                 disabled={currentPage === totalPages}
+               >
+                 {t('portal.common.next')}
+               </PortalButton>
             </div>
           </div>
         )}

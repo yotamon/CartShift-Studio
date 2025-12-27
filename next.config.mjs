@@ -1,5 +1,9 @@
 import createNextIntlPlugin from 'next-intl/plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const withNextIntl = createNextIntlPlugin();
 
@@ -8,10 +12,13 @@ const nextConfig = {
   ...(process.env.NODE_ENV === 'production' && { output: 'export' }),
   trailingSlash: true,
   skipTrailingSlashRedirect: true,
-  distDir: 'build_out',
+  ...(process.env.NODE_ENV === 'production' && { distDir: 'build_out' }),
   assetPrefix: '',
 
-  transpilePackages: ['firebase', 'next-intl'],
+  // Explicitly set the workspace root to avoid lockfile detection issues
+  outputFileTracingRoot: __dirname,
+
+  transpilePackages: ['firebase', 'next-intl', '@react-pdf/renderer'],
   images: {
     unoptimized: true,
     formats: ['image/avif', 'image/webp'],
@@ -63,6 +70,19 @@ const nextConfig = {
         );
       },
     ];
+
+    // Use a single RegExp to ignore directories and Windows system files
+    config.watchOptions = {
+      ...config.watchOptions,
+      ignored: /([/\\](node_modules|\.git|\.next|build_out|out|coverage|\.firebase)[/\\])|(DumpStack\.log\.tmp|hiberfil\.sys|pagefile\.sys|swapfile\.sys)$/i,
+      aggregateTimeout: 300,
+      poll: false,
+    };
+
+    config.infrastructureLogging = {
+      ...config.infrastructureLogging,
+      level: 'error',
+    };
 
     return config;
   },

@@ -1,6 +1,11 @@
 const { onRequest } = require("firebase-functions/v2/https");
+const { onDocumentCreated, onDocumentUpdated } = require("firebase-functions/v2/firestore");
 const { defineSecret } = require("firebase-functions/params");
 const admin = require("firebase-admin");
+const fs = require("fs");
+const path = require("path");
+const nodemailer = require("nodemailer");
+const PDFDocument = require("pdfkit");
 
 admin.initializeApp();
 
@@ -61,6 +66,154 @@ function checkRateLimit(map, key, maxRequests) {
 const gmailUser = defineSecret("GMAIL_USER", { required: false });
 const gmailPassword = defineSecret("GMAIL_APP_PASSWORD", { required: false });
 const contactEmail = defineSecret("CONTACT_EMAIL", { required: false });
+
+// Helper to send email
+async function sendPortalEmail(to, subject, templateName, data) {
+	const user = gmailUser.value();
+	const pass = gmailPassword.value();
+
+	if (!user || !pass) {
+		console.log("Email skipped: GMAIL_USER or GMAIL_APP_PASSWORD not set.");
+		return;
+	}
+
+	try {
+		const baseTemplate = fs.readFileSync(path.join(__dirname, "emails", "base.html"), "utf8");
+		const contentTemplate = fs.readFileSync(path.join(__dirname, "emails", `${templateName}.html`), "utf8");
+
+		// Simple mustache-like replacement
+		let body = contentTemplate;
+		Object.keys(data).forEach(key => {
+			const regex = new RegExp(`{{${key}}}`, "g");
+			body = body.replace(regex, data[key]);
+		});
+
+		// Handle triple braces for unescaped content if needed (like the body in base)
+		let html = baseTemplate.replace("{{{body}}}", body);
+		html = html.replace("{{title}}", subject);
+		html = html.replace("{{year}}", new Date().getFullYear());
+
+		const transporter = nodemailer.createTransport({
+			service: "gmail",
+			auth: { user, pass }
+		});
+
+		const mailOptions = {
+			from: `"CartShift Studio" <${user}>`,
+			to,
+			subject,
+			html
+		};
+
+		await transporter.sendMail(mailOptions);
+		console.log(`Email sent to ${to}: ${subject}`);
+	} catch (error) {
+		console.error("Error sending email:", error);
+	}
+}
+
+// Helper to generate and upload invoice PDF
+async function saveInvoicePDF(request) {
+	try {
+		const orgSnap = await admin.firestore().collection("portal_organizations").doc(request.orgId).get();
+		if (!orgSnap.exists) return;
+		const organization = orgSnap.data();
+
+		const pdfBuffer = await new Promise((resolve, reject) => {
+			const doc = new PDFDocument({ margin: 50 });
+			const buffers = [];
+			doc.on("data", buffers.push.bind(buffers));
+			doc.on("end", () => resolve(Buffer.concat(buffers)));
+			doc.on("error", reject);
+
+			// Header - Simplified design for PDFKit compatibility
+			doc.fillColor("#2563eb").fontSize(24).text("CartShift Studio", 50, 50);
+			doc.fillColor("#6b7280").fontSize(10).text("Premium E-commerce Development", 50, 80);
+
+			doc.fillColor("#111827").fontSize(20).text("INVOICE", 400, 50, { align: "right" });
+			doc.fillColor("#6b7280").fontSize(10).text(`#INV-${request.id.substring(0, 8).toUpperCase()}`, 400, 75, { align: "right" });
+			doc.text(`Date: ${new Date().toLocaleDateString()}`, 400, 90, { align: "right" });
+
+			doc.moveDown(3);
+
+			// Info Section
+			const y1 = doc.y;
+			doc.fillColor("#6b7280").fontSize(10).text("FROM", 50, y1);
+			doc.fillColor("#1a1a1a").text("CartShift Studio", 50, y1 + 15);
+			doc.text("Tel Aviv, Israel", 50, y1 + 30);
+			doc.text("support@cartshift.studio", 50, y1 + 45);
+
+			doc.fillColor("#6b7280").text("BILL TO", 350, y1);
+			doc.fillColor("#1a1a1a").text(organization.name, 350, y1 + 15);
+			doc.text(`Org ID: ${request.orgId}`, 350, y1 + 30);
+			if (organization.website) doc.text(organization.website, 350, y1 + 45);
+
+			doc.moveDown(4);
+
+			// Table Header
+			const tableY = doc.y;
+			doc.fillColor("#6b7280").fontSize(9).text("DESCRIPTION", 50, tableY);
+			doc.text("QTY", 350, tableY, { width: 50, align: "center" });
+			doc.text("PRICE", 400, tableY, { width: 70, align: "right" });
+			doc.text("TOTAL", 470, tableY, { width: 70, align: "right" });
+
+			doc.moveTo(50, tableY + 15).lineTo(540, tableY + 15).strokeColor("#e5e7eb").stroke();
+
+			// Table Items
+			let y = tableY + 25;
+			const currency = request.currency === "ILS" ? "₪" : "$";
+			const items = request.lineItems || [{ description: request.title, quantity: 1, unitPrice: request.totalAmount || 0 }];
+
+			items.forEach(item => {
+				doc.fillColor("#111827").fontSize(10).text(item.description, 50, y);
+				doc.text(item.quantity.toString(), 350, y, { width: 50, align: "center" });
+				doc.text(`${currency}${(item.unitPrice / 100).toLocaleString()}`, 400, y, { width: 70, align: "right" });
+				doc.text(`${currency}${(item.quantity * item.unitPrice / 100).toLocaleString()}`, 470, y, { width: 70, align: "right" });
+				y += 20;
+			});
+
+			doc.moveTo(50, y).lineTo(540, y).strokeColor("#e5e7eb").stroke();
+			doc.moveDown(2);
+
+			// Summary
+			const total = (request.totalAmount || 0) / 100;
+			doc.fillColor("#111827").fontSize(10).text("Total Paid", 350, doc.y, { width: 100, align: "right" });
+			doc.fontSize(14).fillColor("#2563eb").text(`${currency}${total.toLocaleString()}`, 450, doc.y - 4, { width: 90, align: "right" });
+
+			// Footer
+			doc.fontSize(8).fillColor("#9ca3af").text("Thank you for your business. Generated by CartShift Studio Portal.", 50, 750, { align: "center" });
+
+			doc.end();
+		});
+
+		// Upload to Storage
+		const bucket = admin.storage().bucket();
+		const filePath = `portal_invoices/${request.orgId}/${request.id}.pdf`;
+		const file = bucket.file(filePath);
+
+		await file.save(pdfBuffer, {
+			contentType: "application/pdf",
+			metadata: {
+				firebaseStorageDownloadTokens: request.id // Fixed token for easier access if public, or just use signed URLs
+			}
+		});
+
+		// Update Request with Invoice URL (signed URL or standard path)
+		await admin.firestore().collection("portal_requests").doc(request.id).update({
+			invoicePath: filePath,
+			invoiceGeneratedAt: admin.firestore.FieldValue.serverTimestamp()
+		});
+
+		console.log(`Invoice saved for request ${request.id} at ${filePath}`);
+	} catch (error) {
+		console.error("Error generating/saving invoice:", error);
+	}
+}
+
+async function getUserEmail(userId) {
+	const userSnap = await admin.firestore().collection("portal_users").doc(userId).get();
+	return userSnap.exists ? userSnap.data().email : null;
+}
 
 exports.contactForm = onRequest(
 	{
@@ -198,5 +351,147 @@ exports.newsletterSubscription = onRequest(
 			console.error("Newsletter subscription error:", error);
 			return res.status(500).json({ error: "Failed to process request" });
 		}
+	}
+);
+
+// ============================================
+// PORTAL NOTIFICATION TRIGGERS
+// ============================================
+
+const PORTAL_BASE_URL = "https://cartshift.studio/portal";
+
+// 1. New Request Trigger (Notify Admin)
+exports.onPortalRequestCreated = onDocumentCreated(
+	{ document: "portal_requests/{requestId}", secrets: [gmailUser, gmailPassword, contactEmail] },
+	async (event) => {
+		const requestData = event.data.data();
+		const orgSnap = await admin.firestore().collection("portal_organizations").doc(requestData.orgId).get();
+		const orgName = orgSnap.exists ? orgSnap.data().name : "Unknown Organization";
+
+		await sendPortalEmail(
+			contactEmail.value() || "yotamon@gmail.com",
+			`New Request: ${requestData.title}`,
+			"new_request",
+			{
+				clientName: requestData.createdByName || "A client",
+				organizationName: orgName,
+				requestTitle: requestData.title,
+				requestDescription: requestData.description,
+				requestType: requestData.type,
+				requestPriority: requestData.priority,
+				actionUrl: `${PORTAL_BASE_URL}/org/${requestData.orgId}/requests/${event.params.requestId}`
+			}
+		);
+	}
+);
+
+// 2. Request Updated Trigger (Notify Client on Status Change / Quote)
+exports.onPortalRequestUpdated = onDocumentUpdated(
+	{ document: "portal_requests/{requestId}", secrets: [gmailUser, gmailPassword] },
+	async (event) => {
+		const oldData = event.data.before.data();
+		const newData = event.data.after.data();
+
+		const clientEmail = await getUserEmail(newData.createdBy);
+		if (!clientEmail) return;
+
+		const requestUrl = `${PORTAL_BASE_URL}/org/${newData.orgId}/requests/${event.params.requestId}`;
+
+		// Detect Status Change
+		if (oldData.status !== newData.status) {
+			const statusConfigs = {
+				IN_PROGRESS: { label: "In Progress", style: "background: #dbeafe; color: #1e40af;" },
+				IN_REVIEW: { label: "In Review", style: "background: #fef3c7; color: #92400e;" },
+				DELIVERED: { label: "Delivered", style: "background: #d1fae5; color: #065f46;" },
+				PAID: { label: "Paid", style: "background: #ecfdf5; color: #065f46;" },
+				CLOSED: { label: "Closed", style: "background: #f1f5f9; color: #475569;" },
+			};
+
+			const config = statusConfigs[newData.status];
+			if (config) {
+				await sendPortalEmail(clientEmail, `Update: ${newData.title}`, "status_update", {
+					requestTitle: newData.title,
+					statusLabel: config.label,
+					statusStyle: config.style,
+					actionUrl: requestUrl
+				});
+			}
+		}
+
+		// 2. Detect Milestone Completion
+		if (newData.milestones && Array.isArray(newData.milestones)) {
+			const oldMilestones = oldData.milestones || [];
+			newData.milestones.forEach((m, index) => {
+				const oldM = oldMilestones[index];
+				if (m.status === "completed" && (!oldM || oldM.status !== "completed")) {
+					sendPortalEmail(clientEmail, `Milestone Completed: ${m.title}`, "milestone_completed", {
+						requestTitle: newData.title,
+						milestoneTitle: m.title,
+						actionUrl: requestUrl
+					});
+				}
+			});
+		}
+
+		// 3. Detect Quote added (New Quote)
+		if (!oldData.isBillable && newData.isBillable && newData.status === "QUOTED") {
+			const currencySymbol = newData.currency === "ILS" ? "₪" : "$";
+			const totalFormatted = `${currencySymbol}${(newData.totalAmount / 100).toLocaleString()}`;
+
+			await sendPortalEmail(clientEmail, `New Quote: ${newData.title}`, "quote_received", {
+				requestTitle: newData.title,
+				totalAmount: totalFormatted,
+				actionUrl: requestUrl
+			});
+		}
+
+		// Detect Payment (Paid)
+		if (!oldData.paidAt && newData.paidAt) {
+			const currencySymbol = newData.currency === "ILS" ? "₪" : "$";
+			const totalFormatted = `${currencySymbol}${(newData.totalAmount / 100).toLocaleString()}`;
+
+			await sendPortalEmail(clientEmail, `Payment Received: ${newData.title}`, "payment_receipt", {
+				requestTitle: newData.title,
+				totalAmount: totalFormatted,
+				paymentId: newData.paymentId || "N/A",
+				actionUrl: requestUrl
+			});
+
+			// Generate and store Invoice PDF
+			await saveInvoicePDF(newData);
+		}
+	}
+);
+
+// 3. New Comment Trigger
+exports.onPortalCommentCreated = onDocumentCreated(
+	{ document: "portal_comments/{commentId}", secrets: [gmailUser, gmailPassword, contactEmail] },
+	async (event) => {
+		const commentData = event.data.data();
+		if (commentData.isInternal) return; // Don't notify for internal comments
+
+		const requestSnap = await admin.firestore().collection("portal_requests").doc(commentData.requestId).get();
+		if (!requestSnap.exists) return;
+		const requestData = requestSnap.data();
+
+		const authorId = commentData.userId;
+		const isAgencyAuthor = authorId === "agency" || authorId.includes("agency"); // Rough check, improved below
+
+		// Try to find if the user is agency
+		const authorSnap = await admin.firestore().collection("portal_users").doc(authorId).get();
+		const isAgency = authorSnap.exists ? authorSnap.data().isAgency : false;
+
+		const targetEmail = isAgency
+			? await getUserEmail(requestData.createdBy) // Agency commented -> Notify client
+			: (contactEmail.value() || "yotamon@gmail.com"); // Client commented -> Notify admin
+
+		if (!targetEmail) return;
+
+		await sendPortalEmail(targetEmail, `New message: ${requestData.title}`, "new_comment", {
+			userName: commentData.userName,
+			requestTitle: requestData.title,
+			commentText: commentData.content,
+			actionUrl: `${PORTAL_BASE_URL}/org/${commentData.orgId}/requests/${commentData.requestId}`
+		});
 	}
 );

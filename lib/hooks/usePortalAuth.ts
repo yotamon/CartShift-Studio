@@ -13,6 +13,7 @@ interface UserData {
   isAgency: boolean;
   organizations?: string[];
   notificationPreferences?: PortalUser['notificationPreferences'];
+  onboardingComplete?: boolean;
 }
 
 // Helper to derive account type from existing data (for backward compatibility)
@@ -72,6 +73,7 @@ export function usePortalAuth() {
                 isAgency: accountType === ACCOUNT_TYPE.AGENCY,
                 organizations: data.organizations || [],
                 notificationPreferences: data.notificationPreferences,
+                onboardingComplete: data.onboardingComplete ?? false,
               });
             } else {
               // Fallback to auth user data if no Firestore doc

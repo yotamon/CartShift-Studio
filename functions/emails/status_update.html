@@ -1,0 +1,12 @@
+<h2>Request Update: {{statusLabel}}</h2>
+<p>Hello,</p>
+<p>The status of your request <strong>"{{requestTitle}}"</strong> has been updated to <strong>{{statusLabel}}</strong>.</p>
+
+<div style="background: #f8fafc; border-radius: 8px; padding: 20px; margin: 20px 0;">
+  <p style="margin: 0; font-size: 14px; color: #4b5563;">
+    Current Status: <span class="status-badge" style="{{statusStyle}}">{{statusLabel}}</span>
+  </p>
+</div>
+
+<p>Log in to your portal dashboard to view the full details and progress.</p>
+<a href="{{actionUrl}}" class="button">Go to Portal</a>

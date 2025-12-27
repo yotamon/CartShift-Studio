@@ -7,10 +7,10 @@ import {
 import { getFirestoreDb } from '@/lib/firebase';
 import { PortalUser } from '@/lib/types/portal';
 
-const db = getFirestoreDb();
 const USERS_COLLECTION = 'portal_users';
 
 export async function getPortalUser(userId: string): Promise<PortalUser | null> {
+  const db = getFirestoreDb();
   const docRef = doc(db, USERS_COLLECTION, userId);
   const docSnap = await getDoc(docRef);
 
@@ -28,6 +28,7 @@ export async function updatePortalUser(
   userId: string,
   data: Partial<PortalUser>
 ): Promise<void> {
+  const db = getFirestoreDb();
   const docRef = doc(db, USERS_COLLECTION, userId);
   await updateDoc(docRef, {
     ...data,

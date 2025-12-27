@@ -8,6 +8,7 @@
     "work": "Work",
     "pricing": "Pricing",
     "maintenance": "Maintenance",
+    "industries": "Industries",
     "company": "Company",
     "login": "Login",
     "portal": "Portal"
@@ -140,6 +141,30 @@
         "submit": "Upload File"
       }
     },
+    "organization": {
+      "createForm": {
+        "title": "Create New Organization",
+        "nameLabel": "Organization Name *",
+        "namePlaceholder": "e.g. Acme Corporation",
+        "websiteLabel": "Website",
+        "websitePlaceholder": "https://example.com",
+        "industryLabel": "Industry",
+        "industryPlaceholder": "e.g. E-commerce, SaaS, Marketing",
+        "note": "Note:",
+        "noteText": "You will be set as the owner of this organization and can invite team members later.",
+        "cancel": "Cancel",
+        "submit": "Create Organization",
+        "submitting": "Creating...",
+        "errors": {
+          "name": "Organization name must be at least 3 characters",
+          "nameLong": "Name is too long",
+          "website": "Please enter a valid URL",
+          "industry": "Industry must be at least 2 characters",
+          "auth": "You must be logged in to create an organization",
+          "generic": "Failed to create organization. Please try again."
+        }
+      }
+    },
     "sidebar": {
       "title": "CartShift",
       "subtitle": "Studio Portal",
@@ -184,6 +209,7 @@
       "save": "Save Changes",
       "cancel": "Cancel",
       "delete": "Delete",
+      "confirm": "Are you sure?",
       "edit": "Edit",
       "create": "Create",
       "back": "Back",
@@ -228,8 +254,19 @@
       },
       "insight": {
         "title": "Insight",
-        "partner": "Premium Partner",
-        "proPlan": "You're currently on the Pro plan. Enjoy priority design support and 24-hour turnaround.",
+        "partner": "Growth Partner",
+        "free": {
+          "title": "Free Starter",
+          "description": "You're on our Free plan. Perfect for small projects and getting started with our studio."
+        },
+        "pro": {
+          "title": "Pro Partner",
+          "description": "You're currently on the Pro plan. Enjoy priority design support and 24-hour turnaround."
+        },
+        "enterprise": {
+          "title": "Enterprise Partner",
+          "description": "Unlimited capacity and dedicated strategic support for your scaling commerce business."
+        },
         "viewBenefits": "View Plan Benefits"
       },
       "serviceStatus": {
@@ -239,7 +276,32 @@
         "dev": "Dev Capacity",
         "peak": "Peak Load",
         "avgResponse": "Avg. Response",
-        "responseTime": "< 2 hours"
+        "responseTime": "< 2 hours",
+        "etaLabel": "ETA for new requests",
+        "days": "days"
+      },
+      "analytics": {
+        "title": "Analytics Overview",
+        "totalRequests": "Total Requests",
+        "activeRequests": "Active Requests",
+        "completed": "Completed",
+        "avgResolution": "Avg. Resolution",
+        "totalSpend": "Total Spend",
+        "days": "days",
+        "inProgress": "Currently in progress",
+        "delivered": "Successfully delivered",
+        "payments": "Payments completed",
+        "last30Days": "in last 30 days",
+        "noData": "No Data Yet",
+        "noDataDesc": "Create your first request to see analytics"
+      },
+      "activity": {
+        "title": "Recent Activity",
+        "noActivity": "No recent activity",
+        "requestCreated": "New request created",
+        "requestCompleted": "Request completed",
+        "paymentReceived": "Payment received",
+        "justNow": "Just now"
       },
       "ecommerceTitle": "E-commerce Command Center",
       "ecommerceSubtitle": "Monitor your conversion roadmap, performance metrics, and active project lifecycles.",
@@ -247,9 +309,25 @@
         "emptyDescription": "No requests match your current filters. Try adjusting your search or filter criteria."
       }
     },
+    "activity": {
+      "title": "Recent Activity",
+      "actions": {
+        "created_request": "New project request filed",
+        "assigned_request": "Specialist assigned to project",
+        "added_pricing": "Quote issued for review",
+        "accepted_quote": "Project scope & quote approved",
+        "declined_quote": "Revision requested on quote",
+        "started_work": "Project moved to production",
+        "paid_request": "Payment verified & secured",
+        "added_comment": "New message in discussion"
+      }
+    },
     "requests": {
       "title": "Project Requests",
       "newRequest": "New Request",
+      "emptyTitle": "No requests found",
+      "emptyDescription": "Your project pipeline is clear. Start a new request to get moving.",
+      "emptySearch": "No requests match your current filters. Try adjusting your search or filter criteria.",
       "table": {
         "id": "ID",
         "title": "Title",
@@ -260,6 +338,7 @@
       },
       "status": {
         "new": "New",
+        "quoted": "Quoted",
         "queued": "Queued",
         "in_progress": "In Progress",
         "in_review": "In Review",
@@ -271,6 +350,14 @@
         "normal": "Normal",
         "high": "High",
         "urgent": "Urgent"
+      },
+      "type": {
+        "design": "Design",
+        "feature": "New Feature",
+        "bug": "Bug Fix",
+        "optimization": "Optimization",
+        "content": "Content Update",
+        "other": "Other"
       },
       "new": {
         "title": "Create New Request",
@@ -318,6 +405,8 @@
         "backToRequests": "Back to Requests",
         "designRequest": "Design Request",
         "details": "Request Details",
+        "overview": "Overview",
+        "assets": "Assets",
         "submissionDate": "Submission Date",
         "priorityStatus": "Priority Status",
         "discussion": "Discussion History",
@@ -358,7 +447,16 @@
         "sendQuote": "Send Quote",
         "acceptQuote": "Accept Quote",
         "decline": "Decline",
-        "pricingTitle": "Pricing"
+        "pricingTitle": "Pricing",
+        "history": "History",
+        "historyTitle": "Request Timeline",
+        "revisionDesc": "Please describe the changes you would like to see. Be as specific as possible to help our team deliver the perfect result.",
+        "revisionNotes": "Revision Details",
+        "revisionPlaceholder": "E.g., Please change the main color to cobalt blue and update the typography on the hero section...",
+        "submitRevision": "Submit Revision",
+        "reportIssue": "Report Issue",
+        "commentPlaceholder": "Share feedback or ask a question...",
+        "noComments": "No messages yet"
       },
       "types": {
         "audit": "Strategic Audit",
@@ -367,6 +465,33 @@
         "feature": "New Store Feature",
         "migration": "Platform Migration",
         "general": "General Task"
+      },
+      "milestones": {
+        "title": "Project Milestones",
+        "progress": "Project Progress",
+        "completed": "milestones completed",
+        "noMilestones": "No milestones defined yet",
+        "current": "Current",
+        "due": "Due",
+        "editMilestones": "Edit Milestones",
+        "addMilestone": "Add Milestone",
+        "saveMilestones": "Save Milestones",
+        "newMilestone": "New Milestone",
+        "milestoneName": "Milestone title",
+        "milestoneDesc": "Description (optional)",
+        "saveError": "Failed to save. Please try again.",
+        "status": {
+          "pending": "Pending",
+          "in_progress": "In Progress",
+          "completed": "Completed",
+          "blocked": "Blocked"
+        },
+        "templates": {
+          "title": "Apply Template",
+          "shopify": "Shopify Store Build",
+          "wordpress": "WordPress Project",
+          "maintenance": "Maintenance Task"
+        }
       }
     },
     "agency": {
@@ -408,9 +533,94 @@
         "emptyTitle": "No clients found",
         "emptyDesc": "Either you have no active clients or they don't match your search criteria.",
         "badge": {
-          "active": "ACTIVE"
+          "active": "ACTIVE",
+          "inactive": "INACTIVE",
+          "suspended": "SUSPENDED"
+        },
+        "plans": {
+          "free": "Free Starter",
+          "pro": "Pro Partner",
+          "enterprise": "Enterprise Partner"
         },
         "enterprise": "Enterprise Partner"
+      },
+      "settings": {
+        "title": "Agency Settings",
+        "subtitle": "Manage global agency configurations and team defaults.",
+        "tabs": {
+          "profile": "Agency Profile",
+          "services": "Service Packages",
+          "team": "Internal Team",
+          "integrations": "Integrations",
+          "billing": "Payouts"
+        },
+        "profile": {
+          "title": "Agency Profile",
+          "nameLabel": "Agency Name",
+          "namePlaceholder": "Your Agency Name",
+          "emailLabel": "Support Email",
+          "emailPlaceholder": "support@agency.com",
+          "websiteLabel": "Agency Website",
+          "websitePlaceholder": "https://agency.com",
+          "phoneLabel": "Phone Number",
+          "phonePlaceholder": "+1 (555) 123-4567",
+          "descLabel": "Agency Description",
+          "descPlaceholder": "Brief description of your agency and services...",
+          "save": "Save Changes",
+          "saving": "Saving...",
+          "success": "Settings saved successfully!"
+        },
+        "team": {
+          "title": "Internal Team",
+          "subtitle": "Manage your agency team members and permissions.",
+          "invite": "Invite Member",
+          "table": {
+            "member": "Member",
+            "status": "Status",
+            "joined": "Joined",
+            "action": "Action"
+          },
+          "active": "Active",
+          "inactive": "Inactive",
+          "suspended": "Suspended",
+          "edit": "Edit",
+          "noMembers": "No team members found",
+          "pendingInvites": "Pending Invitations",
+          "cancelInvite": "Cancel"
+        },
+        "services": {
+          "title": "Service Catalog",
+          "subtitle": "Define and manage the services your agency offers.",
+          "add": "Add Service",
+          "empty": "No services defined yet",
+          "emptyDesc": "Create your first service to start offering it to clients.",
+          "form": {
+            "addTitle": "Add New Service",
+            "addSubtitle": "Create a new service offering for your clients.",
+            "editTitle": "Edit Service",
+            "editSubtitle": "Update service details for your catalog.",
+            "fields": {
+              "name": "Service Name",
+              "namePlaceholder": "e.g. Website Maintenance",
+              "basePrice": "Base Price",
+              "currency": "Currency",
+              "category": "Category",
+              "categoryPlaceholder": "e.g. Development, Design, SEO",
+              "description": "Description",
+              "descriptionPlaceholder": "Briefly describe what this service includes...",
+              "active": "Active & Visible to Clients"
+            },
+            "actions": {
+              "create": "Create Service",
+              "update": "Update Service",
+              "cancel": "Cancel"
+            },
+            "errors": {
+              "required": "Name and price are required",
+              "failed": "Failed to save service"
+            }
+          }
+        }
       }
     },
     "team": {
@@ -548,21 +758,28 @@
         }
       },
       "billing": {
-        "title": "Premium Subscription",
-        "nextPayment": "Next payment cycle cycles on Jan 15, 2026",
-        "priority": "Priority Ecosystem",
-        "proStatus": "Pro Status",
-        "investment": "Investment",
-        "workflowLimit": "Workflow limit",
+        "title": "Investment & Plans",
+        "nextPayment": "Professional Tier Status",
+        "priority": "Partner Priority",
+        "proStatus": "Active Partner",
+        "investment": "Monthly Investment",
+        "workflowLimit": "Active Workflows",
         "teamAvailability": "Team Availability",
+        "perMonth": "/ month",
         "unlimited": "Unlimited",
-        "perMonth": "/mo",
-        "seats": "10 Seats",
-        "stripeDashboard": "Stripe Dashboard",
-        "invoicingHistory": "Invoicing History",
+        "seats": "10 Active Seats",
+        "stripeDashboard": "Stripe Portal",
+        "invoicingHistory": "Bill History",
+        "activeSubscription": "Active Subscription",
+        "enterpriseStatus": "Contact for terms",
+        "plans": {
+          "free": "Free Tier",
+          "pro": "Pro Studio",
+          "enterprise": "Enterprise"
+        },
         "encrypted": {
-          "title": "Encrypted Billing Pipeline",
-          "desc": "Transactions are handled exclusively via Stripe's certified PCI Level 1 infrastructure. Your financial signatures never leave the Stripe ecosystem."
+          "title": "Bank-Grade Encryption",
+          "desc": "All transaction data is handled securely via Stripe, protected by AES-256 encryption. We never store your full payment details."
         }
       }
     },
@@ -580,6 +797,8 @@
         "expired": "Expired",
         "canceled": "Canceled"
       },
+      "noOffersAgency": "Create your first pricing offer to get started.",
+      "noOffersClient": "No pricing offers available yet.",
       "form": {
         "titleLabel": "Offer Title",
         "titlePlaceholder": "e.g., Website Redesign Proposal",
@@ -618,6 +837,45 @@
         "pending": "Pending Review",
         "accepted": "Ready to Pay",
         "paid": "Completed"
+      }
+    },
+    "onboarding": {
+      "skip": "Skip tour",
+      "step": "Step",
+      "prev": "Back",
+      "next": "Next",
+      "start": "Let's Go!",
+      "goToStep": "Go to step",
+      "keyboardHint": "Use arrow keys to navigate, Enter to continue, Esc to skip",
+      "steps": {
+        "welcome": {
+          "title": "Welcome to CartShift Portal!",
+          "description": "We're thrilled to have you here. Let's take a quick tour to help you get started with your new workspace."
+        },
+        "dashboard": {
+          "title": "Your Dashboard",
+          "description": "This is your command center. See an overview of your projects, track progress, and quickly access recent activity."
+        },
+        "requests": {
+          "title": "Submit Requests",
+          "description": "Need something done? Create requests for new features, bug fixes, optimizations, or any other work. Our team will review and get started."
+        },
+        "pricing": {
+          "title": "Pricing & Quotes",
+          "description": "Review pricing proposals from our team, accept quotes, and manage payments — all in one place."
+        },
+        "team": {
+          "title": "Team Collaboration",
+          "description": "Invite colleagues to your workspace. Everyone on your team can submit requests and track progress together."
+        },
+        "notifications": {
+          "title": "Stay Updated",
+          "description": "Never miss an update. We'll notify you when there's activity on your requests or important status changes."
+        },
+        "complete": {
+          "title": "You're All Set!",
+          "description": "Your workspace is ready. Start by creating your first request or explore the dashboard to see what's possible."
+        }
       }
     }
   },
@@ -1102,24 +1360,30 @@
   },
   "testimonials": {
     "title": "Success Stories",
-    "subtitle": "Don't just take our word for it",
+    "subtitle": "Real results from real clients",
     "items": [
       {
-        "quote": "CartShift Studio rebuilt our store experience end-to-end. Conversions improved quickly, and the site finally feels premium.",
+        "quote": "CartShift Studio rebuilt our store experience end-to-end. Our conversion rate jumped from 1.2% to 3.8% in just two months. The site finally feels premium and matches our brand.",
         "author": "Sarah Johnson",
-        "company": "Artisan Creations",
+        "company": "StyleCraft Boutique",
+        "role": "Founder & CEO",
+        "industry": "Fashion & Apparel",
         "rating": 5
       },
       {
-        "quote": "They handled our migration flawlessly and made the store noticeably faster. Customers felt the difference immediately.",
+        "quote": "They handled our migration from WooCommerce flawlessly. The new Shopify store is 60% faster and our checkout completion rate improved by 38%. Best investment we made this year.",
         "author": "Michael Chen",
-        "company": "TechGear Pro",
+        "company": "CloudSync Pro",
+        "role": "CTO",
+        "industry": "Tech & SaaS",
         "rating": 5
       },
       {
-        "quote": "They don't just ship a site. They stick around, iterate, and help us grow month after month.",
+        "quote": "They don't just ship a site. They stick around, iterate, and help us grow month after month. Our online reservations doubled within 90 days of the new website launch.",
         "author": "Emily Rodriguez",
-        "company": "Boutique Fashion Co",
+        "company": "Terra Kitchen Group",
+        "role": "Operations Director",
+        "industry": "Food & Beverage",
         "rating": 5
       }
     ]
@@ -1297,7 +1561,22 @@
       "button": "Start Your Project"
     },
     "viewProject": "View Project",
-    "comingSoon": "Case studies coming soon. We're documenting our recent projects."
+    "comingSoon": "Case studies coming soon. We're documenting our recent projects.",
+    "detail": {
+      "projectDetails": "Project Details",
+      "client": "Client",
+      "industry": "Industry",
+      "platform": "Platform",
+      "duration": "Duration",
+      "services": "Services",
+      "startProject": "Start Your Project",
+      "wantResults": "Want Similar Results?",
+      "wantResultsDesc": "Let's discuss your project and see how we can help you grow.",
+      "getConsultation": "Get a Free Consultation",
+      "viewMore": "View More Projects",
+      "noProjects": "No Projects Found",
+      "noProjectsDesc": "Try changing the filter to see more projects."
+    }
   },
   "pricing": {
     "hero": {

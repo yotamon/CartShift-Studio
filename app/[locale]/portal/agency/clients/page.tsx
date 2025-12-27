@@ -15,14 +15,15 @@ import {
   Loader2,
   ShieldCheck
 } from 'lucide-react';
-import { getAllOrganizations } from '@/lib/services/portal-organizations';
+import { getOrganizationsWithStats } from '@/lib/services/portal-organizations';
 import { Organization } from '@/lib/types/portal';
 import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
+import { cn } from '@/lib/utils';
 
 export default function AgencyClientsPage() {
   const t = useTranslations('portal');
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [organizations, setOrganizations] = useState<(Organization & { memberCount: number; requestCount: number })[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -30,7 +31,7 @@ export default function AgencyClientsPage() {
     async function fetchOrgs() {
       setLoading(true);
       try {
-        const data = await getAllOrganizations();
+        const data = await getOrganizationsWithStats();
         setOrganizations(data);
       } catch (error) {
         console.error('Error fetching organizations:', error);
@@ -100,7 +101,12 @@ export default function AgencyClientsPage() {
                       <Briefcase size={28} className="text-blue-600 opacity-80" />
                     </div>
                     <div className="flex items-center gap-2">
-                      <PortalBadge variant="green" className="text-[9px] font-black uppercase tracking-widest h-5">{t('agency.clients.badge.active')}</PortalBadge>
+                      <PortalBadge
+                        variant={org.status === 'inactive' ? 'gray' : org.status === 'suspended' ? 'red' : 'green'}
+                        className="text-[9px] font-black uppercase tracking-widest h-5"
+                      >
+                        {org.status ? t(`agency.clients.badge.${org.status}` as any) : t('agency.clients.badge.active')}
+                      </PortalBadge>
                       <button className="text-surface-300 hover:text-surface-900 dark:hover:text-white transition-colors p-1">
                         <MoreVertical size={18} />
                       </button>
@@ -112,15 +118,17 @@ export default function AgencyClientsPage() {
                   </h3>
 
                   <div className="flex items-center gap-2 mb-6">
-                    <ShieldCheck size={14} className="text-emerald-500" />
-                    <span className="text-xs font-bold text-surface-500 uppercase tracking-widest">{t('agency.clients.enterprise')}</span>
+                    <ShieldCheck size={14} className={cn(org.plan === 'enterprise' ? 'text-purple-500' : 'text-emerald-500')} />
+                    <span className="text-xs font-bold text-surface-500 uppercase tracking-widest">
+                      {org.plan ? t(`agency.clients.plans.${org.plan}` as any) : t('agency.clients.enterprise')}
+                    </span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 pt-6 border-t border-surface-50 dark:border-surface-800/50">
                     <div>
                       <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-1">{t('agency.clients.tickets')}</p>
                       <div className="flex items-center gap-2">
-                        <span className="text-lg font-bold text-surface-900 dark:text-white">12</span>
+                        <span className="text-lg font-bold text-surface-900 dark:text-white">{org.requestCount}</span>
                         <TrendingUp size={14} className="text-emerald-500" />
                       </div>
                     </div>
@@ -128,7 +136,7 @@ export default function AgencyClientsPage() {
                       <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-1">{t('agency.clients.members')}</p>
                       <div className="flex items-center gap-2 text-lg font-bold text-surface-900 dark:text-white">
                          <Users size={16} className="text-surface-400" />
-                         <span>{(org as any).memberCount || 5}</span>
+                         <span>{org.memberCount}</span>
                       </div>
                     </div>
                   </div>

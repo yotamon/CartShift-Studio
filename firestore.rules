@@ -20,9 +20,11 @@ service cloud.firestore {
     match /portal_users/{userId} {
       // Helper to check if current user is agency (checks both accountType and isAgency for backward compatibility)
       function isAgencyUser() {
-        let userDoc = get(/databases/$(database)/documents/portal_users/$(getUserId()));
-        return exists(/databases/$(database)/documents/portal_users/$(getUserId())) &&
-          (userDoc.data.accountType == 'AGENCY' || userDoc.data.isAgency == true);
+        let userDocPath = /databases/$(database)/documents/portal_users/$(getUserId());
+        return exists(userDocPath) && (
+          get(userDocPath).data.accountType == 'AGENCY' ||
+          get(userDocPath).data.isAgency == true
+        );
       }
 
       // Users can read their own document, agency users can read all
@@ -46,9 +48,11 @@ service cloud.firestore {
     // Portal Organizations
     match /portal_organizations/{orgId} {
       function isAgencyUser() {
-        let userDoc = get(/databases/$(database)/documents/portal_users/$(getUserId()));
-        return exists(/databases/$(database)/documents/portal_users/$(getUserId())) &&
-          (userDoc.data.accountType == 'AGENCY' || userDoc.data.isAgency == true);
+        let userDocPath = /databases/$(database)/documents/portal_users/$(getUserId());
+        return exists(userDocPath) && (
+          get(userDocPath).data.accountType == 'AGENCY' ||
+          get(userDocPath).data.isAgency == true
+        );
       }
 
       // Agency users can read all organizations, regular users can read organizations they're part of
@@ -65,6 +69,7 @@ service cloud.firestore {
 
       // Only owners can delete
       allow delete: if isAuthenticated() &&
+        exists(/databases/$(database)/documents/portal_members/$(orgId + '_' + getUserId())) &&
         get(/databases/$(database)/documents/portal_members/$(orgId + '_' + getUserId())).data.role == 'owner';
     }
 
@@ -103,14 +108,16 @@ service cloud.firestore {
       }
 
       function isOrgAdmin(orgId) {
-        let memberDoc = get(/databases/$(database)/documents/portal_members/$(orgId + '_' + getUserId()));
-        return memberDoc.data.role in ['owner', 'admin'];
+        let memberPath = /databases/$(database)/documents/portal_members/$(orgId + '_' + getUserId());
+        return exists(memberPath) && get(memberPath).data.role in ['owner', 'admin'];
       }
 
       function isAgencyUser() {
-        let userDoc = get(/databases/$(database)/documents/portal_users/$(getUserId()));
-        return exists(/databases/$(database)/documents/portal_users/$(getUserId())) &&
-          (userDoc.data.accountType == 'AGENCY' || userDoc.data.isAgency == true);
+        let userDocPath = /databases/$(database)/documents/portal_users/$(getUserId());
+        return exists(userDocPath) && (
+          get(userDocPath).data.accountType == 'AGENCY' ||
+          get(userDocPath).data.isAgency == true
+        );
       }
 
       // Agency users can read all requests, regular users can read requests in their organizations
@@ -125,12 +132,12 @@ service cloud.firestore {
       // Agency users can update any request, regular users can update requests in their organizations
       // Admins can update any request, regular members can update their own
       allow update: if isAuthenticated() &&
-        (isAgencyUser() || (isOrgMember(resource.data.orgId) &&
+        (isAgencyUser() || (resource != null && resource.data.orgId != null && isOrgMember(resource.data.orgId) &&
         (resource.data.createdBy == getUserId() || isOrgAdmin(resource.data.orgId))));
 
       // Agency users can delete any request, regular users can delete their own or admins can delete in their org
       allow delete: if isAuthenticated() &&
-        (isAgencyUser() || (isOrgMember(resource.data.orgId) &&
+        (isAgencyUser() || (resource != null && resource.data.orgId != null && isOrgMember(resource.data.orgId) &&
         (resource.data.createdBy == getUserId() || isOrgAdmin(resource.data.orgId))));
     }
 
@@ -142,22 +149,29 @@ service cloud.firestore {
       }
 
       function isAgencyUser() {
-        let userDoc = get(/databases/$(database)/documents/portal_users/$(getUserId()));
-        return exists(/databases/$(database)/documents/portal_users/$(getUserId())) &&
-          (userDoc.data.accountType == 'AGENCY' || userDoc.data.isAgency == true);
+        let userDocPath = /databases/$(database)/documents/portal_users/$(getUserId());
+        return exists(userDocPath) && (
+          get(userDocPath).data.accountType == 'AGENCY' ||
+          get(userDocPath).data.isAgency == true
+        );
       }
 
-      // Agency users can read all comments, regular users can read comments in their organizations
+      // Agency users can read all comments
+      // Regular users can read comments in their organizations
+      // For queries: Firestore validates each document that could match the query
+      // Since we filter by orgId in the query, this validates org membership
       allow read: if isAuthenticated() &&
-        (isAgencyUser() || (resource != null && resource.data.orgId != null && isOrgMember(resource.data.orgId)));
+        (isAgencyUser() ||
+         (resource != null && resource.data.orgId != null && isOrgMember(resource.data.orgId)));
 
-      // Authenticated users can create comments for orgs they belong to
+      // Agency users can create comments on any request
+      // Regular users can create comments for orgs they belong to
       allow create: if isAuthenticated() &&
-        isOrgMember(request.resource.data.orgId);
+        (isAgencyUser() || isOrgMember(request.resource.data.orgId));
 
       // Comment author can update/delete their own comments
       allow update, delete: if isAuthenticated() &&
-        isOwner(resource.data.userId);
+        resource != null && resource.data.userId != null && isOwner(resource.data.userId);
     }
 
     // Portal Files
@@ -168,14 +182,16 @@ service cloud.firestore {
       }
 
       function isOrgAdmin(orgId) {
-        let memberDoc = get(/databases/$(database)/documents/portal_members/$(orgId + '_' + getUserId()));
-        return memberDoc.data.role in ['owner', 'admin'];
+        let memberPath = /databases/$(database)/documents/portal_members/$(orgId + '_' + getUserId());
+        return exists(memberPath) && get(memberPath).data.role in ['owner', 'admin'];
       }
 
       function isAgencyUser() {
-        let userDoc = get(/databases/$(database)/documents/portal_users/$(getUserId()));
-        return exists(/databases/$(database)/documents/portal_users/$(getUserId())) &&
-          (userDoc.data.accountType == 'AGENCY' || userDoc.data.isAgency == true);
+        let userDocPath = /databases/$(database)/documents/portal_users/$(getUserId());
+        return exists(userDocPath) && (
+          get(userDocPath).data.accountType == 'AGENCY' ||
+          get(userDocPath).data.isAgency == true
+        );
       }
 
       // Agency users can read all files, regular users can read files in their organizations
@@ -188,23 +204,23 @@ service cloud.firestore {
 
       // File uploader or admins can delete files
       allow delete: if isAuthenticated() &&
-        isOrgMember(resource.data.orgId) &&
+        resource != null && resource.data.orgId != null && isOrgMember(resource.data.orgId) &&
         (resource.data.uploadedBy == getUserId() || isOrgAdmin(resource.data.orgId));
     }
 
     // Portal Notifications
     match /portal_notifications/{notificationId} {
       // Users can read their own notifications
-      allow read: if isAuthenticated() && resource.data.userId == getUserId();
+      allow read: if isAuthenticated() && resource != null && resource.data.userId == getUserId();
 
       // Authenticated users can create notifications (must be for themselves)
       allow create: if isAuthenticated() && request.resource.data.userId == getUserId();
 
       // Users can update their own notifications
-      allow update: if isAuthenticated() && resource.data.userId == getUserId();
+      allow update: if isAuthenticated() && resource != null && resource.data.userId == getUserId();
 
       // Users can delete their own notifications
-      allow delete: if isAuthenticated() && resource.data.userId == getUserId();
+      allow delete: if isAuthenticated() && resource != null && resource.data.userId == getUserId();
     }
 
     // Portal Pricing Requests
@@ -215,9 +231,11 @@ service cloud.firestore {
       }
 
       function isAgencyUser() {
-        let userDoc = get(/databases/$(database)/documents/portal_users/$(getUserId()));
-        return exists(/databases/$(database)/documents/portal_users/$(getUserId())) &&
-          (userDoc.data.accountType == 'AGENCY' || userDoc.data.isAgency == true);
+        let userDocPath = /databases/$(database)/documents/portal_users/$(getUserId());
+        return exists(userDocPath) && (
+          get(userDocPath).data.accountType == 'AGENCY' ||
+          get(userDocPath).data.isAgency == true
+        );
       }
 
       // Agency users can read all pricing requests, org members can read pricing requests for their organizations
@@ -229,7 +247,7 @@ service cloud.firestore {
 
       // Agency users can update any field
       // Org members can update to accept/decline and add client notes
-      allow update: if isAuthenticated() && isOrgMember(resource.data.orgId);
+      allow update: if isAuthenticated() && resource != null && resource.data.orgId != null && isOrgMember(resource.data.orgId);
 
       // Only agency users can delete pricing requests
       allow delete: if isAuthenticated() && isAgencyUser();

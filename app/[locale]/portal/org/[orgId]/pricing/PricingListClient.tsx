@@ -16,13 +16,13 @@ import {
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
-import { subscribeToOrgPricingRequests } from '@/lib/services/pricing-requests';
 import {
   PricingRequest,
   PRICING_STATUS_CONFIG,
   PRICING_STATUS,
   formatCurrency,
 } from '@/lib/types/pricing';
+import { subscribeToOrgPricingRequests, sendPricingRequest } from '@/lib/services/pricing-requests';
 import { format } from 'date-fns';
 import { enUS, he } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -49,11 +49,13 @@ export default function PricingListClient() {
   const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
   const t = useTranslations();
   const locale = useLocale();
   const { isAgency } = usePortalAuth();
 
-  const filters = ['All', 'DRAFT', 'SENT', 'ACCEPTED', 'PAID'];
+  const filters = ['All', PRICING_STATUS.DRAFT, PRICING_STATUS.SENT, PRICING_STATUS.ACCEPTED, PRICING_STATUS.PAID];
 
   useEffect(() => {
     if (!orgId || typeof orgId !== 'string') return undefined;
@@ -81,6 +83,21 @@ export default function PricingListClient() {
     }
   }, [orgId, isAgency, t]);
 
+  // Reset to page 1 when filter or search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeFilter, searchQuery]);
+
+  const handleSend = async (requestId: string) => {
+    try {
+      if (!confirm('Send this pricing offer to the client?')) return;
+      await sendPricingRequest(requestId);
+    } catch (err) {
+      console.error('Failed to send pricing request:', err);
+      alert('Failed to send. Please try again.');
+    }
+  };
+
   const filteredRequests = requests.filter((req) => {
     const matchesFilter =
       activeFilter === 'All' || req.status === activeFilter;
@@ -90,11 +107,17 @@ export default function PricingListClient() {
     return matchesFilter && matchesSearch;
   });
 
+  const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
+  const paginatedRequests = filteredRequests.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const handlePrevPage = () => setCurrentPage(p => Math.max(1, p - 1));
+  const handleNextPage = () => setCurrentPage(p => Math.min(totalPages, p + 1));
+
   if (error) {
     return (
       <div className="py-20 flex flex-col items-center justify-center text-center space-y-4">
         <AlertCircle className="w-12 h-12 text-rose-500" />
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">
           {t('portal.common.error')}
         </h2>
         <p className="text-slate-500 dark:text-slate-400 max-w-sm">{error}</p>
@@ -137,7 +160,7 @@ export default function PricingListClient() {
             <input
               type="text"
               placeholder={t('portal.header.searchPlaceholder')}
-              className="portal-input pl-10 h-10 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 font-medium w-full"
+              className="portal-input pl-10 h-10 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 font-medium w-full font-outfit"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -177,8 +200,8 @@ export default function PricingListClient() {
           ) : filteredRequests.length > 0 ? (
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50/50 dark:bg-slate-900/50">
-                  <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest cursor-default">
+                <tr className="bg-slate-50/50 dark:bg-slate-900/50 cursor-default">
+                  <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest">
                     {t('portal.pricing.form.titleLabel')}
                   </th>
                   <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">
@@ -196,10 +219,10 @@ export default function PricingListClient() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {filteredRequests.map((req) => (
+                {paginatedRequests.map((req) => (
                   <tr
                     key={req.id}
-                    className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors group"
+                    className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all group"
                   >
                     <td className="px-6 py-4">
                       <Link
@@ -248,7 +271,7 @@ export default function PricingListClient() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col items-center">
-                        <span className="text-sm font-bold text-slate-800 dark:text-slate-200 font-outfit">
+                        <span className="text-sm font-bold text-slate-800 dark:text-slate-200 font-outfit whitespace-nowrap">
                           {req.createdAt?.toDate
                             ? format(req.createdAt.toDate(), 'MMM d, yyyy', {
                                 locale: locale === 'he' ? he : enUS,
@@ -257,7 +280,7 @@ export default function PricingListClient() {
                         </span>
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">
                           {req.status === PRICING_STATUS.DRAFT
-                            ? 'Created'
+                            ? t('portal.pricing.status.draft')
                             : req.sentAt?.toDate
                               ? format(req.sentAt.toDate(), 'MMM d', {
                                   locale: locale === 'he' ? he : enUS,
@@ -274,7 +297,10 @@ export default function PricingListClient() {
                           </button>
                         </Link>
                         {isAgency && req.status === PRICING_STATUS.DRAFT && (
-                          <button className="p-2 text-slate-400 hover:text-green-600 dark:hover:text-green-400 transition-all rounded-xl hover:bg-green-50 dark:hover:bg-green-900/20">
+                          <button
+                            onClick={() => handleSend(req.id)}
+                            className="p-2 text-slate-400 hover:text-green-600 dark:hover:text-green-400 transition-all rounded-xl hover:bg-green-50 dark:hover:bg-green-900/20"
+                          >
                             <Send size={16} />
                           </button>
                         )}
@@ -301,13 +327,13 @@ export default function PricingListClient() {
                 </h3>
                 <p className="text-slate-500 dark:text-slate-400 text-sm max-w-sm font-medium">
                   {isAgency
-                    ? 'Create your first pricing offer to get started.'
-                    : 'No pricing offers available yet.'}
+                    ? t('portal.pricing.noOffersAgency')
+                    : t('portal.pricing.noOffersClient')}
                 </p>
               </div>
               {isAgency && !searchQuery && activeFilter === 'All' && (
                 <Link href={`/portal/org/${orgId}/pricing/new/`} className="pt-4">
-                  <PortalButton className="h-11 px-8 font-outfit">
+                  <PortalButton className="h-11 px-8 font-outfit shadow-lg shadow-blue-500/10">
                     {t('portal.pricing.newOffer')}
                   </PortalButton>
                 </Link>
@@ -318,10 +344,30 @@ export default function PricingListClient() {
 
         {/* Footer info */}
         {!loading && filteredRequests.length > 0 && (
-          <div className="p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-black text-slate-400 px-6 bg-slate-50/50 dark:bg-slate-900/50">
-            <span className="uppercase tracking-widest">
-              Showing {filteredRequests.length} of {requests.length} results
+          <div className="p-5 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/30 dark:bg-slate-900/30">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+              {t('portal.common.showing', { count: paginatedRequests.length, total: filteredRequests.length })}
             </span>
+            <div className="flex items-center gap-2">
+              <PortalButton
+                variant="outline"
+                size="sm"
+                className="h-8 px-4 text-[10px] font-black uppercase tracking-widest"
+                onClick={handlePrevPage}
+                disabled={currentPage === 1}
+              >
+                {t('portal.common.prev')}
+              </PortalButton>
+              <PortalButton
+                variant="outline"
+                size="sm"
+                className="h-8 px-4 text-[10px] font-black uppercase tracking-widest"
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+              >
+                {t('portal.common.next')}
+              </PortalButton>
+            </div>
           </div>
         )}
       </PortalCard>
