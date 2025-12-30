@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -28,7 +28,6 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
-import { useMemo, useRef } from 'react';
 import { uploadMultipleFiles, formatFileSize } from '@/lib/services/portal-files';
 import { updateRequest } from '@/lib/services/portal-requests';
 
@@ -69,6 +68,10 @@ export const CreateRequestForm = ({ orgId }: CreateRequestFormProps) => {
       }),
     [t]
   );
+
+  const openFilePicker = () => {
+    fileInputRef.current?.click();
+  };
 
   const {
     register,
@@ -259,15 +262,12 @@ export const CreateRequestForm = ({ orgId }: CreateRequestFormProps) => {
               <Paperclip size={14} className="text-blue-500" />
               {t('portal.requests.new.attachments')}
             </h3>
-            <span className="text-[10px] font-bold text-slate-400 font-outfit">
-              {t('portal.requests.new.uploadHelp')}
-            </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Upload Trigger */}
             <div
-              onClick={() => fileInputRef.current?.click()}
+              onClick={openFilePicker}
               className="border-2 border-dashed border-surface-200 dark:border-surface-800 rounded-2xl p-6 flex flex-col items-center justify-center text-center hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all cursor-pointer group"
             >
               <input

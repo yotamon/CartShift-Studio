@@ -11,17 +11,36 @@ import { hasLocale } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
-// Import messages directly for static export compatibility
-import enMessages from '@/messages/en.json';
-import heMessages from '@/messages/he.json';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cartshiftstudio.com';
 
-// Messages map for static lookup
-const messagesMap = {
-  en: enMessages,
-  he: heMessages,
-} as const;
+function loadMessages(locale: 'en' | 'he') {
+  try {
+    const filePath = join(process.cwd(), 'messages', `${locale}.json`);
+    const fileContents = readFileSync(filePath, 'utf8');
+    const trimmed = fileContents.trim();
+    return JSON.parse(trimmed);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`Failed to load messages for locale ${locale}:`, errorMessage);
+
+    if (locale === 'en') {
+      throw new Error(`Failed to load English messages: ${errorMessage}`);
+    }
+
+    try {
+      const fallbackPath = join(process.cwd(), 'messages', 'en.json');
+      const fallbackContents = readFileSync(fallbackPath, 'utf8');
+      const trimmed = fallbackContents.trim();
+      return JSON.parse(trimmed);
+    } catch (fallbackError) {
+      const fallbackMessage = fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
+      throw new Error(`Failed to load both ${locale} and fallback (en) messages. ${locale} error: ${errorMessage}. Fallback error: ${fallbackMessage}`);
+    }
+  }
+}
 
 export const metadata: Metadata = {
   title: {
@@ -61,17 +80,23 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  // Get messages directly from static import instead of getMessages()
-  // This avoids the headers() call that breaks static export
-  const messages = messagesMap[locale as keyof typeof messagesMap] || messagesMap.en;
+  const messages = loadMessages(locale as 'en' | 'he');
   const orgSchema = generateOrganizationSchema();
+
+  let schemaJson: string;
+  try {
+    schemaJson = JSON.stringify(orgSchema);
+  } catch (error) {
+    console.error('Failed to stringify organization schema:', error);
+    schemaJson = '{}';
+  }
 
   return (
     <>
       <Script
         id="organization-schema"
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        dangerouslySetInnerHTML={{ __html: schemaJson }}
       />
       <ThemeProvider>
         <NextIntlClientProvider messages={messages} locale={locale}>

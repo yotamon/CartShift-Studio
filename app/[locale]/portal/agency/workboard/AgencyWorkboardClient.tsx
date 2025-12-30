@@ -124,7 +124,7 @@ export default function AgencyWorkboardClient() {
               <div className="space-y-4 max-h-[calc(100vh-280px)] overflow-y-auto pr-1 scrollbar-hide">
                 {columnRequests.map(req => (
                   <Link key={req.id} href={`/portal/org/${req.orgId}/requests/${req.id}/`}>
-                    <PortalCard className="p-4 border-surface-200 dark:border-surface-800 shadow-sm hover:shadow-md hover:border-blue-200 dark:hover:border-blue-900 transition-all cursor-pointer group active:scale-[0.98]">
+                    <PortalCard className="p-3 md:p-4 border-surface-200 dark:border-surface-800 shadow-sm hover:shadow-md hover:border-blue-200 dark:hover:border-blue-900 transition-all cursor-pointer group active:scale-[0.98]">
                       <div className="flex items-start justify-between gap-3 mb-3">
                         <PortalBadge
                           variant={

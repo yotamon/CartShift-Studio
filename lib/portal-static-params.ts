@@ -1,6 +1,7 @@
 export const PORTAL_STATIC_ORG_ID = 'template';
 export const PORTAL_STATIC_REQUEST_ID = 'request';
 export const PORTAL_STATIC_PRICING_ID = 'pricing';
+export const PORTAL_STATIC_CLIENT_ID = 'template';
 export const PORTAL_DYNAMIC_PARAMS = process.env.NODE_ENV === 'development';
 export const SUPPORTED_LOCALES = ['en', 'he'] as const;
 
@@ -30,4 +31,12 @@ export function getPortalStaticRequestParams() {
  */
 export function getPortalStaticPricingParams() {
   return [{ orgId: PORTAL_STATIC_ORG_ID, pricingId: PORTAL_STATIC_PRICING_ID }];
+}
+
+/**
+ * For pages at /[locale]/portal/agency/clients/[clientId]
+ * Only need to return clientId - locale is handled by parent layout
+ */
+export function getPortalStaticClientParams() {
+  return [{ clientId: PORTAL_STATIC_CLIENT_ID }];
 }

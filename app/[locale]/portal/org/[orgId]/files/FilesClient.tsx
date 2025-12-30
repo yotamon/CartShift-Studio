@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
 import {
   FileText,
   Image as ImageIcon,
@@ -14,7 +13,7 @@ import {
   FileArchive,
   FileCode,
   File,
-  AlertCircle
+  AlertCircle,
 } from 'lucide-react';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
@@ -27,9 +26,10 @@ import { format } from 'date-fns';
 import { enUS, he } from 'date-fns/locale';
 import { UploadFileForm } from '@/components/portal/forms/UploadFileForm';
 import { useTranslations, useLocale } from 'next-intl';
+import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
 
 export default function FilesClient() {
-  const { orgId } = useParams();
+  const orgId = useResolvedOrgId();
   const [files, setFiles] = useState<FileAttachment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -67,7 +67,8 @@ export default function FilesClient() {
     if (mimeType.startsWith('image/')) return <ImageIcon size={20} />;
     if (mimeType.includes('pdf')) return <FileText size={20} />;
     if (mimeType.includes('zip') || mimeType.includes('archive')) return <FileArchive size={20} />;
-    if (mimeType.includes('javascript') || mimeType.includes('html') || mimeType.includes('css')) return <FileCode size={20} />;
+    if (mimeType.includes('javascript') || mimeType.includes('html') || mimeType.includes('css'))
+      return <FileCode size={20} />;
     return <File size={20} />;
   };
 
@@ -98,36 +99,40 @@ export default function FilesClient() {
   };
 
   if (loading) {
-     return (
-       <div className="space-y-6 animate-pulse" role="status" aria-live="polite">
-         <span className="sr-only">Loading files...</span>
-         <div className="flex justify-between items-center">
-           <div className="space-y-2">
-             <div className="h-8 w-48 bg-surface-200 dark:bg-surface-800 rounded-lg" />
-             <div className="h-4 w-64 bg-surface-100 dark:bg-surface-800 rounded-lg" />
-           </div>
-           <div className="h-10 w-32 bg-surface-200 dark:bg-surface-800 rounded-xl" />
-         </div>
-         <div className="rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden bg-white dark:bg-surface-950">
-           <div className="p-5 border-b border-surface-100 dark:border-surface-800 flex justify-between">
-             <div className="h-10 w-full md:w-96 bg-surface-100 dark:bg-surface-800 rounded-2xl" />
-             <div className="h-8 w-24 bg-surface-100 dark:bg-surface-800 rounded-xl" />
-           </div>
-           <div className="p-0">
-             <SkeletonTable rows={5} columns={5} />
-           </div>
-         </div>
-       </div>
-     );
-   }
+    return (
+      <div className="space-y-6 animate-pulse" role="status" aria-live="polite">
+        <span className="sr-only">Loading files...</span>
+        <div className="flex justify-between items-center">
+          <div className="space-y-2">
+            <div className="h-8 w-48 bg-surface-200 dark:bg-surface-800 rounded-lg" />
+            <div className="h-4 w-64 bg-surface-100 dark:bg-surface-800 rounded-lg" />
+          </div>
+          <div className="h-10 w-32 bg-surface-200 dark:bg-surface-800 rounded-xl" />
+        </div>
+        <div className="rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden bg-white dark:bg-surface-950">
+          <div className="p-5 border-b border-surface-100 dark:border-surface-800 flex justify-between">
+            <div className="h-10 w-full md:w-96 bg-surface-100 dark:bg-surface-800 rounded-2xl" />
+            <div className="h-8 w-24 bg-surface-100 dark:bg-surface-800 rounded-xl" />
+          </div>
+          <div className="p-0">
+            <SkeletonTable rows={5} columns={5} />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (error) {
     return (
       <div className="py-20 flex flex-col items-center justify-center text-center space-y-4">
         <AlertCircle className="w-12 h-12 text-rose-500" />
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">{t('portal.files.error.title')}</h2>
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">
+          {t('portal.files.error.title')}
+        </h2>
         <p className="text-slate-500 max-w-sm font-medium">{error}</p>
-        <PortalButton onClick={() => window.location.reload()}>{t('portal.files.error.retry')}</PortalButton>
+        <PortalButton onClick={() => window.location.reload()}>
+          {t('portal.files.error.retry')}
+        </PortalButton>
       </div>
     );
   }
@@ -136,8 +141,12 @@ export default function FilesClient() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">{t('portal.files.title')}</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">{t('portal.files.subtitle')}</p>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
+            {t('portal.files.title')}
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">
+            {t('portal.files.subtitle')}
+          </p>
         </div>
         <PortalButton
           onClick={() => setShowUploadModal(true)}
@@ -148,23 +157,26 @@ export default function FilesClient() {
         </PortalButton>
       </div>
 
-      <PortalCard className="p-0 border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden bg-white dark:bg-slate-950">
+      <PortalCard
+        noPadding
+        className="border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden bg-white dark:bg-slate-950"
+      >
         <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/30 dark:bg-slate-900/30">
-           <div className="relative w-full md:w-96">
-             <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-             <input
-               type="text"
-               placeholder={t('portal.files.searchPlaceholder')}
-               className="w-full pl-11 pr-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-900 dark:text-white"
-               value={searchQuery}
-               onChange={(e) => setSearchQuery(e.target.value)}
-             />
-           </div>
-           <div className="flex items-center gap-3">
-             <div className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[10px] font-black text-slate-500 uppercase tracking-widest">
-               {files.length} {t('portal.files.totalFiles')}
-             </div>
-           </div>
+          <div className="relative w-full md:w-96">
+            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              placeholder={t('portal.files.searchPlaceholder')}
+              className="w-full pl-11 pr-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-900 dark:text-white"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[10px] font-black text-slate-500 uppercase tracking-widest">
+              {files.length} {t('portal.files.totalFiles')}
+            </div>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -172,16 +184,29 @@ export default function FilesClient() {
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-slate-50/50 dark:bg-slate-900/50">
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit">{t('portal.files.table.identity')}</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit">{t('portal.files.table.metadata')}</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit">{t('portal.files.table.format')}</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit">{t('portal.files.table.transmission')}</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit text-right">{t('portal.files.table.actions')}</th>
+                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit">
+                    {t('portal.files.table.identity')}
+                  </th>
+                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit">
+                    {t('portal.files.table.metadata')}
+                  </th>
+                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit">
+                    {t('portal.files.table.format')}
+                  </th>
+                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit">
+                    {t('portal.files.table.transmission')}
+                  </th>
+                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit text-right">
+                    {t('portal.files.table.actions')}
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {filteredFiles.map(file => (
-                  <tr key={file.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-all group">
+                  <tr
+                    key={file.id}
+                    className="hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-all group"
+                  >
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-400 group-hover:text-blue-500 transition-all shadow-sm">
@@ -192,23 +217,33 @@ export default function FilesClient() {
                             {file.originalName}
                           </span>
                           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter mt-1">
-                            {t('portal.files.table.addedBy')} {file.uploadedByName || t('portal.files.table.system')}
+                            {t('portal.files.table.addedBy')}{' '}
+                            {file.uploadedByName || t('portal.files.table.system')}
                           </span>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-5">
-                       <span className="text-sm font-bold text-slate-600 dark:text-slate-300 font-outfit">{formatFileSize(file.size)}</span>
+                      <span className="text-sm font-bold text-slate-600 dark:text-slate-300 font-outfit">
+                        {formatFileSize(file.size)}
+                      </span>
                     </td>
                     <td className="px-6 py-5">
-                       <PortalBadge variant="gray" className="text-[9px] font-black border-slate-200 dark:border-slate-800">
-                         {file.mimeType.split('/').pop()?.toUpperCase() || 'FILE'}
-                       </PortalBadge>
+                      <PortalBadge
+                        variant="gray"
+                        className="text-[9px] font-black border-slate-200 dark:border-slate-800"
+                      >
+                        {file.mimeType.split('/').pop()?.toUpperCase() || 'FILE'}
+                      </PortalBadge>
                     </td>
                     <td className="px-6 py-5">
-                       <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tight">
-                          {file.uploadedAt?.toDate ? format(file.uploadedAt.toDate(), 'MMM d, yyyy', { locale: locale === 'he' ? he : enUS }) : t('portal.files.recentlyAdded')}
-                       </span>
+                      <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tight">
+                        {file.uploadedAt?.toDate
+                          ? format(file.uploadedAt.toDate(), 'MMM d, yyyy', {
+                              locale: locale === 'he' ? he : enUS,
+                            })
+                          : t('portal.files.recentlyAdded')}
+                      </span>
                     </td>
                     <td className="px-6 py-5 text-right">
                       <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
@@ -249,17 +284,21 @@ export default function FilesClient() {
             <PortalEmptyState
               icon={FileText}
               title={t('portal.files.empty.title')}
-              description={searchQuery ? t('portal.files.empty.search') : t('portal.files.empty.noFiles')}
-              action={!searchQuery && (
-                <PortalButton
-                  onClick={() => setShowUploadModal(true)}
-                  variant="outline"
-                  size="sm"
-                  className="mt-6 font-outfit border-slate-200 dark:border-slate-800"
-                >
-                  {t('portal.files.empty.uploadFirst')}
-                </PortalButton>
-              )}
+              description={
+                searchQuery ? t('portal.files.empty.search') : t('portal.files.empty.noFiles')
+              }
+              action={
+                !searchQuery && (
+                  <PortalButton
+                    onClick={() => setShowUploadModal(true)}
+                    variant="outline"
+                    size="sm"
+                    className="mt-6 font-outfit border-slate-200 dark:border-slate-800"
+                  >
+                    {t('portal.files.empty.uploadFirst')}
+                  </PortalButton>
+                )
+              }
               className="py-24"
             />
           )}
@@ -276,4 +315,3 @@ export default function FilesClient() {
     </div>
   );
 }
-

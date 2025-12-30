@@ -14,7 +14,7 @@ import {
   onSnapshot,
   serverTimestamp,
 } from 'firebase/firestore';
-import { getFirestoreDb } from '@/lib/firebase';
+import { getFirestoreDb, waitForAuth } from '@/lib/firebase';
 import {
   PricingRequest,
   CreatePricingRequestData,
@@ -25,9 +25,6 @@ import {
   calculateTotalAmount,
   generateLineItemId,
 } from '@/lib/types/pricing';
-
-// Initialize Firestore
-const db = getFirestoreDb();
 
 const PRICING_REQUESTS_COLLECTION = 'portal_pricing_requests';
 
@@ -68,6 +65,8 @@ export async function createPricingRequest(
     updatedAt: serverTimestamp(),
   };
 
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = await addDoc(collection(db, PRICING_REQUESTS_COLLECTION), requestData);
 
   // Update linked requests with the pricing offer ID
@@ -95,6 +94,8 @@ export async function createPricingRequest(
 // ============================================
 
 export async function getPricingRequest(requestId: string): Promise<PricingRequest | null> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   try {
     const docRef = doc(db, PRICING_REQUESTS_COLLECTION, requestId);
     const docSnap = await getDoc(docRef);
@@ -125,6 +126,8 @@ export async function getPricingRequestsByOrg(
     createdBy?: string;
   }
 ): Promise<PricingRequest[]> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   let q = query(
     collection(db, PRICING_REQUESTS_COLLECTION),
     where('orgId', '==', orgId),
@@ -188,6 +191,8 @@ export async function updatePricingRequest(
   requestId: string,
   data: UpdatePricingRequestData
 ): Promise<void> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = doc(db, PRICING_REQUESTS_COLLECTION, requestId);
   const updateData: Record<string, unknown> = {
     updatedAt: serverTimestamp(),
@@ -215,6 +220,8 @@ export async function updatePricingRequest(
 }
 
 export async function sendPricingRequest(requestId: string): Promise<void> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = doc(db, PRICING_REQUESTS_COLLECTION, requestId);
   await updateDoc(docRef, {
     status: PRICING_STATUS.SENT,
@@ -224,6 +231,8 @@ export async function sendPricingRequest(requestId: string): Promise<void> {
 }
 
 export async function acceptPricingRequest(requestId: string, clientNotes?: string): Promise<void> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = doc(db, PRICING_REQUESTS_COLLECTION, requestId);
   const updateData: Record<string, unknown> = {
     status: PRICING_STATUS.ACCEPTED,
@@ -239,6 +248,8 @@ export async function acceptPricingRequest(requestId: string, clientNotes?: stri
 }
 
 export async function declinePricingRequest(requestId: string, reason?: string): Promise<void> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = doc(db, PRICING_REQUESTS_COLLECTION, requestId);
   const updateData: Record<string, unknown> = {
     status: PRICING_STATUS.DECLINED,
@@ -258,6 +269,8 @@ export async function submitClientEdits(
   lineItems: PricingLineItem[],
   clientNotes?: string
 ): Promise<void> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = doc(db, PRICING_REQUESTS_COLLECTION, requestId);
   await updateDoc(docRef, {
     status: PRICING_STATUS.CLIENT_EDITED,
@@ -273,6 +286,8 @@ export async function markPricingRequestPaid(
   paymentId: string,
   paymentMethod: 'paypal' = 'paypal'
 ): Promise<void> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = doc(db, PRICING_REQUESTS_COLLECTION, pricingRequestId);
 
   // First, get the pricing request to access linked request IDs
@@ -305,6 +320,8 @@ export async function markPricingRequestPaid(
 }
 
 export async function cancelPricingRequest(requestId: string): Promise<void> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = doc(db, PRICING_REQUESTS_COLLECTION, requestId);
   await updateDoc(docRef, {
     status: PRICING_STATUS.CANCELED,
@@ -317,6 +334,8 @@ export async function cancelPricingRequest(requestId: string): Promise<void> {
 // ============================================
 
 export async function deletePricingRequest(requestId: string): Promise<void> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = doc(db, PRICING_REQUESTS_COLLECTION, requestId);
   await deleteDoc(docRef);
 }
@@ -329,24 +348,43 @@ export function subscribeToPricingRequest(
   requestId: string,
   callback: (request: PricingRequest | null) => void
 ): () => void {
-  const docRef = doc(db, PRICING_REQUESTS_COLLECTION, requestId);
-  return onSnapshot(
-    docRef,
-    (snapshot) => {
-      if (!snapshot.exists()) {
-        callback(null);
-        return;
-      }
-      callback({
-        id: snapshot.id,
-        ...snapshot.data(),
-      } as PricingRequest);
-    },
-    (error) => {
-      console.error('Error in pricing request snapshot:', error);
+  let unsubscribe: (() => void) | null = null;
+  let isUnsubscribed = false;
+
+  waitForAuth()
+    .then(() => {
+      if (isUnsubscribed) return;
+      const db = getFirestoreDb();
+      const docRef = doc(db, PRICING_REQUESTS_COLLECTION, requestId);
+      unsubscribe = onSnapshot(
+        docRef,
+        (snapshot) => {
+          if (!snapshot.exists()) {
+            callback(null);
+            return;
+          }
+          callback({
+            id: snapshot.id,
+            ...snapshot.data(),
+          } as PricingRequest);
+        },
+        (error) => {
+          console.error('Error in pricing request snapshot:', error);
+          callback(null);
+        }
+      );
+    })
+    .catch(error => {
+      console.error('Error waiting for auth in subscribeToPricingRequest:', error);
       callback(null);
+    });
+
+  return () => {
+    isUnsubscribed = true;
+    if (unsubscribe) {
+      unsubscribe();
     }
-  );
+  };
 }
 
 export function subscribeToOrgPricingRequests(
@@ -357,43 +395,62 @@ export function subscribeToOrgPricingRequests(
     excludeDrafts?: boolean;
   }
 ): () => void {
-  let q = query(
-    collection(db, PRICING_REQUESTS_COLLECTION),
-    where('orgId', '==', orgId),
-    orderBy('createdAt', 'desc')
-  );
+  let unsubscribe: (() => void) | null = null;
+  let isUnsubscribed = false;
 
-  // For clients, exclude drafts
-  if (options?.excludeDrafts) {
-    q = query(
-      collection(db, PRICING_REQUESTS_COLLECTION),
-      where('orgId', '==', orgId),
-      where('status', '!=', PRICING_STATUS.DRAFT),
-      orderBy('status'),
-      orderBy('createdAt', 'desc')
-    );
-  }
+  waitForAuth()
+    .then(() => {
+      if (isUnsubscribed) return;
+      const db = getFirestoreDb();
+      let q = query(
+        collection(db, PRICING_REQUESTS_COLLECTION),
+        where('orgId', '==', orgId),
+        orderBy('createdAt', 'desc')
+      );
 
-  return onSnapshot(
-    q,
-    (snapshot) => {
-      let requests = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as PricingRequest[];
-
-      // Client-side filtering for status if needed
-      if (options?.status && options.status.length > 0) {
-        requests = requests.filter((r) => options.status!.includes(r.status));
+      // For clients, exclude drafts
+      if (options?.excludeDrafts) {
+        q = query(
+          collection(db, PRICING_REQUESTS_COLLECTION),
+          where('orgId', '==', orgId),
+          where('status', '!=', PRICING_STATUS.DRAFT),
+          orderBy('status'),
+          orderBy('createdAt', 'desc')
+        );
       }
 
-      callback(requests);
-    },
-    (error) => {
-      console.error('Error in org pricing requests snapshot:', error);
+      unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          let requests = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as PricingRequest[];
+
+          // Client-side filtering for status if needed
+          if (options?.status && options.status.length > 0) {
+            requests = requests.filter((r) => options.status!.includes(r.status));
+          }
+
+          callback(requests);
+        },
+        (error) => {
+          console.error('Error in org pricing requests snapshot:', error);
+          callback([]);
+        }
+      );
+    })
+    .catch(error => {
+      console.error('Error waiting for auth in subscribeToOrgPricingRequests:', error);
       callback([]);
+    });
+
+  return () => {
+    isUnsubscribed = true;
+    if (unsubscribe) {
+      unsubscribe();
     }
-  );
+  };
 }
 
 // ============================================
@@ -435,6 +492,8 @@ export async function getPricingStats(orgId: string): Promise<{
  * Get pricing offer that contains a specific request
  */
 export async function getPricingOfferForRequest(requestId: string): Promise<PricingRequest | null> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   try {
     // Query for pricing requests that contain this requestId
     // Note: Firestore doesn't support 'array-contains' with composite indexes well,

@@ -93,8 +93,10 @@ export default function AgencyClientsClient() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredOrgs.length > 0 ? (
-            filteredOrgs.map((org) => (
-              <PortalCard key={org.id} className="p-0 border-surface-200 dark:border-surface-800 shadow-sm hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-900 transition-all group">
+            filteredOrgs.map((org) => {
+              console.log('[ClientCard] Org ID:', org.id, 'Name:', org.name);
+              return (
+              <PortalCard key={org.id} noPadding className="border-surface-200 dark:border-surface-800 shadow-sm hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-900 transition-all group">
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-6">
                     <div className="w-14 h-14 bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300">
@@ -144,15 +146,16 @@ export default function AgencyClientsClient() {
 
                 <div className="px-6 py-4 bg-surface-50/50 dark:bg-surface-900/50 border-t border-surface-50 dark:border-surface-800 rounded-b-2xl group-hover:bg-blue-600 transition-colors">
                   <Link
-                    href={`/portal/org/${org.id}/dashboard/`}
+                    href={`/portal/agency/clients/${org.id}/`}
                     className="flex items-center justify-between group-hover:text-white text-blue-600 dark:text-blue-400 transition-colors"
                   >
-                    <span className="text-xs font-black uppercase tracking-widest">{t('agency.clients.dashboard')}</span>
+                    <span className="text-xs font-black uppercase tracking-widest">{t('agency.clients.detail.overview')}</span>
                     <ArrowUpRight size={18} />
                   </Link>
                 </div>
               </PortalCard>
-            ))
+              );
+            })
           ) : (
             <div className="col-span-full py-20 text-center bg-white dark:bg-surface-950 rounded-3xl border border-surface-200 dark:border-surface-800">
                <Users className="w-16 h-16 text-surface-100 dark:text-surface-800 mx-auto mb-4" />

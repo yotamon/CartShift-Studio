@@ -21,7 +21,6 @@ export const FavoriteButton = ({
   variant = 'heart'
 }: FavoriteButtonProps) => {
   const [isActive, setIsActive] = useState(initialIsActive);
-  const [isHovered, setIsHovered] = useState(false);
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -36,8 +35,6 @@ export const FavoriteButton = ({
   return (
     <button
       onClick={handleClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       className={cn(
         "group relative flex items-center gap-2 p-2 rounded-full transition-colors",
         isActive

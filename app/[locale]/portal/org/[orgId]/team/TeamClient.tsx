@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useParams } from 'next/navigation';
 import {
   UserPlus,
   Shield,
@@ -13,10 +12,14 @@ import {
   AlertCircle,
   Copy,
   CheckCircle2,
+  UserMinus,
+  Settings,
 } from 'lucide-react';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
+import { PortalAvatar } from '@/components/portal/ui/PortalAvatar';
+import { Dropdown } from '@/components/ui/Dropdown';
 import { SkeletonMemberCard, PortalSkeleton } from '@/components/portal/ui/PortalSkeleton';
 import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
 import {
@@ -30,9 +33,10 @@ import { enUS, he } from 'date-fns/locale';
 import { InviteTeamMemberForm } from '@/components/portal/forms/InviteTeamMemberForm';
 import { cn } from '@/lib/utils';
 import { useTranslations, useLocale } from 'next-intl';
+import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
 
 export default function TeamClient() {
-  const { orgId } = useParams();
+  const orgId = useResolvedOrgId();
   const [members, setMembers] = useState<OrganizationMember[]>([]);
   const [invites, setInvites] = useState<Invite[]>([]);
   const [loading, setLoading] = useState(true);
@@ -123,19 +127,19 @@ export default function TeamClient() {
           <div className="lg:col-span-2 space-y-4">
             <PortalSkeleton className="h-4 w-32" />
             <div className="space-y-0 border border-surface-200 dark:border-surface-800 rounded-2xl overflow-hidden">
-               <SkeletonMemberCard />
-               <SkeletonMemberCard />
-               <SkeletonMemberCard />
+              <SkeletonMemberCard />
+              <SkeletonMemberCard />
+              <SkeletonMemberCard />
             </div>
           </div>
           <div className="space-y-4">
-             <PortalSkeleton className="h-4 w-32" />
-             <div className="space-y-6 border border-surface-200 dark:border-surface-800 rounded-2xl p-6">
-                <div className="space-y-4">
-                   <PortalSkeleton className="h-12 w-full" />
-                   <PortalSkeleton className="h-12 w-full" />
-                </div>
-             </div>
+            <PortalSkeleton className="h-4 w-32" />
+            <div className="space-y-6 border border-surface-200 dark:border-surface-800 rounded-2xl p-6">
+              <div className="space-y-4">
+                <PortalSkeleton className="h-12 w-full" />
+                <PortalSkeleton className="h-12 w-full" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -193,12 +197,15 @@ export default function TeamClient() {
                   className="p-5 flex items-center justify-between hover:bg-surface-50/50 dark:hover:bg-surface-900/30 transition-colors group"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-surface-50 dark:bg-surface-900 border border-surface-100 dark:border-surface-800 flex items-center justify-center font-bold text-blue-600 shadow-sm group-hover:scale-105 transition-transform">
-                      {member.name ? member.name[0] : member.email[0].toUpperCase()}
-                    </div>
+                    <PortalAvatar
+                      src={member.photoUrl}
+                      name={member.name}
+                      size="md"
+                      className="rounded-2xl shadow-sm group-hover:scale-105 transition-transform"
+                    />
                     <div>
                       <h4 className="font-bold text-surface-900 dark:text-white leading-none mb-1.5 font-outfit">
-                        {member.name || (t('portal.team.anonymous'))}
+                        {member.name || t('portal.team.anonymous')}
                       </h4>
                       <p className="text-xs font-bold text-surface-400">{member.email}</p>
                     </div>
@@ -214,12 +221,35 @@ export default function TeamClient() {
                     </div>
                     <PortalBadge variant={member.role === 'owner' ? 'blue' : 'green'}>
                       {member.role === 'owner'
-                        ? (t('portal.team.roles.owner'))
-                        : (t('portal.team.roles.member'))}
+                        ? t('portal.team.roles.owner')
+                        : t('portal.team.roles.member')}
                     </PortalBadge>
-                    <button className="text-surface-400 hover:text-surface-900 dark:hover:text-white p-2 transition-colors rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800">
-                      <MoreHorizontal size={18} />
-                    </button>
+                    <Dropdown
+                      trigger={
+                        <span className="text-surface-400 hover:text-surface-900 dark:hover:text-white p-2 transition-colors rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 inline-flex">
+                          <MoreHorizontal size={18} />
+                        </span>
+                      }
+                      items={[
+                        {
+                          label: 'Change Role',
+                          onClick: () => console.log('Change role', member.id),
+                          icon: <Settings size={16} />,
+                          disabled: member.role === 'owner',
+                        },
+                        {
+                          label: 'Remove Member',
+                          onClick: () => {
+                            if (confirm(`Remove ${member.name || member.email} from team?`)) {
+                              console.log('Remove member', member.id);
+                            }
+                          },
+                          icon: <UserMinus size={16} />,
+                          variant: 'danger',
+                          disabled: member.role === 'owner',
+                        },
+                      ]}
+                    />
                   </div>
                 </div>
               ))}
@@ -252,7 +282,7 @@ export default function TeamClient() {
                       {cancellingInvite === invite.id ? (
                         <Loader2 size={12} className="animate-spin" />
                       ) : (
-                        (t('portal.team.cancel'))
+                        t('portal.team.cancel')
                       )}
                     </button>
                   </div>

@@ -65,7 +65,7 @@ export default function InviteClient() {
               ? t('portal.auth.errors.alreadyAccepted')
               : t('portal.auth.errors.expired')
           );
-        } else if (inviteData.expiresAt.toDate() < new Date()) {
+        } else if (inviteData.expiresAt?.toDate && inviteData.expiresAt.toDate() < new Date()) {
           // Update expired status if user is authenticated, otherwise just show error
           if (isAuthenticated) {
             try {
@@ -84,10 +84,12 @@ export default function InviteClient() {
       }
     }
 
-    if (!authLoading) {
+    if (!authLoading && isAuthenticated) {
       fetchInvite();
+    } else if (!authLoading && !isAuthenticated) {
+      setLoading(false);
     }
-  }, [code, authLoading]);
+  }, [code, authLoading, t, isAuthenticated]);
 
   const handleAcceptInvite = async () => {
     if (!invite || !user || !userData) return;
@@ -101,22 +103,26 @@ export default function InviteClient() {
       const inviteSnap = await getDoc(inviteRef);
 
       if (!inviteSnap.exists()) {
-        throw new Error('Invite not found');
+        throw new Error(t('portal.auth.errors.inviteNotFound'));
       }
 
       const currentInvite = inviteSnap.data() as Invite;
 
       if (currentInvite.status !== 'pending') {
-        throw new Error('This invite has already been used');
+        throw new Error(t('portal.auth.errors.alreadyAccepted'));
       }
 
-      if (currentInvite.expiresAt.toDate() < new Date()) {
+      if (currentInvite.expiresAt?.toDate && currentInvite.expiresAt.toDate() < new Date()) {
         await updateDoc(inviteRef, { status: 'expired' });
-        throw new Error('This invite has expired');
+        throw new Error(t('portal.auth.errors.expired'));
       }
 
-      if (currentInvite.email.toLowerCase() !== user.email?.toLowerCase()) {
-        throw new Error('This invite was sent to a different email address');
+      if (
+        !currentInvite.email ||
+        !user.email ||
+        currentInvite.email.toLowerCase() !== user.email.toLowerCase()
+      ) {
+        throw new Error(t('portal.auth.errors.mismatch'));
       }
 
       const memberData = {
@@ -125,9 +131,9 @@ export default function InviteClient() {
         email: invite.email,
         role: invite.role,
         name: userData.name || null,
-        addedBy: invite.invitedBy,
-        addedAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
+        invitedBy: invite.invitedBy,
+        inviteId: invite.id,
+        joinedAt: serverTimestamp(),
       };
 
       await setDoc(doc(db, MEMBERS_COLLECTION, `${invite.orgId}_${user.uid}`), memberData);
@@ -165,6 +171,38 @@ export default function InviteClient() {
     );
   }
 
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 dark:bg-slate-950">
+        <PortalCard className="max-w-md w-full">
+          <div className="text-center space-y-4">
+            <Mail className="w-12 h-12 text-primary mx-auto" />
+            <h1 className="text-2xl font-bold">{t('portal.invite.title')}</h1>
+            <p className="text-muted-foreground">{t('portal.invite.guestIntro')}</p>
+            <div className="space-y-2">
+              <Link
+                href={`/portal/signup?redirect=/portal/invite/${code}`}
+                className="block"
+              >
+                <PortalButton className="w-full shadow-lg shadow-blue-500/20">
+                  {t('portal.invite.createAccount')}
+                </PortalButton>
+              </Link>
+              <Link
+                href={`/portal/login?redirect=/portal/invite/${code}`}
+                className="block"
+              >
+                <PortalButton variant="outline" className="w-full">
+                  {t('portal.invite.signIn')}
+                </PortalButton>
+              </Link>
+            </div>
+          </div>
+        </PortalCard>
+      </div>
+    );
+  }
+
   if (error && !invite) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6">
@@ -186,9 +224,9 @@ export default function InviteClient() {
     return null;
   }
 
-  const isExpired = invite.expiresAt.toDate() < new Date();
+  const isExpired = invite.expiresAt?.toDate ? invite.expiresAt.toDate() < new Date() : false;
   const isAccepted = invite.status === 'accepted';
-  const emailMatch = user?.email?.toLowerCase() === invite.email.toLowerCase();
+  const emailMatch = user?.email?.toLowerCase() === invite.email?.toLowerCase();
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 dark:bg-slate-950">
@@ -242,11 +280,13 @@ export default function InviteClient() {
                     <span className="font-medium">{invite.invitedByName}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-2 text-sm">
-                  <Clock className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">{t('portal.invite.expires')}</span>
-                  <span className="font-medium">{format(invite.expiresAt.toDate(), 'PPp')}</span>
-                </div>
+                {invite.expiresAt?.toDate && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <Clock className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">{t('portal.invite.expires')}</span>
+                    <span className="font-medium">{format(invite.expiresAt.toDate(), 'PPp')}</span>
+                  </div>
+                )}
               </div>
 
               {error && (

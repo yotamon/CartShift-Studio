@@ -180,9 +180,28 @@
       "subtitle": "Manage organization preferences and workspace.",
       "tabs": {
         "general": "General",
+        "profile": "My Profile",
         "notifications": "Notifications",
         "security": "Security",
         "billing": "Billing"
+      },
+      "profile": {
+        "title": "Personal Profile",
+        "subtitle": "Manage your individual identity and appearance",
+        "name": "Full Name",
+        "namePlaceholder": "Your Name",
+        "email": "Email Address",
+        "avatar": {
+          "title": "Profile Photo",
+          "desc": "Upload a professional thumbnail to represent you across the portal.",
+          "upload": "Upload Photo",
+          "change": "Change Photo",
+          "removing": "Removing...",
+          "remove": "Remove"
+        },
+        "save": "Update Profile",
+        "success": "Your profile has been updated!",
+        "error": "Failed to update profile"
       },
       "general": {
         "title": "Organization Profile",
@@ -508,7 +527,6 @@
         "attachments": "Attachments",
         "uploadText": "Click to upload assets",
         "uploadSubtext": "Images, PDFs, or ZIP files",
-        "uploadHelp": "Attaching relevant assets, brand guides, or screenshots helps our team deliver high-quality results faster.",
         "tips": {
           "title": "Pro Tips",
           "tip1": "Be specific about the goals and expected outcomes of this request.",
@@ -688,7 +706,63 @@
           "pro": "Pro Partner",
           "enterprise": "Enterprise Partner"
         },
-        "enterprise": "Enterprise Partner"
+        "enterprise": "Enterprise Partner",
+        "detail": {
+          "loading": "Loading client details...",
+          "backToClients": "Back to Clients",
+          "overview": "Client Overview",
+          "viewDashboard": "View Client Dashboard",
+          "editClient": "Edit Client",
+          "stats": {
+            "totalRequests": "Total Requests",
+            "activeRequests": "Active Requests",
+            "completedRequests": "Completed",
+            "teamMembers": "Team Members",
+            "avgResolution": "Avg. Resolution",
+            "totalRevenue": "Total Revenue",
+            "days": "days",
+            "lastActive": "Last Active",
+            "joinedDate": "Client Since"
+          },
+          "sections": {
+            "information": "Client Information",
+            "recentActivity": "Recent Activity",
+            "requests": "Recent Requests",
+            "team": "Team Members"
+          },
+          "info": {
+            "website": "Website",
+            "industry": "Industry",
+            "plan": "Plan",
+            "status": "Status",
+            "email": "Contact Email",
+            "phone": "Phone"
+          },
+          "actions": {
+            "createRequest": "Create Request for Client",
+            "viewAllRequests": "View All Requests",
+            "managePlan": "Manage Plan",
+            "sendEmail": "Send Email",
+            "exportData": "Export Client Data"
+          },
+          "requests": {
+            "viewAll": "View All",
+            "emptyTitle": "No requests yet",
+            "emptyDesc": "This client hasn't created any requests."
+          },
+          "team": {
+            "viewAll": "View All Members",
+            "owner": "Owner",
+            "admin": "Admin",
+            "member": "Member",
+            "emptyTitle": "No team members",
+            "emptyDesc": "This client hasn't invited any team members yet."
+          },
+          "activity": {
+            "emptyTitle": "No recent activity",
+            "emptyDesc": "No activity recorded for this client yet."
+          }
+        }
       },
       "settings": {
         "title": "Agency Settings",
@@ -824,9 +898,28 @@
       "subtitle": "Manage your organization and workspace preferences.",
       "tabs": {
         "general": "General",
+        "profile": "My Profile",
         "notifications": "Notifications",
         "security": "Security",
         "billing": "Billing"
+      },
+      "profile": {
+        "title": "Personal Profile",
+        "subtitle": "Manage your individual identity and appearance",
+        "name": "Full Name",
+        "namePlaceholder": "Your Name",
+        "email": "Email Address",
+        "avatar": {
+          "title": "Profile Photo",
+          "desc": "Upload a professional thumbnail to represent you across the portal.",
+          "upload": "Upload Photo",
+          "change": "Change Photo",
+          "removing": "Removing...",
+          "remove": "Remove"
+        },
+        "save": "Update Profile",
+        "success": "Your profile has been updated!",
+        "error": "Failed to update profile"
       },
       "general": {
         "title": "Organization Profile",
@@ -854,6 +947,13 @@
           "title": "Danger Zone",
           "description": "Permanently delete this organization and all its data. This cannot be undone.",
           "button": "Delete Workspace"
+        },
+        "onboarding": {
+          "title": "Restart Tour",
+          "description": "Re-experience the portal walkthrough to discover new features.",
+          "button": "Start Tour",
+          "success": "Onboarding will start on next page load",
+          "error": "Failed to reset onboarding status"
         }
       },
       "notifications": {

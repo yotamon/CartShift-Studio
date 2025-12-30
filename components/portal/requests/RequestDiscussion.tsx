@@ -2,13 +2,11 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { User, MessageSquare, Send, Loader2 } from 'lucide-react';
+import { MessageSquare, Send, Loader2 } from 'lucide-react';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { CommentItem } from './CommentItem';
 import { MentionInput } from '@/components/portal/ui/Discussion/MentionInput';
 import { Comment, PortalUser } from '@/lib/types/portal';
-import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
 
 interface RequestDiscussionProps {
   comments: Comment[];

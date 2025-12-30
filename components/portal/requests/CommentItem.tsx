@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { Comment } from '@/lib/types/portal';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { User, Smile, Reply } from 'lucide-react';
+import { Smile, Reply } from 'lucide-react';
 import { addReaction, removeReaction } from '@/lib/services/portal-comments';
 import { motion, AnimatePresence } from 'framer-motion';
+import { PortalAvatar } from '@/components/portal/ui/PortalAvatar';
 
 interface CommentItemProps {
   comment: Comment;
@@ -70,15 +71,13 @@ export const CommentItem = ({ comment, currentUserId, onReply, isReply = false }
         setShowReactions(false);
       }}
     >
-      {/* Avatar */}
       <div className={cn("flex-shrink-0", isAuthor && "order-last")}>
-        <div className="w-8 h-8 rounded-full bg-surface-200 dark:bg-surface-700 flex items-center justify-center overflow-hidden">
-          {comment.userPhotoUrl ? (
-            <img src={comment.userPhotoUrl} alt={comment.userName} className="w-full h-full object-cover" />
-          ) : (
-            <User size={14} className="text-surface-500" />
-          )}
-        </div>
+        <PortalAvatar
+          src={comment.userPhotoUrl}
+          name={comment.userName}
+          size="sm"
+          className="shadow-md"
+        />
       </div>
 
       {/* Content */}

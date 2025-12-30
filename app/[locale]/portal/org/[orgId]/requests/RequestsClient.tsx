@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
 import {
   Plus,
   Search,
@@ -14,12 +13,15 @@ import {
   X,
   Check,
   Trash2,
+  Edit,
+  Archive,
 } from 'lucide-react';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
 import { SkeletonTable } from '@/components/portal/ui/PortalSkeleton';
 import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
+import { Dropdown } from '@/components/ui/Dropdown';
 import { subscribeToOrgRequests } from '@/lib/services/portal-requests';
 import { createPricingRequest, sendPricingRequest } from '@/lib/services/pricing-requests';
 import {
@@ -33,13 +35,14 @@ import {
   calculateTotalAmount,
   CLIENT_STATUS_MAP,
   CLIENT_STATUS_CONFIG,
-  ClientStatus
+  ClientStatus,
 } from '@/lib/types/portal';
 import { format } from 'date-fns';
 import { enUS, he } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { useTranslations, useLocale } from 'next-intl';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
+import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
 import { Link, useRouter } from '@/i18n/navigation';
 
 const mapStatusColor = (color: string): 'blue' | 'green' | 'yellow' | 'red' | 'gray' => {
@@ -52,7 +55,7 @@ const mapStatusColor = (color: string): 'blue' | 'green' | 'yellow' | 'red' | 'g
 };
 
 export default function RequestsClient() {
-  const { orgId } = useParams();
+  const orgId = useResolvedOrgId();
   const router = useRouter();
   const { userData, loading: authLoading, isAuthenticated, isAgency } = usePortalAuth();
   const [requests, setRequests] = useState<Request[]>([]);
@@ -92,7 +95,7 @@ export default function RequestsClient() {
     setError(null);
 
     try {
-      const unsubscribe = subscribeToOrgRequests(orgId, (data) => {
+      const unsubscribe = subscribeToOrgRequests(orgId, data => {
         setRequests(data);
         setLoading(false);
       });
@@ -121,13 +124,17 @@ export default function RequestsClient() {
       }
     }
 
-    const matchesSearch = req.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          req.id.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch =
+      req.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      req.id.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
   const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
-  const paginatedRequests = filteredRequests.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const paginatedRequests = filteredRequests.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handlePrevPage = () => setCurrentPage(p => Math.max(1, p - 1));
   const handleNextPage = () => setCurrentPage(p => Math.min(totalPages, p + 1));
@@ -135,9 +142,7 @@ export default function RequestsClient() {
   // Multi-select helpers
   const toggleRequestSelection = (requestId: string) => {
     setSelectedRequestIds(prev =>
-      prev.includes(requestId)
-        ? prev.filter(id => id !== requestId)
-        : [...prev, requestId]
+      prev.includes(requestId) ? prev.filter(id => id !== requestId) : [...prev, requestId]
     );
   };
 
@@ -164,9 +169,7 @@ export default function RequestsClient() {
 
   const updateLineItem = (id: string, field: keyof PricingLineItem, value: string | number) => {
     setPricingLineItems(
-      pricingLineItems.map(item =>
-        item.id === id ? { ...item, [field]: value } : item
-      )
+      pricingLineItems.map(item => (item.id === id ? { ...item, [field]: value } : item))
     );
   };
 
@@ -176,8 +179,8 @@ export default function RequestsClient() {
     if (selectedRequestIds.length === 0) return;
     if (!pricingTitle.trim()) return;
 
-    const validItems = pricingLineItems.filter(item =>
-      item.description.trim() && item.quantity > 0 && item.unitPrice > 0
+    const validItems = pricingLineItems.filter(
+      item => item.description.trim() && item.quantity > 0 && item.unitPrice > 0
     );
     if (validItems.length === 0) return;
 
@@ -213,9 +216,13 @@ export default function RequestsClient() {
     return (
       <div className="py-20 flex flex-col items-center justify-center text-center space-y-4">
         <AlertCircle className="w-12 h-12 text-rose-500" />
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">{t('portal.common.error')}</h2>
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">
+          {t('portal.common.error')}
+        </h2>
         <p className="text-slate-500 dark:text-slate-400 max-w-sm">{error}</p>
-        <PortalButton onClick={() => window.location.reload()}>{t('portal.common.retry')}</PortalButton>
+        <PortalButton onClick={() => window.location.reload()}>
+          {t('portal.common.retry')}
+        </PortalButton>
       </div>
     );
   }
@@ -224,8 +231,12 @@ export default function RequestsClient() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 w-full min-w-0">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 min-w-0">
         <div className="min-w-0 flex-1">
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit truncate">{t('portal.requests.title')}</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium truncate font-outfit">{t('portal.dashboard.subtitle')}</p>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit truncate">
+            {t('portal.requests.title')}
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium truncate font-outfit">
+            {t('portal.dashboard.subtitle')}
+          </p>
         </div>
         <Link href={`/portal/org/${orgId}/requests/new/`} className="flex-shrink-0">
           <PortalButton className="flex items-center gap-2 shadow-lg shadow-blue-500/20 font-outfit whitespace-nowrap">
@@ -235,7 +246,10 @@ export default function RequestsClient() {
         </Link>
       </div>
 
-      <PortalCard className="p-0 overflow-hidden border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-950 w-full min-w-0">
+      <PortalCard
+        noPadding
+        className="overflow-hidden border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-950 w-full min-w-0"
+      >
         {/* Toolbar */}
         <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col lg:flex-row lg:items-center gap-4 bg-slate-50/50 dark:bg-slate-900/50 min-w-0">
           <div className="relative w-full lg:w-96 min-w-0 flex-shrink-0">
@@ -245,30 +259,29 @@ export default function RequestsClient() {
               placeholder={t('portal.header.searchPlaceholder')}
               className="portal-input pl-10 h-10 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 font-medium w-full min-w-0 font-outfit"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
             />
           </div>
           <div className="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 scrollbar-hide min-w-0 flex-1">
             <div className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-black text-slate-400 uppercase tracking-widest shrink-0">
-               <Filter size={12} /> {t('portal.common.filter')}:
+              <Filter size={12} /> {t('portal.common.filter')}:
             </div>
             {filters.map(filter => (
               <button
                 key={filter}
                 onClick={() => setActiveFilter(filter)}
                 className={cn(
-                  "px-3 py-1.5 text-sm font-bold rounded-lg whitespace-nowrap transition-all font-outfit shrink-0",
+                  'px-3 py-1.5 text-sm font-bold rounded-lg whitespace-nowrap transition-all font-outfit shrink-0',
                   activeFilter === filter
-                    ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
-                    : "text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800"
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
+                    : 'text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800'
                 )}
               >
                 {filter === 'All'
                   ? t('portal.common.all' as any)
                   : isAgency
                     ? t(`portal.requests.status.${filter.toLowerCase()}` as any)
-                    : CLIENT_STATUS_CONFIG[filter as ClientStatus]?.label || filter
-                }
+                    : CLIENT_STATUS_CONFIG[filter as ClientStatus]?.label || filter}
               </button>
             ))}
           </div>
@@ -282,7 +295,8 @@ export default function RequestsClient() {
                 {selectedRequestIds.length}
               </div>
               <span className="text-sm font-bold text-blue-800 dark:text-blue-200">
-                {t('portal.requests.selected' as never) || `${selectedRequestIds.length} requests selected`}
+                {t('portal.requests.selected' as never) ||
+                  `${selectedRequestIds.length} requests selected`}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -310,15 +324,15 @@ export default function RequestsClient() {
         {/* Table Content */}
         <div className="overflow-x-auto w-full min-w-0">
           {loading ? (
-             <div className="p-4" role="status" aria-live="polite">
-               <SkeletonTable rows={8} columns={6} />
-               <span className="sr-only">Loading requests...</span>
-             </div>
+            <div className="p-4" role="status" aria-live="polite">
+              <SkeletonTable rows={8} columns={6} />
+              <span className="sr-only">Loading requests...</span>
+            </div>
           ) : filteredRequests.length > 0 ? (
             <>
               {/* Mobile Card View */}
               <div className="md:hidden space-y-4 p-4">
-                {paginatedRequests.map((req) => (
+                {paginatedRequests.map(req => (
                   <div
                     key={req.id}
                     onClick={() => router.push(`/portal/org/${orgId}/requests/${req.id}/`)}
@@ -338,40 +352,57 @@ export default function RequestsClient() {
                           </span>
                         </div>
                       </div>
-                      <div className={cn(
-                        "w-2 h-2 rounded-full shrink-0 mt-1.5",
-                        req.priority === 'HIGH' || req.priority === 'URGENT' ? "bg-rose-500" :
-                        req.priority === 'NORMAL' ? "bg-amber-500" : "bg-blue-500"
-                      )} />
+                      <div
+                        className={cn(
+                          'w-2 h-2 rounded-full shrink-0 mt-1.5',
+                          req.priority === 'HIGH' || req.priority === 'URGENT'
+                            ? 'bg-rose-500'
+                            : req.priority === 'NORMAL'
+                              ? 'bg-amber-500'
+                              : 'bg-blue-500'
+                        )}
+                      />
                     </div>
 
                     {req.lastComment && (
-                       <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2.5 mb-3 border border-slate-100 dark:border-slate-800">
-                         <div className="flex items-center gap-1.5 mb-1">
-                           <MessageSquare size={10} className="text-blue-500" />
-                           <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">
-                             {req.lastComment.userName}
-                           </span>
-                         </div>
-                         <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
-                           {req.lastComment.content}
-                         </p>
-                       </div>
+                      <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2.5 mb-3 border border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <MessageSquare size={10} className="text-blue-500" />
+                          <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                            {req.lastComment.userName}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
+                          {req.lastComment.content}
+                        </p>
+                      </div>
                     )}
 
                     <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
                       {isAgency ? (
-                        <PortalBadge variant={mapStatusColor(STATUS_CONFIG[req.status]?.color || 'gray')} className="text-[10px]">
+                        <PortalBadge
+                          variant={mapStatusColor(STATUS_CONFIG[req.status]?.color || 'gray')}
+                          className="text-[10px]"
+                        >
                           {t(`portal.requests.status.${req.status.toLowerCase()}` as any)}
                         </PortalBadge>
                       ) : (
-                        <PortalBadge variant={mapStatusColor(CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[req.status]]?.color || 'gray')} className="text-[10px]">
+                        <PortalBadge
+                          variant={mapStatusColor(
+                            CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[req.status]]?.color || 'gray'
+                          )}
+                          className="text-[10px]"
+                        >
                           {CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[req.status]]?.label}
                         </PortalBadge>
                       )}
 
                       <span className="text-[10px] font-bold text-slate-400 font-outfit">
-                        {req.createdAt?.toDate ? format(req.createdAt.toDate(), 'MMM d', { locale: locale === 'he' ? he : enUS }) : ''}
+                        {req.createdAt?.toDate
+                          ? format(req.createdAt.toDate(), 'MMM d', {
+                              locale: locale === 'he' ? he : enUS,
+                            })
+                          : ''}
                       </span>
                     </div>
                   </div>
@@ -380,144 +411,205 @@ export default function RequestsClient() {
 
               {/* Desktop Table View */}
               <table className="hidden md:table w-full text-left border-collapse min-w-[600px]">
-              <thead>
-                <tr className="bg-slate-50/50 dark:bg-slate-900/50 cursor-default">
-                  {isAgency && (
-                    <th className="px-3 py-4 w-12">
-                      {/* Select All - could add later */}
+                <thead>
+                  <tr className="bg-slate-50/50 dark:bg-slate-900/50 cursor-default">
+                    {isAgency && (
+                      <th className="px-3 py-4 w-12">{/* Select All - could add later */}</th>
+                    )}
+                    <th className="px-3 md:px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest min-w-[200px]">
+                      {t('portal.requests.table.title')}
                     </th>
-                  )}
-                  <th className="px-3 md:px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest min-w-[200px]">{t('portal.requests.table.title')}</th>
-                  <th className="px-3 md:px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center whitespace-nowrap">{t('portal.requests.table.status')}</th>
-                  <th className="px-3 md:px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center whitespace-nowrap">{t('portal.requests.table.priority')}</th>
-                  <th className="px-3 md:px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center whitespace-nowrap hidden md:table-cell">{t('portal.requests.table.created')}</th>
-                  <th className="px-3 md:px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right whitespace-nowrap">{t('portal.common.actions')}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {paginatedRequests.map((req) => {
-                  const isSelected = selectedRequestIds.includes(req.id);
-                  const canSelect = isAgency && !req.pricingOfferId && req.status !== 'PAID' && req.status !== 'CLOSED';
-                  return (
-                    <tr
-                      key={req.id}
-                      onClick={() => router.push(`/portal/org/${orgId}/requests/${req.id}/`)}
-                      className={cn(
-                        "hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all group cursor-pointer",
-                        isSelected && "bg-blue-50 dark:bg-blue-900/10"
-                      )}
-                    >
-                      {isAgency && (
-                        <td className="px-3 py-4">
-                          {canSelect && (
+                    <th className="px-3 md:px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center whitespace-nowrap">
+                      {t('portal.requests.table.status')}
+                    </th>
+                    <th className="px-3 md:px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center whitespace-nowrap">
+                      {t('portal.requests.table.priority')}
+                    </th>
+                    <th className="px-3 md:px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center whitespace-nowrap hidden md:table-cell">
+                      {t('portal.requests.table.created')}
+                    </th>
+                    <th className="px-3 md:px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right whitespace-nowrap">
+                      {t('portal.common.actions')}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {paginatedRequests.map(req => {
+                    const isSelected = selectedRequestIds.includes(req.id);
+                    const canSelect =
+                      isAgency &&
+                      !req.pricingOfferId &&
+                      req.status !== 'PAID' &&
+                      req.status !== 'CLOSED';
+                    return (
+                      <tr
+                        key={req.id}
+                        onClick={() => router.push(`/portal/org/${orgId}/requests/${req.id}/`)}
+                        className={cn(
+                          'hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all group cursor-pointer',
+                          isSelected && 'bg-blue-50 dark:bg-blue-900/10'
+                        )}
+                      >
+                        {isAgency && (
+                          <td className="px-3 py-4">
+                            {canSelect && (
+                              <button
+                                type="button"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  toggleRequestSelection(req.id);
+                                }}
+                                className={cn(
+                                  'w-5 h-5 rounded flex items-center justify-center transition-all border-2',
+                                  isSelected
+                                    ? 'bg-blue-600 border-blue-600 text-white'
+                                    : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
+                                )}
+                              >
+                                {isSelected && <Check size={12} />}
+                              </button>
+                            )}
+                            {req.pricingOfferId && (
+                              <PortalBadge variant="green" className="text-[9px]">
+                                {t('portal.requests.hasPricing' as never) || 'Priced'}
+                              </PortalBadge>
+                            )}
+                          </td>
+                        )}
+                        <td className="px-3 md:px-6 py-4 min-w-0">
+                          <div className="flex flex-col min-w-0">
+                            <span className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate font-outfit">
+                              {req.title}
+                            </span>
+                            {req.lastComment && (
+                              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5 max-w-full flex items-center gap-1 pr-4">
+                                <span className="font-bold text-slate-700 dark:text-slate-300 shrink-0">
+                                  {req.lastComment.userName}:
+                                </span>
+                                <span className="truncate">{req.lastComment.content}</span>
+                              </span>
+                            )}
+                            <span className="text-xs font-bold text-slate-400 flex items-center gap-1.5 mt-1 font-outfit flex-wrap">
+                              {t('portal.requests.table.id')}:{' '}
+                              <span className="font-mono bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-[10px] tracking-tight shrink-0">
+                                {req.id.slice(0, 8)}
+                              </span>
+                              <span className="w-1 h-1 rounded-full bg-slate-300 shrink-0" />
+                              <span className="uppercase tracking-wider text-[10px] truncate">
+                                {req.type || t('portal.common.general')}
+                              </span>
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-3 md:px-6 py-4">
+                          <div className="flex justify-center">
+                            {isAgency ? (
+                              <PortalBadge
+                                variant={mapStatusColor(STATUS_CONFIG[req.status]?.color || 'gray')}
+                              >
+                                {t(`portal.requests.status.${req.status.toLowerCase()}` as any)}
+                              </PortalBadge>
+                            ) : (
+                              <PortalBadge
+                                variant={mapStatusColor(
+                                  CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[req.status]]?.color ||
+                                    'gray'
+                                )}
+                              >
+                                {CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[req.status]]?.label}
+                              </PortalBadge>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-3 md:px-6 py-4">
+                          <div className="flex items-center justify-center gap-2">
+                            <div
+                              className={cn(
+                                'w-2 h-2 rounded-full shrink-0',
+                                req.priority === 'HIGH' || req.priority === 'URGENT'
+                                  ? 'bg-rose-500 shadow-sm shadow-rose-500/50'
+                                  : req.priority === 'NORMAL'
+                                    ? 'bg-amber-500 shadow-sm shadow-amber-500/50'
+                                    : 'bg-blue-500 shadow-sm shadow-blue-500/50'
+                              )}
+                            />
+                            <span className="text-sm font-bold text-slate-600 dark:text-slate-300 font-outfit whitespace-nowrap">
+                              {t(`portal.requests.priority.${req.priority.toLowerCase()}` as any)}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-3 md:px-6 py-4 hidden md:table-cell">
+                          <div className="flex flex-col items-center">
+                            <span className="text-sm font-bold text-slate-800 dark:text-slate-200 font-outfit whitespace-nowrap">
+                              {req.createdAt?.toDate
+                                ? format(req.createdAt.toDate(), 'MMM d, yyyy', {
+                                    locale: locale === 'he' ? he : enUS,
+                                  })
+                                : t('portal.common.recently')}
+                            </span>
+                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">
+                              {t('portal.requests.table.created')}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-3 md:px-6 py-4 text-right">
+                          <div className="flex items-center justify-end gap-1">
                             <button
                               type="button"
-                              onClick={(e) => {
+                              onClick={e => {
                                 e.stopPropagation();
-                                toggleRequestSelection(req.id);
+                                router.push(`/portal/org/${orgId}/requests/${req.id}/`);
                               }}
-                              className={cn(
-                                "w-5 h-5 rounded flex items-center justify-center transition-all border-2",
-                                isSelected
-                                  ? "bg-blue-600 border-blue-600 text-white"
-                                  : "border-slate-300 dark:border-slate-600 hover:border-blue-400"
-                              )}
+                              className="p-2 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20"
                             >
-                              {isSelected && <Check size={12} />}
+                              <MessageSquare size={16} />
                             </button>
-                          )}
-                          {req.pricingOfferId && (
-                            <PortalBadge variant="green" className="text-[9px]">
-                              {t('portal.requests.hasPricing' as never) || 'Priced'}
-                            </PortalBadge>
-                          )}
+                            <Dropdown
+                              trigger={
+                                <span className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 inline-flex">
+                                  <MoreVertical size={16} />
+                                </span>
+                              }
+                              items={[
+                                {
+                                  label: 'Edit Request',
+                                  onClick: () => console.log('Edit request', req.id),
+                                  icon: <Edit size={16} />,
+                                },
+                                {
+                                  label: 'Archive',
+                                  onClick: () => console.log('Archive request', req.id),
+                                  icon: <Archive size={16} />,
+                                },
+                                {
+                                  label: 'Delete',
+                                  onClick: () => {
+                                    if (confirm('Delete this request?')) {
+                                      console.log('Delete request', req.id);
+                                    }
+                                  },
+                                  icon: <Trash2 size={16} />,
+                                  variant: 'danger',
+                                },
+                              ]}
+                            />
+                          </div>
                         </td>
-                      )}
-                      <td className="px-3 md:px-6 py-4 min-w-0">
-                        <div className="flex flex-col min-w-0">
-                          <span className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate font-outfit">
-                            {req.title}
-                          </span>
-                          {req.lastComment && (
-                             <span className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5 max-w-full flex items-center gap-1 pr-4">
-                               <span className="font-bold text-slate-700 dark:text-slate-300 shrink-0">{req.lastComment.userName}:</span>
-                               <span className="truncate">{req.lastComment.content}</span>
-                             </span>
-                          )}
-                          <span className="text-xs font-bold text-slate-400 flex items-center gap-1.5 mt-1 font-outfit flex-wrap">
-                            {t('portal.requests.table.id')}: <span className="font-mono bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-[10px] tracking-tight shrink-0">{req.id.slice(0, 8)}</span>
-                            <span className="w-1 h-1 rounded-full bg-slate-300 shrink-0" />
-                            <span className="uppercase tracking-wider text-[10px] truncate">{req.type || t('portal.common.general')}</span>
-                          </span>
-                        </div>
-                      </td>
-                    <td className="px-3 md:px-6 py-4">
-                      <div className="flex justify-center">
-                        {isAgency ? (
-                          <PortalBadge variant={mapStatusColor(STATUS_CONFIG[req.status]?.color || 'gray')}>
-                            {t(`portal.requests.status.${req.status.toLowerCase()}` as any)}
-                          </PortalBadge>
-                        ) : (
-                          <PortalBadge variant={mapStatusColor(CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[req.status]]?.color || 'gray')}>
-                            {CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[req.status]]?.label}
-                          </PortalBadge>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-3 md:px-6 py-4">
-                      <div className="flex items-center justify-center gap-2">
-                        <div className={cn(
-                          "w-2 h-2 rounded-full shrink-0",
-                          req.priority === 'HIGH' || req.priority === 'URGENT' ? "bg-rose-500 shadow-sm shadow-rose-500/50" :
-                          req.priority === 'NORMAL' ? "bg-amber-500 shadow-sm shadow-amber-500/50" : "bg-blue-500 shadow-sm shadow-blue-500/50"
-                        )} />
-                        <span className="text-sm font-bold text-slate-600 dark:text-slate-300 font-outfit whitespace-nowrap">
-                          {t(`portal.requests.priority.${req.priority.toLowerCase()}` as any)}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-3 md:px-6 py-4 hidden md:table-cell">
-                      <div className="flex flex-col items-center">
-                        <span className="text-sm font-bold text-slate-800 dark:text-slate-200 font-outfit whitespace-nowrap">
-                          {req.createdAt?.toDate ? format(req.createdAt.toDate(), 'MMM d, yyyy', { locale: locale === 'he' ? he : enUS }) : t('portal.common.recently')}
-                        </span>
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{t('portal.requests.table.created')}</span>
-                      </div>
-                    </td>
-                    <td className="px-3 md:px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            router.push(`/portal/org/${orgId}/requests/${req.id}/`);
-                          }}
-                          className="p-2 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                        >
-                          <MessageSquare size={16} />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={(e) => e.stopPropagation()}
-                          className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
-                        >
-                          <MoreVertical size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </>
           ) : (
             <PortalEmptyState
               icon={Search}
               title={t('portal.requests.emptyTitle')}
-              description={searchQuery || activeFilter !== 'All'
-                ? t('portal.requests.emptySearch')
-                : t('portal.requests.emptyDescription')}
+              description={
+                searchQuery || activeFilter !== 'All'
+                  ? t('portal.requests.emptySearch')
+                  : t('portal.requests.emptyDescription')
+              }
               action={
                 !searchQuery && activeFilter === 'All' ? (
                   <Link href={`/portal/org/${orgId}/requests/new/`}>
@@ -537,27 +629,30 @@ export default function RequestsClient() {
         {!loading && filteredRequests.length > 0 && (
           <div className="p-5 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/30 dark:bg-slate-900/30 min-w-0">
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest truncate min-w-0">
-              {t('portal.common.showing', { count: paginatedRequests.length, total: filteredRequests.length })}
+              {t('portal.common.showing', {
+                count: paginatedRequests.length,
+                total: filteredRequests.length,
+              })}
             </span>
             <div className="flex items-center gap-2 shrink-0">
-               <PortalButton
-                 variant="outline"
-                 size="sm"
-                 className="h-8 px-4 text-[10px] font-black uppercase tracking-widest"
-                 onClick={handlePrevPage}
-                 disabled={currentPage === 1}
-               >
-                 {t('portal.common.prev')}
-               </PortalButton>
-               <PortalButton
-                 variant="outline"
-                 size="sm"
-                 className="h-8 px-4 text-[10px] font-black uppercase tracking-widest"
-                 onClick={handleNextPage}
-                 disabled={currentPage === totalPages}
-               >
-                 {t('portal.common.next')}
-               </PortalButton>
+              <PortalButton
+                variant="outline"
+                size="sm"
+                className="h-8 px-4 text-[10px] font-black uppercase tracking-widest"
+                onClick={handlePrevPage}
+                disabled={currentPage === 1}
+              >
+                {t('portal.common.prev')}
+              </PortalButton>
+              <PortalButton
+                variant="outline"
+                size="sm"
+                className="h-8 px-4 text-[10px] font-black uppercase tracking-widest"
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+              >
+                {t('portal.common.next')}
+              </PortalButton>
             </div>
           </div>
         )}
@@ -573,7 +668,8 @@ export default function RequestsClient() {
                   {t('portal.requests.createPricingOffer' as never) || 'Create Pricing Offer'}
                 </h2>
                 <p className="text-sm text-slate-500 mt-1">
-                  {selectedRequests.length} {t('portal.requests.requestsIncluded' as never) || 'requests included'}
+                  {selectedRequests.length}{' '}
+                  {t('portal.requests.requestsIncluded' as never) || 'requests included'}
                 </p>
               </div>
               <button
@@ -591,10 +687,17 @@ export default function RequestsClient() {
                   {t('portal.requests.selectedRequests' as never) || 'Selected Requests'}
                 </label>
                 <div className="space-y-2 max-h-32 overflow-y-auto">
-                  {selectedRequests.map((req) => (
-                    <div key={req.id} className="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-800 rounded-lg">
-                      <span className="font-medium text-slate-900 dark:text-white text-sm truncate">{req.title}</span>
-                      <PortalBadge variant="gray" className="text-[9px] ml-auto shrink-0">{req.type}</PortalBadge>
+                  {selectedRequests.map(req => (
+                    <div
+                      key={req.id}
+                      className="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-800 rounded-lg"
+                    >
+                      <span className="font-medium text-slate-900 dark:text-white text-sm truncate">
+                        {req.title}
+                      </span>
+                      <PortalBadge variant="gray" className="text-[9px] ml-auto shrink-0">
+                        {req.type}
+                      </PortalBadge>
                     </div>
                   ))}
                 </div>
@@ -608,8 +711,11 @@ export default function RequestsClient() {
                 <input
                   type="text"
                   value={pricingTitle}
-                  onChange={(e) => setPricingTitle(e.target.value)}
-                  placeholder={t('portal.pricing.form.titlePlaceholder' as never) || 'e.g., Website Redesign Package'}
+                  onChange={e => setPricingTitle(e.target.value)}
+                  placeholder={
+                    t('portal.pricing.form.titlePlaceholder' as never) ||
+                    'e.g., Website Redesign Package'
+                  }
                   className="portal-input w-full"
                 />
               </div>
@@ -621,7 +727,7 @@ export default function RequestsClient() {
                 </label>
                 <select
                   value={pricingCurrency}
-                  onChange={(e) => setPricingCurrency(e.target.value as Currency)}
+                  onChange={e => setPricingCurrency(e.target.value as Currency)}
                   className="portal-input w-full"
                 >
                   {Object.entries(CURRENCY_CONFIG).map(([key, config]) => (
@@ -638,13 +744,18 @@ export default function RequestsClient() {
                   {t('portal.pricing.form.lineItems' as never) || 'Line Items'} *
                 </label>
                 <div className="space-y-3">
-                  {pricingLineItems.map((item) => (
-                    <div key={item.id} className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl space-y-2">
+                  {pricingLineItems.map(item => (
+                    <div
+                      key={item.id}
+                      className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl space-y-2"
+                    >
                       <input
                         type="text"
-                        placeholder={t('portal.pricing.form.itemDescription' as never) || 'Description'}
+                        placeholder={
+                          t('portal.pricing.form.itemDescription' as never) || 'Description'
+                        }
                         value={item.description}
-                        onChange={(e) => updateLineItem(item.id, 'description', e.target.value)}
+                        onChange={e => updateLineItem(item.id, 'description', e.target.value)}
                         className="portal-input w-full h-9 text-sm"
                       />
                       <div className="flex gap-2 items-center">
@@ -653,19 +764,29 @@ export default function RequestsClient() {
                           min="1"
                           placeholder={t('portal.pricing.form.quantity' as never) || 'Qty'}
                           value={item.quantity || ''}
-                          onChange={(e) => updateLineItem(item.id, 'quantity', parseInt(e.target.value) || 0)}
+                          onChange={e =>
+                            updateLineItem(item.id, 'quantity', parseInt(e.target.value) || 0)
+                          }
                           className="portal-input h-9 text-sm w-20"
                         />
                         <span className="text-slate-400">×</span>
                         <div className="relative flex-1">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
+                            $
+                          </span>
                           <input
                             type="number"
                             min="0"
                             step="0.01"
                             placeholder={t('portal.pricing.form.unitPrice' as never) || 'Price'}
                             value={item.unitPrice ? (item.unitPrice / 100).toFixed(2) : ''}
-                            onChange={(e) => updateLineItem(item.id, 'unitPrice', Math.round(parseFloat(e.target.value || '0') * 100))}
+                            onChange={e =>
+                              updateLineItem(
+                                item.id,
+                                'unitPrice',
+                                Math.round(parseFloat(e.target.value || '0') * 100)
+                              )
+                            }
                             className="portal-input h-9 text-sm pl-7 w-full"
                           />
                         </div>
@@ -713,7 +834,11 @@ export default function RequestsClient() {
               </PortalButton>
               <PortalButton
                 onClick={handleCreatePricingOffer}
-                disabled={isCreatingPricing || !pricingTitle.trim() || !pricingLineItems.some(i => i.description && i.unitPrice > 0)}
+                disabled={
+                  isCreatingPricing ||
+                  !pricingTitle.trim() ||
+                  !pricingLineItems.some(i => i.description && i.unitPrice > 0)
+                }
                 className="bg-green-600 hover:bg-green-700"
               >
                 {isCreatingPricing ? (
@@ -730,4 +855,3 @@ export default function RequestsClient() {
     </div>
   );
 }
-

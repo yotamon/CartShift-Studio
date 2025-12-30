@@ -16,7 +16,7 @@ import {
   arrayUnion,
   arrayRemove,
 } from 'firebase/firestore';
-import { getFirestoreDb } from '@/lib/firebase';
+import { getFirestoreDb, waitForAuth } from '@/lib/firebase';
 import { Comment, CreateCommentData } from '@/lib/types/portal';
 
 
@@ -96,6 +96,7 @@ export async function createComment(
   userPhotoUrl: string | undefined,
   data: CreateCommentData
 ): Promise<Comment> {
+  await waitForAuth();
   const db = getFirestoreDb();
 
   // Validate and sanitize content
@@ -158,6 +159,7 @@ export async function getCommentsByRequest(
   requestId: string,
   includeInternal = false
 ): Promise<Comment[]> {
+  await waitForAuth();
   const db = getFirestoreDb();
   try {
     let q = query(
@@ -208,6 +210,7 @@ export async function updateComment(commentId: string, content: string): Promise
   // Sanitize content with same validation as create
   const sanitizedContent = sanitizeContent(content);
 
+  await waitForAuth();
   const db = getFirestoreDb();
   const docRef = doc(db, COMMENTS_COLLECTION, commentId);
   await updateDoc(docRef, {
@@ -221,6 +224,7 @@ export async function updateComment(commentId: string, content: string): Promise
 // ============================================
 
 export async function addReaction(commentId: string, userId: string, emoji: string): Promise<void> {
+  await waitForAuth();
   const db = getFirestoreDb();
   const docRef = doc(db, COMMENTS_COLLECTION, commentId);
   const fieldPath = `reactions.${emoji}`;
@@ -231,6 +235,7 @@ export async function addReaction(commentId: string, userId: string, emoji: stri
 }
 
 export async function removeReaction(commentId: string, userId: string, emoji: string): Promise<void> {
+  await waitForAuth();
   const db = getFirestoreDb();
   const docRef = doc(db, COMMENTS_COLLECTION, commentId);
   const fieldPath = `reactions.${emoji}`;
@@ -245,6 +250,7 @@ export async function removeReaction(commentId: string, userId: string, emoji: s
 // ============================================
 
 export async function deleteComment(commentId: string): Promise<void> {
+  await waitForAuth();
   const db = getFirestoreDb();
   const docRef = doc(db, COMMENTS_COLLECTION, commentId);
 
@@ -276,30 +282,34 @@ export function subscribeToRequestComments(
   includeInternal = false,
   orgId?: string
 ): () => void {
-  const db = getFirestoreDb();
-  // Renamed from 'isAgency' to 'showInternalComments' for clarity
+  let unsubscribe: (() => void) | null = null;
+  let isUnsubscribed = false;
   const showInternalComments = Boolean(includeInternal);
 
-  let q;
+  waitForAuth()
+    .then(() => {
+      if (isUnsubscribed) return;
+      const db = getFirestoreDb();
+      let q;
 
-  if (orgId) {
-    q = query(
-      collection(db, COMMENTS_COLLECTION),
-      where('requestId', '==', requestId),
-      where('orgId', '==', orgId),
-      orderBy('createdAt', 'asc')
-    );
-  } else {
-    q = query(
-      collection(db, COMMENTS_COLLECTION),
-      where('requestId', '==', requestId),
-      orderBy('createdAt', 'asc')
-    );
-  }
+      if (orgId) {
+        q = query(
+          collection(db, COMMENTS_COLLECTION),
+          where('requestId', '==', requestId),
+          where('orgId', '==', orgId),
+          orderBy('createdAt', 'asc')
+        );
+      } else {
+        q = query(
+          collection(db, COMMENTS_COLLECTION),
+          where('requestId', '==', requestId),
+          orderBy('createdAt', 'asc')
+        );
+      }
 
-  return onSnapshot(
-    q,
-    snapshot => {
+      unsubscribe = onSnapshot(
+        q,
+        snapshot => {
       let comments = snapshot.docs.map(doc => {
         const data = doc.data();
         return {
@@ -341,6 +351,18 @@ export function subscribeToRequestComments(
         );
       }
       callback([]);
+        }
+      );
+    })
+    .catch(error => {
+      console.error('Error waiting for auth in subscribeToRequestComments:', error);
+      callback([]);
+    });
+
+  return () => {
+    isUnsubscribed = true;
+    if (unsubscribe) {
+      unsubscribe();
     }
-  );
+  };
 }

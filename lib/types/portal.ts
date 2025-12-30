@@ -122,6 +122,7 @@ export interface Organization {
   id: string;
   name: string;
   slug: string;
+  createdBy?: string;
   logoUrl?: string;
   website?: string;
   industry?: string;
@@ -138,8 +139,10 @@ export interface OrganizationMember {
   userId: string;
   email: string;
   name?: string;
+  photoUrl?: string;
   role: UserRole;
   invitedBy?: string;
+  inviteId?: string;
   joinedAt: Timestamp;
 }
 
@@ -372,6 +375,7 @@ export interface UpdateRequestData {
   assignedTo?: string;
   estimatedHours?: number;
   tags?: string[];
+  attachmentIds?: string[];
 }
 
 export interface CreateCommentData {

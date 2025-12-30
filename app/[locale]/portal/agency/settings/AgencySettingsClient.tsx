@@ -4,12 +4,15 @@ import { useState, useEffect } from 'react';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalInput } from '@/components/portal/ui/PortalInput';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
-import { User, Shield, CreditCard, Save, Settings2, Building2, Loader2 } from 'lucide-react';
+import { Shield, CreditCard, Save, Settings2, Building2, Loader2, Camera, User as UserIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db, getAuthInstance } from '@/lib/services/firebase-client';
 import { getAgencyTeam } from '@/lib/services/portal-agency';
+import { updatePortalUser } from '@/lib/services/portal-users';
+import { getFirebaseStorage, waitForAuth } from '@/lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { PortalUser, Invite } from '@/lib/types/portal';
 import {
   subscribeToAgencyInvites,
@@ -53,6 +56,12 @@ export default function AgencySettingsClient() {
   const [services, setServices] = useState<Service[]>([]);
   const [loadingServices, setLoadingServices] = useState(false);
   const [cancellingInvite, setCancellingInvite] = useState<string | null>(null);
+  const [profileFormData, setProfileFormData] = useState({
+    name: '',
+    photoUrl: '',
+  });
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   useEffect(() => {
     async function fetchAgencyProfile() {
@@ -79,6 +88,13 @@ export default function AgencySettingsClient() {
     }
 
     fetchAgencyProfile();
+
+    if (user) {
+      setProfileFormData({
+        name: user.displayName || '',
+        photoUrl: user.photoURL || '',
+      });
+    }
   }, [user]);
 
   useEffect(() => {
@@ -224,11 +240,67 @@ export default function AgencySettingsClient() {
 
   const tabs = [
     { id: 'profile', label: t('agency.settings.tabs.profile'), icon: Building2 },
+    { id: 'user-profile', label: t('settings.tabs.profile'), icon: UserIcon },
     { id: 'services', label: t('agency.settings.tabs.services'), icon: Settings2 },
-    { id: 'team', label: t('agency.settings.tabs.team'), icon: User },
+    { id: 'team', label: t('agency.settings.tabs.team'), icon: UserIcon },
     { id: 'integrations', label: t('agency.settings.tabs.integrations'), icon: Shield },
     { id: 'billing', label: t('agency.settings.tabs.billing'), icon: CreditCard },
   ];
+
+  const handleProfileSave = async () => {
+    if (!user) return;
+    setProfileSaving(true);
+    try {
+      await updatePortalUser(user.uid, {
+        name: profileFormData.name,
+        photoUrl: profileFormData.photoUrl,
+      });
+      alert(t('settings.profile.success'));
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      alert(t('settings.profile.error'));
+    } finally {
+      setProfileSaving(false);
+    }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Image size must be less than 2MB');
+      return;
+    }
+
+    setUploadingAvatar(true);
+    try {
+      await waitForAuth();
+      const storage = getFirebaseStorage();
+      const storageRef = ref(storage, `avatars/${user.uid}/${Date.now()}_${file.name}`);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      setProfileFormData(prev => ({ ...prev, photoUrl: url }));
+
+      // Auto-save
+      await updatePortalUser(user.uid, { photoUrl: url });
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      alert('Failed to upload photo');
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const removeAvatar = async () => {
+    if (!user) return;
+    try {
+      setProfileFormData(prev => ({ ...prev, photoUrl: '' }));
+      await updatePortalUser(user.uid, { photoUrl: '' });
+    } catch (error) {
+      console.error('Error removing avatar:', error);
+    }
+  };
 
   if (loading) {
     return (
@@ -271,6 +343,106 @@ export default function AgencySettingsClient() {
         </aside>
 
         <div className="lg:col-span-3 space-y-6">
+          {activeTab === 'user-profile' && (
+            <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm">
+              <div className="flex items-center gap-3 mb-10">
+                <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 border border-blue-100 dark:border-blue-900/30">
+                  <UserIcon size={20} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-surface-900 dark:text-white font-outfit">
+                    {t('settings.profile.title')}
+                  </h3>
+                  <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mt-0.5">
+                    {t('settings.profile.subtitle')}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-8">
+                {/* Avatar Section */}
+                <div className="flex flex-col md:flex-row items-center gap-8 p-6 rounded-3xl bg-surface-50/50 dark:bg-surface-900/30 border border-surface-100 dark:border-surface-800/50">
+                  <div className="relative group">
+                    <PortalAvatar
+                      src={profileFormData.photoUrl}
+                      name={profileFormData.name}
+                      size="lg"
+                      className="w-24 h-24 ring-4 ring-white dark:ring-surface-900 shadow-2xl"
+                    />
+                    {uploadingAvatar && (
+                      <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <Loader2 className="w-6 h-6 text-white animate-spin" />
+                      </div>
+                    )}
+                    <label className="absolute -bottom-1 -right-1 p-2 bg-blue-600 text-white rounded-xl shadow-lg cursor-pointer hover:bg-blue-700 transition-all hover:scale-110 active:scale-95">
+                      <Camera size={16} />
+                      <input type="file" className="hidden" accept="image/*" onChange={handleAvatarUpload} disabled={uploadingAvatar} />
+                    </label>
+                  </div>
+
+                  <div className="flex-1 text-center md:text-left">
+                    <h4 className="font-bold text-surface-900 dark:text-white mb-1 font-outfit">
+                      {t('settings.profile.avatar.title')}
+                    </h4>
+                    <p className="text-xs text-surface-500 dark:text-surface-400 mb-4 font-medium max-w-xs">
+                      {t('settings.profile.avatar.desc')}
+                    </p>
+                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+                      <PortalButton
+                        variant="outline"
+                        size="sm"
+                        className="h-9 px-4 text-xs font-bold border-surface-200 dark:border-surface-800"
+                        onClick={() => document.querySelector<HTMLInputElement>('input[type="file"]')?.click()}
+                      >
+                        {profileFormData.photoUrl ? t('settings.profile.avatar.change') : t('settings.profile.avatar.upload')}
+                      </PortalButton>
+                      {profileFormData.photoUrl && (
+                        <button
+                          onClick={removeAvatar}
+                          className="text-xs font-bold text-rose-500 hover:text-rose-600 px-3 py-2 transition-colors"
+                        >
+                          {t('settings.profile.avatar.remove')}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <PortalInput
+                      label={t('settings.profile.name')}
+                      value={profileFormData.name}
+                      onChange={e => setProfileFormData({ ...profileFormData, name: e.target.value })}
+                      placeholder={t('settings.profile.namePlaceholder')}
+                    />
+                    <div className="opacity-60 grayscale pointer-events-none">
+                      <PortalInput
+                        label={t('settings.profile.email')}
+                        value={user?.email || ''}
+                        readOnly
+                        placeholder="email@example.com"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-10 pt-6 border-t border-surface-200 dark:border-surface-800 flex justify-end">
+                <PortalButton
+                  onClick={handleProfileSave}
+                  isLoading={profileSaving}
+                  className="flex items-center gap-2 shadow-xl shadow-blue-500/20 font-outfit px-8"
+                >
+                  <Save size={18} />
+                  {profileSaving
+                    ? t('settings.general.saving')
+                    : t('settings.profile.save')}
+                </PortalButton>
+              </div>
+            </PortalCard>
+          )}
+
           {activeTab === 'profile' && (
             <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm">
               <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-6 font-outfit">
@@ -529,7 +701,7 @@ export default function AgencySettingsClient() {
                 </div>
               ) : (
                 <div className="py-12 text-center opacity-30">
-                  <User className="w-12 h-12 text-surface-300 dark:text-surface-700 mx-auto mb-3" />
+                  <UserIcon className="w-12 h-12 text-surface-300 dark:text-surface-700 mx-auto mb-3" />
                   <p className="text-[10px] font-black uppercase tracking-widest">{t('agency.settings.team.noMembers')}</p>
                 </div>
               )}
@@ -537,7 +709,7 @@ export default function AgencySettingsClient() {
               {/* Pending Invites Section */}
               <div className="mt-10">
                 <div className="flex items-center gap-2 mb-4 px-1">
-                  <User className="text-blue-500" size={16} />
+                  <UserIcon className="text-blue-500" size={16} />
                   <h4 className="text-[10px] font-black text-surface-400 uppercase tracking-widest">
                     {t('agency.settings.team.pendingInvites') || 'Pending Invitations'}
                   </h4>

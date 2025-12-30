@@ -41,7 +41,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  setRequestLocale(locale as 'en' | 'he');
   const post = await getPostBySlug(slug);
 
   if (!post) {

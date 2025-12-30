@@ -93,9 +93,33 @@ export default function AgencyInboxClient() {
 
   // Multi-select helpers
   const toggleRequestSelection = (requestId: string) => {
-    setSelectedRequestIds(prev =>
-      prev.includes(requestId) ? prev.filter(id => id !== requestId) : [...prev, requestId]
-    );
+    setSelectedRequestIds(prev => {
+      if (prev.includes(requestId)) {
+        return prev.filter(id => id !== requestId);
+      }
+
+      if (prev.length > 0) {
+        const selectedReqs = requests.filter(r => prev.includes(r.id));
+        const newReq = requests.find(r => r.id === requestId);
+
+        if (newReq && selectedReqs.length > 0) {
+          const selectedOrgId = selectedReqs[0]?.orgId;
+          if (selectedOrgId && newReq.orgId !== selectedOrgId) {
+            // Show which organizations are involved
+            const selectedOrgName = organizations[selectedOrgId]?.name || 'Unknown';
+            const newOrgName = organizations[newReq.orgId]?.name || 'Unknown';
+            alert(
+              `${t('agency.inbox.errors.sameOrgRequired')}\n\n` +
+              `Currently selected: ${selectedOrgName}\n` +
+              `Trying to add: ${newOrgName}`
+            );
+            return prev;
+          }
+        }
+      }
+
+      return [...prev, requestId];
+    });
   };
 
   const clearSelection = () => {
@@ -140,7 +164,14 @@ export default function AgencyInboxClient() {
     const uniqueOrgIds = [...new Set(selectedReqs.map(r => r.orgId))];
 
     if (uniqueOrgIds.length > 1) {
-      alert(t('agency.inbox.errors.sameOrgRequired'));
+      const orgNames = uniqueOrgIds
+        .map(id => organizations[id]?.name || 'Unknown')
+        .join(', ');
+      alert(
+        `${t('agency.inbox.errors.sameOrgRequired')}\n\n` +
+        `Selected requests are from: ${orgNames}\n\n` +
+        'Please select requests from only one client organization.'
+      );
       return;
     }
 
@@ -196,7 +227,7 @@ export default function AgencyInboxClient() {
         </div>
       </div>
 
-      <PortalCard className="p-0 overflow-hidden border-surface-200 dark:border-surface-800 shadow-sm">
+      <PortalCard noPadding className="overflow-hidden border-surface-200 dark:border-surface-800 shadow-sm">
         <div className="p-4 border-b border-surface-100 dark:border-surface-800 flex items-center justify-between bg-white dark:bg-surface-950">
           <div className="flex items-center gap-4">
             <div className="relative">
@@ -336,11 +367,11 @@ export default function AgencyInboxClient() {
 
                       <div className="min-w-0 flex-1 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
                         <div className="md:col-span-1">
+                          <p className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider truncate mb-1">
+                            {organizations[req.orgId]?.name || t('agency.inbox.clientOrg')}
+                          </p>
                           <p className="text-sm font-bold text-surface-900 dark:text-white truncate">
                             {req.createdByName || 'User'}
-                          </p>
-                          <p className="text-[10px] font-bold text-surface-400 uppercase tracking-tighter truncate">
-                            {organizations[req.orgId]?.name || t('agency.inbox.clientOrg')}
                           </p>
                         </div>
                         <div className="md:col-span-2">

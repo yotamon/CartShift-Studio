@@ -180,9 +180,28 @@
       "subtitle": "ניהול העדפות ארגון וסביבת עבודה.",
       "tabs": {
         "general": "כללי",
+        "profile": "הפרופיל שלי",
         "notifications": "התראות",
         "security": "אבטחה",
         "billing": "חיובים"
+      },
+      "profile": {
+        "title": "פרופיל אישי",
+        "subtitle": "נהל את הזהות האישית והמראה שלך",
+        "name": "שם מלא",
+        "namePlaceholder": "השם שלך",
+        "email": "כתובת אימייל",
+        "avatar": {
+          "title": "תמונת פרופיל",
+          "desc": "העלה תמונה מקצועית שתייצג אותך ברחבי הפורטל.",
+          "upload": "העלאת תמונה",
+          "change": "שינוי תמונה",
+          "removing": "מסיר...",
+          "remove": "הסרה"
+        },
+        "save": "עדכן פרופיל",
+        "success": "הפרופיל שלך עודכן בהצלחה!",
+        "error": "עדכון הפרופיל נכשל"
       },
       "general": {
         "title": "פרופיל אירגוני",
@@ -514,7 +533,6 @@
         "attachments": "קבצים מצורפים",
         "uploadText": "לחץ להעלאת קבצים",
         "uploadSubtext": "תמונות, PDF או קבצי ZIP",
-        "uploadHelp": "הוספת קבצים רלוונטיים, מדריכי מותג או צילומי מסך עוזרת לצוות שלנו לספק תוצאות איכותיות מהר יותר.",
         "tips": {
           "title": "טיפים מקצועיים",
           "tip1": "היו ספציפיים לגבי המטרות והתוצאות המצופות מבקשה זו.",
@@ -703,7 +721,63 @@
           "pro": "שותף פרו",
           "enterprise": "שותף ארגוני"
         },
-        "enterprise": "שותף ארגוני"
+        "enterprise": "שותף ארגוני",
+        "detail": {
+          "loading": "טוען פרטי לקוח...",
+          "backToClients": "חזרה ללקוחות",
+          "overview": "סקירת לקוח",
+          "viewDashboard": "צפה בלוח בקרה של לקוח",
+          "editClient": "ערוך לקוח",
+          "stats": {
+            "totalRequests": "סה״כ בקשות",
+            "activeRequests": "בקשות פעילות",
+            "completedRequests": "הושלמו",
+            "teamMembers": "חברי צוות",
+            "avgResolution": "זמן סיום ממוצע",
+            "totalRevenue": "סה״כ הכנסות",
+            "days": "ימים",
+            "lastActive": "פעילות אחרונה",
+            "joinedDate": "לקוח מאז"
+          },
+          "sections": {
+            "information": "פרטי לקוח",
+            "recentActivity": "פעילות אחרונה",
+            "requests": "בקשות אחרונות",
+            "team": "חברי צוות"
+          },
+          "info": {
+            "website": "אתר אינטרנט",
+            "industry": "תעשייה",
+            "plan": "תוכנית",
+            "status": "סטטוס",
+            "email": "אימייל ליצירת קשר",
+            "phone": "טלפון"
+          },
+          "actions": {
+            "createRequest": "צור בקשה עבור לקוח",
+            "viewAllRequests": "צפה בכל הבקשות",
+            "managePlan": "נהל תוכנית",
+            "sendEmail": "שלח אימייל",
+            "exportData": "ייצא נתוני לקוח"
+          },
+          "requests": {
+            "viewAll": "צפה בהכל",
+            "emptyTitle": "אין בקשות עדיין",
+            "emptyDesc": "לקוח זה טרם יצר בקשות."
+          },
+          "team": {
+            "viewAll": "צפה בכל החברים",
+            "owner": "בעלים",
+            "admin": "מנהל",
+            "member": "חבר",
+            "emptyTitle": "אין חברי צוות",
+            "emptyDesc": "לקוח זה טרם הזמין חברי צוות."
+          },
+          "activity": {
+            "emptyTitle": "אין פעילות אחרונה",
+            "emptyDesc": "טרם נרשמה פעילות ללקוח זה."
+          }
+        }
       },
       "settings": {
         "title": "הגדרות סוכנות",

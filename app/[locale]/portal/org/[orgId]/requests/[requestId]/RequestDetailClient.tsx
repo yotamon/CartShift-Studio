@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
 import {
   ArrowLeft,
   Paperclip,
@@ -47,6 +46,8 @@ import { logActivity, subscribeToRequestActivities } from '@/lib/services/portal
 import { createComment, subscribeToRequestComments } from '@/lib/services/portal-comments';
 import { uploadFile } from '@/lib/services/portal-files';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
+import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
+import { useResolvedRequestId } from '@/lib/hooks/useResolvedRequestId';
 import { Timestamp } from 'firebase/firestore';
 import {
   Request,
@@ -83,8 +84,9 @@ const mapStatusColor = (color: string): 'blue' | 'green' | 'yellow' | 'red' | 'g
 };
 
 export default function RequestDetailClient() {
-  const { orgId, requestId } = useParams();
-  const { userData, isAgency } = usePortalAuth();
+  const orgId = useResolvedOrgId();
+  const requestId = useResolvedRequestId();
+  const { userData, isAgency, loading: authLoading, isAuthenticated } = usePortalAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'discussion' | 'history'>('overview');
   const [request, setRequest] = useState<Request | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -134,7 +136,9 @@ export default function RequestDetailClient() {
 
   // Submit pricing form
   const handleAddPricing = async () => {
-    if (!requestId || typeof requestId !== 'string') return;
+    if (!requestId || typeof requestId !== 'string' || !orgId || typeof orgId !== 'string' || !userData) {
+      return;
+    }
 
     // Validate line items
     const validItems = pricingLineItems.filter(item =>
@@ -147,9 +151,9 @@ export default function RequestDetailClient() {
     try {
       await addPricingToRequest(
         requestId,
-        orgId as string,
-        userData!.id,
-        userData!.name || userData!.email,
+        orgId,
+        userData.id,
+        userData.name || userData.email,
         {
           lineItems: validItems,
           currency: pricingCurrency,
@@ -166,14 +170,14 @@ export default function RequestDetailClient() {
 
   // Handlers for pricing actions
   const handleAcceptQuote = async () => {
-    if (!requestId || typeof requestId !== 'string') return;
+    if (!requestId || typeof requestId !== 'string' || !orgId || typeof orgId !== 'string' || !userData) return;
     setIsAccepting(true);
     try {
       await acceptRequest(
         requestId,
-        orgId as string,
-        userData!.id,
-        userData!.name || userData!.email
+        orgId,
+        userData.id,
+        userData.name || userData.email
       );
     } catch (err) {
       console.error('Error accepting quote:', err);
@@ -183,14 +187,14 @@ export default function RequestDetailClient() {
   };
 
   const handleDeclineQuote = async () => {
-    if (!requestId || typeof requestId !== 'string') return;
+    if (!requestId || typeof requestId !== 'string' || !orgId || typeof orgId !== 'string' || !userData) return;
     setIsDeclining(true);
     try {
       await declineRequest(
         requestId,
-        orgId as string,
-        userData!.id,
-        userData!.name || userData!.email
+        orgId,
+        userData.id,
+        userData.name || userData.email
       );
     } catch (err) {
       console.error('Error declining quote:', err);
@@ -200,13 +204,13 @@ export default function RequestDetailClient() {
   };
 
   const handleStartWork = async () => {
-    if (!requestId || typeof requestId !== 'string') return;
+    if (!requestId || typeof requestId !== 'string' || !orgId || typeof orgId !== 'string' || !userData) return;
     try {
       await startRequestWork(
         requestId,
-        orgId as string,
-        userData!.id,
-        userData!.name || userData!.email
+        orgId,
+        userData.id,
+        userData.name || userData.email
       );
     } catch (err) {
       console.error('Error starting work:', err);
@@ -214,13 +218,13 @@ export default function RequestDetailClient() {
   };
 
   const handlePaymentSuccess = async (result: { paymentId?: string }) => {
-    if (!requestId || typeof requestId !== 'string' || !result.paymentId) return;
+    if (!requestId || typeof requestId !== 'string' || !orgId || typeof orgId !== 'string' || !result.paymentId || !userData) return;
     try {
       await markRequestPaid(
         requestId,
-        orgId as string,
-        userData!.id,
-        userData!.name || userData!.email,
+        orgId,
+        userData.id,
+        userData.name || userData.email,
         result.paymentId
       );
     } catch (err) {
@@ -254,7 +258,12 @@ export default function RequestDetailClient() {
       setLoading(false);
       return undefined;
     }
-    if (userData === undefined) {
+    if (authLoading) {
+      return undefined;
+    }
+    if (!isAuthenticated) {
+      setError(t('common.error'));
+      setLoading(false);
       return undefined;
     }
 
@@ -263,7 +272,12 @@ export default function RequestDetailClient() {
 
     try {
       // Subscribe to request data
-      const unsubscribeRequest = subscribeToRequest(requestId, data => {
+      const unsubscribeRequest = subscribeToRequest(requestId, (data, error) => {
+        if (error) {
+          setError(error.message);
+          setLoading(false);
+          return;
+        }
         if (!data) {
           setError(t('requests.detail.notFound'));
           setLoading(false);
@@ -299,7 +313,7 @@ export default function RequestDetailClient() {
       setLoading(false);
       return undefined;
     }
-  }, [requestId, userData, t]);
+  }, [requestId, orgId, userData, authLoading, isAuthenticated, t]);
 
   // Fetch organization details for invoice generation
   useEffect(() => {
@@ -368,7 +382,7 @@ export default function RequestDetailClient() {
 
 
   const handleStatusChange = async (newStatus: RequestStatus) => {
-    if (!requestId || typeof requestId !== 'string' || !userData) return;
+    if (!requestId || typeof requestId !== 'string' || !userData || !isAgency) return;
     try {
       await updateRequestStatus(requestId, newStatus);
       // We could also log activity here if updateRequestStatus took user info
@@ -387,7 +401,7 @@ export default function RequestDetailClient() {
     }
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="space-y-6 animate-pulse" role="status" aria-live="polite">
         <span className="sr-only">Loading request details...</span>
@@ -444,6 +458,9 @@ export default function RequestDetailClient() {
     { label: t('requests.title'), href: `/portal/org/${orgId}/requests/` },
     { label: request.title },
   ];
+  const canAct = Boolean(userData);
+  const showAgencyActions = canAct && isAgency;
+  const showClientActions = canAct && !isAgency;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -615,7 +632,7 @@ export default function RequestDetailClient() {
                   orgId: orgId as string,
                   userId: userData.id,
                   userName: userData.name || userData.email,
-                  userPhotoUrl: undefined,
+                  userPhotoUrl: userData.photoUrl,
                   content: content,
                   attachmentIds: [],
                   isInternal: false,
@@ -634,7 +651,7 @@ export default function RequestDetailClient() {
                     orgId as string,
                     userData.id,
                     userData.name || userData.email,
-                    undefined,
+                    userData.photoUrl,
                     {
                       content: content,
                       parentId: parentId
@@ -671,7 +688,7 @@ export default function RequestDetailClient() {
 
         <div className="space-y-6">
           {/* Agency Add Pricing Section - For NEW requests without pricing */}
-          {isAgency && request.status === 'NEW' && !request.isBillable && (
+          {showAgencyActions && request.status === 'NEW' && !request.isBillable && (
             <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950">
               <h4 className="text-[10px] font-black text-surface-400 dark:text-surface-500 mb-6 uppercase tracking-widest flex items-center gap-2">
                 <DollarSign size={14} className="text-green-500" />
@@ -866,7 +883,7 @@ export default function RequestDetailClient() {
               </div>
 
               {/* Client Accept/Decline Buttons - Only for QUOTED status */}
-              {!isAgency && request.status === 'QUOTED' && (
+              {showClientActions && request.status === 'QUOTED' && (
                 <div className="mt-6 pt-6 border-t border-surface-200 dark:border-surface-800 flex gap-3">
                   <PortalButton
                     variant="primary"
@@ -898,7 +915,7 @@ export default function RequestDetailClient() {
               )}
 
               {/* Agency Start Work Button - Only for ACCEPTED status */}
-              {isAgency && request.status === 'ACCEPTED' && (
+              {showAgencyActions && request.status === 'ACCEPTED' && (
                 <div className="mt-6 pt-6 border-t border-surface-200 dark:border-surface-800">
                   <PortalButton
                     variant="primary"
@@ -912,7 +929,7 @@ export default function RequestDetailClient() {
               )}
 
               {/* PayPal Payment - For DELIVERED billable requests */}
-              {!isAgency && request.status === 'DELIVERED' && request.isBillable && (
+              {showClientActions && request.status === 'DELIVERED' && request.isBillable && (
                 <div className="mt-6 pt-6 border-t border-surface-200 dark:border-surface-800">
                   <PayPalProvider>
                     <PayPalCheckoutButton
@@ -943,7 +960,7 @@ export default function RequestDetailClient() {
               {t('requests.detail.workflowActions')}
             </h4>
             <div className="space-y-2">
-              {request.status !== 'CLOSED' && (
+              {showAgencyActions && request.status !== 'CLOSED' && request.status !== 'CANCELED' && (
                 <PortalButton
                   variant="outline"
                   className="w-full justify-start h-12 border-surface-200 dark:border-surface-800 text-sm font-bold font-outfit"
@@ -953,36 +970,40 @@ export default function RequestDetailClient() {
                   {t('requests.detail.closeRequest')}
                 </PortalButton>
               )}
-              <div className="relative">
-                <input
-                  type="file"
-                  id="file-upload"
-                  className="hidden"
-                  onChange={handleFileUpload}
-                  disabled={isUploading}
-                />
+              {showAgencyActions && (
+                <div className="relative">
+                  <input
+                    type="file"
+                    id="file-upload"
+                    className="hidden"
+                    onChange={handleFileUpload}
+                    disabled={isUploading}
+                  />
+                  <PortalButton
+                    variant="outline"
+                    className="w-full justify-start h-12 border-surface-200 dark:border-surface-800 text-sm font-bold font-outfit"
+                    onClick={() => document.getElementById('file-upload')?.click()}
+                    disabled={isUploading}
+                  >
+                    {isUploading ? (
+                      <Loader2 size={16} className="mr-3 animate-spin text-blue-500" />
+                    ) : (
+                      <Paperclip size={16} className="mr-3 text-blue-500" />
+                    )}
+                    {t('requests.detail.addAttachment') || 'Upload Deliverable'}
+                  </PortalButton>
+                </div>
+              )}
+              {showClientActions && request.status !== 'CLOSED' && request.status !== 'CANCELED' && (
                 <PortalButton
                   variant="outline"
                   className="w-full justify-start h-12 border-surface-200 dark:border-surface-800 text-sm font-bold font-outfit"
-                  onClick={() => document.getElementById('file-upload')?.click()}
-                  disabled={isUploading}
+                  onClick={() => setShowRevisionModal(true)}
                 >
-                  {isUploading ? (
-                    <Loader2 size={16} className="mr-3 animate-spin text-blue-500" />
-                  ) : (
-                    <Paperclip size={16} className="mr-3 text-blue-500" />
-                  )}
-                  {t('requests.detail.addAttachment') || 'Upload Deliverable'}
+                  <RotateCcw size={16} className="mr-3 text-amber-500" />{' '}
+                  {t('requests.detail.requestRevision') || 'Request Revision'}
                 </PortalButton>
-              </div>
-              <PortalButton
-                variant="outline"
-                className="w-full justify-start h-12 border-surface-200 dark:border-surface-800 text-sm font-bold font-outfit"
-                onClick={() => setShowRevisionModal(true)}
-              >
-                <RotateCcw size={16} className="mr-3 text-amber-500" />{' '}
-                {t('requests.detail.requestRevision') || 'Request Revision'}
-              </PortalButton>
+              )}
             </div>
           </PortalCard>
 
@@ -991,7 +1012,7 @@ export default function RequestDetailClient() {
               <h4 className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest">
                 {t('requests.detail.assignedSpecialist')}
               </h4>
-              {isAgency && (
+              {showAgencyActions && (
                 <div className="relative group/assign">
                   <select
                     className="absolute inset-0 opacity-0 cursor-pointer w-full"

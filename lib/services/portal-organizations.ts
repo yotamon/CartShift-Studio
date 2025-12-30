@@ -51,6 +51,7 @@ export async function createOrganization(
   const orgData = {
     name: name.trim(),
     slug,
+    createdBy: userId,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   };
@@ -212,7 +213,8 @@ async function addMember(
   email: string,
   role: UserRole,
   name?: string,
-  invitedBy?: string
+  invitedBy?: string,
+  inviteId?: string
 ): Promise<OrganizationMember> {
   const db = getFirestoreDb();
   const memberData = {
@@ -222,6 +224,7 @@ async function addMember(
     name: name || null,
     role,
     invitedBy: invitedBy || null,
+    inviteId: inviteId || null,
     joinedAt: serverTimestamp(),
   };
 
@@ -273,12 +276,95 @@ export async function getMemberByUserId(
     const firestoreError = error as { code?: string; message?: string };
     if (firestoreError.code === 'permission-denied') {
       console.warn(
-        `[getMemberByUserId] Permission denied checking membership for orgId: ${orgId}, userId: ${userId}`
+        `[getMemberByUserId] Permission denied - treating as no membership. orgId: ${orgId}, userId: ${userId}`
       );
       return null;
     }
     console.error(`[getMemberByUserId] Error checking membership:`, error);
     throw error;
+  }
+}
+
+export async function ensureMembership(
+  orgId: string,
+  userId: string,
+  userEmail: string,
+  userName?: string
+): Promise<OrganizationMember | null> {
+  let member = await getMemberByUserId(orgId, userId);
+
+  if (member) {
+    return member;
+  }
+
+  let org: Organization | null = null;
+  try {
+    org = await getOrganization(orgId);
+  } catch (error: unknown) {
+    const firestoreError = error as { code?: string; message?: string };
+    if (firestoreError.code === 'permission-denied') {
+      console.warn(`[ensureMembership] Permission denied reading organization: ${orgId}`);
+    } else {
+      console.error(`[ensureMembership] Error reading organization:`, error);
+    }
+  }
+
+  if (!org) {
+    console.warn(`[ensureMembership] Organization not found or not accessible: ${orgId}`);
+    return null;
+  }
+
+  const isCreator = org.createdBy === userId;
+  if (isCreator) {
+    console.log(
+      `[ensureMembership] User is creator, creating owner membership for orgId: ${orgId}, userId: ${userId}`
+    );
+    try {
+      member = await addMember(orgId, userId, userEmail, USER_ROLE.OWNER, userName);
+
+      const db = getFirestoreDb();
+      const userRef = doc(db, USERS_COLLECTION, userId);
+      await setDoc(
+        userRef,
+        {
+          organizations: arrayUnion(orgId),
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true }
+      );
+
+      return member;
+    } catch (error) {
+      console.error(`[ensureMembership] Failed to create owner membership:`, error);
+      return null;
+    }
+  }
+
+  const userData = await getPortalUser(userId);
+  if (!userData) {
+    console.warn(`[ensureMembership] User not found: ${userId}`);
+    return null;
+  }
+
+  const hasOrgInList = userData.organizations?.includes(orgId);
+  if (!hasOrgInList) {
+    console.warn(
+      `[ensureMembership] User doesn't have orgId in organizations array. orgId: ${orgId}, userId: ${userId}, userOrgs: ${JSON.stringify(userData.organizations)}`
+    );
+    return null;
+  }
+
+  const role = USER_ROLE.MEMBER;
+
+  try {
+    member = await addMember(orgId, userId, userEmail, role, userName);
+    console.log(
+      `[ensureMembership] Repaired missing membership for orgId: ${orgId}, userId: ${userId}, role: ${role}`
+    );
+    return member;
+  } catch (error) {
+    console.error(`[ensureMembership] Failed to repair membership:`, error);
+    return null;
   }
 }
 
@@ -471,7 +557,8 @@ export async function acceptInvite(
       invite.email,
       invite.role,
       userName || 'User',
-      invite.invitedBy
+      invite.invitedBy,
+      inviteId
     );
 
     // Update user's organizations
@@ -558,9 +645,7 @@ export function subscribeToInvites(
   );
 }
 
-export function subscribeToAgencyInvites(
-  callback: (invites: Invite[]) => void
-): () => void {
+export function subscribeToAgencyInvites(callback: (invites: Invite[]) => void): () => void {
   const db = getFirestoreDb();
   const q = query(
     collection(db, INVITES_COLLECTION),

@@ -17,7 +17,7 @@ import {
   serverTimestamp,
   Timestamp,
 } from 'firebase/firestore';
-import { getFirebaseStorage, getFirestoreDb } from '@/lib/firebase';
+import { getFirebaseStorage, getFirestoreDb, waitForAuth } from '@/lib/firebase';
 import { FileAttachment } from '@/lib/types/portal';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -39,6 +39,7 @@ export async function uploadFile(
     previousVersionId?: string;
   }
 ): Promise<FileAttachment> {
+  await waitForAuth();
   const storage = getFirebaseStorage();
   const db = getFirestoreDb();
   // Generate unique filename
@@ -101,6 +102,7 @@ export async function uploadMultipleFiles(
 // ============================================
 
 export async function getFilesByOrg(orgId: string): Promise<FileAttachment[]> {
+  await waitForAuth();
   const db = getFirestoreDb();
   try {
     const q = query(
@@ -125,6 +127,7 @@ export async function getFilesByOrg(orgId: string): Promise<FileAttachment[]> {
 }
 
 export async function getFilesByRequest(requestId: string): Promise<FileAttachment[]> {
+  await waitForAuth();
   const db = getFirestoreDb();
   try {
     const q = query(
@@ -153,6 +156,7 @@ export async function getFilesByRequest(requestId: string): Promise<FileAttachme
 // ============================================
 
 export async function deleteFile(fileId: string, storagePath: string): Promise<void> {
+  await waitForAuth();
   const storage = getFirebaseStorage();
   const db = getFirestoreDb();
   // Delete from Storage
@@ -195,25 +199,43 @@ export function subscribeToRequestFiles(
   requestId: string,
   callback: (files: FileAttachment[]) => void
 ): () => void {
-  const db = getFirestoreDb();
-  const q = query(
-    collection(db, FILES_COLLECTION),
-    where('requestId', '==', requestId),
-    orderBy('uploadedAt', 'desc')
-  );
+  let unsubscribe: (() => void) | null = null;
+  let isUnsubscribed = false;
 
-  return onSnapshot(
-    q,
-    (snapshot) => {
-      const files = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as FileAttachment[];
-      callback(files);
-    },
-    (error) => {
-      console.error('Error in request files subscription:', error);
+  waitForAuth()
+    .then(() => {
+      if (isUnsubscribed) return;
+      const db = getFirestoreDb();
+      const q = query(
+        collection(db, FILES_COLLECTION),
+        where('requestId', '==', requestId),
+        orderBy('uploadedAt', 'desc')
+      );
+
+      unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          const files = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          })) as FileAttachment[];
+          callback(files);
+        },
+        (error) => {
+          console.error('Error in request files subscription:', error);
+          callback([]);
+        }
+      );
+    })
+    .catch(error => {
+      console.error('Error waiting for auth in subscribeToRequestFiles:', error);
       callback([]);
+    });
+
+  return () => {
+    isUnsubscribed = true;
+    if (unsubscribe) {
+      unsubscribe();
     }
-  );
+  };
 }

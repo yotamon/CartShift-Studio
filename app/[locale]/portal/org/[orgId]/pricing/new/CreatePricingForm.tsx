@@ -5,7 +5,6 @@ import { useForm, useFieldArray, FieldArrayWithId } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from '@/i18n/navigation';
-import { useParams } from 'next/navigation';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
@@ -15,6 +14,7 @@ import {
 } from '@/lib/services/pricing-requests';
 import { getRequestsByOrg } from '@/lib/services/portal-requests';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
+import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
 import {
   AlertCircle,
   CheckCircle2,
@@ -58,7 +58,7 @@ interface PricingFormData {
 }
 
 export default function CreatePricingForm() {
-  const { orgId } = useParams();
+  const orgId = useResolvedOrgId();
   const router = useRouter();
   const { userData } = usePortalAuth();
   const t = useTranslations();

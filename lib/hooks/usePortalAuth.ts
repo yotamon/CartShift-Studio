@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getAuthInstance } from '@/lib/services/auth';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
@@ -10,6 +10,7 @@ interface UserData {
   id: string;
   email: string;
   name?: string;
+  photoUrl?: string;
   accountType: AccountType;
   isAgency: boolean;
   organizations?: string[];
@@ -32,8 +33,10 @@ export function usePortalAuth() {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<PortalErrorCode | null>(null);
+  const isMountedRef = useRef(false);
 
   useEffect(() => {
+    isMountedRef.current = true;
     let unsubscribeAuth: (() => void) | undefined;
     let unsubscribeUserData: (() => void) | undefined;
 
@@ -42,6 +45,7 @@ export function usePortalAuth() {
 
       // Listen to auth state changes
       unsubscribeAuth = onAuthStateChanged(auth, async (currentUser) => {
+        if (!isMountedRef.current) return;
         setUser(currentUser);
 
         if (currentUser) {
@@ -49,12 +53,14 @@ export function usePortalAuth() {
           try {
             await currentUser.getIdToken();
           } catch (err) {
+            if (!isMountedRef.current) return;
             console.error('Error getting auth token:', err);
             setError(getPortalError(err));
             setUserData({
               id: currentUser.uid,
               email: currentUser.email || '',
               name: currentUser.displayName || undefined,
+              photoUrl: currentUser.photoURL || undefined,
               accountType: ACCOUNT_TYPE.CLIENT,
               isAgency: false,
             });
@@ -65,6 +71,7 @@ export function usePortalAuth() {
           // Subscribe to user data from Firestore
           const userDocRef = doc(db, 'portal_users', currentUser.uid);
           unsubscribeUserData = onSnapshot(userDocRef, (snapshot) => {
+            if (!isMountedRef.current) return;
             if (snapshot.exists()) {
               const data = snapshot.data() as Partial<PortalUser>;
               const accountType = deriveAccountType(data);
@@ -72,6 +79,7 @@ export function usePortalAuth() {
                 id: currentUser.uid,
                 email: currentUser.email || data.email || '',
                 name: data.name || currentUser.displayName || undefined,
+                photoUrl: data.photoUrl || currentUser.photoURL || undefined,
                 accountType,
                 isAgency: accountType === ACCOUNT_TYPE.AGENCY,
                 organizations: data.organizations || [],
@@ -84,6 +92,7 @@ export function usePortalAuth() {
                 id: currentUser.uid,
                 email: currentUser.email || '',
                 name: currentUser.displayName || undefined,
+                photoUrl: currentUser.photoURL || undefined,
                 accountType: ACCOUNT_TYPE.CLIENT,
                 isAgency: false,
                 organizations: [],
@@ -91,6 +100,7 @@ export function usePortalAuth() {
             }
             setLoading(false);
           }, (err) => {
+            if (!isMountedRef.current) return;
             console.error('Error fetching user data:', err);
             setError(getPortalError(err));
 
@@ -98,17 +108,20 @@ export function usePortalAuth() {
               id: currentUser.uid,
               email: currentUser.email || '',
               name: currentUser.displayName || undefined,
+              photoUrl: currentUser.photoURL || undefined,
               accountType: ACCOUNT_TYPE.CLIENT,
               isAgency: false,
             });
             setLoading(false);
           });
         } else {
+          if (!isMountedRef.current) return;
           setUserData(null);
           setLoading(false);
         }
       });
     } catch (err) {
+      if (!isMountedRef.current) return;
       console.error('Auth initialization error:', err);
       setError(getPortalError(err));
       setLoading(false);
@@ -116,6 +129,7 @@ export function usePortalAuth() {
 
     // Cleanup subscriptions on unmount
     return () => {
+      isMountedRef.current = false;
       if (unsubscribeAuth) {
         unsubscribeAuth();
       }

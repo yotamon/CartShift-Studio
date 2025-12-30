@@ -17,7 +17,6 @@ import {
   ChevronLeft,
   Bell,
   Search,
-  User as UserIcon,
   Loader2,
   AlertCircle,
   Zap,
@@ -29,8 +28,9 @@ import { cn } from '@/lib/utils';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { logout } from '@/lib/services/auth';
 import { PortalButton } from './ui/PortalButton';
+import { PortalAvatar } from './ui/PortalAvatar';
 import { useTranslations, useLocale } from 'next-intl';
-import { getMemberByUserId } from '@/lib/services/portal-organizations';
+import { getMemberByUserId, ensureMembership } from '@/lib/services/portal-organizations';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import {
   subscribeToNotifications,
@@ -80,6 +80,23 @@ export const PortalShell = ({
 
   const userId = userData?.id ?? null;
 
+  // Resolve real orgId if we are in the template route
+  const effectiveOrgId = React.useMemo(() => {
+    if (orgId === 'template' && pathname) {
+      // Path format: /:locale/portal/org/:orgId/... or /portal/org/:orgId/...
+      // Example: /en/portal/org/123/dashboard
+      const parts = pathname.split('/');
+      const orgIndex = parts.indexOf('org');
+      if (orgIndex !== -1 && parts.length > orgIndex + 1) {
+        const realId = parts[orgIndex + 1];
+        if (realId !== 'template') {
+          return realId;
+        }
+      }
+    }
+    return orgId;
+  }, [orgId, pathname]);
+
   useEffect(() => {
     if (!loading) {
       if (!isAuthenticated) {
@@ -89,18 +106,47 @@ export const PortalShell = ({
 
       const checkAccess = async () => {
         try {
-          if (orgId && userData) {
+          if (effectiveOrgId && userData) {
             if (userData.isAgency || userData.accountType === 'AGENCY') {
               setIsAuthorized(true);
               return;
             }
 
-            const member = await getMemberByUserId(orgId, userData.id);
+            // CRITICAL: Skip check if orgId is 'template' to avoid backend errors
+            if (effectiveOrgId === 'template') {
+              console.warn(
+                '[PortalShell] effectiveOrgId is "template". Skipping access check and allowing render.'
+              );
+              setIsAuthorized(true);
+              return;
+            }
+
+            console.log(
+              `[PortalShell] Checking access for orgId: ${effectiveOrgId}, userId: ${userData.id}`
+            );
+
+            let member = await getMemberByUserId(effectiveOrgId, userData.id);
+            console.log(
+              `[PortalShell] Initial membership check result:`,
+              member ? 'found' : 'not found'
+            );
+
+            if (!member) {
+              console.log(`[PortalShell] Attempting to ensure membership...`);
+              member = await ensureMembership(
+                effectiveOrgId,
+                userData.id,
+                userData.email,
+                userData.name
+              );
+              console.log(`[PortalShell] After ensureMembership:`, member ? 'found' : 'not found');
+            }
+
             setIsAuthorized(member !== null);
 
             if (!member) {
               console.warn(
-                `[PortalShell] No membership found for orgId: ${orgId}, userId: ${userData.id}`
+                `[PortalShell] Access denied - No membership found for orgId: ${effectiveOrgId}, userId: ${userData.id}, userOrgs: ${JSON.stringify(userData.organizations)}`
               );
             }
           } else if (isAgencyPage && userData) {
@@ -120,7 +166,7 @@ export const PortalShell = ({
     if (userData && !userData.isAgency && !userData.onboardingComplete) {
       setShowOnboarding(true);
     }
-  }, [loading, isAuthenticated, userData, orgId, isAgencyPage, router]);
+  }, [loading, isAuthenticated, userData, effectiveOrgId, isAgencyPage, router]);
 
   useEffect(() => {
     setMounted(true);
@@ -263,32 +309,32 @@ export const PortalShell = ({
           {
             label: t('portal.sidebar.nav.dashboard'),
             icon: LayoutDashboard,
-            href: `/portal/org/${orgId}/dashboard/`,
+            href: `/portal/org/${effectiveOrgId}/dashboard/`,
           },
           {
             label: t('portal.sidebar.nav.requests'),
             icon: ClipboardList,
-            href: `/portal/org/${orgId}/requests/`,
+            href: `/portal/org/${effectiveOrgId}/requests/`,
           },
           {
             label: t('portal.sidebar.nav.pricing' as any),
             icon: DollarSign,
-            href: `/portal/org/${orgId}/pricing/`,
+            href: `/portal/org/${effectiveOrgId}/pricing/`,
           },
           {
             label: t('portal.sidebar.nav.team'),
             icon: Users,
-            href: `/portal/org/${orgId}/team/`,
+            href: `/portal/org/${effectiveOrgId}/team/`,
           },
           {
             label: t('portal.sidebar.nav.files'),
             icon: FolderOpen,
-            href: `/portal/org/${orgId}/files/`,
+            href: `/portal/org/${effectiveOrgId}/files/`,
           },
           {
             label: t('portal.sidebar.nav.settings'),
             icon: Settings,
-            href: `/portal/org/${orgId}/settings/`,
+            href: `/portal/org/${effectiveOrgId}/settings/`,
           },
         ];
 
@@ -380,14 +426,23 @@ export const PortalShell = ({
           'w-[85vw] max-w-sm',
           'md:translate-x-0',
           locale === 'he' ? 'right-0' : 'left-0',
-          isMobileMenuOpen ? 'translate-x-0' : (locale === 'he' ? 'translate-x-[100%]' : '-translate-x-full'),
-          isSidebarOpen ? 'md:w-[var(--sidebar-width-expanded)]' : 'md:w-[var(--sidebar-width-collapsed)]'
+          isMobileMenuOpen
+            ? 'translate-x-0'
+            : locale === 'he'
+              ? 'translate-x-[100%]'
+              : '-translate-x-full',
+          isSidebarOpen
+            ? 'md:w-[var(--sidebar-width-expanded)]'
+            : 'md:w-[var(--sidebar-width-collapsed)]'
         )}
         aria-label="Navigation"
       >
         {/* Sidebar Header / Brand */}
         <div className="h-20 flex items-center px-6 border-b border-surface-200/50 dark:border-surface-800/30 flex-shrink-0">
-          <Link href={`/${locale}/portal/org/${orgId}/dashboard`} className="flex items-center gap-4 group w-full min-w-0">
+          <Link
+            href={`/${locale}/portal/org/${orgId}/dashboard`}
+            className="flex items-center gap-4 group w-full min-w-0"
+          >
             <div className="w-10 h-10 flex-shrink-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-black shadow-lg shadow-blue-500/25 group-hover:scale-110 transition-transform duration-300">
               <Zap size={20} fill="currentColor" />
             </div>
@@ -419,7 +474,9 @@ export const PortalShell = ({
                 onClick={() => isMobile && setIsMobileMenuOpen(false)}
                 className={cn(
                   'portal-nav-item group relative',
-                  isActive ? 'portal-nav-item-active' : 'hover:bg-surface-100/60 dark:hover:bg-surface-800/40',
+                  isActive
+                    ? 'portal-nav-item-active'
+                    : 'hover:bg-surface-100/60 dark:hover:bg-surface-800/40',
                   !isSidebarOpen && 'md:justify-center md:px-0'
                 )}
                 title={!isSidebarOpen ? item.label : undefined}
@@ -428,7 +485,9 @@ export const PortalShell = ({
                   size={20}
                   className={cn(
                     'transition-all duration-300 flex-shrink-0',
-                    isActive ? 'text-blue-600 dark:text-blue-400' : 'opacity-60 group-hover:opacity-100 group-hover:scale-110'
+                    isActive
+                      ? 'text-blue-600 dark:text-blue-400'
+                      : 'opacity-60 group-hover:opacity-100 group-hover:scale-110'
                   )}
                 />
                 {isSidebarOpen && (
@@ -444,8 +503,8 @@ export const PortalShell = ({
                   <motion.div
                     layoutId="nav-active-indicator"
                     className={cn(
-                      "absolute w-1 h-6 bg-blue-600 rounded-full",
-                      locale === 'he' ? "left-0" : "right-0"
+                      'absolute w-1 h-6 bg-blue-600 rounded-full',
+                      locale === 'he' ? 'left-0' : 'right-0'
                     )}
                   />
                 )}
@@ -464,10 +523,23 @@ export const PortalShell = ({
             )}
             aria-label={isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
           >
-            <div className={cn('transition-transform duration-500', isSidebarOpen ? (locale === 'he' ? 'rotate-180' : 'rotate-0') : (locale === 'he' ? 'rotate-0' : 'rotate-180'))}>
+            <div
+              className={cn(
+                'transition-transform duration-500',
+                isSidebarOpen
+                  ? locale === 'he'
+                    ? 'rotate-180'
+                    : 'rotate-0'
+                  : locale === 'he'
+                    ? 'rotate-0'
+                    : 'rotate-180'
+              )}
+            >
               <ChevronLeft size={20} />
             </div>
-            {isSidebarOpen && <span className="text-sm font-bold">{t('portal.sidebar.collapse')}</span>}
+            {isSidebarOpen && (
+              <span className="text-sm font-bold">{t('portal.sidebar.collapse')}</span>
+            )}
           </button>
 
           <button
@@ -477,7 +549,10 @@ export const PortalShell = ({
               !isSidebarOpen && 'justify-center px-0'
             )}
           >
-            <LogOut size={20} className="flex-shrink-0 group-hover:translate-x-1 transition-transform" />
+            <LogOut
+              size={20}
+              className="flex-shrink-0 group-hover:translate-x-1 transition-transform"
+            />
             {isSidebarOpen && <span className="text-sm">{t('portal.sidebar.signOut')}</span>}
           </button>
         </div>
@@ -488,7 +563,9 @@ export const PortalShell = ({
         className={cn(
           'portal-main',
           'transition-all duration-300',
-          isSidebarOpen ? 'md:pl-[var(--sidebar-width-expanded)] rtl:md:pl-0 rtl:md:pr-[var(--sidebar-width-expanded)]' : 'md:pl-[var(--sidebar-width-collapsed)] rtl:md:pl-0 rtl:md:pr-[var(--sidebar-width-collapsed)]'
+          isSidebarOpen
+            ? 'md:pl-[var(--sidebar-width-expanded)] rtl:md:pl-0 rtl:md:pr-[var(--sidebar-width-expanded)]'
+            : 'md:pl-[var(--sidebar-width-collapsed)] rtl:md:pl-0 rtl:md:pr-[var(--sidebar-width-collapsed)]'
         )}
       >
         {/* Header */}
@@ -502,7 +579,10 @@ export const PortalShell = ({
               <Menu size={24} />
             </button>
             <div className="relative hidden lg:block group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-400 group-focus-within:text-blue-500 transition-colors" size={18} />
+              <Search
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-400 group-focus-within:text-blue-500 transition-colors"
+                size={18}
+              />
               <input
                 type="text"
                 placeholder={t('portal.header.searchPlaceholder')}
@@ -521,8 +601,10 @@ export const PortalShell = ({
                   ref={notificationButtonRef}
                   onClick={() => setIsNotificationOpen(!isNotificationOpen)}
                   className={cn(
-                    "p-3 rounded-2xl transition-all relative group",
-                    isNotificationOpen ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600" : "text-surface-400 hover:bg-surface-50 dark:hover:bg-surface-900"
+                    'p-3 rounded-2xl transition-all relative group',
+                    isNotificationOpen
+                      ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600'
+                      : 'text-surface-400 hover:bg-surface-50 dark:hover:bg-surface-900'
                   )}
                 >
                   <Bell size={20} className="group-hover:scale-110 transition-transform" />
@@ -539,110 +621,145 @@ export const PortalShell = ({
                 <span className="text-sm font-black text-surface-900 dark:text-white">
                   {userData?.name || t('portal.header.authorizedMember' as never)}
                 </span>
-                <span className={cn(
-                  "text-[9px] font-black uppercase tracking-widest",
-                  accountType === ACCOUNT_TYPE.AGENCY ? "text-purple-500" : "text-blue-500"
-                )}>
-                  {accountType === ACCOUNT_TYPE.AGENCY ? t('portal.accountType.badge.agency' as never) : t('portal.accountType.badge.client' as never)}
+                <span
+                  className={cn(
+                    'text-[9px] font-black uppercase tracking-widest',
+                    accountType === ACCOUNT_TYPE.AGENCY ? 'text-purple-500' : 'text-blue-500'
+                  )}
+                >
+                  {accountType === ACCOUNT_TYPE.AGENCY
+                    ? t('portal.accountType.badge.agency' as never)
+                    : t('portal.accountType.badge.client' as never)}
                 </span>
               </div>
-              <div className="portal-avatar group cursor-pointer hover:border-blue-500/50 transition-colors">
-                <UserIcon size={20} className="group-hover:scale-110 transition-transform" />
-              </div>
+              <Link
+                href={
+                  userData?.isAgency ? '/portal/agency/settings/' : `/portal/org/${orgId}/settings/`
+                }
+                className="portal-avatar group cursor-pointer hover:border-blue-500/50 transition-all active:scale-95 shadow-lg shadow-blue-500/10"
+              >
+                <PortalAvatar
+                  src={userData?.photoUrl}
+                  name={userData?.name}
+                  size="sm"
+                  className="group-hover:scale-110 transition-transform"
+                />
+              </Link>
             </div>
           </div>
         </header>
 
         {/* Page Content Container */}
         <main id="main-content" className="portal-content">
-          <div className="portal-reveal">
-            {children}
-          </div>
+          <div className="portal-reveal">{children}</div>
         </main>
       </div>
 
       {/* Portal Elements */}
-      {mounted && createPortal(
-        <AnimatePresence>
-          {isNotificationOpen && (
-            <motion.div
-              ref={notificationDropdownRef}
-              initial={{ opacity: 0, y: 10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.95 }}
-              className="fixed w-96 bg-white/90 dark:bg-surface-900/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-surface-200/60 dark:border-surface-800/50 overflow-hidden z-[100]"
-              style={{
-                top: `${notificationPosition.top}px`,
-                right: notificationPosition.right !== undefined ? `${notificationPosition.right}px` : undefined,
-                left: notificationPosition.left !== undefined ? `${notificationPosition.left}px` : undefined,
-              }}
-            >
-              <div className="p-6 border-b border-surface-200/50 dark:border-surface-800/30 flex items-center justify-between bg-white/50 dark:bg-surface-900/50">
-                <h3 className="text-base font-black text-surface-900 dark:text-white">
-                  {t('portal.header.notifications' as any) || 'Notifications'}
-                </h3>
-                {unreadCount > 0 && (
-                  <button onClick={handleMarkAllAsRead} className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1.5 hover:underline decoration-2 underline-offset-4 transition-all">
-                    <CheckCheck size={14} />
-                    Mark all as read
-                  </button>
-                )}
-              </div>
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {isNotificationOpen && (
+              <motion.div
+                ref={notificationDropdownRef}
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                className="fixed w-96 bg-white/90 dark:bg-surface-900/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-surface-200/60 dark:border-surface-800/50 overflow-hidden z-[100]"
+                style={{
+                  top: `${notificationPosition.top}px`,
+                  right:
+                    notificationPosition.right !== undefined
+                      ? `${notificationPosition.right}px`
+                      : undefined,
+                  left:
+                    notificationPosition.left !== undefined
+                      ? `${notificationPosition.left}px`
+                      : undefined,
+                }}
+              >
+                <div className="p-6 border-b border-surface-200/50 dark:border-surface-800/30 flex items-center justify-between bg-white/50 dark:bg-surface-900/50">
+                  <h3 className="text-base font-black text-surface-900 dark:text-white">
+                    {t('portal.header.notifications' as any) || 'Notifications'}
+                  </h3>
+                  {unreadCount > 0 && (
+                    <button
+                      onClick={handleMarkAllAsRead}
+                      className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1.5 hover:underline decoration-2 underline-offset-4 transition-all"
+                    >
+                      <CheckCheck size={14} />
+                      Mark all as read
+                    </button>
+                  )}
+                </div>
 
-              <div className="max-h-[450px] overflow-y-auto portal-scrollbar bg-white/30 dark:bg-surface-900/10">
-                {notifications.length === 0 ? (
-                  <div className="p-12 text-center">
-                    <div className="w-16 h-16 bg-surface-50 dark:bg-surface-950 rounded-full flex items-center justify-center mx-auto mb-4 border border-surface-200 dark:border-surface-800">
-                      <Bell size={24} className="text-surface-300 dark:text-surface-700" />
+                <div className="max-h-[450px] overflow-y-auto portal-scrollbar bg-white/30 dark:bg-surface-900/10">
+                  {notifications.length === 0 ? (
+                    <div className="p-12 text-center">
+                      <div className="w-16 h-16 bg-surface-50 dark:bg-surface-950 rounded-full flex items-center justify-center mx-auto mb-4 border border-surface-200 dark:border-surface-800">
+                        <Bell size={24} className="text-surface-300 dark:text-surface-700" />
+                      </div>
+                      <p className="text-sm text-surface-500 font-bold">
+                        {t('portal.header.noNotifications' as any) || 'No notifications'}
+                      </p>
                     </div>
-                    <p className="text-sm text-surface-500 font-bold">
-                      {t('portal.header.noNotifications' as any) || 'No notifications'}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="divide-y divide-surface-100 dark:divide-surface-800/50">
-                    {notifications.map(notification => {
-                      const createdAt = notification.createdAt?.toDate ? notification.createdAt.toDate() : new Date();
-                      return (
-                        <button
-                          key={notification.id}
-                          onClick={() => handleNotificationClick(notification)}
-                          className={cn(
-                            'w-full p-5 text-left rtl:text-right hover:bg-surface-50/80 dark:hover:bg-surface-800/40 transition-all flex items-start gap-4 group',
-                            !notification.read && 'bg-blue-50/30 dark:bg-blue-900/10'
-                          )}
-                        >
-                          <div className={cn(
-                            "w-2 h-2 rounded-full mt-2 flex-shrink-0 transition-all group-hover:scale-150",
-                            !notification.read ? 'bg-blue-600' : 'bg-transparent border border-surface-300 dark:border-surface-700'
-                          )} />
-                          <div className="flex-1 min-w-0">
-                            <p className={cn(
-                              'text-sm font-bold mb-1 font-outfit leading-tight',
-                              !notification.read ? 'text-surface-900 dark:text-white' : 'text-surface-500'
-                            )}>
-                              {notification.title}
-                            </p>
-                            <p className="text-xs text-surface-500/80 mb-3 line-clamp-2 leading-relaxed font-medium">
-                              {notification.body}
-                            </p>
-                            <div className="flex items-center gap-2">
-                              <div className="px-2 py-0.5 rounded-md bg-surface-100 dark:bg-surface-800 text-[10px] font-black uppercase text-surface-400">
-                                {formatDistanceToNow(createdAt, { addSuffix: true, locale: locale === 'he' ? he : enUS })}
+                  ) : (
+                    <div className="divide-y divide-surface-100 dark:divide-surface-800/50">
+                      {notifications.map(notification => {
+                        const createdAt = notification.createdAt?.toDate
+                          ? notification.createdAt.toDate()
+                          : new Date();
+                        return (
+                          <button
+                            key={notification.id}
+                            onClick={() => handleNotificationClick(notification)}
+                            className={cn(
+                              'w-full p-5 text-left rtl:text-right hover:bg-surface-50/80 dark:hover:bg-surface-800/40 transition-all flex items-start gap-4 group',
+                              !notification.read && 'bg-blue-50/30 dark:bg-blue-900/10'
+                            )}
+                          >
+                            <div
+                              className={cn(
+                                'w-2 h-2 rounded-full mt-2 flex-shrink-0 transition-all group-hover:scale-150',
+                                !notification.read
+                                  ? 'bg-blue-600'
+                                  : 'bg-transparent border border-surface-300 dark:border-surface-700'
+                              )}
+                            />
+                            <div className="flex-1 min-w-0">
+                              <p
+                                className={cn(
+                                  'text-sm font-bold mb-1 font-outfit leading-tight',
+                                  !notification.read
+                                    ? 'text-surface-900 dark:text-white'
+                                    : 'text-surface-500'
+                                )}
+                              >
+                                {notification.title}
+                              </p>
+                              <p className="text-xs text-surface-500/80 mb-3 line-clamp-2 leading-relaxed font-medium">
+                                {notification.body}
+                              </p>
+                              <div className="flex items-center gap-2">
+                                <div className="px-2 py-0.5 rounded-md bg-surface-100 dark:bg-surface-800 text-[10px] font-black uppercase text-surface-400">
+                                  {formatDistanceToNow(createdAt, {
+                                    addSuffix: true,
+                                    locale: locale === 'he' ? he : enUS,
+                                  })}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>,
-        document.body
-      )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
+        )}
 
       {/* Onboarding Tour for new users */}
       {showOnboarding && userData?.id && (

@@ -12,7 +12,7 @@ export const PortalCard = ({ children, className, noPadding = false, hoverEffect
     <div
       className={cn(
         "portal-card",
-        !noPadding && "p-6 md:p-8",
+        !noPadding && "p-3 md:p-4",
         hoverEffect && "portal-card-hover",
         className
       )}
@@ -25,7 +25,7 @@ export const PortalCard = ({ children, className, noPadding = false, hoverEffect
 
 export const PortalCardHeader = ({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className={cn("px-6 md:px-8 py-5 border-b border-surface-200/60 dark:border-surface-800/50", className)} {...props}>
+    <div className={cn("px-3 md:px-4 py-3 border-b border-surface-200/60 dark:border-surface-800/50", className)} {...props}>
       {children}
     </div>
   );
@@ -41,7 +41,7 @@ export const PortalCardTitle = ({ children, className, ...props }: React.HTMLAtt
 
 export const PortalCardContent = ({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className={cn("p-6 md:p-8", className)} {...props}>
+    <div className={cn("p-3 md:p-4", className)} {...props}>
       {children}
     </div>
   );

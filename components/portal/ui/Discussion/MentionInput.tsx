@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, KeyboardEvent } from 'react';
 import { PortalUser } from '@/lib/types/portal';
 import { cn } from '@/lib/utils';
-import { User, X, Loader2 } from 'lucide-react';
+import { User } from 'lucide-react';
 
 interface MentionInputProps {
   value: string;
@@ -12,7 +12,6 @@ interface MentionInputProps {
   disabled?: boolean;
   placeholder?: string;
   users: PortalUser[];
-  isLoading?: boolean;
 }
 
 export const MentionInput = ({
@@ -22,7 +21,6 @@ export const MentionInput = ({
   disabled,
   placeholder,
   users,
-  isLoading
 }: MentionInputProps) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestionIndex, setSuggestionIndex] = useState(0);

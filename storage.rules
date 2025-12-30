@@ -6,15 +6,48 @@ service firebase.storage {
       return request.auth != null;
     }
 
+    function getUserId() {
+      return request.auth.uid;
+    }
+
+    function getUserDoc() {
+      return get(/databases/(default)/documents/portal_users/$(getUserId()));
+    }
+
+    function isAgencyUser() {
+      return isAuthenticated()
+        && (getUserDoc().data.accountType == 'AGENCY' || getUserDoc().data.isAgency == true);
+    }
+
+    function getMemberDoc(orgId) {
+      return get(/databases/(default)/documents/portal_members/$(orgId + '_' + getUserId()));
+    }
+
+    function isOrgMember(orgId) {
+      return isAuthenticated() && (isAgencyUser() || getMemberDoc(orgId).exists());
+    }
+
     // Portal files
     match /portal/{orgId}/{allPaths=**} {
-      // Anyone authenticated can read
+      // Members or agency can read
+      allow read: if isOrgMember(orgId);
+
+      // Only members or agency can upload
+      // Max file size: 50MB
+      allow write: if isOrgMember(orgId)
+                   && request.resource.size < 50 * 1024 * 1024;
+    }
+
+    // User avatars
+    match /avatars/{userId}/{allPaths=**} {
+      // Authenticated users can read any avatar (for displaying profile pictures)
       allow read: if isAuthenticated();
 
-      // Only authenticated users can upload
-      // Max file size: 50MB
+      // Users can only upload/delete their own avatars
+      // Max file size: 2MB
       allow write: if isAuthenticated()
-                   && request.resource.size < 50 * 1024 * 1024;
+                   && getUserId() == userId
+                   && request.resource.size < 2 * 1024 * 1024;
     }
   }
 }

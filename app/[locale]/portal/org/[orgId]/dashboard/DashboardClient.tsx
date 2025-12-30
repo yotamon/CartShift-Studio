@@ -1,31 +1,25 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import {
-  Clock,
-  Plus,
-  Loader2,
-  AlertCircle
-} from 'lucide-react';
+import { Clock, Plus, Loader2, AlertCircle } from 'lucide-react';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { subscribeToOrgRequests } from '@/lib/services/portal-requests';
 import { subscribeToOrgActivities } from '@/lib/services/portal-activities';
-import { Request, Organization, ActivityLog } from '@/lib/types/portal';
+import { Request, ActivityLog } from '@/lib/types/portal';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
+import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
 import { useTranslations } from 'next-intl';
-import { getMemberByUserId, subscribeToOrganization } from '@/lib/services/portal-organizations';
+import { getMemberByUserId, ensureMembership } from '@/lib/services/portal-organizations';
 import { Link } from '@/i18n/navigation';
 import { ClientAnalytics } from '@/components/portal/ClientAnalytics';
 import { ActivityTimeline } from '@/components/portal/ActivityTimeline';
 
 export default function DashboardClient() {
-  const { orgId } = useParams();
+  const orgId = useResolvedOrgId();
   const { userData, loading: authLoading } = usePortalAuth();
   const [requests, setRequests] = useState<Request[]>([]);
   const [activities, setActivities] = useState<ActivityLog[]>([]);
-  const [organization, setOrganization] = useState<Organization | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const t = useTranslations();
@@ -46,10 +40,10 @@ export default function DashboardClient() {
         setLoading(true);
         setError(null);
         try {
-          unsubscribeRequests = subscribeToOrgRequests(orgId, (data) => {
+          unsubscribeRequests = subscribeToOrgRequests(orgId, data => {
             setRequests(data);
           });
-          unsubscribeActivities = subscribeToOrgActivities(orgId, (data) => {
+          unsubscribeActivities = subscribeToOrgActivities(orgId, data => {
             setActivities(data);
             setLoading(false);
           });
@@ -62,9 +56,26 @@ export default function DashboardClient() {
       }
 
       try {
-        const member = await getMemberByUserId(orgId, userData.id);
+        console.log(
+          `[DashboardClient] Checking access for orgId: ${orgId}, userId: ${userData.id}, userOrgs: ${JSON.stringify(userData.organizations)}`
+        );
+
+        let member = await getMemberByUserId(orgId, userData.id);
+        console.log(
+          `[DashboardClient] Initial membership check result:`,
+          member ? 'found' : 'not found'
+        );
+
         if (!member) {
-          console.warn(`[DashboardClient] No membership found for orgId: ${orgId}, userId: ${userData.id}`);
+          console.log(`[DashboardClient] Attempting to ensure membership...`);
+          member = await ensureMembership(orgId, userData.id, userData.email, userData.name);
+          console.log(`[DashboardClient] After ensureMembership:`, member ? 'found' : 'not found');
+        }
+
+        if (!member) {
+          console.warn(
+            `[DashboardClient] Access denied - No membership found for orgId: ${orgId}, userId: ${userData.id}, userOrgs: ${JSON.stringify(userData.organizations)}`
+          );
           setError(t('portal.access.restrictedMessage'));
           setLoading(false);
           return;
@@ -79,15 +90,11 @@ export default function DashboardClient() {
       setLoading(true);
       setError(null);
 
-      const unsubscribeOrg = subscribeToOrganization(orgId, (org) => {
-        setOrganization(org);
-      });
-
       try {
-        unsubscribeRequests = subscribeToOrgRequests(orgId, (data) => {
+        unsubscribeRequests = subscribeToOrgRequests(orgId, data => {
           setRequests(data);
         });
-        unsubscribeActivities = subscribeToOrgActivities(orgId, (data) => {
+        unsubscribeActivities = subscribeToOrgActivities(orgId, data => {
           setActivities(data);
           setLoading(false);
         });
@@ -96,12 +103,6 @@ export default function DashboardClient() {
         setError(t('portal.common.error'));
         setLoading(false);
       }
-
-      return () => {
-        unsubscribeOrg();
-        if (unsubscribeRequests) unsubscribeRequests();
-        if (unsubscribeActivities) unsubscribeActivities();
-      };
     };
 
     checkAccess();
@@ -116,7 +117,9 @@ export default function DashboardClient() {
     return (
       <div className="flex flex-col items-center justify-center py-40 space-y-4">
         <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-        <p className="text-slate-500 font-bold font-outfit uppercase tracking-widest text-xs">{t('portal.dashboard.loading')}</p>
+        <p className="text-slate-500 font-bold font-outfit uppercase tracking-widest text-xs">
+          {t('portal.dashboard.loading')}
+        </p>
       </div>
     );
   }
@@ -125,9 +128,13 @@ export default function DashboardClient() {
     return (
       <div className="py-20 flex flex-col items-center justify-center text-center space-y-4">
         <AlertCircle className="w-12 h-12 text-rose-500" />
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">{t('portal.dashboard.error.title')}</h2>
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">
+          {t('portal.dashboard.error.title')}
+        </h2>
         <p className="text-slate-500 max-w-sm">{error}</p>
-        <PortalButton onClick={() => window.location.reload()}>{t('portal.dashboard.error.retry')}</PortalButton>
+        <PortalButton onClick={() => window.location.reload()}>
+          {t('portal.dashboard.error.retry')}
+        </PortalButton>
       </div>
     );
   }
@@ -137,7 +144,9 @@ export default function DashboardClient() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">{t('portal.dashboard.title')}</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
+            {t('portal.dashboard.title')}
+          </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">
             {t('portal.dashboard.subtitle')}
           </p>
@@ -165,29 +174,16 @@ export default function DashboardClient() {
             </h2>
           </div>
 
-          <PortalCard noPadding className="border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden bg-white dark:bg-slate-950 p-4">
+          <PortalCard
+            noPadding
+            className="border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden bg-white dark:bg-slate-950"
+          >
             <ActivityTimeline activities={activities} orgId={orgId as string} />
           </PortalCard>
         </div>
 
         {/* Sidebar Info */}
         <div className="space-y-6">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white px-2 font-outfit">{t('portal.dashboard.insight.title')}</h2>
-          <PortalCard hoverEffect className="bg-gradient-to-br from-blue-600 to-indigo-700 border-none text-white shadow-xl shadow-blue-500/20 relative overflow-hidden group">
-            <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-700" />
-            <div className="relative z-10">
-              <h4 className="font-bold text-lg mb-2 font-outfit">
-                {organization?.plan ? t(`portal.dashboard.insight.${organization.plan}.title` as any) : t('portal.dashboard.insight.partner')}
-              </h4>
-              <p className="text-sm text-blue-100/90 mb-6 leading-relaxed font-medium">
-                {organization?.plan ? t(`portal.dashboard.insight.${organization.plan}.description` as any) : t('portal.dashboard.insight.pro.description' as any)}
-              </p>
-              <PortalButton className="bg-white text-blue-600 hover:bg-blue-50 w-full border-none font-bold font-outfit">
-                {t('portal.dashboard.insight.viewBenefits')}
-              </PortalButton>
-            </div>
-          </PortalCard>
-
           <PortalCard className="border-slate-100 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-950">
             <h4 className="text-[10px] font-black text-slate-400 dark:text-slate-500 mb-6 flex items-center gap-2 uppercase tracking-widest">
               <Clock size={14} className="text-blue-500" />
@@ -195,28 +191,39 @@ export default function DashboardClient() {
             </h4>
             <div className="space-y-5">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-600 dark:text-slate-400 font-bold font-outfit">{t('portal.dashboard.serviceStatus.design')}</span>
+                <span className="text-slate-600 dark:text-slate-400 font-bold font-outfit">
+                  {t('portal.dashboard.serviceStatus.design')}
+                </span>
                 <span className="text-emerald-500 font-black flex items-center gap-2 text-[10px] uppercase tracking-widest">
-                   <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                   {t('portal.dashboard.serviceStatus.active')}
+                  <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                  {t('portal.dashboard.serviceStatus.active')}
                 </span>
               </div>
               <PortalCard className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl border-slate-200 dark:border-slate-800 p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-slate-600 dark:text-slate-400 font-bold font-outfit">{t('portal.dashboard.serviceStatus.dev')}</span>
+                  <span className="text-slate-600 dark:text-slate-400 font-bold font-outfit">
+                    {t('portal.dashboard.serviceStatus.dev')}
+                  </span>
                   <span className="text-amber-500 font-black flex items-center gap-2 text-[10px] uppercase tracking-widest">
-                     <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse" />
-                     {t('portal.dashboard.serviceStatus.peak')}
+                    <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse" />
+                    {t('portal.dashboard.serviceStatus.peak')}
                   </span>
                 </div>
                 <div className="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                   <div className="h-full bg-amber-500 w-[92%]" />
                 </div>
-                <p className="mt-3 text-[10px] text-slate-400 font-bold uppercase tracking-tight">{t('portal.dashboard.serviceStatus.etaLabel')}: 4-6 {t('portal.dashboard.serviceStatus.days')}</p>
+                <p className="mt-3 text-[10px] text-slate-400 font-bold uppercase tracking-tight">
+                  {t('portal.dashboard.serviceStatus.etaLabel')}: 4-6{' '}
+                  {t('portal.dashboard.serviceStatus.days')}
+                </p>
               </PortalCard>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-600 dark:text-slate-400 font-bold font-outfit">{t('portal.dashboard.serviceStatus.avgResponse')}</span>
-                <span className="text-slate-900 dark:text-white font-black text-[10px] uppercase tracking-widest">{t('portal.dashboard.serviceStatus.responseTime')}</span>
+                <span className="text-slate-600 dark:text-slate-400 font-bold font-outfit">
+                  {t('portal.dashboard.serviceStatus.avgResponse')}
+                </span>
+                <span className="text-slate-900 dark:text-white font-black text-[10px] uppercase tracking-widest">
+                  {t('portal.dashboard.serviceStatus.responseTime')}
+                </span>
               </div>
             </div>
           </PortalCard>

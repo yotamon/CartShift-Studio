@@ -2,7 +2,7 @@ import { setRequestLocale } from 'next-intl/server';
 import PricingListClient from './PricingListClient';
 import { getPortalStaticOrgParams } from '@/lib/portal-static-params';
 
-export const dynamicParams = process.env.NODE_ENV !== 'production';
+export const dynamicParams = false;
 
 export async function generateStaticParams() {
   return getPortalStaticOrgParams();

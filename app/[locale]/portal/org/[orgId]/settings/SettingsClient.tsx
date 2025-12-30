@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalInput } from '@/components/portal/ui/PortalInput';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
@@ -19,7 +18,12 @@ import {
   Building2,
   AlertCircle,
   RefreshCw,
+  User as UserIcon,
+  Camera,
 } from 'lucide-react';
+import { PortalAvatar } from '@/components/portal/ui/PortalAvatar';
+import { getFirebaseStorage, waitForAuth } from '@/lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { cn } from '@/lib/utils';
 import { getOrganization, updateOrganization } from '@/lib/services/portal-organizations';
 import { updatePortalUser } from '@/lib/services/portal-users';
@@ -29,9 +33,10 @@ import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { PortalSwitch } from '@/components/portal/ui/PortalSwitch';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
+import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
 
 export default function SettingsClient() {
-  const { orgId } = useParams();
+  const orgId = useResolvedOrgId();
   const router = useRouter();
   const { user, userData } = usePortalAuth();
   const t = useTranslations();
@@ -60,6 +65,12 @@ export default function SettingsClient() {
   const [notifSaving, setNotifSaving] = useState(false);
   const [resetSent, setResetSent] = useState(false);
   const [restartingOnboarding, setRestartingOnboarding] = useState(false);
+  const [profileFormData, setProfileFormData] = useState({
+    name: '',
+    photoUrl: '',
+  });
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   useEffect(() => {
     async function fetchOrganization() {
@@ -113,12 +124,10 @@ export default function SettingsClient() {
 
     fetchOrganization();
 
-    if (userData?.notificationPreferences) {
-      setNotificationPrefs({
-        emailOnRequestUpdate: userData.notificationPreferences.emailOnRequestUpdate ?? true,
-        emailOnNewComment: userData.notificationPreferences.emailOnNewComment ?? true,
-        emailOnStatusChange: userData.notificationPreferences.emailOnStatusChange ?? true,
-        marketingEmails: userData.notificationPreferences.marketingEmails ?? false,
+    if (userData) {
+      setProfileFormData({
+        name: userData.name || '',
+        photoUrl: userData.photoUrl || '',
       });
     }
   }, [orgId, userData]);
@@ -194,14 +203,14 @@ export default function SettingsClient() {
         onboardingComplete: false,
         onboardingSkipped: false,
       });
-      showFeedback('success', t('portal.settings.general.onboarding.success' as any) || 'Onboarding will start on next page load');
+      showFeedback('success', t('portal.settings.general.onboarding.success'));
       // Reload to trigger onboarding
       setTimeout(() => {
         window.location.reload();
       }, 1500);
     } catch (error) {
       console.error('Error restarting onboarding:', error);
-      showFeedback('error', t('portal.settings.general.onboarding.error' as any) || 'Failed to restart onboarding');
+      showFeedback('error', t('portal.settings.general.onboarding.error'));
     } finally {
       setRestartingOnboarding(false);
     }
@@ -209,10 +218,68 @@ export default function SettingsClient() {
 
   const tabs = [
     { id: 'general', label: t('portal.settings.tabs.general'), icon: Building2 },
+    { id: 'profile', label: t('portal.settings.tabs.profile'), icon: UserIcon },
     { id: 'notifications', label: t('portal.settings.tabs.notifications'), icon: Bell },
     { id: 'security', label: t('portal.settings.tabs.security'), icon: Shield },
     { id: 'billing', label: t('portal.settings.tabs.billing'), icon: CreditCard },
   ];
+
+  const handleProfileSave = async () => {
+    if (!user) return;
+    setProfileSaving(true);
+    try {
+      await updatePortalUser(user.uid, {
+        name: profileFormData.name,
+        photoUrl: profileFormData.photoUrl,
+      });
+      showFeedback('success', t('portal.settings.profile.success'));
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      showFeedback('error', t('portal.settings.profile.error'));
+    } finally {
+      setProfileSaving(false);
+    }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      showFeedback('error', 'Image size must be less than 2MB');
+      return;
+    }
+
+    setUploadingAvatar(true);
+    try {
+      await waitForAuth();
+      const storage = getFirebaseStorage();
+      const storageRef = ref(storage, `avatars/${user.uid}/${Date.now()}_${file.name}`);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      setProfileFormData(prev => ({ ...prev, photoUrl: url }));
+
+      // Auto-save the new photo URL
+      await updatePortalUser(user.uid, { photoUrl: url });
+      showFeedback('success', 'Profile photo updated');
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      showFeedback('error', 'Failed to upload photo');
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const removeAvatar = async () => {
+    if (!user) return;
+    try {
+      setProfileFormData(prev => ({ ...prev, photoUrl: '' }));
+      await updatePortalUser(user.uid, { photoUrl: '' });
+      showFeedback('success', 'Profile photo removed');
+    } catch (error) {
+      console.error('Error removing avatar:', error);
+    }
+  };
 
   if (loading) {
     return (
@@ -361,10 +428,10 @@ export default function SettingsClient() {
                 <PortalCard className="border-blue-200 dark:border-blue-900/20 bg-blue-50/20 dark:bg-blue-900/5 shadow-sm">
                   <h3 className="text-lg font-bold text-blue-600 dark:text-blue-400 mb-2 flex items-center gap-2 font-outfit">
                     <RefreshCw size={20} />
-                    {t('portal.settings.general.onboarding.title' as any) || 'Restart Tour'}
+                    {t('portal.settings.general.onboarding.title')}
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 font-medium leading-relaxed">
-                    {t('portal.settings.general.onboarding.description' as any) || 'Re-experience the portal walkthrough to discover new features.'}
+                    {t('portal.settings.general.onboarding.description')}
                   </p>
                   <PortalButton
                     onClick={handleRestartOnboarding}
@@ -373,7 +440,7 @@ export default function SettingsClient() {
                     className="w-full shadow-lg shadow-blue-500/10 border-blue-300 dark:border-blue-800 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-outfit"
                   >
                     <RefreshCw size={18} className="mr-2" />
-                    {t('portal.settings.general.onboarding.button' as any) || 'Start Tour'}
+                    {t('portal.settings.general.onboarding.button')}
                   </PortalButton>
                 </PortalCard>
               </div>
@@ -393,6 +460,120 @@ export default function SettingsClient() {
                 >
                   {t('portal.settings.general.dangerZone.button')}
                 </PortalButton>
+              </PortalCard>
+            </div>
+          )}
+
+          {activeTab === 'profile' && (
+            <div className="space-y-6">
+              <PortalCard className="border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-950">
+                <div className="flex items-center gap-3 mb-10">
+                  <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 border border-blue-100 dark:border-blue-900/30">
+                    <UserIcon size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit">
+                      {t('portal.settings.profile.title')}
+                    </h3>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
+                      {t('portal.settings.profile.subtitle')}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-8">
+                  {/* Avatar Section */}
+                  <div className="flex flex-col md:flex-row items-center gap-8 p-6 rounded-3xl bg-slate-50/50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800/50">
+                    <div className="relative group">
+                      <PortalAvatar
+                        src={profileFormData.photoUrl}
+                        name={profileFormData.name}
+                        size="lg"
+                        className="w-24 h-24 ring-4 ring-white dark:ring-slate-900 shadow-2xl"
+                      />
+                      {uploadingAvatar && (
+                        <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center backdrop-blur-sm">
+                          <Loader2 className="w-6 h-6 text-white animate-spin" />
+                        </div>
+                      )}
+                      <label className="absolute -bottom-1 -right-1 p-2 bg-blue-600 text-white rounded-xl shadow-lg cursor-pointer hover:bg-blue-700 transition-all hover:scale-110 active:scale-95">
+                        <Camera size={16} />
+                        <input
+                          type="file"
+                          className="hidden"
+                          accept="image/*"
+                          onChange={handleAvatarUpload}
+                          disabled={uploadingAvatar}
+                        />
+                      </label>
+                    </div>
+
+                    <div className="flex-1 text-center md:text-left">
+                      <h4 className="font-bold text-slate-900 dark:text-white mb-1 font-outfit">
+                        {t('portal.settings.profile.avatar.title')}
+                      </h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 font-medium max-w-xs">
+                        {t('portal.settings.profile.avatar.desc')}
+                      </p>
+                      <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+                        <PortalButton
+                          variant="outline"
+                          size="sm"
+                          className="h-9 px-4 text-xs font-bold border-slate-200 dark:border-slate-800"
+                          onClick={() =>
+                            document.querySelector<HTMLInputElement>('input[type="file"]')?.click()
+                          }
+                        >
+                          {profileFormData.photoUrl
+                            ? t('portal.settings.profile.avatar.change')
+                            : t('portal.settings.profile.avatar.upload')}
+                        </PortalButton>
+                        {profileFormData.photoUrl && (
+                          <button
+                            onClick={removeAvatar}
+                            className="text-xs font-bold text-rose-500 hover:text-rose-600 px-3 py-2 transition-colors"
+                          >
+                            {t('portal.settings.profile.avatar.remove')}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <PortalInput
+                        label={t('portal.settings.profile.name')}
+                        value={profileFormData.name}
+                        onChange={e =>
+                          setProfileFormData({ ...profileFormData, name: e.target.value })
+                        }
+                        placeholder={t('portal.settings.profile.namePlaceholder')}
+                      />
+                      <div className="opacity-60 grayscale pointer-events-none">
+                        <PortalInput
+                          label={t('portal.settings.profile.email')}
+                          value={user?.email || ''}
+                          readOnly
+                          placeholder="email@example.com"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-10 pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                  <PortalButton
+                    onClick={handleProfileSave}
+                    isLoading={profileSaving}
+                    className="flex items-center gap-2 shadow-xl shadow-blue-500/20 font-outfit px-8"
+                  >
+                    <Save size={18} />
+                    {profileSaving
+                      ? t('portal.settings.general.saving')
+                      : t('portal.settings.profile.save')}
+                  </PortalButton>
+                </div>
               </PortalCard>
             </div>
           )}
@@ -588,7 +769,10 @@ export default function SettingsClient() {
 
           {activeTab === 'billing' && (
             <div className="space-y-6">
-              <PortalCard className="border-surface-200 dark:border-surface-800 shadow-xl overflow-hidden p-0 bg-white dark:bg-slate-950">
+              <PortalCard
+                noPadding
+                className="border-surface-200 dark:border-surface-800 shadow-xl overflow-hidden bg-white dark:bg-slate-950"
+              >
                 <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 p-8 text-white relative">
                   <div className="absolute right-0 top-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
                   <div className="relative z-10">

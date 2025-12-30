@@ -9,12 +9,13 @@ import {
   limit,
   onSnapshot,
 } from 'firebase/firestore';
-import { getFirestoreDb } from '@/lib/firebase';
+import { getFirestoreDb, waitForAuth } from '@/lib/firebase';
 import { Notification } from '@/lib/types/portal';
 
 const NOTIFICATIONS_COLLECTION = 'portal_notifications';
 
 export async function getNotifications(userId: string, options?: { limit?: number }): Promise<Notification[]> {
+  await waitForAuth();
   const db = getFirestoreDb();
   const q = query(
     collection(db, NOTIFICATIONS_COLLECTION),
@@ -31,6 +32,7 @@ export async function getNotifications(userId: string, options?: { limit?: numbe
 }
 
 export async function getUnreadNotificationCount(userId: string): Promise<number> {
+  await waitForAuth();
   const db = getFirestoreDb();
   const q = query(
     collection(db, NOTIFICATIONS_COLLECTION),
@@ -43,6 +45,7 @@ export async function getUnreadNotificationCount(userId: string): Promise<number
 }
 
 export async function markNotificationAsRead(notificationId: string): Promise<void> {
+  await waitForAuth();
   const db = getFirestoreDb();
   const docRef = doc(db, NOTIFICATIONS_COLLECTION, notificationId);
   await updateDoc(docRef, {
@@ -51,6 +54,7 @@ export async function markNotificationAsRead(notificationId: string): Promise<vo
 }
 
 export async function markAllNotificationsAsRead(userId: string): Promise<void> {
+  await waitForAuth();
   const db = getFirestoreDb();
   const q = query(
     collection(db, NOTIFICATIONS_COLLECTION),
@@ -71,42 +75,78 @@ export function subscribeToNotifications(
   callback: (notifications: Notification[]) => void,
   options?: { limit?: number }
 ): () => void {
-  const db = getFirestoreDb();
-  const q = query(
-    collection(db, NOTIFICATIONS_COLLECTION),
-    where('userId', '==', userId),
-    orderBy('createdAt', 'desc'),
-    ...(options?.limit ? [limit(options.limit)] : [])
-  );
+  let unsubscribe: (() => void) | null = null;
+  let isUnsubscribed = false;
 
-  return onSnapshot(q, (snapshot) => {
-    const notifications = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Notification[];
-    callback(notifications);
-  }, (error) => {
-    console.error('Error in notifications snapshot:', error);
-    callback([]);
-  });
+  waitForAuth()
+    .then(() => {
+      if (isUnsubscribed) return;
+      const db = getFirestoreDb();
+      const q = query(
+        collection(db, NOTIFICATIONS_COLLECTION),
+        where('userId', '==', userId),
+        orderBy('createdAt', 'desc'),
+        ...(options?.limit ? [limit(options.limit)] : [])
+      );
+
+      unsubscribe = onSnapshot(q, (snapshot) => {
+        const notifications = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Notification[];
+        callback(notifications);
+      }, (error) => {
+        console.error('Error in notifications snapshot:', error);
+        callback([]);
+      });
+    })
+    .catch(error => {
+      console.error('Error waiting for auth in subscribeToNotifications:', error);
+      callback([]);
+    });
+
+  return () => {
+    isUnsubscribed = true;
+    if (unsubscribe) {
+      unsubscribe();
+    }
+  };
 }
 
 export function subscribeToUnreadCount(
   userId: string,
   callback: (count: number) => void
 ): () => void {
-  const db = getFirestoreDb();
-  const q = query(
-    collection(db, NOTIFICATIONS_COLLECTION),
-    where('userId', '==', userId),
-    where('read', '==', false)
-  );
+  let unsubscribe: (() => void) | null = null;
+  let isUnsubscribed = false;
 
-  return onSnapshot(q, (snapshot) => {
-    callback(snapshot.size);
-  }, (error) => {
-    console.error('Error in unread count snapshot:', error);
-    callback(0);
-  });
+  waitForAuth()
+    .then(() => {
+      if (isUnsubscribed) return;
+      const db = getFirestoreDb();
+      const q = query(
+        collection(db, NOTIFICATIONS_COLLECTION),
+        where('userId', '==', userId),
+        where('read', '==', false)
+      );
+
+      unsubscribe = onSnapshot(q, (snapshot) => {
+        callback(snapshot.size);
+      }, (error) => {
+        console.error('Error in unread count snapshot:', error);
+        callback(0);
+      });
+    })
+    .catch(error => {
+      console.error('Error waiting for auth in subscribeToUnreadCount:', error);
+      callback(0);
+    });
+
+  return () => {
+    isUnsubscribed = true;
+    if (unsubscribe) {
+      unsubscribe();
+    }
+  };
 }
 

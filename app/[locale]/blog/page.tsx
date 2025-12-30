@@ -11,7 +11,9 @@ export const metadata: Metadata = genMeta({
   url: "/blog",
 });
 
-export default async function BlogPage() {
+export default async function BlogPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale as 'en' | 'he');
   const posts = await getAllPosts();
   const categories = Array.from(new Set(posts.map((post) => post.category)));
 

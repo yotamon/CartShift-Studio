@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
 import {
   Plus,
   Search,
@@ -29,10 +28,9 @@ import { cn } from '@/lib/utils';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
+import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
 
-const mapStatusColor = (
-  color: string
-): 'blue' | 'green' | 'yellow' | 'red' | 'gray' => {
+const mapStatusColor = (color: string): 'blue' | 'green' | 'yellow' | 'red' | 'gray' => {
   if (color === 'purple') return 'blue';
   if (color === 'emerald' || color === 'green') return 'green';
   if (color === 'orange') return 'yellow';
@@ -43,7 +41,7 @@ const mapStatusColor = (
 };
 
 export default function PricingListClient() {
-  const { orgId } = useParams();
+  const orgId = useResolvedOrgId();
   const [requests, setRequests] = useState<PricingRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +53,13 @@ export default function PricingListClient() {
   const locale = useLocale();
   const { isAgency } = usePortalAuth();
 
-  const filters = ['All', PRICING_STATUS.DRAFT, PRICING_STATUS.SENT, PRICING_STATUS.ACCEPTED, PRICING_STATUS.PAID];
+  const filters = [
+    'All',
+    PRICING_STATUS.DRAFT,
+    PRICING_STATUS.SENT,
+    PRICING_STATUS.ACCEPTED,
+    PRICING_STATUS.PAID,
+  ];
 
   useEffect(() => {
     if (!orgId || typeof orgId !== 'string') return undefined;
@@ -67,7 +71,7 @@ export default function PricingListClient() {
       // Agency sees all requests, clients only see non-drafts
       const unsubscribe = subscribeToOrgPricingRequests(
         orgId,
-        (data) => {
+        data => {
           setRequests(data);
           setLoading(false);
         },
@@ -98,9 +102,8 @@ export default function PricingListClient() {
     }
   };
 
-  const filteredRequests = requests.filter((req) => {
-    const matchesFilter =
-      activeFilter === 'All' || req.status === activeFilter;
+  const filteredRequests = requests.filter(req => {
+    const matchesFilter = activeFilter === 'All' || req.status === activeFilter;
     const matchesSearch =
       req.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       req.id.toLowerCase().includes(searchQuery.toLowerCase());
@@ -108,7 +111,10 @@ export default function PricingListClient() {
   });
 
   const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
-  const paginatedRequests = filteredRequests.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const paginatedRequests = filteredRequests.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handlePrevPage = () => setCurrentPage(p => Math.max(1, p - 1));
   const handleNextPage = () => setCurrentPage(p => Math.min(totalPages, p + 1));
@@ -149,27 +155,27 @@ export default function PricingListClient() {
         )}
       </div>
 
-      <PortalCard className="p-0 overflow-visible border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-950">
+      <PortalCard
+        noPadding
+        className="overflow-visible border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-950"
+      >
         {/* Toolbar */}
         <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col lg:flex-row lg:items-center gap-4 bg-slate-50/50 dark:bg-slate-900/50">
           <div className="relative w-full lg:w-96">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-              size={16}
-            />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
             <input
               type="text"
               placeholder={t('portal.header.searchPlaceholder')}
               className="portal-input pl-10 h-10 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 font-medium w-full font-outfit"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
             />
           </div>
           <div className="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 scrollbar-hide">
             <div className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-black text-slate-400 uppercase tracking-widest shrink-0">
               <Filter size={12} /> {t('portal.common.filter')}:
             </div>
-            {filters.map((filter) => (
+            {filters.map(filter => (
               <button
                 key={filter}
                 onClick={() => setActiveFilter(filter)}
@@ -219,7 +225,7 @@ export default function PricingListClient() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {paginatedRequests.map((req) => (
+                {paginatedRequests.map(req => (
                   <tr
                     key={req.id}
                     className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all group"
@@ -252,18 +258,13 @@ export default function PricingListClient() {
                             PRICING_STATUS_CONFIG[req.status]?.color || 'gray'
                           )}
                         >
-                          {t(
-                            `portal.pricing.status.${req.status.toLowerCase()}` as never
-                          )}
+                          {t(`portal.pricing.status.${req.status.toLowerCase()}` as never)}
                         </PortalBadge>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-center gap-2">
-                        <DollarSign
-                          size={14}
-                          className="text-green-500 opacity-70"
-                        />
+                        <DollarSign size={14} className="text-green-500 opacity-70" />
                         <span className="text-sm font-bold text-slate-800 dark:text-slate-200 font-outfit">
                           {formatCurrency(req.totalAmount, req.currency)}
                         </span>
@@ -316,10 +317,7 @@ export default function PricingListClient() {
           ) : (
             <div className="py-20 flex flex-col items-center justify-center text-center px-4 space-y-4">
               <div className="w-20 h-20 bg-slate-50 dark:bg-slate-900 rounded-3xl flex items-center justify-center mb-2 border border-slate-100 dark:border-slate-800 shadow-inner">
-                <DollarSign
-                  className="text-slate-200 dark:text-slate-800"
-                  size={36}
-                />
+                <DollarSign className="text-slate-200 dark:text-slate-800" size={36} />
               </div>
               <div className="space-y-1">
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">
@@ -346,7 +344,10 @@ export default function PricingListClient() {
         {!loading && filteredRequests.length > 0 && (
           <div className="p-5 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/30 dark:bg-slate-900/30">
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-              {t('portal.common.showing', { count: paginatedRequests.length, total: filteredRequests.length })}
+              {t('portal.common.showing', {
+                count: paginatedRequests.length,
+                total: filteredRequests.length,
+              })}
             </span>
             <div className="flex items-center gap-2">
               <PortalButton

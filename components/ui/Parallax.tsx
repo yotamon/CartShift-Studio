@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useLayoutEffect } from "react";
 import { motion, useScroll, useTransform, MotionValue, useSpring } from "framer-motion";
 
 /**
@@ -63,12 +63,16 @@ export const Parallax: React.FC<ParallaxProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
+  useLayoutEffect(() => {
+    // Force consistent hook order - always call useLayoutEffect before useScroll
+    // This prevents framer-motion's useScroll from switching between useEffect and useLayoutEffect
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
 
-  // Subtle but visible parallax range
   const range = 80 * speed;
   const y = useTransform(scrollYProgress, [0, 1], [-range, range]);
   const x = useTransform(scrollYProgress, [0, 1], [-range, range]);

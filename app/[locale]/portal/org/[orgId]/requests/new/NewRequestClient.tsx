@@ -1,21 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { useParams } from 'next/navigation';
-import {
-  ArrowLeft,
-  Upload,
-  Info
-} from 'lucide-react';
+import { ArrowLeft, Info } from 'lucide-react';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { CreateRequestForm } from '@/components/portal/forms/CreateRequestForm';
-import { UploadFileForm } from '@/components/portal/forms/UploadFileForm';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
+import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
 
 export default function NewRequestClient() {
-  const { orgId } = useParams();
-  const [showUploadModal, setShowUploadModal] = useState(false);
+  const orgId = useResolvedOrgId();
   const t = useTranslations();
 
   if (!orgId || typeof orgId !== 'string') {
@@ -32,8 +25,12 @@ export default function NewRequestClient() {
           <ArrowLeft size={20} className="text-slate-500" />
         </Link>
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">{t('portal.requests.new.title')}</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">{t('portal.requests.new.subtitle')}</p>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+            {t('portal.requests.new.title')}
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">
+            {t('portal.requests.new.subtitle')}
+          </p>
         </div>
       </div>
 
@@ -45,23 +42,6 @@ export default function NewRequestClient() {
         </div>
 
         <div className="space-y-6">
-          <PortalCard className="border-slate-200 dark:border-slate-800 shadow-sm">
-            <h3 className="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-              <Upload size={18} className="text-blue-500" /> {t('portal.requests.new.attachments')}
-            </h3>
-            <div
-              onClick={() => setShowUploadModal(true)}
-              className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors cursor-pointer group"
-            >
-              <Upload size={32} className="mb-2 opacity-20 group-hover:opacity-40 transition-opacity" />
-              <p className="text-xs font-semibold text-slate-900 dark:text-white">{t('portal.requests.new.uploadText')}</p>
-              <p className="text-[10px] mt-1 text-slate-500">{t('portal.requests.new.uploadSubtext')}</p>
-            </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-4 leading-relaxed">
-              {t('portal.requests.new.uploadHelp')}
-            </p>
-          </PortalCard>
-
           <PortalCard className="bg-blue-50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-900/20 shadow-sm">
             <h3 className="font-bold text-blue-900 dark:text-blue-400 mb-2 flex items-center gap-2">
               <Info size={18} /> {t('portal.requests.new.tips.title')}
@@ -75,14 +55,6 @@ export default function NewRequestClient() {
           </PortalCard>
         </div>
       </div>
-
-      {showUploadModal && (
-        <UploadFileForm
-          orgId={orgId}
-          onSuccess={() => setShowUploadModal(false)}
-          onCancel={() => setShowUploadModal(false)}
-        />
-      )}
     </div>
   );
 }

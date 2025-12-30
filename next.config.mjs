@@ -15,6 +15,73 @@ const nextConfig = {
   ...(process.env.NODE_ENV === 'production' && { distDir: 'build_out' }),
   assetPrefix: '',
 
+  // Rewrites for DEV mode - route dynamic portal paths to template pages
+  // This allows real orgIds to work in development while keeping dynamicParams = false for production
+  async rewrites() {
+    // Only apply in development - production uses Firebase Hosting rewrites
+    if (process.env.NODE_ENV === 'production') {
+      return [];
+    }
+
+    return [
+      // ============================================================
+      // SPECIFIC REWRITES - Handle detail pages with static fallbacks
+      // ============================================================
+
+      // Pricing Detail - ANY pricingId → /pricing/pricing/
+      {
+        source: '/:locale/portal/org/:orgId/pricing/:pricingId/',
+        destination: '/:locale/portal/org/template/pricing/pricing/',
+      },
+      {
+        source: '/:locale/portal/org/:orgId/pricing/:pricingId',
+        destination: '/:locale/portal/org/template/pricing/pricing/',
+      },
+
+      // Request Detail - ANY requestId → /requests/request/
+      {
+        source: '/:locale/portal/org/:orgId/requests/:requestId/',
+        destination: '/:locale/portal/org/template/requests/request/',
+      },
+      {
+        source: '/:locale/portal/org/:orgId/requests/:requestId',
+        destination: '/:locale/portal/org/template/requests/request/',
+      },
+
+      // ============================================================
+      // WILDCARD REWRITES - Automatically handles remaining nested routes
+      // ============================================================
+
+      // Portal org routes - ANY path under /portal/org/[realId]/ → /portal/org/template/
+      {
+        source: '/:locale/portal/org/:orgId/:path*',
+        destination: '/:locale/portal/org/template/:path*',
+      },
+
+      // Portal invite routes - ANY invite code → template
+      {
+        source: '/:locale/portal/invite/:code',
+        destination: '/:locale/portal/invite/template',
+      },
+
+      // Portal agency client routes - ANY path under /portal/agency/clients/[realId]/ → template
+      {
+        source: '/:locale/portal/agency/clients/:clientId/:path*',
+        destination: '/:locale/portal/agency/clients/template/:path*',
+      },
+
+      // Catch base paths without trailing path (e.g., /portal/org/abc123)
+      {
+        source: '/:locale/portal/org/:orgId',
+        destination: '/:locale/portal/org/template',
+      },
+      {
+        source: '/:locale/portal/agency/clients/:clientId',
+        destination: '/:locale/portal/agency/clients/template',
+      },
+    ];
+  },
+
   // Explicitly set the workspace root to avoid lockfile detection issues
   outputFileTracingRoot: __dirname,
 
@@ -74,7 +141,8 @@ const nextConfig = {
     // Use a single RegExp to ignore directories and Windows system files
     config.watchOptions = {
       ...config.watchOptions,
-      ignored: /([/\\](node_modules|\.git|\.next|build_out|out|coverage|\.firebase)[/\\])|(DumpStack\.log\.tmp|hiberfil\.sys|pagefile\.sys|swapfile\.sys)$/i,
+      ignored:
+        /([/\\](node_modules|\.git|\.next|build_out|out|coverage|\.firebase)[/\\])|(DumpStack\.log\.tmp|hiberfil\.sys|pagefile\.sys|swapfile\.sys)$/i,
       aggregateTimeout: 300,
       poll: false,
     };

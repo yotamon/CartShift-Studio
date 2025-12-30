@@ -15,7 +15,7 @@ import {
   increment,
   serverTimestamp,
 } from 'firebase/firestore';
-import { getFirestoreDb, getFirebaseAuth } from '@/lib/firebase';
+import { getFirestoreDb, getFirebaseAuth, waitForAuth } from '@/lib/firebase';
 import { getPortalUser } from './portal-users';
 import {
   Request,
@@ -33,9 +33,6 @@ import {
 import { logActivity } from './portal-activities';
 import { withRetry } from '@/lib/utils/retry';
 
-// Initialize Firestore
-const db = getFirestoreDb();
-
 const REQUESTS_COLLECTION = 'portal_requests';
 
 // ============================================
@@ -49,6 +46,8 @@ export async function createRequest(
   data: CreateRequestData
 ): Promise<Request> {
   return withRetry(async () => {
+    await waitForAuth();
+    const db = getFirestoreDb();
     const requestData = {
       orgId,
       title: data.title.trim(),
@@ -90,6 +89,8 @@ export async function createRequest(
 // ============================================
 
 export async function getRequest(requestId: string): Promise<Request | null> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = doc(db, REQUESTS_COLLECTION, requestId);
   const docSnap = await getDoc(docRef);
 
@@ -110,6 +111,8 @@ export async function getRequestsByOrg(
     limit?: number;
   }
 ): Promise<Request[]> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   let q = query(
     collection(db, REQUESTS_COLLECTION),
     where('orgId', '==', orgId),
@@ -161,6 +164,8 @@ export async function getAllRequests(): Promise<Request[]> {
   }
 
   try {
+    await waitForAuth();
+    const db = getFirestoreDb();
     const q = query(collection(db, REQUESTS_COLLECTION), orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({
@@ -200,6 +205,8 @@ export async function getActiveRequestsByOrg(orgId: string): Promise<Request[]> 
 
 export async function updateRequest(requestId: string, data: UpdateRequestData): Promise<void> {
   return withRetry(async () => {
+    await waitForAuth();
+    const db = getFirestoreDb();
     const docRef = doc(db, REQUESTS_COLLECTION, requestId);
     const updateData: Record<string, unknown> = {
       ...data,
@@ -227,6 +234,8 @@ export async function assignRequest(
   assignedTo: string,
   assignedToName: string
 ): Promise<void> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = doc(db, REQUESTS_COLLECTION, requestId);
   await updateDoc(docRef, {
     assignedTo,
@@ -245,6 +254,8 @@ export async function assignRequest(
 }
 
 export async function incrementCommentCount(requestId: string): Promise<void> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = doc(db, REQUESTS_COLLECTION, requestId);
   await updateDoc(docRef, {
     commentCount: increment(1),
@@ -257,6 +268,8 @@ export async function incrementCommentCount(requestId: string): Promise<void> {
 // ============================================
 
 export async function deleteRequest(requestId: string): Promise<void> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = doc(db, REQUESTS_COLLECTION, requestId);
   await deleteDoc(docRef);
 }
@@ -267,58 +280,110 @@ export async function deleteRequest(requestId: string): Promise<void> {
 
 export function subscribeToRequest(
   requestId: string,
-  callback: (request: Request | null) => void
+  callback: (request: Request | null, error?: { code: string; message: string }) => void
 ): () => void {
-  const docRef = doc(db, REQUESTS_COLLECTION, requestId);
-  return onSnapshot(
-    docRef,
-    snapshot => {
-      if (!snapshot.exists()) {
-        callback(null);
-        return;
-      }
-      callback({
-        id: snapshot.id,
-        ...snapshot.data(),
-      } as Request);
-    },
-    error => {
-      console.error('Error in request snapshot:', error);
-      callback(null);
+  let unsubscribe: (() => void) | null = null;
+  let isUnsubscribed = false;
+
+  waitForAuth()
+    .then(() => {
+      if (isUnsubscribed) return;
+      const db = getFirestoreDb();
+      const docRef = doc(db, REQUESTS_COLLECTION, requestId);
+      unsubscribe = onSnapshot(
+        docRef,
+        snapshot => {
+          if (!snapshot.exists()) {
+            callback(null);
+            return;
+          }
+          callback({
+            id: snapshot.id,
+            ...snapshot.data(),
+          } as Request);
+        },
+        error => {
+          console.error('Error in request snapshot:', error);
+          const firestoreError = error as { code?: string; message?: string };
+          if (firestoreError.code === 'permission-denied') {
+            callback(null, {
+              code: 'permission-denied',
+              message: 'You do not have permission to view this request. You may not be a member of this organization.'
+            });
+          } else {
+            callback(null, {
+              code: firestoreError.code || 'unknown',
+              message: firestoreError.message || 'Failed to load request'
+            });
+          }
+        }
+      );
+    })
+    .catch(error => {
+      console.error('Error waiting for auth in subscribeToRequest:', error);
+      callback(null, {
+        code: 'auth-error',
+        message: 'Authentication error. Please try logging in again.'
+      });
+    });
+
+  return () => {
+    isUnsubscribed = true;
+    if (unsubscribe) {
+      unsubscribe();
     }
-  );
+  };
 }
 
 export function subscribeToOrgRequests(
   orgId: string,
   callback: (requests: Request[]) => void
 ): () => void {
-  const q = query(
-    collection(db, REQUESTS_COLLECTION),
-    where('orgId', '==', orgId),
-    orderBy('createdAt', 'desc')
-  );
+  let unsubscribe: (() => void) | null = null;
+  let isUnsubscribed = false;
 
-  return onSnapshot(
-    q,
-    snapshot => {
-      const requests = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Request[];
-      callback(requests);
-    },
-    error => {
-      console.error('Error in org requests snapshot:', error);
-      if (error.code === 'permission-denied') {
-        console.error(
-          'Permission denied. User may not be a member of this organization or rules may not have propagated yet.'
-        );
-        console.error('Organization ID:', orgId);
-      }
+  waitForAuth()
+    .then(() => {
+      if (isUnsubscribed) return;
+      const db = getFirestoreDb();
+      const q = query(
+        collection(db, REQUESTS_COLLECTION),
+        where('orgId', '==', orgId),
+        orderBy('createdAt', 'desc')
+      );
+
+      unsubscribe = onSnapshot(
+        q,
+        snapshot => {
+          const requests = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as Request[];
+          callback(requests);
+        },
+        error => {
+          console.error('Error in org requests snapshot:', error);
+          if (error.code === 'permission-denied') {
+            console.error(
+              'Permission denied. User may not be a member of this organization or rules may not have propagated yet.'
+            );
+            console.error('Organization ID:', orgId);
+          }
+          callback([]);
+        }
+      );
+    })
+    .catch(error => {
+      console.error('Error waiting for auth in subscribeToOrgRequests:', error);
       callback([]);
+    });
+
+  return () => {
+    isUnsubscribed = true;
+    if (unsubscribe) {
+      unsubscribe();
     }
-  );
+  };
 }
 
 // ============================================
@@ -371,6 +436,8 @@ export async function addPricingToRequest(
 ): Promise<void> {
   const totalAmount = calculateTotalAmount(data.lineItems);
 
+  await waitForAuth();
+  const db = getFirestoreDb();
   await updateDoc(doc(db, REQUESTS_COLLECTION, requestId), {
     isBillable: true,
     lineItems: data.lineItems,
@@ -413,6 +480,8 @@ export async function acceptRequest(
       updateData.clientNotes = clientNotes;
     }
 
+    await waitForAuth();
+    const db = getFirestoreDb();
     await updateDoc(doc(db, REQUESTS_COLLECTION, requestId), updateData);
 
     await logActivity({
@@ -445,6 +514,8 @@ export async function declineRequest(
     updateData.clientNotes = clientNotes;
   }
 
+  await waitForAuth();
+  const db = getFirestoreDb();
   await updateDoc(doc(db, REQUESTS_COLLECTION, requestId), updateData);
 
   await logActivity({
@@ -465,6 +536,8 @@ export async function startRequestWork(
   userId: string,
   userName: string
 ): Promise<void> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   await updateDoc(doc(db, REQUESTS_COLLECTION, requestId), {
     status: REQUEST_STATUS.IN_PROGRESS,
     updatedAt: serverTimestamp(),
@@ -490,6 +563,8 @@ export async function markRequestPaid(
   paymentId: string,
   paymentMethod: 'paypal' = 'paypal'
 ): Promise<void> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   await updateDoc(doc(db, REQUESTS_COLLECTION, requestId), {
     status: REQUEST_STATUS.PAID,
     paymentId,
@@ -525,6 +600,8 @@ export async function updateRequestMilestones(
     sortedMilestones.find(m => m.status === MILESTONE_STATUS.IN_PROGRESS) ||
     sortedMilestones.find(m => m.status === MILESTONE_STATUS.PENDING);
 
+  await waitForAuth();
+  const db = getFirestoreDb();
   await updateDoc(doc(db, REQUESTS_COLLECTION, requestId), {
     milestones,
     currentMilestoneId: currentMilestone?.id || null,
@@ -583,6 +660,7 @@ export async function requestRevision(
   userName: string,
   revisionNotes: string
 ): Promise<void> {
+  await waitForAuth();
   const db = getFirestoreDb();
   await updateDoc(doc(db, REQUESTS_COLLECTION, requestId), {
     status: REQUEST_STATUS.IN_PROGRESS,

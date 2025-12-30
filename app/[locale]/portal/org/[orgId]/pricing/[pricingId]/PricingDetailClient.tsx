@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import {
   AlertCircle,
@@ -23,6 +22,8 @@ import {
 import { Request, STATUS_CONFIG } from '@/lib/types/portal';
 import { useTranslations } from 'next-intl';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
+import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
+import { useResolvedPricingId } from '@/lib/hooks/useResolvedPricingId';
 import { PayPalProvider } from '@/components/providers/PayPalProvider';
 import { PayPalCheckoutButton } from '@/components/portal/PayPalCheckoutButton';
 
@@ -39,7 +40,8 @@ const mapStatusColor = (
 };
 
 export default function PricingDetailClient() {
-  const { orgId, pricingId } = useParams();
+  const orgId = useResolvedOrgId();
+  const pricingId = useResolvedPricingId();
   const t = useTranslations();
   const { isAgency } = usePortalAuth();
 
