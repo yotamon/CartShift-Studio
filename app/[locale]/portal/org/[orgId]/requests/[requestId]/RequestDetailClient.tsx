@@ -662,7 +662,7 @@ export default function RequestDetailClient() {
                 <Clock size={14} className="text-blue-500" />{' '}
                 {t('requests.detail.historyTitle') || 'Request Timeline'}
               </h3>
-              <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950 p-6">
+              <PortalCard noPadding className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950">
                 <ActivityTimeline activities={activities} orgId={orgId as string} />
               </PortalCard>
             </div>

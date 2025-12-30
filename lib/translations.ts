@@ -162,7 +162,6 @@ export const translations = {
         },
       },
       header: {
-        serverStatus: 'Server Operational',
         searchPlaceholder: 'Search global resources...',
         authorizedMember: 'Authorized Member',
         agencyPartner: 'Agency Partner',
@@ -1758,7 +1757,6 @@ export const translations = {
         },
       },
       header: {
-        serverStatus: 'שרת פעיל',
         searchPlaceholder: 'חיפוש במשאבים...',
         authorizedMember: 'חבר מורשה',
         agencyPartner: 'שותף סוכנות',

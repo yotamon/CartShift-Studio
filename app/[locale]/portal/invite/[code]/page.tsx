@@ -1,7 +1,7 @@
 import { setRequestLocale } from 'next-intl/server';
 import InviteClient from './InviteClient';
 
-export const dynamicParams = false;
+export const dynamicParams = process.env.NODE_ENV !== 'production';
 
 export async function generateStaticParams() {
   // Return a placeholder for static export - actual routing happens client-side

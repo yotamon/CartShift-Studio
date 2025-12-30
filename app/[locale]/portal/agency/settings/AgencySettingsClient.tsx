@@ -7,8 +7,8 @@ import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { User, Shield, CreditCard, Save, Settings2, Building2, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '@/lib/services/firebase-client';
+import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { db, getAuthInstance } from '@/lib/services/firebase-client';
 import { getAgencyTeam } from '@/lib/services/portal-agency';
 import { PortalUser, Invite } from '@/lib/types/portal';
 import {
@@ -139,18 +139,51 @@ export default function AgencySettingsClient() {
 
     setSaving(true);
     try {
-      await updateDoc(doc(db, 'agencies', user.uid), {
+      const auth = getAuthInstance();
+      const currentUser = auth.currentUser;
+
+      if (!currentUser || !currentUser.uid) {
+        throw new Error('User not authenticated');
+      }
+
+      const userId = currentUser.uid;
+
+      if (userId !== user.uid) {
+        console.warn('UID mismatch:', { hookUid: user.uid, authUid: userId });
+      }
+
+      const token = await currentUser.getIdToken(true);
+      if (!token) {
+        throw new Error('Failed to get authentication token');
+      }
+
+      console.log('Saving agency profile:', { userId, agencyId: userId });
+
+      const agencyRef = doc(db, 'agencies', userId);
+      const agencyDoc = await getDoc(agencyRef);
+
+      const data = {
         name: profile.name,
         email: profile.email,
         website: profile.website,
         phone: profile.phone,
         description: profile.description,
-        updatedAt: new Date(),
-      });
+        updatedAt: serverTimestamp(),
+      };
+
+      if (agencyDoc.exists()) {
+        await updateDoc(agencyRef, data);
+      } else {
+        await setDoc(agencyRef, {
+          ...data,
+          createdAt: serverTimestamp(),
+        });
+      }
       alert(t('agency.settings.profile.success'));
     } catch (error) {
       console.error('Error saving agency profile:', error);
-      alert('Failed to save settings. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert(`Failed to save settings: ${errorMessage}`);
     } finally {
       setSaving(false);
     }

@@ -30,6 +30,7 @@
         "email": "Email",
         "password": "Password",
         "forgotPassword": "Forgot password?",
+        "rememberMe": "Keep me signed in",
         "signIn": "Sign in",
         "sso": "Or continue with",
         "google": "Google SSO",
@@ -310,7 +311,6 @@
       }
     },
     "header": {
-      "serverStatus": "Server Operational",
       "searchPlaceholder": "Search global resources...",
       "authorizedMember": "Authorized Member",
       "agencyPartner": "Agency Partner",

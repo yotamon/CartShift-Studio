@@ -2,7 +2,7 @@ import { setRequestLocale } from 'next-intl/server';
 import SettingsClient from './SettingsClient';
 import { getPortalStaticOrgParams } from '@/lib/portal-static-params';
 
-export const dynamicParams = false;
+export const dynamicParams = process.env.NODE_ENV !== 'production';
 
 export async function generateStaticParams() {
   return getPortalStaticOrgParams();

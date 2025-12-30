@@ -69,9 +69,10 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    // Agencies - all authenticated users can read/write
+    // Agencies - users can read all, write only to their own (document ID = user ID)
     match /agencies/{agencyId} {
-      allow read, write: if isAuthenticated();
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && getUserId() == agencyId;
     }
 
     // Default: deny all other access

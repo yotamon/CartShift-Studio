@@ -139,7 +139,7 @@ function LoginForm() {
                 htmlFor="rememberMe"
                 className="text-xs font-medium text-surface-500 dark:text-surface-400 cursor-pointer select-none"
               >
-                {t('portal.auth.login.rememberMe' as any) || 'Keep me signed in'}
+                {t('portal.auth.login.rememberMe' as any)}
               </label>
             </div>
           </div>

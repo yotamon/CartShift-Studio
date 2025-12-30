@@ -30,6 +30,7 @@
         "email": "אימייל",
         "password": "סיסמה",
         "forgotPassword": "שכחת סיסמה?",
+        "rememberMe": "שמור אותי מחובר",
         "signIn": "התחבר",
         "sso": "או המשיכו עם",
         "google": "התחברות עם Google",
@@ -310,7 +311,6 @@
       }
     },
     "header": {
-      "serverStatus": "שרת פעיל",
       "searchPlaceholder": "חיפוש במשאבים...",
       "authorizedMember": "חבר מורשה",
       "agencyPartner": "שותף סוכנות",

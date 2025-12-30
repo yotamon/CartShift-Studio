@@ -501,19 +501,6 @@ export const PortalShell = ({
             >
               <Menu size={24} />
             </button>
-
-            {/* Server Status indicator */}
-            <div className="hidden lg:flex items-center gap-4 bg-surface-50 dark:bg-surface-900/50 px-4 py-2 rounded-2xl border border-surface-200/50 dark:border-surface-800/30">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                <span className="text-[10px] font-black uppercase tracking-wider text-surface-500 dark:text-surface-400">
-                  {t('portal.header.serverStatus')}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 md:gap-8">
             <div className="relative hidden lg:block group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-400 group-focus-within:text-blue-500 transition-colors" size={18} />
               <input
@@ -522,7 +509,9 @@ export const PortalShell = ({
                 className="portal-input pl-12 w-64 focus:w-80"
               />
             </div>
+          </div>
 
+          <div className="flex items-center gap-4 md:gap-8">
             <div className="flex items-center gap-2">
               <LanguageSwitcher />
 
