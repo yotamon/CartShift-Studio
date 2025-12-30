@@ -4,7 +4,7 @@ import {
   signOut,
   sendPasswordResetEmail,
   updateProfile,
-  type User
+  type User,
 } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { getFirebaseAuth, getFirestoreDb } from '@/lib/firebase';
@@ -35,25 +35,32 @@ export async function loginWithEmail(email: string, password: string): Promise<U
 
     // Check if Firebase is properly configured
     if (!authInstance) {
-      throw new Error('Firebase Auth is not properly initialized. Please check your environment variables.');
+      throw new Error(
+        'Firebase Auth is not properly initialized. Please check your environment variables.'
+      );
     }
 
     const userCredential = await signInWithEmailAndPassword(authInstance, email, password);
     return userCredential.user;
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Re-throw Firebase auth errors with more context
-    if (error.code) {
+    const authError = error as { code?: string; message?: string };
+    if (authError.code) {
       // Firebase Auth error codes
-      const errorMessage = error.message || 'Authentication failed';
-      const enhancedError = new Error(errorMessage);
-      (enhancedError as any).code = error.code;
+      const errorMessage = authError.message || 'Authentication failed';
+      const enhancedError = new Error(errorMessage) as Error & { code: string };
+      enhancedError.code = authError.code;
       throw enhancedError;
     }
     throw error;
   }
 }
 
-export async function signUpWithEmail(email: string, password: string, name?: string): Promise<User> {
+export async function signUpWithEmail(
+  email: string,
+  password: string,
+  name?: string
+): Promise<User> {
   try {
     // Validate inputs
     if (!email || !password) {
@@ -75,7 +82,9 @@ export async function signUpWithEmail(email: string, password: string, name?: st
 
     // Check if Firebase is properly configured
     if (!authInstance) {
-      throw new Error('Firebase Auth is not properly initialized. Please check your environment variables.');
+      throw new Error(
+        'Firebase Auth is not properly initialized. Please check your environment variables.'
+      );
     }
 
     const userCredential = await createUserWithEmailAndPassword(authInstance, email, password);
@@ -83,12 +92,15 @@ export async function signUpWithEmail(email: string, password: string, name?: st
     // Update user profile with display name if provided
     if (name && userCredential.user) {
       await updateProfile(userCredential.user, {
-        displayName: name
+        displayName: name,
       });
     }
 
-    // Create portal user document
+    // Ensure auth token is ready before accessing Firestore
     const user = userCredential.user;
+    await user.getIdToken(true);
+
+    // Create portal user document
     const db = getFirestoreDb();
     await setDoc(doc(db, 'portal_users', user.uid), {
       email: user.email,
@@ -102,12 +114,13 @@ export async function signUpWithEmail(email: string, password: string, name?: st
     });
 
     return user;
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Re-throw Firebase auth errors with more context
-    if (error.code) {
-      const errorMessage = error.message || 'Registration failed';
-      const enhancedError = new Error(errorMessage);
-      (enhancedError as any).code = error.code;
+    const authError = error as { code?: string; message?: string };
+    if (authError.code) {
+      const errorMessage = authError.message || 'Registration failed';
+      const enhancedError = new Error(errorMessage) as Error & { code: string };
+      enhancedError.code = authError.code;
       throw enhancedError;
     }
     throw error;
@@ -121,7 +134,7 @@ export async function logout(): Promise<void> {
       throw new Error('Firebase Auth is not properly initialized');
     }
     await signOut(authInstance);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Logout error:', error);
     throw error;
   }
@@ -144,11 +157,12 @@ export async function resetPassword(email: string): Promise<void> {
       throw new Error('Firebase Auth is not properly initialized');
     }
     await sendPasswordResetEmail(authInstance, email);
-  } catch (error: any) {
-    if (error.code) {
-      const errorMessage = error.message || 'Password reset failed';
-      const enhancedError = new Error(errorMessage);
-      (enhancedError as any).code = error.code;
+  } catch (error: unknown) {
+    const authError = error as { code?: string; message?: string };
+    if (authError.code) {
+      const errorMessage = authError.message || 'Password reset failed';
+      const enhancedError = new Error(errorMessage) as Error & { code: string };
+      enhancedError.code = authError.code;
       throw enhancedError;
     }
     throw error;

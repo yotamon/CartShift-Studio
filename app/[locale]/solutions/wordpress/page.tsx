@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import { WordPressTemplate } from "@/components/templates/WordPressTemplate";
 import { generateMetadata as genMeta, generateServiceSchema, generateBreadcrumbSchema, generateFAQPageSchema } from "@/lib/seo";
 import Script from "next/script";
@@ -9,7 +10,9 @@ export const metadata: Metadata = genMeta({
   url: "/solutions/wordpress",
 });
 
-export default function WordPressPage() {
+export default async function WordPressPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale as 'en' | 'he');
   const serviceSchema = generateServiceSchema(
     "WordPress Development",
     "Expert WordPress development services for content sites, news platforms, and custom websites. Theme customization, performance optimization, and ongoing support."

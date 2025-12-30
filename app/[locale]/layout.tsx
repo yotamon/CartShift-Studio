@@ -55,7 +55,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
 
   // Enable static rendering by providing the locale to next-intl
-  setRequestLocale(locale);
+  setRequestLocale(locale as 'en' | 'he');
 
   if (!hasLocale(routing.locales, locale)) {
     notFound();

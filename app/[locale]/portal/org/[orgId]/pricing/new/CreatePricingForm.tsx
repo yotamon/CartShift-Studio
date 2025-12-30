@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useForm, useFieldArray, FieldArrayWithId } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -8,10 +8,12 @@ import { useRouter } from '@/i18n/navigation';
 import { useParams } from 'next/navigation';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
+import { PortalBadge } from '@/components/portal/ui/PortalBadge';
 import {
   createPricingRequest,
   sendPricingRequest,
 } from '@/lib/services/pricing-requests';
+import { getRequestsByOrg } from '@/lib/services/portal-requests';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import {
   AlertCircle,
@@ -22,6 +24,8 @@ import {
   Save,
   Loader2,
   CalendarIcon,
+  FileText,
+  Check,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
@@ -33,6 +37,7 @@ import {
   calculateTotalAmount,
   PricingLineItem,
 } from '@/lib/types/pricing';
+import { Request, RequestStatus } from '@/lib/types/portal';
 
 interface LineItemInput {
   description: string;
@@ -63,6 +68,42 @@ export default function CreatePricingForm() {
     'idle' | 'success' | 'error'
   >('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Request selection state
+  const [availableRequests, setAvailableRequests] = useState<Request[]>([]);
+  const [selectedRequestIds, setSelectedRequestIds] = useState<string[]>([]);
+  const [loadingRequests, setLoadingRequests] = useState(true);
+
+  // Fetch requests that can be included in pricing offers
+  useEffect(() => {
+    async function fetchRequests() {
+      if (!orgId || typeof orgId !== 'string') return;
+
+      try {
+        const requests = await getRequestsByOrg(orgId);
+        // Filter to requests that are eligible for pricing (not already paid, not in active offer)
+        const eligibleStatuses: RequestStatus[] = ['NEW', 'NEEDS_INFO', 'QUOTED', 'ACCEPTED', 'IN_PROGRESS', 'IN_REVIEW', 'DELIVERED'];
+        const eligible = requests.filter(
+          (r) => eligibleStatuses.includes(r.status) && !r.pricingOfferId
+        );
+        setAvailableRequests(eligible);
+      } catch (error) {
+        console.error('Failed to fetch requests:', error);
+      } finally {
+        setLoadingRequests(false);
+      }
+    }
+
+    fetchRequests();
+  }, [orgId]);
+
+  const toggleRequestSelection = (requestId: string) => {
+    setSelectedRequestIds((prev) =>
+      prev.includes(requestId)
+        ? prev.filter((id) => id !== requestId)
+        : [...prev, requestId]
+    );
+  };
 
   const pricingSchema = useMemo(
     () =>
@@ -164,6 +205,7 @@ export default function CreatePricingForm() {
           clientName: data.clientName,
           clientEmail: data.clientEmail,
           agencyNotes: data.agencyNotes,
+          requestIds: selectedRequestIds.length > 0 ? selectedRequestIds : undefined,
         }
       );
 
@@ -264,6 +306,88 @@ export default function CreatePricingForm() {
                 />
               </div>
             </div>
+          </PortalCard>
+
+          {/* Request Selection */}
+          <PortalCard className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit">
+                  {t('portal.pricing.form.selectRequests' as never) || 'Select Requests'}
+                </h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                  {t('portal.pricing.form.selectRequestsDescription' as never) || 'Choose requests to include in this pricing offer'}
+                </p>
+              </div>
+              {selectedRequestIds.length > 0 && (
+                <PortalBadge variant="blue">
+                  {selectedRequestIds.length} {t('portal.pricing.form.selected' as never) || 'selected'}
+                </PortalBadge>
+              )}
+            </div>
+
+            {loadingRequests ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
+              </div>
+            ) : availableRequests.length === 0 ? (
+              <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+                <FileText className="w-10 h-10 mx-auto mb-3 opacity-50" />
+                <p className="font-medium">
+                  {t('portal.pricing.form.noRequestsAvailable' as never) || 'No requests available'}
+                </p>
+                <p className="text-sm mt-1">
+                  {t('portal.pricing.form.allRequestsInOffers' as never) || 'All requests are already in pricing offers or paid'}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {availableRequests.map((request) => {
+                  const isSelected = selectedRequestIds.includes(request.id);
+                  return (
+                    <button
+                      key={request.id}
+                      type="button"
+                      onClick={() => toggleRequestSelection(request.id)}
+                      className={cn(
+                        'w-full text-left p-4 rounded-xl border-2 transition-all duration-200',
+                        isSelected
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                          : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                      )}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-bold text-slate-900 dark:text-white truncate">
+                              {request.title}
+                            </h4>
+                            <PortalBadge variant="gray" className="text-xs">
+                              {request.type}
+                            </PortalBadge>
+                          </div>
+                          {request.description && (
+                            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">
+                              {request.description}
+                            </p>
+                          )}
+                        </div>
+                        <div
+                          className={cn(
+                            'flex-shrink-0 w-6 h-6 rounded-lg flex items-center justify-center transition-all',
+                            isSelected
+                              ? 'bg-blue-500 text-white'
+                              : 'border-2 border-slate-300 dark:border-slate-600'
+                          )}
+                        >
+                          {isSelected && <Check size={14} />}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </PortalCard>
 
           {/* Line Items */}

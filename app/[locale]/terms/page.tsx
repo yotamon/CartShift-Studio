@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import { generateMetadata as genMeta, generateBreadcrumbSchema } from "@/lib/seo";
 import Script from "next/script";
 import type { Metadata } from "next";
@@ -8,7 +9,9 @@ export const metadata: Metadata = genMeta({
   url: "/terms",
 });
 
-export default function TermsPage() {
+export default async function TermsPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale as 'en' | 'he');
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Home", url: "/" },
     { name: "Terms of Service", url: "/terms" }

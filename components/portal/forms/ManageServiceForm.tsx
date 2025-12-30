@@ -24,7 +24,7 @@ export function ManageServiceForm({ service, onSuccess, onCancel }: ManageServic
     name: service?.name || '',
     description: service?.description || '',
     basePrice: service?.basePrice ? (service.basePrice / 100).toString() : '',
-    currency: service?.currency || 'USD' as Currency,
+    currency: service?.currency || ('USD' as Currency),
     category: service?.category || '',
     isActive: service?.isActive ?? true,
   });
@@ -55,9 +55,9 @@ export function ManageServiceForm({ service, onSuccess, onCancel }: ManageServic
         await createService(serviceData);
       }
       onSuccess();
-    } catch (err: any) {
-      console.error('Error saving service:', err);
-      setError(err.message || t('errors.failed'));
+    } catch (error: unknown) {
+      console.error('Error saving service:', error);
+      setError(error instanceof Error ? error.message : t('errors.failed'));
     } finally {
       setLoading(false);
     }
@@ -94,7 +94,7 @@ export function ManageServiceForm({ service, onSuccess, onCancel }: ManageServic
             <PortalInput
               label={t('fields.name')}
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={e => setFormData({ ...formData, name: e.target.value })}
               placeholder={t('fields.namePlaceholder')}
               required
             />
@@ -105,7 +105,7 @@ export function ManageServiceForm({ service, onSuccess, onCancel }: ManageServic
                 type="number"
                 step="0.01"
                 value={formData.basePrice}
-                onChange={(e) => setFormData({ ...formData, basePrice: e.target.value })}
+                onChange={e => setFormData({ ...formData, basePrice: e.target.value })}
                 placeholder="0.00"
                 required
               />
@@ -115,7 +115,7 @@ export function ManageServiceForm({ service, onSuccess, onCancel }: ManageServic
                 </label>
                 <select
                   value={formData.currency}
-                  onChange={(e) => setFormData({ ...formData, currency: e.target.value as Currency })}
+                  onChange={e => setFormData({ ...formData, currency: e.target.value as Currency })}
                   className="w-full h-11 px-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-950 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-900 dark:text-white text-sm font-bold font-outfit"
                 >
                   {Object.entries(CURRENCY_CONFIG).map(([code, config]) => (
@@ -130,7 +130,7 @@ export function ManageServiceForm({ service, onSuccess, onCancel }: ManageServic
             <PortalInput
               label={t('fields.category')}
               value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              onChange={e => setFormData({ ...formData, category: e.target.value })}
               placeholder={t('fields.categoryPlaceholder')}
             />
 
@@ -140,7 +140,7 @@ export function ManageServiceForm({ service, onSuccess, onCancel }: ManageServic
               </label>
               <textarea
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={e => setFormData({ ...formData, description: e.target.value })}
                 rows={3}
                 className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-950 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none text-slate-900 dark:text-white text-sm font-medium leading-relaxed font-outfit"
                 placeholder={t('fields.descriptionPlaceholder')}
@@ -152,10 +152,13 @@ export function ManageServiceForm({ service, onSuccess, onCancel }: ManageServic
                 type="checkbox"
                 id="isActive"
                 checked={formData.isActive}
-                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                onChange={e => setFormData({ ...formData, isActive: e.target.checked })}
                 className="w-5 h-5 rounded-lg border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
               />
-              <label htmlFor="isActive" className="text-sm font-bold text-slate-700 dark:text-slate-300 font-outfit cursor-pointer">
+              <label
+                htmlFor="isActive"
+                className="text-sm font-bold text-slate-700 dark:text-slate-300 font-outfit cursor-pointer"
+              >
                 {t('fields.active')}
               </label>
             </div>

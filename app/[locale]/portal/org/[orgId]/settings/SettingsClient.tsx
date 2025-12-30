@@ -18,6 +18,7 @@ import {
   ShieldCheck,
   Building2,
   AlertCircle,
+  RefreshCw,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getOrganization, updateOrganization } from '@/lib/services/portal-organizations';
@@ -58,6 +59,7 @@ export default function SettingsClient() {
 
   const [notifSaving, setNotifSaving] = useState(false);
   const [resetSent, setResetSent] = useState(false);
+  const [restartingOnboarding, setRestartingOnboarding] = useState(false);
 
   useEffect(() => {
     async function fetchOrganization() {
@@ -83,8 +85,9 @@ export default function SettingsClient() {
               : 'Organization not found'
           );
         }
-      } catch (error: any) {
-        if (error.code === 'permission-denied') {
+      } catch (error: unknown) {
+        const firestoreError = error as { code?: string; message?: string };
+        if (firestoreError.code === 'permission-denied') {
           const errorMsg = t('portal.settings.general.permissionDenied');
           const message =
             typeof errorMsg === 'string' && errorMsg !== 'portal.settings.general.permissionDenied'
@@ -97,7 +100,7 @@ export default function SettingsClient() {
         } else {
           const errorMsg = t('portal.settings.general.error');
           const message =
-            error.message ||
+            firestoreError.message ||
             (typeof errorMsg === 'string' && errorMsg !== 'portal.settings.general.error'
               ? errorMsg
               : 'Failed to save settings');
@@ -147,9 +150,12 @@ export default function SettingsClient() {
         bio: formData.bio,
       });
       showFeedback('success', t('portal.settings.general.success'));
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error saving settings:', error);
-      showFeedback('error', error.message || t('portal.settings.general.error'));
+      showFeedback(
+        'error',
+        error instanceof Error ? error.message : t('portal.settings.general.error')
+      );
     } finally {
       setSaving(false);
     }
@@ -177,6 +183,27 @@ export default function SettingsClient() {
     } catch (error) {
       console.error('Error sending reset email:', error);
       showFeedback('error', t('portal.settings.security.changePassword.error'));
+    }
+  };
+
+  const handleRestartOnboarding = async () => {
+    if (!user) return;
+    setRestartingOnboarding(true);
+    try {
+      await updatePortalUser(user.uid, {
+        onboardingComplete: false,
+        onboardingSkipped: false,
+      });
+      showFeedback('success', t('portal.settings.general.onboarding.success' as any) || 'Onboarding will start on next page load');
+      // Reload to trigger onboarding
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } catch (error) {
+      console.error('Error restarting onboarding:', error);
+      showFeedback('error', t('portal.settings.general.onboarding.error' as any) || 'Failed to restart onboarding');
+    } finally {
+      setRestartingOnboarding(false);
     }
   };
 
@@ -331,23 +358,42 @@ export default function SettingsClient() {
                   </PortalButton>
                 </PortalCard>
 
-                <PortalCard className="border-rose-200 dark:border-rose-900/20 bg-rose-50/20 dark:bg-rose-900/5 shadow-sm">
-                  <h3 className="text-lg font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2 font-outfit">
-                    <Trash2 size={20} />
-                    {t('portal.settings.general.dangerZone.title')}
+                <PortalCard className="border-blue-200 dark:border-blue-900/20 bg-blue-50/20 dark:bg-blue-900/5 shadow-sm">
+                  <h3 className="text-lg font-bold text-blue-600 dark:text-blue-400 mb-2 flex items-center gap-2 font-outfit">
+                    <RefreshCw size={20} />
+                    {t('portal.settings.general.onboarding.title' as any) || 'Restart Tour'}
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 font-medium leading-relaxed">
-                    {t('portal.settings.general.dangerZone.description')}
+                    {t('portal.settings.general.onboarding.description' as any) || 'Re-experience the portal walkthrough to discover new features.'}
                   </p>
                   <PortalButton
-                    variant="danger"
-                    size="sm"
-                    className="w-full shadow-lg shadow-rose-500/10 font-outfit"
+                    onClick={handleRestartOnboarding}
+                    isLoading={restartingOnboarding}
+                    variant="outline"
+                    className="w-full shadow-lg shadow-blue-500/10 border-blue-300 dark:border-blue-800 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-outfit"
                   >
-                    {t('portal.settings.general.dangerZone.button')}
+                    <RefreshCw size={18} className="mr-2" />
+                    {t('portal.settings.general.onboarding.button' as any) || 'Start Tour'}
                   </PortalButton>
                 </PortalCard>
               </div>
+
+              <PortalCard className="border-rose-200 dark:border-rose-900/20 bg-rose-50/20 dark:bg-rose-900/5 shadow-sm">
+                <h3 className="text-lg font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2 font-outfit">
+                  <Trash2 size={20} />
+                  {t('portal.settings.general.dangerZone.title')}
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 font-medium leading-relaxed">
+                  {t('portal.settings.general.dangerZone.description')}
+                </p>
+                <PortalButton
+                  variant="danger"
+                  size="sm"
+                  className="shadow-lg shadow-rose-500/10 font-outfit"
+                >
+                  {t('portal.settings.general.dangerZone.button')}
+                </PortalButton>
+              </PortalCard>
             </div>
           )}
 
@@ -555,7 +601,9 @@ export default function SettingsClient() {
                       </span>
                     </div>
                     <h3 className="text-3xl font-bold mb-1 font-outfit uppercase tracking-tight">
-                      {organization?.plan ? t(`portal.settings.billing.plans.${organization.plan}` as any) : t('portal.settings.billing.plans.free' as any)}
+                      {organization?.plan
+                        ? t(`portal.settings.billing.plans.${organization.plan}` as any)
+                        : t('portal.settings.billing.plans.free' as any)}
                     </h3>
                     <p className="text-sm text-blue-100/70 font-medium font-outfit uppercase tracking-wider">
                       {organization?.plan === 'enterprise'
@@ -572,9 +620,15 @@ export default function SettingsClient() {
                         {t('portal.settings.billing.investment')}
                       </p>
                       <p className="text-2xl font-bold text-surface-900 dark:text-white font-outfit tracking-tight">
-                        {organization?.plan === 'pro' ? '$2,499' : organization?.plan === 'enterprise' ? 'Custom' : '$0'}
+                        {organization?.plan === 'pro'
+                          ? '$2,499'
+                          : organization?.plan === 'enterprise'
+                            ? 'Custom'
+                            : '$0'}
                         <span className="text-sm font-medium opacity-40 ml-1">
-                          {organization?.plan === 'enterprise' ? '' : t('portal.settings.billing.perMonth')}
+                          {organization?.plan === 'enterprise'
+                            ? ''
+                            : t('portal.settings.billing.perMonth')}
                         </span>
                       </p>
                     </div>
@@ -593,7 +647,11 @@ export default function SettingsClient() {
                         {t('portal.settings.billing.teamAvailability')}
                       </p>
                       <p className="text-2xl font-bold text-surface-900 dark:text-white font-outfit tracking-tight">
-                        {organization?.plan === 'free' ? '2 Seats' : organization?.plan === 'pro' ? '10 Seats' : t('portal.settings.billing.unlimited')}
+                        {organization?.plan === 'free'
+                          ? '2 Seats'
+                          : organization?.plan === 'pro'
+                            ? '10 Seats'
+                            : t('portal.settings.billing.unlimited')}
                       </p>
                     </div>
                   </div>

@@ -64,6 +64,15 @@
         "expired": "פג תוקפה של ההזמנה",
         "mismatch": "הזמנה זו נשלחה לכתובת אימייל אחרת",
         "genericInvite": "טעינת ההזמנה נכשלה"
+      },
+      "showPassword": "הצג סיסמה",
+      "hidePassword": "הסתר סיסמה",
+      "passwordStrength": {
+        "veryWeak": "חלשה מאוד - הוסף עוד תווים",
+        "weak": "חלשה - נסה להוסיף מספרים",
+        "fair": "סבירה - נסה להוסיף תווים מיוחדים",
+        "strong": "סיסמה חזקה",
+        "veryStrong": "סיסמה חזקה מאוד"
       }
     },
     "invite": {
@@ -196,6 +205,13 @@
           "description": "צריך סביבת עבודה נוספת? צור ארגון נפרד לצוות אחר.",
           "button": "צור ארגון"
         },
+        "onboarding": {
+          "title": "הפעל סיור מחדש",
+          "description": "חווה מחדש את הסיור בפורטל כדי לגלות תכונות חדשות.",
+          "button": "התחל סיור",
+          "success": "הסיור יתחיל בטעינת הדף הבאה",
+          "error": "איפוס סטטוס ההדרכה נכשל"
+        },
         "dangerZone": {
           "title": "אזור סכנה",
           "description": "מחק לצמיתות ארגון זה ואת כל הנתונים שלו. פעולה זו אינה הפיכה.",
@@ -311,6 +327,14 @@
         "agency": "שותף סוכנות"
       }
     },
+    "accessibility": {
+      "skipToContent": "דלג לתוכן הראשי",
+      "openMenu": "פתח תפריט",
+      "closeMenu": "סגור תפריט",
+      "helpCenter": "מרכז עזרה",
+      "notifications": "צפה בהתראות",
+      "userProfile": "פרופיל משתמש"
+    },
     "common": {
       "loading": "טוען...",
       "error": "משהו השתבש",
@@ -329,6 +353,7 @@
       "status": "סטטוס",
       "view": "צפה",
       "all": "הכל",
+      "offline": "אתה במצב לא מקוון כרגע",
       "filter": "סינון",
       "showing": "מציג {count} מתוך {total} תוצאות",
       "prev": "הקודם",
@@ -425,6 +450,21 @@
         "emptyDescription": "אין בקשות התואמות לסינון הנוכחי שלך. נסה לשנות את החיפוש או קריטריוני הסינון."
       }
     },
+    "activity": {
+      "title": "פעילות אחרונה",
+      "actions": {
+        "created_request": "בקשת פרויקט חדשה הוגשה",
+        "assigned_request": "מומחה הוקצה לפרויקט",
+        "added_pricing": "הצעת מחיר הופקה לבדיקה",
+        "accepted_quote": "היקף הפרויקט והצעת המחיר אושרו",
+        "declined_quote": "התבקש שינוי בהצעת המחיר",
+        "requested_revision": "נדרשה תיקון",
+        "started_work": "הפרויקט עבר לשלב הביצוע",
+        "paid_request": "התשלום אומת ואובטח",
+        "added_comment": "הודעה חדשה בדיון",
+        "added_attachment": "קובץ מצורף נוסף"
+      }
+    },
     "requests": {
       "title": "בקשות פרויקט",
       "newRequest": "בקשה חדשה",
@@ -439,6 +479,12 @@
         "created": "נוצר",
         "updated": "עודכן"
       },
+      "selected": "בקשות נבחרו",
+      "createPricingOffer": "צור הצעת מחיר",
+      "requestsIncluded": "בקשות כלולות",
+      "selectedRequests": "בקשות נבחרות",
+      "hasPricing": "מתומחר",
+      "createAndSend": "צור ושלח הצעה",
       "status": {
         "new": "חדש",
         "quoted": "הוצע מחיר",
@@ -508,6 +554,7 @@
         "backToRequests": "חזרה לבקשות",
         "designRequest": "בקשת עיצוב",
         "details": "פרטי בקשה",
+        "overview": "סקירה",
         "submissionDate": "תאריך הגשה",
         "priorityStatus": "סטטוס עדיפות",
         "discussion": "היסטוריית דיונים",
@@ -614,7 +661,10 @@
         "loading": "טוען תיבת דואר סוכנות...",
         "emptyTitle": "תיבת הדואר שלך ריקה",
         "emptyDesc": "כל בקשות הלקוחות טופלו או מוינו.",
-        "clientOrg": "ארגון לקוח"
+        "clientOrg": "ארגון לקוח",
+        "errors": {
+          "sameOrgRequired": "אנא בחרו בקשות מאותו ארגון לקוח."
+        }
       },
       "workboard": {
         "title": "לוח עבודה פרויקטים",
@@ -800,6 +850,7 @@
       },
       "noOffersAgency": "צרו את הצעת המחיר הראשונה שלכם כדי להתחיל.",
       "noOffersClient": "אין הצעות מחיר זמינות עדיין.",
+      "includedRequests": "בקשות כלולות",
       "form": {
         "titleLabel": "כותרת ההצעה",
         "titlePlaceholder": "לדוגמה, הצעה לעיצוב מחדש של האתר",
@@ -818,7 +869,12 @@
         "agencyNotes": "הערות פנימיות",
         "saveDraft": "שמור טיוטה",
         "sendToClient": "שלח ללקוח",
-        "sending": "שולח..."
+        "sending": "שולח...",
+        "selectRequests": "בחירת בקשות",
+        "selectRequestsDescription": "בחר בקשות לכלול בהצעת מחיר זו",
+        "selected": "נבחרו",
+        "noRequestsAvailable": "אין בקשות זמינות",
+        "allRequestsInOffers": "כל הבקשות כבר נמצאות בהצעות מחיר או שולמו"
       },
       "detail": {
         "breakdown": "פירוט המחיר",

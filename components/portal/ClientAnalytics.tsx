@@ -12,6 +12,7 @@ import {
   Activity
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
 import { Request, REQUEST_STATUS, RequestStatus } from '@/lib/types/portal';
 import { Timestamp } from 'firebase/firestore';
 
@@ -196,16 +197,14 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({
 
   if (requests.length === 0) {
     return (
-      <div className={cn('text-center py-12', className)}>
-        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-surface-100 dark:bg-surface-800 flex items-center justify-center">
-          <Activity size={32} className="text-surface-400" />
-        </div>
-        <h3 className="text-lg font-semibold text-surface-900 dark:text-white mb-2">
-          {isHe ? 'אין נתונים עדיין' : 'No Data Yet'}
-        </h3>
-        <p className="text-surface-500 text-sm">
-          {isHe ? 'צרו את הבקשה הראשונה שלכם כדי לראות אנליטיקס' : 'Create your first request to see analytics'}
-        </p>
+      <div className={cn('py-8', className)}>
+        <PortalEmptyState
+          icon={Activity}
+          title={isHe ? 'אין נתונים עדיין' : 'No Data Yet'}
+          description={isHe ? 'צרו את הבקשה הראשונה שלכם כדי לראות אנליטיקס' : 'Create your first request to see analytics'}
+          variant="plain"
+          className="bg-transparent border-0"
+        />
       </div>
     );
   }
@@ -222,7 +221,7 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
-              className="relative p-5 rounded-2xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 overflow-hidden group hover:shadow-lg transition-shadow"
+              className="relative p-5 rounded-2xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 overflow-hidden group hover:shadow-lg transition-shadow hover-lift"
             >
               {/* Background gradient on hover */}
               <div className={`absolute inset-0 bg-gradient-to-br ${card.bgGradient} opacity-0 group-hover:opacity-5 transition-opacity`} />

@@ -1,6 +1,5 @@
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics';
 import { setRequestLocale } from 'next-intl/server';
-import '@/components/portal/portal.css';
 
 export default async function PortalLayout({
   children,
@@ -12,7 +11,7 @@ export default async function PortalLayout({
   const { locale } = await params;
 
   // Enable static rendering for portal pages
-  setRequestLocale(locale);
+  setRequestLocale(locale as 'en' | 'he');
 
   // Portal pages don't need the main site header/footer
   // They have their own PortalShell navigation

@@ -173,7 +173,7 @@ export default function DashboardClient() {
         {/* Sidebar Info */}
         <div className="space-y-6">
           <h2 className="text-xl font-bold text-slate-900 dark:text-white px-2 font-outfit">{t('portal.dashboard.insight.title')}</h2>
-          <PortalCard className="bg-gradient-to-br from-blue-600 to-indigo-700 border-none text-white shadow-xl shadow-blue-500/20 relative overflow-hidden group">
+          <PortalCard hoverEffect className="bg-gradient-to-br from-blue-600 to-indigo-700 border-none text-white shadow-xl shadow-blue-500/20 relative overflow-hidden group">
             <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-700" />
             <div className="relative z-10">
               <h4 className="font-bold text-lg mb-2 font-outfit">

@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import { ContactTemplate } from "@/components/templates/ContactTemplate";
 import type { Metadata } from "next";
 import { generateMetadata as genMeta, generateBreadcrumbSchema, generateLocalBusinessSchema } from "@/lib/seo";
@@ -9,7 +10,9 @@ export const metadata: Metadata = genMeta({
   url: "/contact",
 });
 
-export default function ContactPage() {
+export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale as 'en' | 'he');
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Home", url: "/" },
     { name: "Contact", url: "/contact" },

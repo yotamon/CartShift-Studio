@@ -17,6 +17,8 @@ import {
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
+import { SkeletonMemberCard, PortalSkeleton } from '@/components/portal/ui/PortalSkeleton';
+import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
 import {
   cancelInvite,
   subscribeToMembers,
@@ -108,11 +110,34 @@ export default function TeamClient() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-40 space-y-4">
-        <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-        <p className="text-surface-500 font-bold font-outfit uppercase tracking-widest text-xs">
-          {t('portal.common.loading')}
-        </p>
+      <div className="space-y-8 animate-pulse" role="status" aria-live="polite">
+        <span className="sr-only">Loading team members...</span>
+        <div className="flex justify-between items-center">
+          <div className="space-y-2">
+            <PortalSkeleton className="h-8 w-48" />
+            <PortalSkeleton className="h-4 w-64" />
+          </div>
+          <PortalSkeleton className="h-10 w-32 rounded-xl" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-4">
+            <PortalSkeleton className="h-4 w-32" />
+            <div className="space-y-0 border border-surface-200 dark:border-surface-800 rounded-2xl overflow-hidden">
+               <SkeletonMemberCard />
+               <SkeletonMemberCard />
+               <SkeletonMemberCard />
+            </div>
+          </div>
+          <div className="space-y-4">
+             <PortalSkeleton className="h-4 w-32" />
+             <div className="space-y-6 border border-surface-200 dark:border-surface-800 rounded-2xl p-6">
+                <div className="space-y-4">
+                   <PortalSkeleton className="h-12 w-full" />
+                   <PortalSkeleton className="h-12 w-full" />
+                </div>
+             </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -262,17 +287,13 @@ export default function TeamClient() {
                 </div>
               ))
             ) : (
-              <div className="py-12 text-center bg-slate-50/50 dark:bg-slate-900/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
-                <div className="w-12 h-12 bg-white dark:bg-slate-950 rounded-xl flex items-center justify-center mx-auto mb-4 border border-slate-100 dark:border-slate-800 shadow-sm">
-                  <Mail className="text-slate-300" size={20} />
-                </div>
-                <p className="text-sm font-bold text-slate-400 font-outfit uppercase tracking-widest">
-                  {t('portal.team.noInvites')}
-                </p>
-                <p className="text-xs text-slate-500 mt-1 max-w-[180px] mx-auto font-medium">
-                  {t('portal.team.noInvitesSub')}
-                </p>
-              </div>
+              <PortalEmptyState
+                icon={Mail}
+                title={t('portal.team.noInvites')}
+                description={t('portal.team.noInvitesSub')}
+                variant="default"
+                className="py-12"
+              />
             )}
 
             <div className="pt-4 border-t border-slate-100 dark:border-slate-800">

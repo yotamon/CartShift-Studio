@@ -64,6 +64,15 @@
         "expired": "This invite has expired",
         "mismatch": "This invite was sent to a different email address",
         "genericInvite": "Failed to load invite"
+      },
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "passwordStrength": {
+        "veryWeak": "Very weak - add more characters",
+        "weak": "Weak - try adding numbers",
+        "fair": "Fair - try adding special characters",
+        "strong": "Strong password",
+        "veryStrong": "Very strong password"
       }
     },
     "invite": {
@@ -165,6 +174,123 @@
         }
       }
     },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Manage organization preferences and workspace.",
+      "tabs": {
+        "general": "General",
+        "notifications": "Notifications",
+        "security": "Security",
+        "billing": "Billing"
+      },
+      "general": {
+        "title": "Organization Profile",
+        "subtitle": "Basic information and appearance",
+        "orgName": "Organization Name",
+        "orgNamePlaceholder": "e.g. Acme Corp",
+        "industry": "Industry / Niche",
+        "industryPlaceholder": "e.g. Tech, SaaS",
+        "website": "Business Website",
+        "websitePlaceholder": "https://acme.com",
+        "bio": "Business Overview",
+        "bioPlaceholder": "Give us brief context on what you do...",
+        "save": "Save Profile",
+        "saving": "Processing...",
+        "success": "Profile updated successfully!",
+        "error": "Failed to save settings",
+        "permissionDenied": "You do not have permission to access this organization",
+        "orgNotFound": "Organization not found",
+        "newWorkspace": {
+          "title": "New Workspace",
+          "description": "Need another workspace? Create a separate organization for a different team.",
+          "button": "Create Organization"
+        },
+        "dangerZone": {
+          "title": "Danger Zone",
+          "description": "Permanently delete this organization and all of its data. This action is not reversible.",
+          "button": "Delete Workspace"
+        },
+        "onboarding": {
+          "title": "Restart Tour",
+          "description": "Re-experience the portal walkthrough to discover new features.",
+          "button": "Start Tour",
+          "success": "Onboarding will start on next page load",
+          "error": "Failed to reset onboarding status"
+        }
+      },
+      "notifications": {
+        "title": "Channels & Alerts",
+        "subtitle": "Email Delivery Settings",
+        "requestUpdate": {
+          "label": "Request Milestone Updates",
+          "desc": "Notifications for every movement in your project lifecycle."
+        },
+        "commentAlerts": {
+          "label": "Real-time Comment Alerts",
+          "desc": "Stay in the loop when specialists or team members reply."
+        },
+        "statusChange": {
+          "label": "Direct Delivery Status",
+          "desc": "High-priority alerts for 'Delivered' and 'In Review' statuses."
+        },
+        "marketing": {
+          "label": "Product & Design News",
+          "desc": "Occasional insights from our studio on scaling your business."
+        },
+        "syncing": "Syncing changes...",
+        "saved": "Settings Active",
+        "pushBeta": "Looking for browser alerts?",
+        "pushBetaSub": "Beta testing starts Early 2026"
+      },
+      "security": {
+        "title": "Security Layer",
+        "subtitle": "Control your access",
+        "changePassword": {
+          "title": "Change Password",
+          "desc": "Reset your password via a secure verification link sent to your email.",
+          "button": "Request Reset Link",
+          "sent": "Link Sent",
+          "success": "Link Sent",
+          "error": "Failed to send reset link."
+        },
+        "mfa": {
+          "title": "Two-Factor Auth (MFA)",
+          "desc": "Add a mobile authenticator app for maximum account protection.",
+          "badge": "Pipeline 2026"
+        },
+        "session": {
+          "title": "Active Session Details",
+          "email": "Email ID",
+          "provider": "Identity Provider",
+          "mailService": "Mail Service"
+        }
+      },
+      "billing": {
+        "title": "Investment & Plans",
+        "nextPayment": "Pro Partner Status",
+        "priority": "Partner Priority",
+        "proStatus": "Active Partner",
+        "investment": "Monthly Investment",
+        "workflowLimit": "Active Workflows",
+        "teamAvailability": "Team Availability",
+        "perMonth": "/month",
+        "unlimited": "Unlimited",
+        "seats": "10 Active Seats",
+        "stripeDashboard": "Stripe Portal",
+        "invoicingHistory": "Billing History",
+        "activeSubscription": "Active Subscription",
+        "enterpriseStatus": "Contact for details",
+        "plans": {
+          "free": "Free Tier",
+          "pro": "Studio Pro",
+          "enterprise": "Enterprise"
+        },
+        "encrypted": {
+          "title": "Bank-Grade Encryption",
+          "desc": "All transaction data is handled securely via Stripe, protected by AES-256 encryption. We never store your full payment details."
+        }
+      }
+    },
     "sidebar": {
       "title": "CartShift",
       "subtitle": "Studio Portal",
@@ -201,6 +327,14 @@
         "agency": "Agency Partner"
       }
     },
+    "accessibility": {
+      "skipToContent": "Skip to main content",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "helpCenter": "Help center",
+      "notifications": "View notifications",
+      "userProfile": "User profile"
+    },
     "common": {
       "loading": "Loading...",
       "error": "Something went wrong",
@@ -219,6 +353,7 @@
       "status": "Status",
       "view": "View",
       "all": "All",
+      "offline": "You are currently offline",
       "filter": "Filter",
       "showing": "Showing {count} of {total} results",
       "prev": "Prev",
@@ -317,9 +452,11 @@
         "added_pricing": "Quote issued for review",
         "accepted_quote": "Project scope & quote approved",
         "declined_quote": "Revision requested on quote",
+        "requested_revision": "Revision requested",
         "started_work": "Project moved to production",
         "paid_request": "Payment verified & secured",
-        "added_comment": "New message in discussion"
+        "added_comment": "New message in discussion",
+        "added_attachment": "Attachment added"
       }
     },
     "requests": {
@@ -336,6 +473,12 @@
         "created": "Created",
         "updated": "Updated"
       },
+      "selected": "requests selected",
+      "createPricingOffer": "Create Pricing Offer",
+      "requestsIncluded": "requests included",
+      "selectedRequests": "Selected Requests",
+      "hasPricing": "Priced",
+      "createAndSend": "Create & Send Offer",
       "status": {
         "new": "New",
         "quoted": "Quoted",
@@ -503,7 +646,10 @@
         "loading": "Loading agency inbox...",
         "emptyTitle": "Your inbox is clear",
         "emptyDesc": "All client requests have been processed or sorted.",
-        "clientOrg": "Client Org"
+        "clientOrg": "Client Org",
+        "errors": {
+          "sameOrgRequired": "Please select requests from the same client organization."
+        }
       },
       "workboard": {
         "title": "Project Workboard",
@@ -799,6 +945,7 @@
       },
       "noOffersAgency": "Create your first pricing offer to get started.",
       "noOffersClient": "No pricing offers available yet.",
+      "includedRequests": "Included Requests",
       "form": {
         "titleLabel": "Offer Title",
         "titlePlaceholder": "e.g., Website Redesign Proposal",
@@ -817,7 +964,12 @@
         "agencyNotes": "Internal Notes",
         "saveDraft": "Save Draft",
         "sendToClient": "Send to Client",
-        "sending": "Sending..."
+        "sending": "Sending...",
+        "selectRequests": "Select Requests",
+        "selectRequestsDescription": "Choose requests to include in this pricing offer",
+        "selected": "selected",
+        "noRequestsAvailable": "No requests available",
+        "allRequestsInOffers": "All requests are already in pricing offers or paid"
       },
       "detail": {
         "breakdown": "Pricing Breakdown",

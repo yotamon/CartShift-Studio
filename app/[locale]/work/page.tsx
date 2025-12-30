@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import { WorkPageContent } from "@/components/sections/WorkPageContent";
 import { generateMetadata as genMeta, generateBreadcrumbSchema } from "@/lib/seo";
 import { getAllCaseStudies } from "@/lib/case-studies";
@@ -10,7 +11,9 @@ export const metadata: Metadata = genMeta({
   url: "/work",
 });
 
-export default function WorkPage() {
+export default async function WorkPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale as 'en' | 'he');
   const caseStudies = getAllCaseStudies();
 
   const breadcrumbSchema = generateBreadcrumbSchema([

@@ -4,14 +4,16 @@ import { cn } from '@/lib/utils';
 interface PortalCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   noPadding?: boolean;
+  hoverEffect?: boolean;
 }
 
-export const PortalCard = ({ children, className, noPadding = false, ...props }: PortalCardProps) => {
+export const PortalCard = ({ children, className, noPadding = false, hoverEffect = false, ...props }: PortalCardProps) => {
   return (
     <div
       className={cn(
         "portal-card",
-        !noPadding && "p-6",
+        !noPadding && "p-6 md:p-8",
+        hoverEffect && "portal-card-hover",
         className
       )}
       {...props}
@@ -23,7 +25,7 @@ export const PortalCard = ({ children, className, noPadding = false, ...props }:
 
 export const PortalCardHeader = ({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className={cn("px-6 py-4 border-b border-[var(--portal-border)]", className)} {...props}>
+    <div className={cn("px-6 md:px-8 py-5 border-b border-surface-200/60 dark:border-surface-800/50", className)} {...props}>
       {children}
     </div>
   );
@@ -31,7 +33,7 @@ export const PortalCardHeader = ({ children, className, ...props }: React.HTMLAt
 
 export const PortalCardTitle = ({ children, className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => {
   return (
-    <h3 className={cn("text-lg font-semibold text-[var(--portal-text-primary)]", className)} {...props}>
+    <h3 className={cn("text-xl font-outfit font-black text-surface-900 dark:text-white tracking-tight leading-none", className)} {...props}>
       {children}
     </h3>
   );
@@ -39,7 +41,7 @@ export const PortalCardTitle = ({ children, className, ...props }: React.HTMLAtt
 
 export const PortalCardContent = ({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className={cn("p-6", className)} {...props}>
+    <div className={cn("p-6 md:p-8", className)} {...props}>
       {children}
     </div>
   );

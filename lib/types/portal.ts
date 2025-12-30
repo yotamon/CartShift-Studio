@@ -247,6 +247,13 @@ export interface Request {
   updatedAt: Timestamp;
   closedAt?: Timestamp;
 
+  // Latest activity
+  lastComment?: {
+    content: string;
+    userName: string;
+    createdAt: Timestamp;
+  };
+
   // Milestones for project tracking
   milestones?: Milestone[];
   currentMilestoneId?: string;
@@ -268,6 +275,9 @@ export interface Request {
   paymentId?: string;           // PayPal transaction ID
   paidAt?: Timestamp;
   paymentMethod?: 'paypal';
+
+  // Pricing offer reference
+  pricingOfferId?: string;      // Link to PricingRequest that includes this request
 }
 
 export interface Comment {
@@ -280,6 +290,9 @@ export interface Comment {
   content: string;
   attachmentIds: string[];
   isInternal: boolean; // Agency-only visibility
+  parentId?: string; // For threaded replies
+  reactions?: Record<string, string[]>; // emoji -> array of userIds
+  mentions?: string[]; // array of userIds mentioned
   createdAt: Timestamp;
   updatedAt?: Timestamp;
 }
@@ -365,6 +378,8 @@ export interface CreateCommentData {
   content: string;
   isInternal?: boolean;
   attachmentIds?: string[];
+  parentId?: string;
+  mentions?: string[];
 }
 
 export interface InviteMemberData {
@@ -474,3 +489,59 @@ export const TYPE_CONFIG: Record<RequestType, { label: string; icon: string }> =
   design: { label: 'Design', icon: 'Palette' },
   other: { label: 'Other', icon: 'HelpCircle' },
 };
+
+// ============================================
+// CLIENT-FACING STATUS CONFIGURATION
+// ============================================
+
+export type ClientStatus = 'SUBMITTED' | 'IN_PROGRESS' | 'IN_REVIEW' | 'COMPLETED';
+
+export const CLIENT_STATUS_MAP: Record<RequestStatus, ClientStatus> = {
+  // Phase 1: Submitted / Received
+  NEW: 'SUBMITTED',
+  NEEDS_INFO: 'SUBMITTED', // Or 'ACTION_REQUIRED' if we want to be more specific, but simplified to Submitted for now
+  QUOTED: 'SUBMITTED',
+  ACCEPTED: 'SUBMITTED',
+  DECLINED: 'SUBMITTED',
+  QUEUED: 'SUBMITTED',
+
+  // Phase 2: In Progress
+  IN_PROGRESS: 'IN_PROGRESS',
+
+  // Phase 3: Review
+  IN_REVIEW: 'IN_REVIEW',
+
+  // Phase 4: Completed
+  DELIVERED: 'COMPLETED', // Or Review? Usually delivered means done from agency side
+  PAID: 'COMPLETED',
+  CLOSED: 'COMPLETED',
+  CANCELED: 'COMPLETED', // Shows as completed/archived
+};
+
+export const CLIENT_STATUS_CONFIG: Record<ClientStatus, StatusConfig> = {
+  SUBMITTED: {
+    label: 'Submitted',
+    color: 'blue',
+    bgClass: 'bg-blue-100 dark:bg-blue-500/20',
+    textClass: 'text-blue-700 dark:text-blue-300',
+  },
+  IN_PROGRESS: {
+    label: 'In Progress',
+    color: 'purple',
+    bgClass: 'bg-purple-100 dark:bg-purple-500/20',
+    textClass: 'text-purple-700 dark:text-purple-300',
+  },
+  IN_REVIEW: {
+    label: 'In Review',
+    color: 'yellow',
+    bgClass: 'bg-amber-100 dark:bg-amber-500/20',
+    textClass: 'text-amber-700 dark:text-amber-300',
+  },
+  COMPLETED: {
+    label: 'Completed',
+    color: 'green',
+    bgClass: 'bg-green-100 dark:bg-green-500/20',
+    textClass: 'text-green-700 dark:text-green-300',
+  },
+};
+

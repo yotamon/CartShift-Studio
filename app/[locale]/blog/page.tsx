@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import { BlogTemplate } from "@/components/templates/BlogTemplate";
 import { getAllPosts } from "@/lib/markdown";
 import { generateMetadata as genMeta, generateBreadcrumbSchema } from "@/lib/seo";

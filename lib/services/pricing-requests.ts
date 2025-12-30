@@ -61,6 +61,7 @@ export async function createPricingRequest(
     clientEmail: data.clientEmail?.trim().toLowerCase() || null,
     agencyNotes: data.agencyNotes?.trim() || null,
     validUntil: data.validUntil ? Timestamp.fromDate(data.validUntil) : null,
+    requestIds: data.requestIds || [], // Store linked request IDs
     createdBy: userId,
     createdByName: userName,
     createdAt: serverTimestamp(),
@@ -68,6 +69,18 @@ export async function createPricingRequest(
   };
 
   const docRef = await addDoc(collection(db, PRICING_REQUESTS_COLLECTION), requestData);
+
+  // Update linked requests with the pricing offer ID
+  if (data.requestIds && data.requestIds.length > 0) {
+    const REQUESTS_COLLECTION = 'portal_requests';
+    for (const requestId of data.requestIds) {
+      const requestDocRef = doc(db, REQUESTS_COLLECTION, requestId);
+      await updateDoc(requestDocRef, {
+        pricingOfferId: docRef.id,
+        updatedAt: serverTimestamp(),
+      });
+    }
+  }
 
   return {
     id: docRef.id,
@@ -256,11 +269,17 @@ export async function submitClientEdits(
 }
 
 export async function markPricingRequestPaid(
-  requestId: string,
+  pricingRequestId: string,
   paymentId: string,
   paymentMethod: 'paypal' = 'paypal'
 ): Promise<void> {
-  const docRef = doc(db, PRICING_REQUESTS_COLLECTION, requestId);
+  const docRef = doc(db, PRICING_REQUESTS_COLLECTION, pricingRequestId);
+
+  // First, get the pricing request to access linked request IDs
+  const pricingDoc = await getDoc(docRef);
+  const pricingData = pricingDoc.data() as PricingRequest | undefined;
+
+  // Update the pricing request status
   await updateDoc(docRef, {
     status: PRICING_STATUS.PAID,
     paymentId,
@@ -268,6 +287,21 @@ export async function markPricingRequestPaid(
     paidAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
+
+  // Update all linked requests to PAID status
+  if (pricingData?.requestIds && pricingData.requestIds.length > 0) {
+    const REQUESTS_COLLECTION = 'portal_requests';
+    for (const requestId of pricingData.requestIds) {
+      const requestDocRef = doc(db, REQUESTS_COLLECTION, requestId);
+      await updateDoc(requestDocRef, {
+        status: 'PAID',
+        paymentId,
+        paymentMethod,
+        paidAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+    }
+  }
 }
 
 export async function cancelPricingRequest(requestId: string): Promise<void> {
@@ -392,3 +426,56 @@ export async function getPricingStats(orgId: string): Promise<{
     totalRevenue,
   };
 }
+
+// ============================================
+// REQUEST-PRICING RELATIONSHIPS
+// ============================================
+
+/**
+ * Get pricing offer that contains a specific request
+ */
+export async function getPricingOfferForRequest(requestId: string): Promise<PricingRequest | null> {
+  try {
+    // Query for pricing requests that contain this requestId
+    // Note: Firestore doesn't support 'array-contains' with composite indexes well,
+    // so we fetch all non-canceled/non-paid for the org and filter client-side
+    const q = query(
+      collection(db, PRICING_REQUESTS_COLLECTION),
+      where('requestIds', 'array-contains', requestId)
+    );
+
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) {
+      return null;
+    }
+
+    // Return the first match (should only be one active offer per request)
+    const doc = snapshot.docs[0];
+    return {
+      id: doc.id,
+      ...doc.data(),
+    } as PricingRequest;
+  } catch (error) {
+    console.error('Error getting pricing offer for request:', error);
+    return null;
+  }
+}
+
+/**
+ * Check if a request is in any active (non-paid, non-canceled, non-declined) pricing offer
+ */
+export async function isRequestInActivePricingOffer(requestId: string): Promise<boolean> {
+  const offer = await getPricingOfferForRequest(requestId);
+  if (!offer) return false;
+
+  // Active = not paid, not canceled, not declined, not expired
+  const inactiveStatuses: PricingStatus[] = [
+    PRICING_STATUS.PAID,
+    PRICING_STATUS.CANCELED,
+    PRICING_STATUS.DECLINED,
+    PRICING_STATUS.EXPIRED,
+  ];
+
+  return !inactiveStatuses.includes(offer.status);
+}
+

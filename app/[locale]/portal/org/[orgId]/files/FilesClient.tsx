@@ -19,6 +19,8 @@ import {
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
+import { SkeletonTable } from '@/components/portal/ui/PortalSkeleton';
+import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
 import { getFilesByOrg, formatFileSize, deleteFile } from '@/lib/services/portal-files';
 import { FileAttachment } from '@/lib/types/portal';
 import { format } from 'date-fns';
@@ -96,13 +98,28 @@ export default function FilesClient() {
   };
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-40 space-y-4">
-        <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-        <p className="text-slate-500 font-bold font-outfit uppercase tracking-widest text-xs">{t('portal.files.empty.syncing')}</p>
-      </div>
-    );
-  }
+     return (
+       <div className="space-y-6 animate-pulse" role="status" aria-live="polite">
+         <span className="sr-only">Loading files...</span>
+         <div className="flex justify-between items-center">
+           <div className="space-y-2">
+             <div className="h-8 w-48 bg-surface-200 dark:bg-surface-800 rounded-lg" />
+             <div className="h-4 w-64 bg-surface-100 dark:bg-surface-800 rounded-lg" />
+           </div>
+           <div className="h-10 w-32 bg-surface-200 dark:bg-surface-800 rounded-xl" />
+         </div>
+         <div className="rounded-2xl border border-surface-200 dark:border-surface-800 overflow-hidden bg-white dark:bg-surface-950">
+           <div className="p-5 border-b border-surface-100 dark:border-surface-800 flex justify-between">
+             <div className="h-10 w-full md:w-96 bg-surface-100 dark:bg-surface-800 rounded-2xl" />
+             <div className="h-8 w-24 bg-surface-100 dark:bg-surface-800 rounded-xl" />
+           </div>
+           <div className="p-0">
+             <SkeletonTable rows={5} columns={5} />
+           </div>
+         </div>
+       </div>
+     );
+   }
 
   if (error) {
     return (
@@ -229,16 +246,11 @@ export default function FilesClient() {
               </tbody>
             </table>
           ) : (
-            <div className="py-24 flex flex-col items-center justify-center text-center px-4">
-              <div className="w-20 h-20 bg-slate-50 dark:bg-slate-900 rounded-[2rem] flex items-center justify-center mb-6 border border-slate-100 dark:border-slate-800 shadow-sm relative group">
-                <div className="absolute inset-0 bg-blue-500/5 rounded-[2rem] scale-90 group-hover:scale-110 transition-transform duration-500" />
-                <FileText className="text-slate-200 dark:text-slate-800 relative z-10" size={36} />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">{t('portal.files.empty.title')}</h3>
-              <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 max-w-sm mx-auto font-medium">
-                {searchQuery ? t('portal.files.empty.search') : t('portal.files.empty.noFiles')}
-              </p>
-              {!searchQuery && (
+            <PortalEmptyState
+              icon={FileText}
+              title={t('portal.files.empty.title')}
+              description={searchQuery ? t('portal.files.empty.search') : t('portal.files.empty.noFiles')}
+              action={!searchQuery && (
                 <PortalButton
                   onClick={() => setShowUploadModal(true)}
                   variant="outline"
@@ -248,7 +260,8 @@ export default function FilesClient() {
                   {t('portal.files.empty.uploadFirst')}
                 </PortalButton>
               )}
-            </div>
+              className="py-24"
+            />
           )}
         </div>
       </PortalCard>

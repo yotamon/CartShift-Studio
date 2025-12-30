@@ -24,6 +24,7 @@ import {
   InviteMemberData,
   USER_ROLE,
   UserRole,
+  ACCOUNT_TYPE,
 } from '@/lib/types/portal';
 
 const ORGS_COLLECTION = 'portal_organizations';
@@ -268,8 +269,9 @@ export async function getMemberByUserId(
       id: memberSnap.id,
       ...memberSnap.data(),
     } as OrganizationMember;
-  } catch (error: any) {
-    if (error?.code === 'permission-denied') {
+  } catch (error: unknown) {
+    const firestoreError = error as { code?: string; message?: string };
+    if (firestoreError.code === 'permission-denied') {
       console.warn(
         `[getMemberByUserId] Permission denied checking membership for orgId: ${orgId}, userId: ${userId}`
       );
@@ -455,7 +457,8 @@ export async function acceptInvite(
       {
         email: invite.email,
         name: userName || null,
-        accountType: 'agency',
+        accountType: ACCOUNT_TYPE.AGENCY,
+        isAgency: true,
         updatedAt: serverTimestamp(),
       },
       { merge: true }

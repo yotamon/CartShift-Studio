@@ -101,11 +101,23 @@
         "destination": "/en/portal/org/template/dashboard/index.html"
       },
       {
-        "source": "/en/portal/org/*/requests",
-        "destination": "/en/portal/org/template/requests/index.html"
+        "source": "/en/portal/org/*/requests/new",
+        "destination": "/en/portal/org/template/requests/new/index.html"
       },
       {
-        "source": "/en/portal/org/*/requests/**",
+        "source": "/en/portal/org/*/requests/new/**",
+        "destination": "/en/portal/org/template/requests/new/index.html"
+      },
+      {
+        "source": "/en/portal/org/*/requests/*",
+        "destination": "/en/portal/org/template/requests/request/index.html"
+      },
+      {
+        "source": "/en/portal/org/*/requests/*/*",
+        "destination": "/en/portal/org/template/requests/request/index.html"
+      },
+      {
+        "source": "/en/portal/org/*/requests",
         "destination": "/en/portal/org/template/requests/index.html"
       },
       {
@@ -133,11 +145,23 @@
         "destination": "/en/portal/org/template/settings/index.html"
       },
       {
-        "source": "/en/portal/org/*/pricing",
-        "destination": "/en/portal/org/template/pricing/index.html"
+        "source": "/en/portal/org/*/pricing/new",
+        "destination": "/en/portal/org/template/pricing/new/index.html"
       },
       {
-        "source": "/en/portal/org/*/pricing/**",
+        "source": "/en/portal/org/*/pricing/new/**",
+        "destination": "/en/portal/org/template/pricing/new/index.html"
+      },
+      {
+        "source": "/en/portal/org/*/pricing/*",
+        "destination": "/en/portal/org/template/pricing/pricing/index.html"
+      },
+      {
+        "source": "/en/portal/org/*/pricing/*/*",
+        "destination": "/en/portal/org/template/pricing/pricing/index.html"
+      },
+      {
+        "source": "/en/portal/org/*/pricing",
         "destination": "/en/portal/org/template/pricing/index.html"
       },
       {
@@ -161,11 +185,23 @@
         "destination": "/he/portal/org/template/dashboard/index.html"
       },
       {
-        "source": "/he/portal/org/*/requests",
-        "destination": "/he/portal/org/template/requests/index.html"
+        "source": "/he/portal/org/*/requests/new",
+        "destination": "/he/portal/org/template/requests/new/index.html"
       },
       {
-        "source": "/he/portal/org/*/requests/**",
+        "source": "/he/portal/org/*/requests/new/**",
+        "destination": "/he/portal/org/template/requests/new/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/requests/*",
+        "destination": "/he/portal/org/template/requests/request/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/requests/*/*",
+        "destination": "/he/portal/org/template/requests/request/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/requests",
         "destination": "/he/portal/org/template/requests/index.html"
       },
       {
@@ -193,11 +229,23 @@
         "destination": "/he/portal/org/template/settings/index.html"
       },
       {
-        "source": "/he/portal/org/*/pricing",
-        "destination": "/he/portal/org/template/pricing/index.html"
+        "source": "/he/portal/org/*/pricing/new",
+        "destination": "/he/portal/org/template/pricing/new/index.html"
       },
       {
-        "source": "/he/portal/org/*/pricing/**",
+        "source": "/he/portal/org/*/pricing/new/**",
+        "destination": "/he/portal/org/template/pricing/new/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/pricing/*",
+        "destination": "/he/portal/org/template/pricing/pricing/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/pricing/*/*",
+        "destination": "/he/portal/org/template/pricing/pricing/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/pricing",
         "destination": "/he/portal/org/template/pricing/index.html"
       },
       {

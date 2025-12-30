@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import { PricingPageContent } from "@/components/sections/PricingPageContent";
 import { generateMetadata as genMeta, generateBreadcrumbSchema, generateFAQPageSchema } from "@/lib/seo";
 import Script from "next/script";
@@ -30,7 +31,9 @@ const pricingFaqs = [
   }
 ];
 
-export default function PricingPage() {
+export default async function PricingPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale as 'en' | 'he');
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Home", url: "/" },
     { name: "Pricing", url: "/pricing" }

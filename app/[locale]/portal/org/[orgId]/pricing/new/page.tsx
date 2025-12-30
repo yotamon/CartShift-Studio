@@ -1,10 +1,15 @@
+import { setRequestLocale } from 'next-intl/server';
 import CreatePricingForm from './CreatePricingForm';
 import { getPortalStaticOrgParams } from '@/lib/portal-static-params';
+
+export const dynamicParams = false;
 
 export async function generateStaticParams() {
   return getPortalStaticOrgParams();
 }
 
-export default function NewPricingPage() {
+export default async function NewPricingPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale as 'en' | 'he');
   return <CreatePricingForm />;
 }

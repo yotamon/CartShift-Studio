@@ -1,14 +1,12 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import {
   ArrowLeft,
-  MessageSquare,
   Paperclip,
   CheckCircle2,
   AlertCircle,
-  Send,
   Loader2,
   Calendar,
   User as UserIcon,
@@ -24,8 +22,12 @@ import {
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
+import { Breadcrumb } from '@/components/portal/ui/Breadcrumb';
+import { FavoriteButton } from '@/components/portal/ui/FavoriteButton';
+import { PortalSkeleton } from '@/components/portal/ui/PortalSkeleton';
 import { RequestMilestones } from '@/components/portal/requests/RequestMilestones';
 import { RequestAttachments } from '@/components/portal/requests/RequestAttachments';
+import { RequestDiscussion } from '@/components/portal/requests/RequestDiscussion';
 import { InvoiceDownloadButton } from '@/components/portal/invoices/InvoiceDownloadButton';
 import { ActivityTimeline } from '@/components/portal/ActivityTimeline';
 import { getOrganization } from '@/lib/services/portal-organizations';
@@ -61,6 +63,8 @@ import {
   calculateTotalAmount,
   Organization,
   ActivityLog,
+  CLIENT_STATUS_MAP,
+  CLIENT_STATUS_CONFIG,
 } from '@/lib/types/portal';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
@@ -86,7 +90,7 @@ export default function RequestDetailClient() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [newComment, setNewComment] = useState('');
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAccepting, setIsAccepting] = useState(false);
   const [isDeclining, setIsDeclining] = useState(false);
@@ -105,7 +109,6 @@ export default function RequestDetailClient() {
   const [isUploading, setIsUploading] = useState(false);
   const [activities, setActivities] = useState<ActivityLog[]>([]);
   const t = useTranslations('portal');
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   // Line item handlers for pricing form
   const addLineItem = () => {
@@ -245,8 +248,15 @@ export default function RequestDetailClient() {
   };
 
   useEffect(() => {
-    if (!requestId || typeof requestId !== 'string') return undefined;
-    if (userData === undefined) return undefined;
+    if (!requestId || typeof requestId !== 'string') {
+      console.warn('[RequestDetailClient] Invalid requestId:', requestId);
+      setError('Invalid request ID');
+      setLoading(false);
+      return undefined;
+    }
+    if (userData === undefined) {
+      return undefined;
+    }
 
     setLoading(true);
     setError(null);
@@ -355,65 +365,7 @@ export default function RequestDetailClient() {
     }
   }, [isAgency]);
 
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [comments]);
 
-  const handleSendComment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newComment.trim() || !requestId || !orgId || !userData) return;
-
-    const commentContent = newComment.trim();
-    setIsSubmitting(true);
-
-    const tempId = `temp-${Date.now()}`;
-    const optimisticComment: Comment = {
-      id: tempId,
-      requestId: requestId as string,
-      orgId: orgId as string,
-      userId: userData.id,
-      userName: userData.name || userData.email,
-      userPhotoUrl: undefined,
-      content: commentContent,
-      attachmentIds: [],
-      isInternal: false,
-      createdAt: Timestamp.now(),
-    };
-
-    setComments(prev => [...prev, optimisticComment]);
-    setNewComment('');
-
-    try {
-      const createdComment = await createComment(
-        requestId as string,
-        orgId as string,
-        userData.id,
-        userData.name || userData.email,
-        undefined,
-        { content: commentContent }
-      );
-
-      // Replace optimistic comment with real one if subscription hasn't updated yet
-      setTimeout(() => {
-        setComments(prev => {
-          const hasRealComment = prev.some(c => c.id === createdComment.id);
-          if (!hasRealComment) {
-            return prev.map(c => c.id === tempId ? createdComment : c);
-          }
-          return prev.filter(c => c.id !== tempId);
-        });
-      }, 1000);
-    } catch (error) {
-      console.error('Error sending comment:', error);
-      setComments(prev => prev.filter(c => c.id !== tempId));
-      setNewComment(commentContent);
-      alert(error instanceof Error ? error.message : 'Failed to send comment. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const handleStatusChange = async (newStatus: RequestStatus) => {
     if (!requestId || typeof requestId !== 'string' || !userData) return;
@@ -437,11 +389,32 @@ export default function RequestDetailClient() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-40 space-y-4">
-        <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-        <p className="text-surface-500 font-bold font-outfit uppercase tracking-widest text-xs">
-          {t('requests.detail.loading')}
-        </p>
+      <div className="space-y-6 animate-pulse" role="status" aria-live="polite">
+        <span className="sr-only">Loading request details...</span>
+        <div className="h-8 w-48 bg-surface-200 dark:bg-surface-800 rounded-lg" />
+        <div className="flex flex-col md:flex-row gap-6">
+           <div className="flex-1 space-y-4">
+             <div className="flex items-center gap-4">
+               <PortalSkeleton className="h-10 w-3/4" />
+               <PortalSkeleton className="h-8 w-24 rounded-full" />
+             </div>
+             <PortalSkeleton className="h-6 w-1/3" />
+           </div>
+        </div>
+        <div className="flex items-center gap-2">
+           <PortalSkeleton className="h-10 w-24 rounded-xl" />
+           <PortalSkeleton className="h-10 w-28 rounded-xl" />
+           <PortalSkeleton className="h-10 w-24 rounded-xl" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+           <div className="lg:col-span-2 space-y-8">
+             <PortalSkeleton className="h-64 w-full rounded-2xl" />
+             <PortalSkeleton className="h-40 w-full rounded-2xl" />
+           </div>
+           <div className="space-y-6">
+             <PortalSkeleton className="h-48 w-full rounded-2xl" />
+           </div>
+        </div>
       </div>
     );
   }
@@ -467,8 +440,15 @@ export default function RequestDetailClient() {
     );
   }
 
+  const breadcrumbItems = [
+    { label: t('requests.title'), href: `/portal/org/${orgId}/requests/` },
+    { label: request.title },
+  ];
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
+      <Breadcrumb items={breadcrumbItems} />
+
       <div className="flex flex-col md:flex-row md:items-center gap-6">
         <Link
           href={`/portal/org/${orgId}/requests/`}
@@ -477,14 +457,20 @@ export default function RequestDetailClient() {
           <ArrowLeft size={20} className="text-surface-500" />
         </Link>
         <div className="flex-1">
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-3xl font-bold text-surface-900 dark:text-white leading-tight font-outfit">
-              {request.title}
-            </h1>
-            <PortalBadge variant={mapStatusColor(STATUS_CONFIG[request.status]?.color || 'gray')}>
-              {STATUS_CONFIG[request.status]?.label || request.status?.replace('_', ' ')}
-            </PortalBadge>
-          </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-3xl font-bold text-surface-900 dark:text-white leading-tight font-outfit">
+                {request.title}
+              </h1>
+              {isAgency ? (
+                <PortalBadge variant={mapStatusColor(STATUS_CONFIG[request.status]?.color || 'gray')}>
+                  {STATUS_CONFIG[request.status]?.label || request.status?.replace('_', ' ')}
+                </PortalBadge>
+              ) : (
+                <PortalBadge variant={mapStatusColor(CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[request.status]]?.color || 'gray')}>
+                  {CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[request.status]]?.label}
+                </PortalBadge>
+              )}
+            </div>
           <div className="flex items-center gap-3 mt-1 underline-offset-4">
             <p className="text-xs font-black text-surface-400 uppercase tracking-widest">
               {request.id.slice(0, 8)}
@@ -494,6 +480,13 @@ export default function RequestDetailClient() {
               {request.type || t('requests.detail.designRequest')}
             </p>
           </div>
+          </div>
+        <div className="flex items-center gap-2 self-start md:self-center">
+            <FavoriteButton
+              initialIsActive={false}
+              className="w-10 h-10 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm"
+              variant="star"
+            />
         </div>
       </div>
 
@@ -604,86 +597,65 @@ export default function RequestDetailClient() {
               />
             </div>
           ) : activeTab === 'discussion' ? (
-            <div className="space-y-4 animate-in slide-in-from-right-4 duration-500">
-              <h3 className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest flex items-center gap-2 px-1">
-                <MessageSquare size={14} className="text-blue-500" />{' '}
-                {t('requests.detail.discussion')}
-              </h3>
-              <PortalCard
-                noPadding
-                className="flex flex-col border-surface-200 dark:border-surface-800 shadow-sm bg-surface-50/50 dark:bg-surface-900/10 min-h-[500px] overflow-hidden"
-              >
-              <div
-                ref={scrollRef}
-                className="flex-1 overflow-y-auto p-6 space-y-6 max-h-[600px] scrollbar-hide"
-              >
-                {comments.length > 0 ? (
-                  comments.map(msg => (
-                    <div
-                      key={msg.id}
-                      className={cn(
-                        'flex flex-col max-w-[85%]',
-                        msg.userId === userData?.id ? 'items-end ml-auto' : 'items-start'
-                      )}
-                    >
-                      <div className="flex items-center gap-2 mb-1.5 px-1">
-                        <span className="text-[10px] font-black text-surface-400 uppercase tracking-widest">
-                          {msg.userName}
-                        </span>
-                        <span className="text-[9px] font-bold text-surface-300 dark:text-surface-600 uppercase tracking-tighter">
-                          {msg.createdAt?.toDate ? format(msg.createdAt.toDate(), 'h:mm a') : 'Now'}
-                        </span>
-                      </div>
-                      <div
-                        className={cn(
-                          'p-4 rounded-2xl text-sm shadow-sm font-medium leading-relaxed',
-                          msg.userId === userData?.id
-                            ? 'bg-blue-600 text-white rounded-tr-none'
-                            : 'bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-100 dark:border-surface-700 rounded-tl-none'
-                        )}
-                      >
-                        {msg.content}
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="h-full flex flex-col items-center justify-center text-center py-20 opacity-40 space-y-2">
-                    <MessageSquare size={48} className="text-surface-300" />
-                    <div>
-                      <p className="text-sm font-bold text-surface-400 font-outfit uppercase tracking-widest">
-                        {t('requests.detail.emptyMessages')}
-                      </p>
-                      <p className="text-xs text-surface-500">
-                        {t('requests.detail.emptyMessagesDesc')}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="p-4 border-t border-surface-100 dark:border-surface-800 bg-white dark:bg-surface-950">
-                <form onSubmit={handleSendComment} className="relative group">
-                  <textarea
-                    placeholder={t('requests.detail.placeholder')}
-                    className="portal-input pr-14 min-h-[80px] py-4 resize-none bg-surface-50 dark:bg-surface-900 border-surface-200 dark:border-surface-800 focus:bg-white dark:focus:bg-surface-950 transition-all font-medium"
-                    value={newComment}
-                    onChange={e => setNewComment(e.target.value)}
-                    disabled={isSubmitting}
-                  />
-                  <button
-                    type="submit"
-                    disabled={isSubmitting || !newComment.trim()}
-                    className="absolute right-3 bottom-3 p-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50 disabled:shadow-none"
-                  >
-                    {isSubmitting ? (
-                      <Loader2 size={18} className="animate-spin" />
-                    ) : (
-                      <Send size={18} />
-                    )}
-                  </button>
-                </form>
-              </div>
-              </PortalCard>
-            </div>
+            <RequestDiscussion
+              comments={comments}
+              currentUser={userData as PortalUser | null}
+              agencyTeam={agencyTeam}
+              onSendMessage={async (content, parentId) => {
+                if (!requestId || !orgId || !userData) return;
+
+                // Optimistic logic would ideally be moved into RequestDiscussion or kept here if we want to control state
+                // For simplicity, we'll keep the optimisitc update here or refactor it.
+                // Since RequestDiscussion is controlled by `comments` prop, we need to update state here.
+
+                const tempId = `temp-${Date.now()}`;
+                const optimisticComment: Comment = {
+                  id: tempId,
+                  requestId: requestId as string,
+                  orgId: orgId as string,
+                  userId: userData.id,
+                  userName: userData.name || userData.email,
+                  userPhotoUrl: undefined,
+                  content: content,
+                  attachmentIds: [],
+                  isInternal: false,
+                  parentId: parentId,
+                  createdAt: Timestamp.now(),
+                  reactions: {},
+                  mentions: []
+                };
+
+                setComments(prev => [...prev, optimisticComment]);
+
+                setIsSubmitting(true);
+                try {
+                  await createComment(
+                    requestId as string,
+                    orgId as string,
+                    userData.id,
+                    userData.name || userData.email,
+                    undefined,
+                    {
+                      content: content,
+                      parentId: parentId
+                    }
+                  );
+
+                  // Filter out temp, let subscription handle real
+                  setTimeout(() => {
+                     setComments(prev => prev.filter(c => c.id !== tempId));
+                  }, 1000);
+
+                } catch (error) {
+                  console.error('Error sending comment:', error);
+                  setComments(prev => prev.filter(c => c.id !== tempId));
+                  // Maybe show toast error
+                } finally {
+                  setIsSubmitting(false);
+                }
+              }}
+              isSubmitting={isSubmitting}
+            />
           ) : (
             <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-500">
               <h3 className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest flex items-center gap-2 px-1">

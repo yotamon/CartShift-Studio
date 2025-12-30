@@ -4,6 +4,7 @@ import { onAuthStateChanged, type User } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { PortalUser, AccountType, ACCOUNT_TYPE } from '@/lib/types/portal';
+import { PortalErrorCode, getPortalError } from '@/lib/constants/error-codes';
 
 interface UserData {
   id: string;
@@ -30,6 +31,7 @@ export function usePortalAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<PortalErrorCode | null>(null);
 
   useEffect(() => {
     let unsubscribeAuth: (() => void) | undefined;
@@ -46,8 +48,9 @@ export function usePortalAuth() {
           // Ensure auth token is ready before accessing Firestore
           try {
             await currentUser.getIdToken();
-          } catch (error) {
-            console.error('Error getting auth token:', error);
+          } catch (err) {
+            console.error('Error getting auth token:', err);
+            setError(getPortalError(err));
             setUserData({
               id: currentUser.uid,
               email: currentUser.email || '',
@@ -87,12 +90,10 @@ export function usePortalAuth() {
               });
             }
             setLoading(false);
-          }, (error) => {
-            if (error.code === 'permission-denied') {
-              console.error('Permission denied accessing user data. User may not be authenticated properly.');
-            } else {
-              console.error('Error fetching user data:', error);
-            }
+          }, (err) => {
+            console.error('Error fetching user data:', err);
+            setError(getPortalError(err));
+
             setUserData({
               id: currentUser.uid,
               email: currentUser.email || '',
@@ -107,8 +108,9 @@ export function usePortalAuth() {
           setLoading(false);
         }
       });
-    } catch (error) {
-      console.error('Auth initialization error:', error);
+    } catch (err) {
+      console.error('Auth initialization error:', err);
+      setError(getPortalError(err));
       setLoading(false);
     }
 
@@ -130,6 +132,7 @@ export function usePortalAuth() {
     isAuthenticated: !!user,
     isAgency: userData?.accountType === ACCOUNT_TYPE.AGENCY,
     accountType: userData?.accountType || ACCOUNT_TYPE.CLIENT,
+    error,
   };
 }
 

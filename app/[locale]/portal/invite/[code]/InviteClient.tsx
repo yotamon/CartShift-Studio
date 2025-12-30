@@ -60,7 +60,11 @@ export default function InviteClient() {
         setInvite(inviteData);
 
         if (inviteData.status !== 'pending') {
-          setError(inviteData.status === 'accepted' ? t('portal.auth.errors.alreadyAccepted') : t('portal.auth.errors.expired'));
+          setError(
+            inviteData.status === 'accepted'
+              ? t('portal.auth.errors.alreadyAccepted')
+              : t('portal.auth.errors.expired')
+          );
         } else if (inviteData.expiresAt.toDate() < new Date()) {
           // Update expired status if user is authenticated, otherwise just show error
           if (isAuthenticated) {
@@ -72,8 +76,8 @@ export default function InviteClient() {
           }
           setError(t('portal.auth.errors.expired'));
         }
-      } catch (err: any) {
-        console.error('Error fetching invite:', err);
+      } catch (error: unknown) {
+        console.error('Error fetching invite:', error);
         setError(t('portal.auth.errors.genericInvite'));
       } finally {
         setLoading(false);
@@ -145,9 +149,9 @@ export default function InviteClient() {
       setTimeout(() => {
         router.push(`/portal/org/${invite.orgId}/dashboard`);
       }, 2000);
-    } catch (err: any) {
-      console.error('Error accepting invite:', err);
-      setError(err.message || t('portal.auth.errors.generic'));
+    } catch (error: unknown) {
+      console.error('Error accepting invite:', error);
+      setError(error instanceof Error ? error.message : t('portal.auth.errors.generic'));
     } finally {
       setAccepting(false);
     }
@@ -257,12 +261,18 @@ export default function InviteClient() {
                     {t('portal.invite.guestIntro')}
                   </p>
                   <div className="space-y-2">
-                    <Link href={`/portal/signup?email=${encodeURIComponent(invite.email)}&redirect=/portal/invite/${invite.id}`} className="block">
+                    <Link
+                      href={`/portal/signup?email=${encodeURIComponent(invite.email)}&redirect=/portal/invite/${invite.id}`}
+                      className="block"
+                    >
                       <PortalButton className="w-full shadow-lg shadow-blue-500/20">
                         {t('portal.invite.createAccount')}
                       </PortalButton>
                     </Link>
-                    <Link href={`/portal/login?redirect=/portal/invite/${invite.id}`} className="block">
+                    <Link
+                      href={`/portal/login?redirect=/portal/invite/${invite.id}`}
+                      className="block"
+                    >
                       <PortalButton variant="outline" className="w-full">
                         {t('portal.invite.signIn')}
                       </PortalButton>
@@ -275,15 +285,14 @@ export default function InviteClient() {
               ) : !emailMatch ? (
                 <div className="p-3 bg-warning/10 border border-warning/20 rounded-md">
                   <p className="text-sm text-warning">
-                    {t('portal.invite.emailMismatch', { email: invite.email, userEmail: user?.email || '' })}
+                    {t('portal.invite.emailMismatch', {
+                      email: invite.email,
+                      userEmail: user?.email || '',
+                    })}
                   </p>
                 </div>
               ) : !isExpired && !isAccepted ? (
-                <PortalButton
-                  onClick={handleAcceptInvite}
-                  disabled={accepting}
-                  className="w-full"
-                >
+                <PortalButton onClick={handleAcceptInvite} disabled={accepting} className="w-full">
                   {accepting ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />

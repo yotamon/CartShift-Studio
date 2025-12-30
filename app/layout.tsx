@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
-import { Inter, Poppins, JetBrains_Mono } from "next/font/google";
+import { Inter, Poppins, JetBrains_Mono, Outfit } from "next/font/google";
 import "./globals.css";
+
+const outfit = Outfit({
+	subsets: ["latin"],
+	variable: "--font-outfit",
+	display: "swap"
+});
 
 const inter = Inter({
 	subsets: ["latin"],
@@ -33,7 +39,7 @@ export default async function RootLayout({
 }) {
 	return (
 		<html suppressHydrationWarning>
-			<body className={`${inter.variable} ${poppins.variable} ${jetbrainsMono.variable} font-sans`} suppressHydrationWarning>
+			<body className={`${inter.variable} ${poppins.variable} ${jetbrainsMono.variable} ${outfit.variable} font-sans`} suppressHydrationWarning>
 				{children}
 			</body>
 		</html>

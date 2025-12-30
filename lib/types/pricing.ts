@@ -46,6 +46,9 @@ export interface PricingRequest {
   currency: Currency;
   status: PricingStatus;
 
+  // Linked requests - allows bundling multiple requests into one pricing offer
+  requestIds?: string[]; // Array of linked Request IDs
+
   // Client info
   clientName?: string;
   clientEmail?: string;
@@ -85,6 +88,7 @@ export interface CreatePricingRequestData {
   clientName?: string;
   clientEmail?: string;
   agencyNotes?: string;
+  requestIds?: string[]; // Optional: link to existing requests
 }
 
 export interface UpdatePricingRequestData {

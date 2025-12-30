@@ -1,11 +1,10 @@
+import { setRequestLocale } from 'next-intl/server';
 import LoginClient from './LoginClient';
 
-export async function generateStaticParams() {
-  // Return empty array - the parent layout already handles the [locale] param
-  // This page has no dynamic segments of its own
-  return [];
-}
 
-export default function LoginPage() {
+
+export default async function LoginPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale as 'en' | 'he');
   return <LoginClient />;
 }

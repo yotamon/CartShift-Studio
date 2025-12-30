@@ -8,7 +8,8 @@ import { useRouter, useSearchParams } from '@/i18n/navigation';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalInput } from '@/components/portal/ui/PortalInput';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
-import { ArrowRight, ShieldCheck } from 'lucide-react';
+import { FormError } from '@/components/portal/ui/FormError';
+import { ArrowRight, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 import { loginWithEmail } from '@/lib/services/auth';
 import { Suspense, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
@@ -20,11 +21,13 @@ const getLoginSchema = (t: (path: string) => string) =>
   z.object({
     email: z.string().email(t('portal.auth.errors.invalidEmail')),
     password: z.string().min(6, t('portal.auth.errors.weakPassword')),
+    rememberMe: z.boolean().optional(),
   });
 
 function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations();
@@ -46,18 +49,20 @@ function LoginForm() {
     try {
       await loginWithEmail(data.email, data.password);
       router.push(redirectPath || '/portal/org/');
-    } catch (err: any) {
-      console.error('Login error:', err);
+    } catch (error: unknown) {
+      console.error('Login error:', error);
+      const firebaseError = error as { code?: string; message?: string };
       const errorMessage =
-        err.code === 'auth/user-not-found'
+        firebaseError.code === 'auth/user-not-found'
           ? t('portal.auth.errors.userNotFound' as any)
-          : err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential'
+          : firebaseError.code === 'auth/wrong-password' ||
+              firebaseError.code === 'auth/invalid-credential'
             ? t('portal.auth.errors.wrongPassword' as any)
-            : err.code === 'auth/invalid-email'
+            : firebaseError.code === 'auth/invalid-email'
               ? t('portal.auth.errors.invalidEmail' as any)
-              : err.code === 'auth/too-many-requests'
+              : firebaseError.code === 'auth/too-many-requests'
                 ? t('portal.auth.errors.too-many-requests' as any)
-                : err.message || t('portal.auth.errors.generic' as any);
+                : firebaseError.message || t('portal.auth.errors.generic' as any);
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -104,20 +109,42 @@ function LoginForm() {
                   {t('portal.auth.login.forgotPassword')}
                 </Link>
               </div>
-              <PortalInput
-                type="password"
-                placeholder="••••••••"
-                error={errors.password?.message}
-                {...register('password')}
+              <div className="relative">
+                <PortalInput
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  error={errors.password?.message}
+                  className="pr-10"
+                  {...register('password')}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors"
+                  aria-label={showPassword ? t('portal.auth.hidePassword' as any) : t('portal.auth.showPassword' as any)}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 px-1">
+              <input
+                type="checkbox"
+                id="rememberMe"
+                {...register('rememberMe')}
+                className="w-4 h-4 rounded border-surface-200 dark:border-surface-800 text-blue-600 focus:ring-blue-500/20 transition-all cursor-pointer"
               />
+              <label
+                htmlFor="rememberMe"
+                className="text-xs font-medium text-surface-500 dark:text-surface-400 cursor-pointer select-none"
+              >
+                {t('portal.auth.login.rememberMe' as any) || 'Keep me signed in'}
+              </label>
             </div>
           </div>
 
-          {error && (
-            <div className="p-3 rounded-md bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/20 text-xs text-red-600 dark:text-red-400">
-              {error}
-            </div>
-          )}
+          <FormError message={error} />
 
           <PortalButton type="submit" isLoading={loading} className="w-full h-11">
             <span>{t('portal.auth.login.signIn')}</span>

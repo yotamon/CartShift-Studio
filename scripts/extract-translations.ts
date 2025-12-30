@@ -58,7 +58,7 @@ if (!fs.existsSync(messagesDir)) {
   fs.mkdirSync(messagesDir, { recursive: true });
 }
 
-const convertToJSON = (tsContent: string): any => {
+const convertToJSON = (tsContent: string): Record<string, unknown> => {
   const cleaned = tsContent
     .replace(/(\w+):/g, '"$1":')
     .replace(/'/g, '"')
@@ -76,19 +76,12 @@ const convertToJSON = (tsContent: string): any => {
 
 if (enContent) {
   const enObj = convertToJSON(enContent);
-  fs.writeFileSync(
-    path.join(messagesDir, 'en.json'),
-    JSON.stringify(enObj, null, 2)
-  );
+  fs.writeFileSync(path.join(messagesDir, 'en.json'), JSON.stringify(enObj, null, 2));
   console.log('✓ Created messages/en.json');
 }
 
 if (heContent) {
   const heObj = convertToJSON(heContent);
-  fs.writeFileSync(
-    path.join(messagesDir, 'he.json'),
-    JSON.stringify(heObj, null, 2)
-  );
+  fs.writeFileSync(path.join(messagesDir, 'he.json'), JSON.stringify(heObj, null, 2));
   console.log('✓ Created messages/he.json');
 }
-

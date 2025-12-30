@@ -76,7 +76,7 @@ export function useDebounce<T>(value: T, delay: number = 500): T {
  * }, [handleScroll]);
  * ```
  */
-export function useThrottle<T extends (...args: any[]) => any>(
+export function useThrottle<T extends (...args: unknown[]) => unknown>(
   callback: T,
   delay: number = 100
 ): T {
@@ -436,7 +436,9 @@ export function usePrevious<T>(value: T): T | undefined {
  * );
  * ```
  */
-export function useAsync<T, Args extends any[] = []>(asyncFunction: (...args: Args) => Promise<T>) {
+export function useAsync<T, Args extends unknown[] = []>(
+  asyncFunction: (...args: Args) => Promise<T>
+) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<T | null>(null);

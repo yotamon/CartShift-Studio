@@ -1,0 +1,594 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { PortalCard } from '@/components/portal/ui/PortalCard';
+import { PortalBadge } from '@/components/portal/ui/PortalBadge';
+import { PortalButton } from '@/components/portal/ui/PortalButton';
+import {
+  Search,
+  Mail,
+  Filter,
+  MoreVertical,
+  Star,
+  Loader2,
+  DollarSign,
+  X,
+  Check,
+  Plus,
+  Trash2,
+} from 'lucide-react';
+import { getAllRequests } from '@/lib/services/portal-requests';
+import { getAllOrganizations } from '@/lib/services/portal-organizations';
+import { createPricingRequest, sendPricingRequest } from '@/lib/services/pricing-requests';
+import {
+  Request,
+  Organization,
+  STATUS_CONFIG,
+  PricingLineItem,
+  Currency,
+  CURRENCY_CONFIG,
+  formatCurrency,
+  generateLineItemId,
+  calculateTotalAmount,
+} from '@/lib/types/portal';
+import { formatDistanceToNow } from 'date-fns';
+import { enUS, he } from 'date-fns/locale';
+import { Link } from '@/i18n/navigation';
+import { useTranslations, useLocale } from 'next-intl';
+import { PortalAvatar } from '@/components/portal/ui/PortalAvatar';
+import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
+import { cn } from '@/lib/utils';
+
+export default function AgencyInboxClient() {
+  const t = useTranslations('portal');
+  const locale = useLocale();
+  const { userData } = usePortalAuth();
+  const [requests, setRequests] = useState<Request[]>([]);
+  const [organizations, setOrganizations] = useState<Record<string, Organization>>({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Multi-select for pricing offers
+  const [selectedRequestIds, setSelectedRequestIds] = useState<string[]>([]);
+  const [showPricingModal, setShowPricingModal] = useState(false);
+  const [pricingTitle, setPricingTitle] = useState('');
+  const [pricingLineItems, setPricingLineItems] = useState<PricingLineItem[]>([
+    { id: generateLineItemId(), description: '', quantity: 1, unitPrice: 0 },
+  ]);
+  const [pricingCurrency, setPricingCurrency] = useState<Currency>('USD');
+  const [isCreatingPricing, setIsCreatingPricing] = useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      setError(null);
+      try {
+        const [requestsData, orgsData] = await Promise.all([
+          getAllRequests(),
+          getAllOrganizations(),
+        ]);
+
+        setRequests(requestsData);
+
+        const orgsMap: Record<string, Organization> = {};
+        orgsData.forEach(org => {
+          orgsMap[org.id] = org;
+        });
+        setOrganizations(orgsMap);
+      } catch (error: unknown) {
+        const firestoreError = error as { code?: string };
+        const errorMessage =
+          firestoreError?.code === 'permission-denied'
+            ? 'You do not have permission to access all requests. Agency permissions are required.'
+            : 'Failed to load requests. Please try again later.';
+        setError(errorMessage);
+        console.error('Error fetching agency inbox:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  // Multi-select helpers
+  const toggleRequestSelection = (requestId: string) => {
+    setSelectedRequestIds(prev =>
+      prev.includes(requestId) ? prev.filter(id => id !== requestId) : [...prev, requestId]
+    );
+  };
+
+  const clearSelection = () => {
+    setSelectedRequestIds([]);
+    setShowPricingModal(false);
+    setPricingTitle('');
+    setPricingLineItems([{ id: generateLineItemId(), description: '', quantity: 1, unitPrice: 0 }]);
+  };
+
+  // Line item helpers
+  const addLineItem = () => {
+    setPricingLineItems([
+      ...pricingLineItems,
+      { id: generateLineItemId(), description: '', quantity: 1, unitPrice: 0 },
+    ]);
+  };
+
+  const removeLineItem = (id: string) => {
+    if (pricingLineItems.length > 1) {
+      setPricingLineItems(pricingLineItems.filter(item => item.id !== id));
+    }
+  };
+
+  const updateLineItem = (id: string, field: keyof PricingLineItem, value: string | number) => {
+    setPricingLineItems(
+      pricingLineItems.map(item => (item.id === id ? { ...item, [field]: value } : item))
+    );
+  };
+
+  // Create pricing offer handler
+  const handleCreatePricingOffer = async () => {
+    if (!userData || selectedRequestIds.length === 0) return;
+    if (!pricingTitle.trim()) return;
+
+    const validItems = pricingLineItems.filter(
+      item => item.description.trim() && item.quantity > 0 && item.unitPrice > 0
+    );
+    if (validItems.length === 0) return;
+
+    // All selected requests must be from the same org for a single pricing offer
+    const selectedReqs = requests.filter(r => selectedRequestIds.includes(r.id));
+    const uniqueOrgIds = [...new Set(selectedReqs.map(r => r.orgId))];
+
+    if (uniqueOrgIds.length > 1) {
+      alert(t('agency.inbox.errors.sameOrgRequired'));
+      return;
+    }
+
+    const orgId = uniqueOrgIds[0];
+    if (!orgId) return;
+
+    setIsCreatingPricing(true);
+    try {
+      const pricingOffer = await createPricingRequest(
+        orgId,
+        userData.id,
+        userData.name || 'Unknown',
+        {
+          title: pricingTitle.trim(),
+          lineItems: validItems,
+          currency: pricingCurrency,
+          requestIds: selectedRequestIds,
+        }
+      );
+
+      await sendPricingRequest(pricingOffer.id);
+      clearSelection();
+
+      // Refresh requests to show updated pricingOfferId
+      const refreshedRequests = await getAllRequests();
+      setRequests(refreshedRequests);
+    } catch (error) {
+      console.error('Failed to create pricing offer:', error);
+    } finally {
+      setIsCreatingPricing(false);
+    }
+  };
+
+  const selectedRequests = requests.filter(r => selectedRequestIds.includes(r.id));
+  const totalAmount = calculateTotalAmount(pricingLineItems);
+
+  const filteredRequests = requests.filter(
+    req =>
+      req.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      req.createdByName?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-surface-900 dark:text-white font-outfit">
+            {t('agency.inbox.title')}
+          </h1>
+          <p className="text-surface-500 dark:text-surface-400 mt-1">
+            {t('agency.inbox.subtitle')}
+          </p>
+        </div>
+      </div>
+
+      <PortalCard className="p-0 overflow-hidden border-surface-200 dark:border-surface-800 shadow-sm">
+        <div className="p-4 border-b border-surface-100 dark:border-surface-800 flex items-center justify-between bg-white dark:bg-surface-950">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400"
+              />
+              <input
+                type="text"
+                placeholder={t('agency.inbox.searchPlaceholder')}
+                className="portal-input pl-10 w-64 md:w-80 h-10 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900/50"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <PortalButton
+              variant="outline"
+              size="sm"
+              className="hidden md:flex items-center gap-2 border-surface-200 dark:border-surface-700"
+            >
+              <Filter size={16} /> {t('common.filter')}
+            </PortalButton>
+          </div>
+          <div className="flex items-center gap-2 text-xs font-bold text-surface-400 uppercase tracking-widest px-2">
+            {filteredRequests.length} {t('agency.inbox.activeItems')}
+          </div>
+        </div>
+
+        {/* Selection Bar */}
+        {selectedRequestIds.length > 0 && (
+          <div className="p-4 border-b border-surface-100 dark:border-surface-800 bg-blue-50 dark:bg-blue-900/20 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                {selectedRequestIds.length}
+              </div>
+              <span className="text-sm font-bold text-blue-800 dark:text-blue-200">
+                {selectedRequestIds.length} {t('requests.selected' as never) || 'requests selected'}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <PortalButton
+                variant="outline"
+                size="sm"
+                onClick={clearSelection}
+                className="text-slate-600 dark:text-slate-300"
+              >
+                <X size={14} className="mr-1" />
+                {t('common.cancel' as never) || 'Cancel'}
+              </PortalButton>
+              <PortalButton
+                size="sm"
+                onClick={() => setShowPricingModal(true)}
+                className="bg-green-600 hover:bg-green-700 text-white"
+              >
+                <DollarSign size={14} className="mr-1" />
+                {t('requests.createPricingOffer' as never) || 'Create Pricing Offer'}
+              </PortalButton>
+            </div>
+          </div>
+        )}
+
+        <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          {loading ? (
+            <div className="py-20 flex flex-col items-center justify-center space-y-3">
+              <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+              <p className="text-sm font-medium text-surface-400">{t('agency.inbox.loading')}</p>
+            </div>
+          ) : error ? (
+            <div className="py-20 text-center">
+              <Mail className="w-16 h-16 text-red-100 dark:text-red-900/20 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-red-600 dark:text-red-400">Permission Error</h3>
+              <p className="text-surface-500 dark:text-surface-400 text-sm mt-1 max-w-sm mx-auto">
+                {error}
+              </p>
+            </div>
+          ) : filteredRequests.length > 0 ? (
+            filteredRequests
+              .map(req => {
+                if (!req.orgId || !req.id) return null;
+                const isSelected = selectedRequestIds.includes(req.id);
+                const canSelect =
+                  !req.pricingOfferId && req.status !== 'PAID' && req.status !== 'CLOSED';
+
+                return (
+                  <div
+                    key={req.id}
+                    className={cn(
+                      'flex items-center gap-4 p-5 hover:bg-surface-50/80 dark:hover:bg-surface-800/40 transition-all group',
+                      isSelected && 'bg-blue-50 dark:bg-blue-900/10'
+                    )}
+                  >
+                    {/* Checkbox */}
+                    <div className="shrink-0">
+                      {canSelect ? (
+                        <button
+                          type="button"
+                          onClick={e => {
+                            e.stopPropagation();
+                            toggleRequestSelection(req.id);
+                          }}
+                          className={cn(
+                            'w-5 h-5 rounded flex items-center justify-center transition-all border-2',
+                            isSelected
+                              ? 'bg-blue-600 border-blue-600 text-white'
+                              : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
+                          )}
+                        >
+                          {isSelected && <Check size={12} />}
+                        </button>
+                      ) : req.pricingOfferId ? (
+                        <PortalBadge variant="green" className="text-[9px]">
+                          {t('requests.hasPricing' as never) || 'Priced'}
+                        </PortalBadge>
+                      ) : (
+                        <div className="w-5 h-5" />
+                      )}
+                    </div>
+
+                    <Link
+                      href={`/portal/org/${req.orgId}/requests/${req.id}/`}
+                      className="flex-1 flex items-center gap-4 min-w-0"
+                    >
+                      <div className="flex items-center gap-3 shrink-0">
+                        <button
+                          type="button"
+                          onClick={e => e.stopPropagation()}
+                          className="p-1 text-surface-300 group-hover:text-amber-400 transition-colors"
+                        >
+                          <Star size={18} />
+                        </button>
+                        <PortalAvatar
+                          name={req.createdByName || 'User'}
+                          size="md"
+                          className="ring-2 ring-white dark:ring-surface-900 shadow-sm"
+                        />
+                      </div>
+
+                      <div className="min-w-0 flex-1 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                        <div className="md:col-span-1">
+                          <p className="text-sm font-bold text-surface-900 dark:text-white truncate">
+                            {req.createdByName || 'User'}
+                          </p>
+                          <p className="text-[10px] font-bold text-surface-400 uppercase tracking-tighter truncate">
+                            {organizations[req.orgId]?.name || t('agency.inbox.clientOrg')}
+                          </p>
+                        </div>
+                        <div className="md:col-span-2">
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-bold text-surface-900 dark:text-white truncate group-hover:text-blue-600 transition-colors font-outfit">
+                              {req.title}
+                            </p>
+                            <PortalBadge
+                              variant={(STATUS_CONFIG[req.status]?.color as any) || 'gray'}
+                              className="text-[9px] h-4"
+                            >
+                              {req.status}
+                            </PortalBadge>
+                          </div>
+                          <p className="text-xs text-surface-500 truncate mt-0.5">
+                            {req.description?.slice(0, 100)}...
+                          </p>
+                        </div>
+                        <div className="md:col-span-1 text-right flex items-center justify-end gap-4">
+                          <div className="flex flex-col items-end">
+                            <span className="text-[10px] font-bold text-surface-500 whitespace-nowrap uppercase tracking-widest leading-none mb-1">
+                              {req.createdAt?.toDate
+                                ? formatDistanceToNow(req.createdAt.toDate(), {
+                                    addSuffix: true,
+                                    locale: locale === 'he' ? he : enUS,
+                                  })
+                                : t('common.recently' as any)}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={e => e.stopPropagation()}
+                            className="opacity-0 group-hover:opacity-100 p-2 text-surface-400 hover:text-surface-900 dark:hover:text-white transition-all rounded-full hover:bg-surface-100 dark:hover:bg-surface-800"
+                          >
+                            <MoreVertical size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                );
+              })
+              .filter(Boolean)
+          ) : (
+            <div className="py-20 text-center">
+              <Mail className="w-16 h-16 text-surface-100 dark:text-surface-800 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-surface-900 dark:text-white">
+                {t('agency.inbox.emptyTitle')}
+              </h3>
+              <p className="text-surface-500 dark:text-surface-400 text-sm mt-1 max-w-sm mx-auto">
+                {t('agency.inbox.emptyDesc')}
+              </p>
+            </div>
+          )}
+        </div>
+      </PortalCard>
+
+      {/* Pricing Modal */}
+      {showPricingModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">
+                  {t('requests.createPricingOffer' as never) || 'Create Pricing Offer'}
+                </h2>
+                <p className="text-sm text-slate-500 mt-1">
+                  {selectedRequests.length}{' '}
+                  {t('requests.requestsIncluded' as never) || 'requests included'}
+                </p>
+              </div>
+              <button
+                onClick={clearSelection}
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
+              >
+                <X size={20} className="text-slate-500" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Selected Requests Preview */}
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">
+                  {t('requests.selectedRequests' as never) || 'Selected Requests'}
+                </label>
+                <div className="space-y-2 max-h-32 overflow-y-auto">
+                  {selectedRequests.map(req => (
+                    <div
+                      key={req.id}
+                      className="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-800 rounded-lg"
+                    >
+                      <span className="font-medium text-slate-900 dark:text-white text-sm truncate">
+                        {req.title}
+                      </span>
+                      <PortalBadge variant="gray" className="text-[9px] ml-auto shrink-0">
+                        {req.type}
+                      </PortalBadge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pricing Title */}
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">
+                  {t('pricing.form.titleLabel' as never) || 'Offer Title'} *
+                </label>
+                <input
+                  type="text"
+                  value={pricingTitle}
+                  onChange={e => setPricingTitle(e.target.value)}
+                  placeholder={
+                    t('pricing.form.titlePlaceholder' as never) || 'e.g., Website Redesign Package'
+                  }
+                  className="portal-input w-full"
+                />
+              </div>
+
+              {/* Currency */}
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">
+                  {t('pricing.form.currency' as never) || 'Currency'}
+                </label>
+                <select
+                  value={pricingCurrency}
+                  onChange={e => setPricingCurrency(e.target.value as Currency)}
+                  className="portal-input w-full"
+                >
+                  {Object.entries(CURRENCY_CONFIG).map(([key, config]) => (
+                    <option key={key} value={key}>
+                      {config.symbol} {config.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Line Items */}
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">
+                  {t('pricing.form.lineItems' as never) || 'Line Items'} *
+                </label>
+                <div className="space-y-3">
+                  {pricingLineItems.map(item => (
+                    <div
+                      key={item.id}
+                      className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl space-y-2"
+                    >
+                      <input
+                        type="text"
+                        placeholder={t('pricing.form.itemDescription' as never) || 'Description'}
+                        value={item.description}
+                        onChange={e => updateLineItem(item.id, 'description', e.target.value)}
+                        className="portal-input w-full h-9 text-sm"
+                      />
+                      <div className="flex gap-2 items-center">
+                        <input
+                          type="number"
+                          min="1"
+                          placeholder={t('pricing.form.quantity' as never) || 'Qty'}
+                          value={item.quantity || ''}
+                          onChange={e =>
+                            updateLineItem(item.id, 'quantity', parseInt(e.target.value) || 0)
+                          }
+                          className="portal-input h-9 text-sm w-20"
+                        />
+                        <span className="text-slate-400">×</span>
+                        <div className="relative flex-1">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
+                            $
+                          </span>
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            placeholder={t('pricing.form.unitPrice' as never) || 'Price'}
+                            value={item.unitPrice ? (item.unitPrice / 100).toFixed(2) : ''}
+                            onChange={e =>
+                              updateLineItem(
+                                item.id,
+                                'unitPrice',
+                                Math.round(parseFloat(e.target.value || '0') * 100)
+                              )
+                            }
+                            className="portal-input h-9 text-sm pl-7 w-full"
+                          />
+                        </div>
+                        {pricingLineItems.length > 1 && (
+                          <button
+                            onClick={() => removeLineItem(item.id)}
+                            className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
+                      </div>
+                      {item.quantity > 0 && item.unitPrice > 0 && (
+                        <div className="text-right text-xs font-bold text-slate-500">
+                          = {formatCurrency(item.unitPrice * item.quantity, pricingCurrency)}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={addLineItem}
+                  className="mt-3 w-full p-2 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl text-slate-500 hover:border-blue-400 hover:text-blue-600 transition-colors text-sm font-medium"
+                >
+                  <Plus size={16} className="inline mr-1" />
+                  {t('pricing.form.addItem' as never) || 'Add Item'}
+                </button>
+              </div>
+
+              {/* Total */}
+              <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl flex items-center justify-between">
+                <span className="text-sm font-bold text-slate-600 dark:text-slate-300">
+                  {t('pricing.form.total' as never) || 'Total'}
+                </span>
+                <span className="text-2xl font-black text-green-600 font-outfit">
+                  {formatCurrency(totalAmount, pricingCurrency)}
+                </span>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end gap-3">
+              <PortalButton variant="outline" onClick={clearSelection}>
+                {t('common.cancel' as never) || 'Cancel'}
+              </PortalButton>
+              <PortalButton
+                onClick={handleCreatePricingOffer}
+                disabled={
+                  isCreatingPricing ||
+                  !pricingTitle.trim() ||
+                  !pricingLineItems.some(i => i.description && i.unitPrice > 0)
+                }
+                className="bg-green-600 hover:bg-green-700"
+              >
+                {isCreatingPricing ? (
+                  <Loader2 size={16} className="animate-spin mr-2" />
+                ) : (
+                  <DollarSign size={16} className="mr-2" />
+                )}
+                {t('requests.createAndSend' as never) || 'Create & Send Offer'}
+              </PortalButton>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

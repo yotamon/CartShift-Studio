@@ -3,20 +3,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useLocale } from 'next-intl';
-import {
-  Circle,
-  Loader2,
-  CheckCircle2,
-  AlertCircle,
-  Calendar,
-  Clock
-} from 'lucide-react';
+import { Circle, Loader2, CheckCircle2, AlertCircle, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   Milestone,
   MilestoneStatus,
   MILESTONE_STATUS,
-  MILESTONE_STATUS_CONFIG
+  MILESTONE_STATUS_CONFIG,
 } from '@/lib/types/portal';
 import { Timestamp } from 'firebase/firestore';
 
@@ -28,7 +21,10 @@ interface MilestoneTimelineProps {
   className?: string;
 }
 
-const StatusIcon: React.FC<{ status: MilestoneStatus; size?: number }> = ({ status, size = 20 }) => {
+const StatusIcon: React.FC<{ status: MilestoneStatus; size?: number }> = ({
+  status,
+  size = 20,
+}) => {
   switch (status) {
     case MILESTONE_STATUS.COMPLETED:
       return <CheckCircle2 size={size} className="text-green-600 dark:text-green-400" />;
@@ -64,8 +60,11 @@ export const MilestoneTimeline: React.FC<MilestoneTimelineProps> = ({
   const sortedMilestones = [...milestones].sort((a, b) => a.order - b.order);
 
   // Calculate progress
-  const completedCount = sortedMilestones.filter(m => m.status === MILESTONE_STATUS.COMPLETED).length;
-  const progress = sortedMilestones.length > 0 ? (completedCount / sortedMilestones.length) * 100 : 0;
+  const completedCount = sortedMilestones.filter(
+    m => m.status === MILESTONE_STATUS.COMPLETED
+  ).length;
+  const progress =
+    sortedMilestones.length > 0 ? (completedCount / sortedMilestones.length) * 100 : 0;
 
   if (sortedMilestones.length === 0) {
     return (
@@ -84,7 +83,8 @@ export const MilestoneTimeline: React.FC<MilestoneTimelineProps> = ({
             {isHe ? 'התקדמות הפרויקט' : 'Project Progress'}
           </h3>
           <p className="text-sm text-surface-500">
-            {completedCount} / {sortedMilestones.length} {isHe ? 'שלבים הושלמו' : 'milestones completed'}
+            {completedCount} / {sortedMilestones.length}{' '}
+            {isHe ? 'שלבים הושלמו' : 'milestones completed'}
           </p>
         </div>
         <div className="text-2xl font-bold text-accent-600 dark:text-accent-400">
@@ -132,7 +132,8 @@ export const MilestoneTimeline: React.FC<MilestoneTimelineProps> = ({
                   className={cn(
                     'relative z-10 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center',
                     config.bgColor,
-                    isCurrent && 'ring-2 ring-accent-500 ring-offset-2 ring-offset-white dark:ring-offset-surface-900'
+                    isCurrent &&
+                      'ring-2 ring-accent-500 ring-offset-2 ring-offset-white dark:ring-offset-surface-900'
                   )}
                 >
                   <StatusIcon status={milestone.status} size={18} />
@@ -145,7 +146,8 @@ export const MilestoneTimeline: React.FC<MilestoneTimelineProps> = ({
                     isCurrent
                       ? 'bg-accent-50 dark:bg-accent-950/20 border-accent-200 dark:border-accent-800'
                       : 'bg-white dark:bg-surface-800 border-surface-200 dark:border-surface-700',
-                    isClickable && 'cursor-pointer hover:border-accent-300 dark:hover:border-accent-700'
+                    isClickable &&
+                      'cursor-pointer hover:border-accent-300 dark:hover:border-accent-700'
                   )}
                   onClick={() => isClickable && onMilestoneClick(milestone)}
                 >
@@ -210,11 +212,7 @@ export const MilestoneProgress: React.FC<{
   milestones: Milestone[];
   className?: string;
 }> = ({ milestones, className }) => {
-  const locale = useLocale();
-  const isHe = locale === 'he';
-
   const completedCount = milestones.filter(m => m.status === MILESTONE_STATUS.COMPLETED).length;
-  const inProgressCount = milestones.filter(m => m.status === MILESTONE_STATUS.IN_PROGRESS).length;
   const progress = milestones.length > 0 ? (completedCount / milestones.length) * 100 : 0;
 
   if (milestones.length === 0) return null;

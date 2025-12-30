@@ -31,6 +31,7 @@ import {
   MILESTONE_STATUS,
 } from '@/lib/types/portal';
 import { logActivity } from './portal-activities';
+import { withRetry } from '@/lib/utils/retry';
 
 // Initialize Firestore
 const db = getFirestoreDb();
@@ -47,39 +48,41 @@ export async function createRequest(
   userName: string,
   data: CreateRequestData
 ): Promise<Request> {
-  const requestData = {
-    orgId,
-    title: data.title.trim(),
-    description: data.description.trim(),
-    type: data.type,
-    status: REQUEST_STATUS.NEW as RequestStatus,
-    priority: data.priority,
-    createdBy: userId,
-    createdByName: userName,
-    tags: data.tags || [],
-    attachmentIds: [],
-    commentCount: 0,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  };
+  return withRetry(async () => {
+    const requestData = {
+      orgId,
+      title: data.title.trim(),
+      description: data.description.trim(),
+      type: data.type,
+      status: REQUEST_STATUS.NEW as RequestStatus,
+      priority: data.priority,
+      createdBy: userId,
+      createdByName: userName,
+      tags: data.tags || [],
+      attachmentIds: [],
+      commentCount: 0,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
 
-  const docRef = await addDoc(collection(db, REQUESTS_COLLECTION), requestData);
+    const docRef = await addDoc(collection(db, REQUESTS_COLLECTION), requestData);
 
-  await logActivity({
-    orgId,
-    requestId: docRef.id,
-    userId,
-    userName,
-    action: 'CREATED_REQUEST',
-    details: { title: data.title },
+    await logActivity({
+      orgId,
+      requestId: docRef.id,
+      userId,
+      userName,
+      action: 'CREATED_REQUEST',
+      details: { title: data.title },
+    });
+
+    return {
+      id: docRef.id,
+      ...requestData,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    } as Request;
   });
-
-  return {
-    id: docRef.id,
-    ...requestData,
-    createdAt: Timestamp.now(),
-    updatedAt: Timestamp.now(),
-  } as Request;
 }
 
 // ============================================
@@ -122,11 +125,21 @@ export async function getRequestsByOrg(
     q = query(q, limit(options.limit));
   }
 
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as Request[];
+  try {
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Request[];
+  } catch (error: unknown) {
+    const firestoreError = error as { code?: string; message?: string };
+    if (firestoreError.code === 'permission-denied') {
+      throw new Error(
+        `Permission denied accessing requests for organization ${orgId}. You may not be a member of this organization.`
+      );
+    }
+    throw error;
+  }
 }
 
 export async function getAllRequests(): Promise<Request[]> {
@@ -138,16 +151,31 @@ export async function getAllRequests(): Promise<Request[]> {
   }
 
   const userData = await getPortalUser(currentUser.uid);
-  if (!userData || (userData.accountType !== 'AGENCY' && !userData.isAgency)) {
+  if (!userData) {
+    throw new Error('User profile not found. Please complete your profile setup.');
+  }
+
+  const isAgency = userData.accountType === 'AGENCY' || userData.isAgency === true;
+  if (!isAgency) {
     throw new Error('Agency permissions required to access all requests');
   }
 
-  const q = query(collection(db, REQUESTS_COLLECTION), orderBy('createdAt', 'desc'));
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as Request[];
+  try {
+    const q = query(collection(db, REQUESTS_COLLECTION), orderBy('createdAt', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Request[];
+  } catch (error: unknown) {
+    const firestoreError = error as { code?: string; message?: string };
+    if (firestoreError.code === 'permission-denied') {
+      throw new Error(
+        'Permission denied. Your user profile may not be properly configured as an agency user. Please contact support.'
+      );
+    }
+    throw error;
+  }
 }
 
 export async function getRecentRequestsByOrg(orgId: string, count = 5): Promise<Request[]> {
@@ -171,18 +199,20 @@ export async function getActiveRequestsByOrg(orgId: string): Promise<Request[]> 
 // ============================================
 
 export async function updateRequest(requestId: string, data: UpdateRequestData): Promise<void> {
-  const docRef = doc(db, REQUESTS_COLLECTION, requestId);
-  const updateData: Record<string, unknown> = {
-    ...data,
-    updatedAt: serverTimestamp(),
-  };
+  return withRetry(async () => {
+    const docRef = doc(db, REQUESTS_COLLECTION, requestId);
+    const updateData: Record<string, unknown> = {
+      ...data,
+      updatedAt: serverTimestamp(),
+    };
 
-  // Handle status change to closed
-  if (data.status === REQUEST_STATUS.CLOSED || data.status === REQUEST_STATUS.CANCELED) {
-    updateData.closedAt = serverTimestamp();
-  }
+    // Handle status change to closed
+    if (data.status === REQUEST_STATUS.CLOSED || data.status === REQUEST_STATUS.CANCELED) {
+      updateData.closedAt = serverTimestamp();
+    }
 
-  await updateDoc(docRef, updateData);
+    await updateDoc(docRef, updateData);
+  });
 }
 
 export async function updateRequestStatus(requestId: string, status: RequestStatus): Promise<void> {
@@ -280,6 +310,12 @@ export function subscribeToOrgRequests(
     },
     error => {
       console.error('Error in org requests snapshot:', error);
+      if (error.code === 'permission-denied') {
+        console.error(
+          'Permission denied. User may not be a member of this organization or rules may not have propagated yet.'
+        );
+        console.error('Organization ID:', orgId);
+      }
       callback([]);
     }
   );
@@ -366,24 +402,26 @@ export async function acceptRequest(
   userName: string,
   clientNotes?: string
 ): Promise<void> {
-  const updateData: Record<string, unknown> = {
-    status: REQUEST_STATUS.ACCEPTED,
-    acceptedAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  };
+  return withRetry(async () => {
+    const updateData: Record<string, unknown> = {
+      status: REQUEST_STATUS.ACCEPTED,
+      acceptedAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
 
-  if (clientNotes) {
-    updateData.clientNotes = clientNotes;
-  }
+    if (clientNotes) {
+      updateData.clientNotes = clientNotes;
+    }
 
-  await updateDoc(doc(db, REQUESTS_COLLECTION, requestId), updateData);
+    await updateDoc(doc(db, REQUESTS_COLLECTION, requestId), updateData);
 
-  await logActivity({
-    orgId,
-    requestId,
-    userId,
-    userName,
-    action: 'ACCEPTED_QUOTE',
+    await logActivity({
+      orgId,
+      requestId,
+      userId,
+      userName,
+      action: 'ACCEPTED_QUOTE',
+    });
   });
 }
 
@@ -558,6 +596,6 @@ export async function requestRevision(
     userId,
     userName,
     action: 'REQUESTED_REVISION',
-    details: { notes: revisionNotes }
+    details: { notes: revisionNotes },
   });
 }

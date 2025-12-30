@@ -7,16 +7,20 @@ import {
   AlertCircle,
   ArrowLeft,
   Loader2,
+  FileText,
+  ExternalLink,
 } from 'lucide-react';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
 import { getPricingRequest } from '@/lib/services/pricing-requests';
+import { getRequest } from '@/lib/services/portal-requests';
 import {
   PricingRequest,
   PRICING_STATUS_CONFIG,
   formatCurrency,
 } from '@/lib/types/pricing';
+import { Request, STATUS_CONFIG } from '@/lib/types/portal';
 import { useTranslations } from 'next-intl';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { PayPalProvider } from '@/components/providers/PayPalProvider';
@@ -42,12 +46,13 @@ export default function PricingDetailClient() {
   const [pricingRequest, setPricingRequest] = useState<PricingRequest | null>(
     null
   );
+  const [linkedRequests, setLinkedRequests] = useState<Request[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!orgId || !pricingId || typeof orgId !== 'string' || typeof pricingId !== 'string') {
-      setError(t('portal.common.error' as any));
+      setError(t('portal.common.error' as never));
       setLoading(false);
       return undefined;
     }
@@ -56,9 +61,16 @@ export default function PricingDetailClient() {
       try {
         const request = await getPricingRequest(pricingId);
         setPricingRequest(request);
+
+        // Fetch linked requests if any
+        if (request?.requestIds && request.requestIds.length > 0) {
+          const requestPromises = request.requestIds.map((id) => getRequest(id));
+          const requests = await Promise.all(requestPromises);
+          setLinkedRequests(requests.filter((r): r is Request => r !== null));
+        }
       } catch (err) {
         console.error('Failed to fetch pricing request:', err);
-        setError(t('portal.common.error' as any));
+        setError(t('portal.common.error' as never));
       } finally {
         setLoading(false);
       }
@@ -150,7 +162,7 @@ export default function PricingDetailClient() {
           {pricingRequest.lineItems && pricingRequest.lineItems.length > 0 && (
             <div className="mb-6">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit mb-4">
-                {t('portal.pricing.form.lineItems' as any)}
+                {t('portal.pricing.form.lineItems' as never)}
               </h3>
               <div className="space-y-2">
                 {pricingRequest.lineItems.map((item) => (
@@ -178,6 +190,51 @@ export default function PricingDetailClient() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* Linked Requests Section */}
+          {linkedRequests.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit mb-4">
+                <FileText className="inline w-5 h-5 mr-2" />
+                {t('portal.pricing.includedRequests' as never) || 'Included Requests'}
+              </h3>
+              <div className="space-y-2">
+                {linkedRequests.map((request) => {
+                  const statusConfig = STATUS_CONFIG[request.status];
+                  return (
+                    <Link
+                      key={request.id}
+                      href={`/portal/org/${orgId}/requests/${request.id}`}
+                      className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-bold text-slate-900 dark:text-white truncate">
+                            {request.title}
+                          </h4>
+                          <PortalBadge variant="gray" className="text-xs">
+                            {request.type}
+                          </PortalBadge>
+                          <PortalBadge
+                            variant={statusConfig.color === 'purple' ? 'blue' : statusConfig.color === 'emerald' ? 'green' : statusConfig.color as 'blue' | 'green' | 'yellow' | 'red' | 'gray'}
+                            className="text-xs"
+                          >
+                            {statusConfig.label}
+                          </PortalBadge>
+                        </div>
+                        {request.description && (
+                          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">
+                            {request.description}
+                          </p>
+                        )}
+                      </div>
+                      <ExternalLink className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity ml-2" />
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}

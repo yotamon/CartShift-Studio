@@ -17,29 +17,26 @@ export const PortalButton = ({
   ...props
 }: PortalButtonProps) => {
   const variants = {
-    primary: 'portal-button-primary',
-    secondary:
-      'bg-surface-100 hover:bg-surface-200 text-surface-900 dark:bg-surface-800 dark:hover:bg-surface-700 dark:text-surface-100',
-    outline:
-      'bg-transparent border border-[var(--portal-border)] hover:bg-surface-50 dark:hover:bg-surface-800 text-[var(--portal-text-primary)]',
-    ghost:
-      'bg-transparent hover:bg-surface-100 dark:hover:bg-surface-800 text-[var(--portal-text-secondary)]',
-    danger: 'bg-red-600 hover:bg-red-700 text-white shadow-sm',
+    primary: 'portal-btn-primary',
+    secondary: 'portal-btn-ghost bg-surface-100/50 dark:bg-surface-800/50',
+    outline: 'portal-btn-outline',
+    ghost: 'portal-btn-ghost',
+    danger: 'bg-rose-500 hover:bg-rose-600 text-white shadow-lg shadow-rose-500/25',
   };
 
   const sizes = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2',
-    lg: 'px-6 py-3 text-lg',
+    sm: 'px-4 py-2 text-[9px]',
+    md: 'portal-btn',
+    lg: 'px-8 py-4 text-xs',
   };
 
   return (
     <button
       disabled={disabled || isLoading}
       className={cn(
-        'rounded-md font-medium transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed',
+        'portal-btn transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed',
         variants[variant],
-        sizes[size],
+        size !== 'md' && sizes[size],
         className
       )}
       {...props}

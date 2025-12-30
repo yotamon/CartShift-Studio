@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import { MaintenancePageContent } from "@/components/sections/MaintenancePageContent";
 import { generateMetadata as genMeta, generateBreadcrumbSchema, generateFAQPageSchema } from "@/lib/seo";
 import Script from "next/script";
@@ -28,7 +29,9 @@ const maintenanceFaqs = [
   }
 ];
 
-export default function MaintenancePage() {
+export default async function MaintenancePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale as 'en' | 'he');
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Home", url: "/" },
     { name: "Maintenance & Support", url: "/maintenance" }

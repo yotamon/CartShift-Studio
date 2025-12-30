@@ -9,7 +9,7 @@ export default async function AgencyLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  setRequestLocale(locale);
+  setRequestLocale(locale as 'en' | 'he');
 
   return <PortalShell isAgency>{children}</PortalShell>;
 }

@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import { ShopifyTemplate } from "@/components/templates/ShopifyTemplate";
 import { generateMetadata as genMeta, generateServiceSchema, generateBreadcrumbSchema, generateFAQPageSchema } from "@/lib/seo";
 import Script from "next/script";
@@ -9,7 +10,9 @@ export const metadata: Metadata = genMeta({
   url: "/solutions/shopify",
 });
 
-export default function ShopifyPage() {
+export default async function ShopifyPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale as 'en' | 'he');
   const serviceSchema = generateServiceSchema(
     "Shopify Development",
     "Expert Shopify development services including store setup, custom features, performance optimization, and ongoing support."

@@ -2,7 +2,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useLocale, useTranslations } from 'next-intl';
 import {
-  FileText,
   CheckCircle2,
   Clock,
   DollarSign,
@@ -11,8 +10,9 @@ import {
   Zap,
   Play,
   RotateCcw,
-  Plus
+  Plus,
 } from 'lucide-react';
+import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
 import { cn } from '@/lib/utils';
 import { ActivityLog } from '@/lib/types/portal';
 import { Timestamp } from 'firebase/firestore';
@@ -35,7 +35,7 @@ const formatTimeAgo = (timestamp: Timestamp, locale: string): string => {
   });
 };
 
-const getActionConfig = (action: string) => {
+const getActionConfig = (action: string): { icon: React.ComponentType<any>; color: string } => {
   switch (action) {
     case 'CREATED_REQUEST':
       return {
@@ -101,12 +101,13 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
 
   if (visibleActivities.length === 0) {
     return (
-      <div className={cn('text-center py-12', className)}>
-        <Clock size={32} className="mx-auto mb-3 text-surface-400 opacity-20" />
-        <p className="text-surface-500 text-sm font-medium font-outfit uppercase tracking-widest opacity-50">
-          {isHe ? 'אין פעילות עדיין' : 'No activity yet'}
-        </p>
-      </div>
+      <PortalEmptyState
+        icon={Clock}
+        title={isHe ? 'אין פעילות' : 'No Activity'}
+        description={isHe ? 'הרשימה תתעדכן כשתהיה פעילות חדשה' : 'Activity log will update when new actions occur'}
+        variant="plain"
+        className={cn("bg-transparent border-0 py-8 opacity-60", className)}
+      />
     );
   }
 
@@ -135,17 +136,21 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
             )}
 
             <Link
-              href={activity.requestId ? `/portal/org/${orgId}/requests/${activity.requestId}` : '#'}
+              href={
+                activity.requestId ? `/portal/org/${orgId}/requests/${activity.requestId}` : '#'
+              }
               className={cn(
-                'flex items-start gap-4 p-3.5 rounded-2xl hover:bg-surface-50 dark:hover:bg-surface-900/50 transition-all cursor-pointer group',
+                'flex items-start gap-4 p-3.5 rounded-2xl hover:bg-surface-50 dark:hover:bg-surface-900/50 transition-all cursor-pointer group hover-lift-sm',
                 isHe && 'flex-row-reverse text-right'
               )}
             >
               {/* Icon Container */}
-              <div className={cn(
-                'flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center z-10 border border-transparent group-hover:border-surface-200 dark:group-hover:border-surface-700 transition-all',
-                config.color
-              )}>
+              <div
+                className={cn(
+                  'flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center z-10 border border-transparent group-hover:border-surface-200 dark:group-hover:border-surface-700 transition-all',
+                  config.color
+                )}
+              >
                 <Icon size={18} />
               </div>
 
@@ -153,24 +158,27 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
               <div className="flex-1 min-w-0 py-0.5">
                 <div className="flex items-center justify-between gap-4">
                   <span className="text-sm font-bold text-surface-900 dark:text-white truncate font-outfit">
-                    {t(activity.action.toLowerCase() as any) || activity.action.replace(/_/g, ' ')}
+                    {String(
+                      t(String(activity.action.toLowerCase() || '').toLowerCase() as any) ||
+                        String(activity.action).replace(/_/g, ' ')
+                    )}
                   </span>
                   <span className="text-[10px] font-black text-surface-400 uppercase tracking-tight whitespace-nowrap">
                     {formatTimeAgo(activity.createdAt, locale)}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 mt-0.5">
-                   <span className="text-xs text-surface-500 font-medium">
-                     {activity.userName}
-                   </span>
-                   {activity.details?.title && (
-                     <>
-                       <span className="w-1 h-1 rounded-full bg-surface-300" />
-                       <span className="text-xs text-blue-600 dark:text-blue-400 font-bold truncate">
-                         {activity.details.title}
-                       </span>
-                     </>
-                   )}
+                  <span className="text-xs text-surface-500 font-medium">
+                    {String(activity.userName)}
+                  </span>
+                  {activity.details?.title ? (
+                    <>
+                      <span className="w-1 h-1 rounded-full bg-surface-300" />
+                      <span className="text-xs text-blue-600 dark:text-blue-400 font-bold truncate">
+                        {String(activity.details.title)}
+                      </span>
+                    </>
+                  ) : null}
                 </div>
               </div>
             </Link>

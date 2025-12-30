@@ -54,18 +54,20 @@ function LoginForm() {
     try {
       await loginWithEmail(data.email, data.password);
       router.push(redirectPath || '/portal/org/');
-    } catch (err: any) {
-      console.error('Login error:', err);
+    } catch (error: unknown) {
+      console.error('Login error:', error);
+      const firebaseError = error as { code?: string; message?: string };
       const errorMessage =
-        err.code === 'auth/user-not-found'
+        firebaseError.code === 'auth/user-not-found'
           ? t('portal.auth.errors.userNotFound' as any)
-          : err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential'
+          : firebaseError.code === 'auth/wrong-password' ||
+              firebaseError.code === 'auth/invalid-credential'
             ? t('portal.auth.errors.wrongPassword' as any)
-            : err.code === 'auth/invalid-email'
+            : firebaseError.code === 'auth/invalid-email'
               ? t('portal.auth.errors.invalidEmail' as any)
-              : err.code === 'auth/too-many-requests'
+              : firebaseError.code === 'auth/too-many-requests'
                 ? t('portal.auth.errors.too-many-requests' as any)
-                : err.message || t('portal.auth.errors.generic' as any);
+                : firebaseError.message || t('portal.auth.errors.generic' as any);
       setError(errorMessage);
     } finally {
       setLoading(false);

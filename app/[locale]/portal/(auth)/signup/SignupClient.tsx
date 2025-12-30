@@ -8,7 +8,7 @@ import { useRouter, useSearchParams } from '@/i18n/navigation';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalInput } from '@/components/portal/ui/PortalInput';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
-import { ArrowRight, ShieldCheck } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 import { signUpWithEmail } from '@/lib/services/auth';
 import { Suspense, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
@@ -32,6 +32,8 @@ const getSignupSchema = (t: (path: string) => string) =>
 function SignupForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations();
@@ -42,10 +44,35 @@ function SignupForm() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<SignupData>({
     resolver: zodResolver(signupSchema),
   });
+
+  // Watch password for strength calculation
+  const passwordValue = watch('password', '');
+
+  // Calculate password strength
+  const calculateStrength = (password: string): number => {
+    let strength = 0;
+    if (password.length >= 6) strength += 1;
+    if (password.length >= 8) strength += 1;
+    if (/[A-Z]/.test(password)) strength += 1;
+    if (/[0-9]/.test(password)) strength += 1;
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+    return strength;
+  };
+
+  const strength = calculateStrength(passwordValue || '');
+  const strengthColors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-lime-500', 'bg-green-500'];
+  const strengthLabels = [
+    t('portal.auth.passwordStrength.veryWeak' as any),
+    t('portal.auth.passwordStrength.weak' as any),
+    t('portal.auth.passwordStrength.fair' as any),
+    t('portal.auth.passwordStrength.strong' as any),
+    t('portal.auth.passwordStrength.veryStrong' as any),
+  ];
 
   const onSubmit = async (data: SignupData) => {
     setLoading(true);
@@ -53,16 +80,17 @@ function SignupForm() {
     try {
       await signUpWithEmail(data.email, data.password, data.name);
       router.push(redirectPath || '/portal/org/');
-    } catch (err: any) {
-      console.error('Signup error:', err);
+    } catch (error: unknown) {
+      console.error('Signup error:', error);
+      const firebaseError = error as { code?: string; message?: string };
       const errorMessage =
-        err.code === 'auth/email-already-in-use'
+        firebaseError.code === 'auth/email-already-in-use'
           ? t('portal.auth.errors.emailInUse' as any)
-          : err.code === 'auth/invalid-email'
+          : firebaseError.code === 'auth/invalid-email'
             ? t('portal.auth.errors.invalidEmail' as any)
-            : err.code === 'auth/weak-password'
+            : firebaseError.code === 'auth/weak-password'
               ? t('portal.auth.errors.weakPassword' as any)
-              : err.message || t('portal.auth.errors.generic' as any);
+              : firebaseError.message || t('portal.auth.errors.generic' as any);
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -105,21 +133,69 @@ function SignupForm() {
               {...register('email')}
             />
 
-            <PortalInput
-              label={t('portal.auth.signup.password')}
-              type="password"
-              placeholder="••••••••"
-              error={errors.password?.message}
-              {...register('password')}
-            />
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-surface-700 dark:text-surface-300">
+                {t('portal.auth.signup.password')}
+              </label>
+              <div className="relative">
+                <PortalInput
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  error={errors.password?.message}
+                  className="pr-10"
+                  {...register('password')}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors"
+                  aria-label={showPassword ? t('portal.auth.hidePassword' as any) : t('portal.auth.showPassword' as any)}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+              {/* Password Strength Indicator */}
+              {passwordValue && (
+                <div className="space-y-1">
+                  <div className="flex gap-1">
+                    {[0, 1, 2, 3, 4].map((index) => (
+                      <div
+                        key={index}
+                        className={`h-1 flex-1 rounded-full transition-colors ${
+                          index < strength ? strengthColors[strength - 1] : 'bg-surface-200 dark:bg-surface-700'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <p className="text-xs text-surface-500 dark:text-surface-400">
+                    {strengthLabels[strength - 1] || t('portal.auth.passwordStrength.veryWeak' as any)}
+                  </p>
+                </div>
+              )}
+            </div>
 
-            <PortalInput
-              label={t('portal.auth.signup.confirmPassword')}
-              type="password"
-              placeholder="••••••••"
-              error={errors.confirmPassword?.message}
-              {...register('confirmPassword')}
-            />
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-surface-700 dark:text-surface-300">
+                {t('portal.auth.signup.confirmPassword')}
+              </label>
+              <div className="relative">
+                <PortalInput
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  error={errors.confirmPassword?.message}
+                  className="pr-10"
+                  {...register('confirmPassword')}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors"
+                  aria-label={showConfirmPassword ? t('portal.auth.hidePassword' as any) : t('portal.auth.showPassword' as any)}
+                >
+                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
           </div>
 
           {error && (

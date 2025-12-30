@@ -114,8 +114,9 @@ export async function getFilesByOrg(orgId: string): Promise<FileAttachment[]> {
       id: doc.id,
       ...doc.data(),
     })) as FileAttachment[];
-  } catch (error: any) {
-    if (error.code === 'permission-denied') {
+  } catch (error: unknown) {
+    const firestoreError = error as { code?: string; message?: string };
+    if (firestoreError.code === 'permission-denied') {
       console.error('Permission denied accessing files for org:', orgId);
       return [];
     }
@@ -137,8 +138,9 @@ export async function getFilesByRequest(requestId: string): Promise<FileAttachme
       id: doc.id,
       ...doc.data(),
     })) as FileAttachment[];
-  } catch (error: any) {
-    if (error.code === 'permission-denied') {
+  } catch (error: unknown) {
+    const firestoreError = error as { code?: string; message?: string };
+    if (firestoreError.code === 'permission-denied') {
       console.error('Permission denied accessing files for request:', requestId);
       return [];
     }

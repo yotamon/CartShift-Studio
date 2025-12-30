@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server';
 import { notFound } from "next/navigation";
 import { generateMetadata as genMeta, generateBreadcrumbSchema } from "@/lib/seo";
 import Script from "next/script";

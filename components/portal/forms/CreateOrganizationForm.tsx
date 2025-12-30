@@ -13,11 +13,25 @@ import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 
 import { useTranslations } from 'next-intl';
 
-const orgSchema = (t: any) => z.object({
-  name: z.string().min(3, t('organization.createForm.errors.name')).max(100, t('organization.createForm.errors.nameLong')),
-  website: z.string().url(t('organization.createForm.errors.website')).optional().or(z.literal('')),
-  industry: z.string().min(2, t('organization.createForm.errors.industry')).optional().or(z.literal('')),
-});
+type TranslationFunction = ReturnType<typeof useTranslations>;
+
+const orgSchema = (t: TranslationFunction) =>
+  z.object({
+    name: z
+      .string()
+      .min(3, t('organization.createForm.errors.name'))
+      .max(100, t('organization.createForm.errors.nameLong')),
+    website: z
+      .string()
+      .url(t('organization.createForm.errors.website'))
+      .optional()
+      .or(z.literal('')),
+    industry: z
+      .string()
+      .min(2, t('organization.createForm.errors.industry'))
+      .optional()
+      .or(z.literal('')),
+  });
 
 type OrgFormData = z.infer<ReturnType<typeof orgSchema>>;
 
@@ -69,9 +83,11 @@ export const CreateOrganizationForm = ({ onSuccess, onCancel }: CreateOrganizati
 
       onSuccess(org.id);
       router.push(`/portal/org/${org.id}/dashboard`);
-    } catch (err: any) {
-      console.error('Create organization error:', err);
-      setError(err.message || t('organization.createForm.errors.generic'));
+    } catch (error: unknown) {
+      console.error('Create organization error:', error);
+      setError(
+        error instanceof Error ? error.message : t('organization.createForm.errors.generic')
+      );
     } finally {
       setLoading(false);
     }
@@ -81,7 +97,9 @@ export const CreateOrganizationForm = ({ onSuccess, onCancel }: CreateOrganizati
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-2xl max-w-lg w-full border border-surface-200 dark:border-surface-800">
         <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-800">
-          <h3 className="text-xl font-bold text-surface-900 dark:text-white font-outfit">{t('organization.createForm.title')}</h3>
+          <h3 className="text-xl font-bold text-surface-900 dark:text-white font-outfit">
+            {t('organization.createForm.title')}
+          </h3>
           <button
             onClick={onCancel}
             disabled={loading}
@@ -119,7 +137,8 @@ export const CreateOrganizationForm = ({ onSuccess, onCancel }: CreateOrganizati
 
           <div className="bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-900/20 rounded-xl p-4">
             <p className="text-xs text-blue-800 dark:text-blue-300 leading-relaxed font-medium">
-              <strong className="font-bold">{t('organization.createForm.note')}</strong> {t('organization.createForm.noteText')}
+              <strong className="font-bold">{t('organization.createForm.note')}</strong>{' '}
+              {t('organization.createForm.noteText')}
             </p>
           </div>
 
@@ -140,7 +159,9 @@ export const CreateOrganizationForm = ({ onSuccess, onCancel }: CreateOrganizati
               {t('organization.createForm.cancel')}
             </PortalButton>
             <PortalButton type="submit" isLoading={loading} className="flex-1 font-outfit">
-              {loading ? t('organization.createForm.submitting') : t('organization.createForm.submit')}
+              {loading
+                ? t('organization.createForm.submitting')
+                : t('organization.createForm.submit')}
             </PortalButton>
           </div>
         </form>
@@ -148,4 +169,3 @@ export const CreateOrganizationForm = ({ onSuccess, onCancel }: CreateOrganizati
     </div>
   );
 };
-

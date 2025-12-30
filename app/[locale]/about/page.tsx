@@ -9,7 +9,12 @@ export const metadata: Metadata = genMeta({
   url: "/about",
 });
 
-export default function AboutPage() {
+import { setRequestLocale } from 'next-intl/server';
+
+export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale as 'en' | 'he');
+
   const orgSchema = generateOrganizationSchema();
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Home", url: "/" },

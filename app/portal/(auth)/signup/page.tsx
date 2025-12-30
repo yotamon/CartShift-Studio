@@ -74,16 +74,17 @@ function SignupForm() {
       } else {
         window.location.href = redirectPath || '/portal/org/';
       }
-    } catch (err: any) {
-      console.error('Signup error:', err);
+    } catch (error: unknown) {
+      console.error('Signup error:', error);
+      const firebaseError = error as { code?: string; message?: string };
       const errorMessage =
-        err.code === 'auth/email-already-in-use'
+        firebaseError.code === 'auth/email-already-in-use'
           ? t('portal.auth.errors.emailInUse' as any)
-          : err.code === 'auth/invalid-email'
+          : firebaseError.code === 'auth/invalid-email'
             ? t('portal.auth.errors.invalidEmail' as any)
-            : err.code === 'auth/weak-password'
+            : firebaseError.code === 'auth/weak-password'
               ? t('portal.auth.errors.weakPassword' as any)
-              : err.message || t('portal.auth.errors.genericSignup' as any);
+              : firebaseError.message || t('portal.auth.errors.genericSignup' as any);
       setError(errorMessage);
     } finally {
       setLoading(false);

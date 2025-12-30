@@ -27,7 +27,7 @@ export const UploadFileForm = ({ orgId, requestId, onSuccess, onCancel }: Upload
     const file = e.target.files?.[0];
     if (file) {
       // Check file size (max 10MB)
-        if (file.size > 10 * 1024 * 1024) {
+      if (file.size > 10 * 1024 * 1024) {
         setError(t('portal.files.uploadForm.errorSize'));
         return;
       }
@@ -48,7 +48,7 @@ export const UploadFileForm = ({ orgId, requestId, onSuccess, onCancel }: Upload
 
       // Note: Progress tracking simulation since uploadFile doesn't support callbacks
       const progressInterval = setInterval(() => {
-        setUploadProgress((prev) => Math.min(prev + 10, 90));
+        setUploadProgress(prev => Math.min(prev + 10, 90));
       }, 200);
 
       await uploadFile(orgId, user.uid, userName, selectedFile, {
@@ -58,9 +58,9 @@ export const UploadFileForm = ({ orgId, requestId, onSuccess, onCancel }: Upload
       clearInterval(progressInterval);
       setUploadProgress(100);
       onSuccess();
-      } catch (err: any) {
-        console.error('Upload error:', err);
-        setError(err.message || t('portal.files.uploadForm.errorGeneric'));
+    } catch (error: unknown) {
+      console.error('Upload error:', error);
+      setError(error instanceof Error ? error.message : t('portal.files.uploadForm.errorGeneric'));
     } finally {
       setLoading(false);
     }
@@ -71,14 +71,16 @@ export const UploadFileForm = ({ orgId, requestId, onSuccess, onCancel }: Upload
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-2xl max-w-lg w-full border border-surface-200 dark:border-surface-800">
         <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-800">
-          <h3 className="text-xl font-bold text-surface-900 dark:text-white">{t('portal.files.uploadForm.title')}</h3>
+          <h3 className="text-xl font-bold text-surface-900 dark:text-white">
+            {t('portal.files.uploadForm.title')}
+          </h3>
           <button
             onClick={onCancel}
             disabled={loading}
@@ -188,4 +190,3 @@ export const UploadFileForm = ({ orgId, requestId, onSuccess, onCancel }: Upload
     </div>
   );
 };
-

@@ -24,16 +24,25 @@ interface InviteTeamMemberFormProps {
   onCancel: () => void;
 }
 
-export const InviteTeamMemberForm = ({ orgId, isAgency = false, onSuccess, onCancel }: InviteTeamMemberFormProps) => {
+export const InviteTeamMemberForm = ({
+  orgId,
+  isAgency = false,
+  onSuccess,
+  onCancel,
+}: InviteTeamMemberFormProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { userData } = usePortalAuth();
   const t = useTranslations();
 
-  const inviteSchema = useMemo(() => z.object({
-    email: z.string().email(t('portal.team.inviteForm.errors.email')),
-    role: z.enum(['admin', 'member', 'viewer']),
-  }), [t]);
+  const inviteSchema = useMemo(
+    () =>
+      z.object({
+        email: z.string().email(t('portal.team.inviteForm.errors.email')),
+        role: z.enum(['admin', 'member', 'viewer']),
+      }),
+    [t]
+  );
 
   const {
     register,
@@ -54,17 +63,28 @@ export const InviteTeamMemberForm = ({ orgId, isAgency = false, onSuccess, onCan
       if (!userData) throw new Error('Not authenticated');
 
       if (isAgency) {
-        await inviteAgencyMember(data.email, data.role, userData.id, userData.name || userData.email);
+        await inviteAgencyMember(
+          data.email,
+          data.role,
+          userData.id,
+          userData.name || userData.email
+        );
       } else if (orgId) {
-        await inviteTeamMember(orgId, data.email, data.role, userData.id, userData.name || userData.email);
+        await inviteTeamMember(
+          orgId,
+          data.email,
+          data.role,
+          userData.id,
+          userData.name || userData.email
+        );
       } else {
         throw new Error('Organization ID is required for client invites');
       }
 
       onSuccess();
-    } catch (err: any) {
-        console.error('Invite error:', err);
-        setError(err.message || t('portal.team.inviteForm.errors.generic'));
+    } catch (error: unknown) {
+      console.error('Invite error:', error);
+      setError(error instanceof Error ? error.message : t('portal.team.inviteForm.errors.generic'));
     } finally {
       setLoading(false);
     }
@@ -80,7 +100,9 @@ export const InviteTeamMemberForm = ({ orgId, isAgency = false, onSuccess, onCan
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-2xl max-w-md w-full border border-surface-200 dark:border-surface-800">
         <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-800">
-          <h3 className="text-xl font-bold text-surface-900 dark:text-white">{t('portal.team.inviteForm.title')}</h3>
+          <h3 className="text-xl font-bold text-surface-900 dark:text-white">
+            {t('portal.team.inviteForm.title')}
+          </h3>
           <button
             onClick={onCancel}
             className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-lg transition-colors"
@@ -134,4 +156,3 @@ export const InviteTeamMemberForm = ({ orgId, isAgency = false, onSuccess, onCan
     </div>
   );
 };
-
