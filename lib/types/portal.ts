@@ -53,6 +53,19 @@ export const CURRENCY = {
   EUR: 'EUR',
 } as const;
 
+export const CONSULTATION_TYPE = {
+  ONBOARDING: 'onboarding',
+  STRATEGY: 'strategy',
+  PROJECT_REVIEW: 'project_review',
+  SUPPORT: 'support',
+} as const;
+
+export const CONSULTATION_STATUS = {
+  SCHEDULED: 'scheduled',
+  COMPLETED: 'completed',
+  CANCELED: 'canceled',
+  NO_SHOW: 'no_show',
+} as const;
 
 export type RequestStatus = (typeof REQUEST_STATUS)[keyof typeof REQUEST_STATUS];
 export type RequestPriority = (typeof REQUEST_PRIORITY)[keyof typeof REQUEST_PRIORITY];
@@ -60,6 +73,8 @@ export type RequestType = (typeof REQUEST_TYPE)[keyof typeof REQUEST_TYPE];
 export type UserRole = (typeof USER_ROLE)[keyof typeof USER_ROLE];
 export type AccountType = (typeof ACCOUNT_TYPE)[keyof typeof ACCOUNT_TYPE];
 export type Currency = (typeof CURRENCY)[keyof typeof CURRENCY];
+export type ConsultationType = (typeof CONSULTATION_TYPE)[keyof typeof CONSULTATION_TYPE];
+export type ConsultationStatus = (typeof CONSULTATION_STATUS)[keyof typeof CONSULTATION_STATUS];
 
 // Account type configuration for UI
 export const ACCOUNT_TYPE_CONFIG: Record<AccountType, { label: string; labelHe: string; color: string; badgeVariant: 'blue' | 'purple' }> = {
@@ -353,6 +368,120 @@ export interface ActivityLog {
   details?: Record<string, unknown>;
   createdAt: Timestamp;
 }
+
+// ============================================
+// CONSULTATIONS
+// ============================================
+
+export interface Consultation {
+  id: string;
+  orgId: string;                    // Client organization
+  type: ConsultationType;
+  status: ConsultationStatus;
+  title: string;
+  description?: string;
+  scheduledAt: Timestamp;           // Meeting date/time
+  duration: number;                 // Minutes
+  participants: string[];           // User IDs
+  createdBy: string;
+  createdByName: string;
+
+  // Booking integration
+  externalCalendarLink?: string;    // Google Meet / Zoom link
+  externalEventId?: string;         // For sync if needed
+
+  // Notes & follow-up
+  agendaItems?: string[];
+  meetingNotes?: string;            // Post-meeting notes
+  actionItems?: string[];
+
+  // Billing (optional)
+  isBillable?: boolean;
+  hourlyRate?: number;              // In cents
+  currency?: Currency;
+  pricingRequestId?: string;        // Link to pricing offer
+
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+  completedAt?: Timestamp;
+}
+
+// Consultation type configuration for UI
+export const CONSULTATION_TYPE_CONFIG: Record<ConsultationType, {
+  label: string;
+  labelHe: string;
+  color: string;
+  bgColor: string;
+  icon: string;
+  googleCalendarColorId?: string;
+}> = {
+  onboarding: {
+    label: 'Onboarding Call',
+    labelHe: 'שיחת הכרות',
+    color: 'text-blue-600 dark:text-blue-400',
+    bgColor: 'bg-blue-100 dark:bg-blue-900/30',
+    icon: 'user-plus',
+    googleCalendarColorId: '7', // Peacock
+  },
+  strategy: {
+    label: 'Strategy Session',
+    labelHe: 'פגישת אסטרטגיה',
+    color: 'text-purple-600 dark:text-purple-400',
+    bgColor: 'bg-purple-100 dark:bg-purple-900/30',
+    icon: 'target',
+    googleCalendarColorId: '3', // Grape
+  },
+  project_review: {
+    label: 'Project Review',
+    labelHe: 'סקירת פרויקט',
+    color: 'text-amber-600 dark:text-amber-400',
+    bgColor: 'bg-amber-100 dark:bg-amber-900/30',
+    icon: 'clipboard-check',
+    googleCalendarColorId: '6', // Tangerine
+  },
+  support: {
+    label: 'Support Call',
+    labelHe: 'שיחת תמיכה',
+    color: 'text-green-600 dark:text-green-400',
+    bgColor: 'bg-green-100 dark:bg-green-900/30',
+    icon: 'headphones',
+    googleCalendarColorId: '2', // Sage
+  },
+};
+
+// Consultation status configuration for UI
+export const CONSULTATION_STATUS_CONFIG: Record<ConsultationStatus, {
+  label: string;
+  labelHe: string;
+  color: string;
+  bgColor: string;
+}> = {
+  scheduled: {
+    label: 'Scheduled',
+    labelHe: 'מתוכנן',
+    color: 'text-blue-600 dark:text-blue-400',
+    bgColor: 'bg-blue-100 dark:bg-blue-500/20',
+  },
+  completed: {
+    label: 'Completed',
+    labelHe: 'הושלם',
+    color: 'text-green-600 dark:text-green-400',
+    bgColor: 'bg-green-100 dark:bg-green-500/20',
+  },
+  canceled: {
+    label: 'Canceled',
+    labelHe: 'בוטל',
+    color: 'text-surface-500 dark:text-surface-400',
+    bgColor: 'bg-surface-100 dark:bg-surface-500/20',
+  },
+  no_show: {
+    label: 'No Show',
+    labelHe: 'לא הופיע',
+    color: 'text-red-600 dark:text-red-400',
+    bgColor: 'bg-red-100 dark:bg-red-500/20',
+  },
+};
+
 
 // ============================================
 // FORM DATA TYPES

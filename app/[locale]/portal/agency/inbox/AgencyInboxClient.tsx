@@ -233,12 +233,12 @@ export default function AgencyInboxClient() {
             <div className="relative">
               <Search
                 size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400"
+                className="absolute start-3 top-1/2 -translate-y-1/2 text-surface-400"
               />
               <input
                 type="text"
                 placeholder={t('agency.inbox.searchPlaceholder')}
-                className="portal-input pl-10 w-64 md:w-80 h-10 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900/50"
+                className="portal-input ps-10 w-64 md:w-80 h-10 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900/50"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
               />
@@ -274,7 +274,7 @@ export default function AgencyInboxClient() {
                 onClick={clearSelection}
                 className="text-slate-600 dark:text-slate-300"
               >
-                <X size={14} className="mr-1" />
+                <X size={14} className="me-1" />
                 {t('common.cancel' as never) || 'Cancel'}
               </PortalButton>
               <PortalButton
@@ -282,7 +282,7 @@ export default function AgencyInboxClient() {
                 onClick={() => setShowPricingModal(true)}
                 className="bg-green-600 hover:bg-green-700 text-white"
               >
-                <DollarSign size={14} className="mr-1" />
+                <DollarSign size={14} className="me-1" />
                 {t('requests.createPricingOffer' as never) || 'Create Pricing Offer'}
               </PortalButton>
             </div>
@@ -390,7 +390,7 @@ export default function AgencyInboxClient() {
                             {req.description?.slice(0, 100)}...
                           </p>
                         </div>
-                        <div className="md:col-span-1 text-right flex items-center justify-end gap-4">
+                        <div className="md:col-span-1 text-end flex items-center justify-end gap-4">
                           <div className="flex flex-col items-end">
                             <span className="text-[10px] font-bold text-surface-500 whitespace-nowrap uppercase tracking-widest leading-none mb-1">
                               {req.createdAt?.toDate
@@ -466,7 +466,7 @@ export default function AgencyInboxClient() {
                       <span className="font-medium text-slate-900 dark:text-white text-sm truncate">
                         {req.title}
                       </span>
-                      <PortalBadge variant="gray" className="text-[9px] ml-auto shrink-0">
+                      <PortalBadge variant="gray" className="text-[9px] ms-auto shrink-0">
                         {req.type}
                       </PortalBadge>
                     </div>
@@ -539,7 +539,7 @@ export default function AgencyInboxClient() {
                         />
                         <span className="text-slate-400">×</span>
                         <div className="relative flex-1">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
+                          <span className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
                             $
                           </span>
                           <input
@@ -555,7 +555,7 @@ export default function AgencyInboxClient() {
                                 Math.round(parseFloat(e.target.value || '0') * 100)
                               )
                             }
-                            className="portal-input h-9 text-sm pl-7 w-full"
+                            className="portal-input h-9 text-sm ps-7 w-full"
                           />
                         </div>
                         {pricingLineItems.length > 1 && (
@@ -568,7 +568,7 @@ export default function AgencyInboxClient() {
                         )}
                       </div>
                       {item.quantity > 0 && item.unitPrice > 0 && (
-                        <div className="text-right text-xs font-bold text-slate-500">
+                        <div className="text-end text-xs font-bold text-slate-500">
                           = {formatCurrency(item.unitPrice * item.quantity, pricingCurrency)}
                         </div>
                       )}
@@ -580,7 +580,7 @@ export default function AgencyInboxClient() {
                   onClick={addLineItem}
                   className="mt-3 w-full p-2 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl text-slate-500 hover:border-blue-400 hover:text-blue-600 transition-colors text-sm font-medium"
                 >
-                  <Plus size={16} className="inline mr-1" />
+                  <Plus size={16} className="inline me-1" />
                   {t('pricing.form.addItem' as never) || 'Add Item'}
                 </button>
               </div>
@@ -610,9 +610,9 @@ export default function AgencyInboxClient() {
                 className="bg-green-600 hover:bg-green-700"
               >
                 {isCreatingPricing ? (
-                  <Loader2 size={16} className="animate-spin mr-2" />
+                  <Loader2 size={16} className="animate-spin me-2" />
                 ) : (
-                  <DollarSign size={16} className="mr-2" />
+                  <DollarSign size={16} className="me-2" />
                 )}
                 {t('requests.createAndSend' as never) || 'Create & Send Offer'}
               </PortalButton>

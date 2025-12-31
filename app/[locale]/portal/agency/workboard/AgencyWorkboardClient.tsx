@@ -88,7 +88,7 @@ export default function AgencyWorkboardClient() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <PortalAvatarGroup max={3} className="mr-2">
+          <PortalAvatarGroup max={3} className="me-2">
             <PortalAvatar name="CartShift Studio" size="sm" />
             <PortalAvatar name="John Doe" size="sm" />
           </PortalAvatarGroup>
@@ -121,7 +121,7 @@ export default function AgencyWorkboardClient() {
                 </button>
               </div>
 
-              <div className="space-y-4 max-h-[calc(100vh-280px)] overflow-y-auto pr-1 scrollbar-hide">
+              <div className="space-y-4 max-h-[calc(100vh-280px)] overflow-y-auto pe-1 scrollbar-hide">
                 {columnRequests.map(req => (
                   <Link key={req.id} href={`/portal/org/${req.orgId}/requests/${req.id}/`}>
                     <PortalCard className="p-3 md:p-4 border-surface-200 dark:border-surface-800 shadow-sm hover:shadow-md hover:border-blue-200 dark:hover:border-blue-900 transition-all cursor-pointer group active:scale-[0.98]">

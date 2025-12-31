@@ -22,20 +22,22 @@ import { format } from 'date-fns';
 interface RequestAttachmentsProps {
   request: Request;
   isAgency: boolean;
+  orgId: string;
 }
 
-export function RequestAttachments({ request, isAgency }: RequestAttachmentsProps) {
+export function RequestAttachments({ request, isAgency, orgId }: RequestAttachmentsProps) {
   const [files, setFiles] = useState<FileAttachment[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedFileId, setExpandedFileId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!orgId) return;
     const unsubscribe = subscribeToRequestFiles(request.id, (data) => {
       setFiles(data);
       setLoading(false);
-    });
+    }, orgId);
     return () => unsubscribe();
-  }, [request.id]);
+  }, [request.id, orgId]);
 
   // Group files by originalName to show versions
   const groupedFiles = files.reduce((acc, file) => {

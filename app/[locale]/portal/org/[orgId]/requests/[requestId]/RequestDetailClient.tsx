@@ -54,7 +54,6 @@ import {
   Comment,
   PortalUser,
   STATUS_CONFIG,
-  PRIORITY_CONFIG,
   RequestStatus,
   formatCurrency,
   PricingLineItem,
@@ -287,20 +286,28 @@ export default function RequestDetailClient() {
         setLoading(false);
       });
 
-      // Subscribe to comments - only after userData is available
-      const unsubscribeComments = subscribeToRequestComments(
-        requestId,
-        data => {
-          setComments(data);
-        },
-        Boolean(userData?.isAgency),
-        orgId as string
-      );
+      // Subscribe to comments - only after userData and orgId are available
+      let unsubscribeComments: () => void = () => {};
+      if (typeof orgId === 'string') {
+        unsubscribeComments = subscribeToRequestComments(
+          requestId,
+          data => {
+            setComments(data);
+          },
+          Boolean(userData?.isAgency),
+          orgId
+        );
+      }
 
       // Subscribe to activities
-      const unsubscribeActivities = subscribeToRequestActivities(requestId, (data) => {
-        setActivities(data);
-      });
+      let unsubscribeActivities: () => void;
+      if (typeof orgId === 'string') {
+        unsubscribeActivities = subscribeToRequestActivities(requestId, (data) => {
+           setActivities(data);
+        }, orgId);
+      } else {
+        unsubscribeActivities = () => {};
+      }
 
       return () => {
         unsubscribeRequest();
@@ -480,11 +487,11 @@ export default function RequestDetailClient() {
               </h1>
               {isAgency ? (
                 <PortalBadge variant={mapStatusColor(STATUS_CONFIG[request.status]?.color || 'gray')}>
-                  {STATUS_CONFIG[request.status]?.label || request.status?.replace('_', ' ')}
+                  {t(`requests.status.${request.status.toLowerCase()}` as any)}
                 </PortalBadge>
               ) : (
                 <PortalBadge variant={mapStatusColor(CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[request.status]]?.color || 'gray')}>
-                  {CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[request.status]]?.label}
+                  {t(`requests.clientStatus.${CLIENT_STATUS_MAP[request.status].toLowerCase()}` as any)}
                 </PortalBadge>
               )}
             </div>
@@ -517,7 +524,7 @@ export default function RequestDetailClient() {
               : "text-surface-500 hover:text-surface-700 dark:hover:text-surface-300"
           )}
         >
-          {t('requests.detail.overview') || 'Overview'}
+          {t('requests.detail.overview')}
         </button>
         <button
           onClick={() => setActiveTab('discussion')}
@@ -528,7 +535,7 @@ export default function RequestDetailClient() {
               : "text-surface-500 hover:text-surface-700 dark:hover:text-surface-300"
           )}
         >
-          {t('requests.detail.discussion') || 'Discussion'}
+          {t('requests.detail.discussion')}
           {comments.length > 0 && (
             <span className="bg-blue-100 dark:bg-blue-900 text-blue-600 px-1.5 py-0.5 rounded-md text-[10px]">
               {comments.length}
@@ -545,14 +552,14 @@ export default function RequestDetailClient() {
           )}
         >
           <Clock size={16} />
-          {t('requests.detail.history') || 'History'}
+          {t('requests.detail.history')}
         </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           {activeTab === 'overview' ? (
-            <div className="space-y-8 animate-in slide-in-from-left-4 duration-500">
+            <div className="space-y-8 animate-in slide-in-from-start-4 duration-500">
               <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950">
                 <h3 className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest mb-4">
                   {t('requests.detail.details')}
@@ -592,8 +599,7 @@ export default function RequestDetailClient() {
                         {t('requests.detail.priorityStatus')}
                       </p>
                       <p className="text-sm font-bold text-surface-900 dark:text-white capitalize font-outfit">
-                        {PRIORITY_CONFIG[request.priority]?.label ||
-                          request.priority ||
+                        {t(`requests.priority.${request.priority.toLowerCase()}` as any) ||
                           t('requests.priority.normal')}
                       </p>
                     </div>
@@ -611,6 +617,7 @@ export default function RequestDetailClient() {
               <RequestAttachments
                 request={request}
                 isAgency={isAgency}
+                orgId={orgId as string}
               />
             </div>
           ) : activeTab === 'discussion' ? (
@@ -677,7 +684,7 @@ export default function RequestDetailClient() {
             <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-500">
               <h3 className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest flex items-center gap-2 px-1">
                 <Clock size={14} className="text-blue-500" />{' '}
-                {t('requests.detail.historyTitle') || 'Request Timeline'}
+                {t('requests.detail.historyTitle')}
               </h3>
               <PortalCard noPadding className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950">
                 <ActivityTimeline activities={activities} orgId={orgId as string} />
@@ -701,7 +708,7 @@ export default function RequestDetailClient() {
                   className="w-full h-12 border-dashed border-2 border-green-300 dark:border-green-700 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20"
                   onClick={() => setShowPricingForm(true)}
                 >
-                  <Plus size={18} className="mr-2" />
+                  <Plus size={18} className="me-2" />
                   {t('requests.detail.addQuote')}
                 </PortalButton>
               ) : (
@@ -748,7 +755,7 @@ export default function RequestDetailClient() {
                           <span className="text-surface-400 text-sm">×</span>
                           <div className="flex-1">
                             <div className="relative">
-                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400 text-sm">
+                              <span className="absolute start-3 top-1/2 -translate-y-1/2 text-surface-400 text-sm">
                                 {CURRENCY_CONFIG[pricingCurrency].symbol}
                               </span>
                               <input
@@ -758,7 +765,7 @@ export default function RequestDetailClient() {
                                 placeholder={t('requests.detail.price')}
                                 value={item.unitPrice ? (item.unitPrice / 100).toFixed(2) : ''}
                                 onChange={(e) => updateLineItem(item.id, 'unitPrice', Math.round(parseFloat(e.target.value || '0') * 100))}
-                                className="portal-input h-9 text-sm pl-7 w-full"
+                                className="portal-input h-9 text-sm ps-7 w-full"
                               />
                             </div>
                           </div>
@@ -772,7 +779,7 @@ export default function RequestDetailClient() {
                           )}
                         </div>
                         {item.quantity > 0 && item.unitPrice > 0 && (
-                          <div className="text-right text-xs font-bold text-surface-500">
+                          <div className="text-end text-xs font-bold text-surface-500">
                             = {formatCurrency(item.unitPrice * item.quantity, pricingCurrency)}
                           </div>
                         )}
@@ -818,9 +825,9 @@ export default function RequestDetailClient() {
                       disabled={isAddingPricing || !pricingLineItems.some(item => item.description.trim() && item.quantity > 0 && item.unitPrice > 0)}
                     >
                       {isAddingPricing ? (
-                        <Loader2 size={16} className="animate-spin mr-2" />
+                        <Loader2 size={16} className="animate-spin me-2" />
                       ) : (
-                        <Check size={16} className="mr-2" />
+                        <Check size={16} className="me-2" />
                       )}
                       {t('requests.detail.sendQuote')}
                     </PortalButton>
@@ -853,7 +860,7 @@ export default function RequestDetailClient() {
                         </p>
                       )}
                     </div>
-                    <div className="text-right ml-4">
+                    <div className="text-end ms-4">
                       <p className="font-bold text-surface-900 dark:text-white text-sm">
                         {formatCurrency(item.unitPrice * item.quantity, request.currency || 'USD')}
                       </p>
@@ -892,9 +899,9 @@ export default function RequestDetailClient() {
                     disabled={isAccepting || isDeclining}
                   >
                     {isAccepting ? (
-                      <Loader2 size={18} className="animate-spin mr-2" />
+                      <Loader2 size={18} className="animate-spin me-2" />
                     ) : (
-                      <Check size={18} className="mr-2" />
+                      <Check size={18} className="me-2" />
                     )}
                     {t('requests.detail.acceptQuote')}
                   </PortalButton>
@@ -905,9 +912,9 @@ export default function RequestDetailClient() {
                     disabled={isAccepting || isDeclining}
                   >
                     {isDeclining ? (
-                      <Loader2 size={18} className="animate-spin mr-2" />
+                      <Loader2 size={18} className="animate-spin me-2" />
                     ) : (
-                      <X size={18} className="mr-2" />
+                      <X size={18} className="me-2" />
                     )}
                     {t('requests.detail.decline')}
                   </PortalButton>
@@ -922,7 +929,7 @@ export default function RequestDetailClient() {
                     className="w-full h-12"
                     onClick={handleStartWork}
                   >
-                    <Zap size={18} className="mr-2" />
+                    <Zap size={18} className="me-2" />
                     {t('requests.detail.startWork')}
                   </PortalButton>
                 </div>
@@ -966,7 +973,7 @@ export default function RequestDetailClient() {
                   className="w-full justify-start h-12 border-surface-200 dark:border-surface-800 text-sm font-bold font-outfit"
                   onClick={() => handleStatusChange('CLOSED')}
                 >
-                  <CheckCircle2 size={16} className="mr-3 text-emerald-500" />{' '}
+                  <CheckCircle2 size={16} className="me-3 text-emerald-500" />{' '}
                   {t('requests.detail.closeRequest')}
                 </PortalButton>
               )}
@@ -986,11 +993,11 @@ export default function RequestDetailClient() {
                     disabled={isUploading}
                   >
                     {isUploading ? (
-                      <Loader2 size={16} className="mr-3 animate-spin text-blue-500" />
+                      <Loader2 size={16} className="me-3 animate-spin text-blue-500" />
                     ) : (
-                      <Paperclip size={16} className="mr-3 text-blue-500" />
+                      <Paperclip size={16} className="me-3 text-blue-500" />
                     )}
-                    {t('requests.detail.addAttachment') || 'Upload Deliverable'}
+                    {t('requests.detail.addAttachment')}
                   </PortalButton>
                 </div>
               )}
@@ -1000,8 +1007,8 @@ export default function RequestDetailClient() {
                   className="w-full justify-start h-12 border-surface-200 dark:border-surface-800 text-sm font-bold font-outfit"
                   onClick={() => setShowRevisionModal(true)}
                 >
-                  <RotateCcw size={16} className="mr-3 text-amber-500" />{' '}
-                  {t('requests.detail.requestRevision') || 'Request Revision'}
+                  <RotateCcw size={16} className="me-3 text-amber-500" />{' '}
+                  {t('requests.detail.requestRevision')}
                 </PortalButton>
               )}
             </div>
@@ -1077,21 +1084,21 @@ export default function RequestDetailClient() {
           <div className="bg-white dark:bg-surface-950 rounded-3xl border border-surface-200 dark:border-surface-800 w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
             <div className="p-8 border-b border-surface-100 dark:border-surface-900">
               <h3 className="text-2xl font-bold text-surface-900 dark:text-white font-outfit">
-                {t('requests.detail.requestRevision') || 'Request Revision'}
+                {t('requests.detail.requestRevision')}
               </h3>
               <p className="text-surface-500 dark:text-surface-400 mt-2 text-sm font-medium">
-                {t('requests.detail.revisionDesc') || 'Please describe the changes you would like to see. Be as specific as possible to help our team deliver the perfect result.'}
+                {t('requests.detail.revisionDesc')}
               </p>
             </div>
 
             <div className="p-8 space-y-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest">
-                  {t('requests.detail.revisionNotes') || 'Revision Details'}
+                  {t('requests.detail.revisionNotes')}
                 </label>
                 <textarea
                   className="portal-input min-h-[160px] p-4 bg-surface-50 dark:bg-surface-900 border-surface-200 dark:border-surface-800 focus:bg-white dark:focus:bg-surface-950 transition-all font-medium resize-none text-sm"
-                  placeholder={t('requests.detail.revisionPlaceholder') || "E.g., Please change the main color to cobalt blue and update the typography on the hero section..."}
+                  placeholder={t('requests.detail.revisionPlaceholder')}
                   value={revisionNotes}
                   onChange={(e) => setRevisionNotes(e.target.value)}
                 />
@@ -1103,7 +1110,7 @@ export default function RequestDetailClient() {
                   className="flex-1 h-12"
                   onClick={() => setShowRevisionModal(false)}
                 >
-                  {t('common.cancel') || 'Cancel'}
+                  {t('common.cancel')}
                 </PortalButton>
                 <PortalButton
                   variant="primary"
@@ -1112,11 +1119,11 @@ export default function RequestDetailClient() {
                   disabled={isSubmittingRevision || !revisionNotes.trim()}
                 >
                   {isSubmittingRevision ? (
-                    <Loader2 size={18} className="animate-spin mr-2" />
+                    <Loader2 size={18} className="animate-spin me-2" />
                   ) : (
-                    <RotateCcw size={18} className="mr-2" />
+                    <RotateCcw size={18} className="me-2" />
                   )}
-                  {t('requests.detail.submitRevision') || 'Submit Revision'}
+                  {t('requests.detail.submitRevision')}
                 </PortalButton>
               </div>
             </div>

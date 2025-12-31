@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from './Icon';
 import { cn } from '@/lib/utils';
-import { useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { trackBookCallClick, trackWhatsAppClick } from '@/lib/analytics';
 import { getScheduleUrl } from '@/lib/schedule';
 import { Calendar, X } from 'lucide-react';
@@ -20,13 +20,10 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const locale = useLocale();
-  const isHe = locale === 'he';
+  const t = useTranslations();
 
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '972503591552';
-  const whatsappMessage = isHe
-    ? 'שלום! אשמח לשמוע פרטים נוספים.'
-    : "Hello! I'd like to get in touch.";
+  const whatsappMessage = t('floatingActions.whatsappMessage');
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
   const scheduleUrl = getScheduleUrl();
 
@@ -109,10 +106,10 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 20 }}
                     transition={{ duration: 0.15, delay: 0.05 }}
-                    className="flex items-center gap-3 ps-4 pe-5 py-2.5 rounded-full bg-white dark:bg-surface-800 text-surface-800 dark:text-white font-medium shadow-lg border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors"
+                    className="flex items-center gap-3 ps-4 pe-5 py-2.5 rounded-full bg-white dark:bg-surface-800 text-surface-800 dark:text-white font-medium shadow-lg border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors font-outfit"
                   >
                     <Calendar className="w-4 h-4 text-surface-600 dark:text-surface-300" />
-                    <span className="text-sm">{isHe ? 'קבעו פגישה' : 'Book a Call'}</span>
+                    <span className="text-sm font-bold">{t('floatingActions.bookCall')}</span>
                   </motion.a>
 
                   {/* WhatsApp Button */}
@@ -125,10 +122,10 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 20 }}
                     transition={{ duration: 0.15 }}
-                    className="flex items-center gap-3 ps-4 pe-5 py-2.5 rounded-full bg-white dark:bg-surface-800 text-surface-800 dark:text-white font-medium shadow-lg border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors"
+                    className="flex items-center gap-3 ps-4 pe-5 py-2.5 rounded-full bg-white dark:bg-surface-800 text-surface-800 dark:text-white font-medium shadow-lg border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors font-outfit"
                   >
                     <Icon name="whatsapp" size={16} className="text-[#25D366]" />
-                    <span className="text-sm">{isHe ? 'וואטסאפ' : 'WhatsApp'}</span>
+                    <span className="text-sm font-bold">{t('floatingActions.whatsapp')}</span>
                   </motion.a>
                 </motion.div>
               )}
@@ -146,7 +143,7 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
                 'border-surface-200 dark:border-surface-700',
                 'hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors'
               )}
-              aria-label={isHe ? 'פתח אפשרויות יצירת קשר' : 'Open contact options'}
+              aria-label={t('floatingActions.openContact')}
               aria-expanded={isExpanded}
             >
               <motion.div animate={{ rotate: isExpanded ? 45 : 0 }} transition={{ duration: 0.2 }}>
@@ -187,10 +184,10 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={handleScheduleClick}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl fashion-gradient text-white font-semibold shadow-lg hover:shadow-glow-primary hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl fashion-gradient text-white font-bold shadow-lg hover:shadow-glow-primary hover:scale-[1.02] active:scale-[0.98] transition-all font-outfit"
                 >
                   <Calendar className="w-5 h-5" />
-                  <span>{isHe ? 'קבעו פגישה' : 'Book a Call'}</span>
+                  <span>{t('floatingActions.bookCall')}</span>
                 </a>
 
                 {/* WhatsApp Button */}
@@ -200,7 +197,7 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
                   rel="noopener noreferrer"
                   onClick={handleWhatsAppClick}
                   className="flex items-center justify-center w-14 rounded-xl bg-surface-100 dark:bg-surface-800 text-[#25D366] dark:text-[#25D366] shadow-sm hover:bg-surface-200 dark:hover:bg-surface-700 active:scale-[0.98] transition-all border border-surface-200 dark:border-surface-700"
-                  aria-label={isHe ? 'וואטסאפ' : 'WhatsApp'}
+                  aria-label={t('floatingActions.whatsapp')}
                 >
                   <Icon name="whatsapp" size={24} />
                 </a>

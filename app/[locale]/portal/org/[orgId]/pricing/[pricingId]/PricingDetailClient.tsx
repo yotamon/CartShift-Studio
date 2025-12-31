@@ -2,13 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from '@/i18n/navigation';
-import {
-  AlertCircle,
-  ArrowLeft,
-  Loader2,
-  FileText,
-  ExternalLink,
-} from 'lucide-react';
+import { AlertCircle, ArrowLeft, Loader2, FileText, ExternalLink, Pencil } from 'lucide-react';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
@@ -16,6 +10,7 @@ import { getPricingRequest } from '@/lib/services/pricing-requests';
 import { getRequest } from '@/lib/services/portal-requests';
 import {
   PricingRequest,
+  PRICING_STATUS,
   PRICING_STATUS_CONFIG,
   formatCurrency,
 } from '@/lib/types/pricing';
@@ -27,9 +22,7 @@ import { useResolvedPricingId } from '@/lib/hooks/useResolvedPricingId';
 import { PayPalProvider } from '@/components/providers/PayPalProvider';
 import { PayPalCheckoutButton } from '@/components/portal/PayPalCheckoutButton';
 
-const mapStatusColor = (
-  color: string
-): 'blue' | 'green' | 'yellow' | 'red' | 'gray' => {
+const mapStatusColor = (color: string): 'blue' | 'green' | 'yellow' | 'red' | 'gray' => {
   if (color === 'purple') return 'blue';
   if (color === 'emerald' || color === 'green') return 'green';
   if (color === 'orange') return 'yellow';
@@ -45,9 +38,7 @@ export default function PricingDetailClient() {
   const t = useTranslations();
   const { isAgency } = usePortalAuth();
 
-  const [pricingRequest, setPricingRequest] = useState<PricingRequest | null>(
-    null
-  );
+  const [pricingRequest, setPricingRequest] = useState<PricingRequest | null>(null);
   const [linkedRequests, setLinkedRequests] = useState<Request[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -66,7 +57,7 @@ export default function PricingDetailClient() {
 
         // Fetch linked requests if any
         if (request?.requestIds && request.requestIds.length > 0) {
-          const requestPromises = request.requestIds.map((id) => getRequest(id));
+          const requestPromises = request.requestIds.map(id => getRequest(id));
           const requests = await Promise.all(requestPromises);
           setLinkedRequests(requests.filter((r): r is Request => r !== null));
         }
@@ -114,13 +105,23 @@ export default function PricingDetailClient() {
   return (
     <PayPalProvider>
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between">
           <Link href={`/portal/org/${orgId}/pricing/`}>
             <PortalButton variant="ghost" className="flex items-center gap-2">
               <ArrowLeft size={18} />
               {t('portal.common.back' as any)}
             </PortalButton>
           </Link>
+          {isAgency &&
+            (pricingRequest.status === PRICING_STATUS.DRAFT ||
+              pricingRequest.status === PRICING_STATUS.SENT) && (
+              <Link href={`/portal/org/${orgId}/pricing/${pricingId}/edit`}>
+                <PortalButton variant="outline" className="flex items-center gap-2">
+                  <Pencil size={18} />
+                  {t('portal.common.edit' as any)}
+                </PortalButton>
+              </Link>
+            )}
         </div>
 
         <PortalCard className="p-6">
@@ -130,14 +131,10 @@ export default function PricingDetailClient() {
                 {pricingRequest.title}
               </h1>
               {pricingRequest.description && (
-                <p className="text-slate-600 dark:text-slate-400">
-                  {pricingRequest.description}
-                </p>
+                <p className="text-slate-600 dark:text-slate-400">{pricingRequest.description}</p>
               )}
             </div>
-            <PortalBadge variant={statusColor}>
-              {statusConfig.label}
-            </PortalBadge>
+            <PortalBadge variant={statusColor}>{statusConfig.label}</PortalBadge>
           </div>
 
           <div className="space-y-4 mb-6">
@@ -154,9 +151,7 @@ export default function PricingDetailClient() {
                 <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">
                   {t('portal.common.status' as any)}
                 </p>
-                <PortalBadge variant={statusColor}>
-                  {statusConfig.label}
-                </PortalBadge>
+                <PortalBadge variant={statusColor}>{statusConfig.label}</PortalBadge>
               </div>
             </div>
           </div>
@@ -167,7 +162,7 @@ export default function PricingDetailClient() {
                 {t('portal.pricing.form.lineItems' as never)}
               </h3>
               <div className="space-y-2">
-                {pricingRequest.lineItems.map((item) => (
+                {pricingRequest.lineItems.map(item => (
                   <div
                     key={item.id}
                     className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900 rounded-lg"
@@ -182,7 +177,7 @@ export default function PricingDetailClient() {
                         </p>
                       )}
                     </div>
-                    <div className="text-right ml-4">
+                    <div className="text-end ms-4">
                       <p className="font-bold text-slate-900 dark:text-white">
                         {formatCurrency(item.unitPrice * item.quantity, pricingRequest.currency)}
                       </p>
@@ -200,11 +195,11 @@ export default function PricingDetailClient() {
           {linkedRequests.length > 0 && (
             <div className="mb-6">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit mb-4">
-                <FileText className="inline w-5 h-5 mr-2" />
+                <FileText className="inline w-5 h-5 me-2" />
                 {t('portal.pricing.includedRequests' as never) || 'Included Requests'}
               </h3>
               <div className="space-y-2">
-                {linkedRequests.map((request) => {
+                {linkedRequests.map(request => {
                   const statusConfig = STATUS_CONFIG[request.status];
                   return (
                     <Link
@@ -221,7 +216,18 @@ export default function PricingDetailClient() {
                             {request.type}
                           </PortalBadge>
                           <PortalBadge
-                            variant={statusConfig.color === 'purple' ? 'blue' : statusConfig.color === 'emerald' ? 'green' : statusConfig.color as 'blue' | 'green' | 'yellow' | 'red' | 'gray'}
+                            variant={
+                              statusConfig.color === 'purple'
+                                ? 'blue'
+                                : statusConfig.color === 'emerald'
+                                  ? 'green'
+                                  : (statusConfig.color as
+                                      | 'blue'
+                                      | 'green'
+                                      | 'yellow'
+                                      | 'red'
+                                      | 'gray')
+                            }
                             className="text-xs"
                           >
                             {statusConfig.label}
@@ -233,7 +239,7 @@ export default function PricingDetailClient() {
                           </p>
                         )}
                       </div>
-                      <ExternalLink className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity ml-2" />
+                      <ExternalLink className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity ms-2" />
                     </Link>
                   );
                 })}
@@ -245,11 +251,11 @@ export default function PricingDetailClient() {
             <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
               <PayPalCheckoutButton
                 pricingRequest={pricingRequest}
-                onSuccess={(result) => {
+                onSuccess={result => {
                   console.log('Payment successful:', result);
                   window.location.reload();
                 }}
-                onError={(error) => {
+                onError={error => {
                   console.error('Payment error:', error);
                   setError(error);
                 }}

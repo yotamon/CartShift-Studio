@@ -9,13 +9,13 @@ import { subscribeToOrgActivities } from '@/lib/services/portal-activities';
 import { Request, ActivityLog } from '@/lib/types/portal';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
-import { useTranslations } from 'next-intl';
+import { useTranslations, NextIntlClientProvider } from 'next-intl';
 import { getMemberByUserId, ensureMembership } from '@/lib/services/portal-organizations';
 import { Link } from '@/i18n/navigation';
 import { ClientAnalytics } from '@/components/portal/ClientAnalytics';
 import { ActivityTimeline } from '@/components/portal/ActivityTimeline';
 
-export default function DashboardClient() {
+function DashboardClientContent() {
   const orgId = useResolvedOrgId();
   const { userData, loading: authLoading } = usePortalAuth();
   const [requests, setRequests] = useState<Request[]>([]);
@@ -230,5 +230,23 @@ export default function DashboardClient() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function DashboardClient({
+  messages,
+  locale,
+}: {
+  messages: Record<string, any>;
+  locale: string;
+}) {
+  if (!messages || !locale) {
+    throw new Error('DashboardClient requires messages and locale props');
+  }
+
+  return (
+    <NextIntlClientProvider messages={messages} locale={locale}>
+      <DashboardClientContent />
+    </NextIntlClientProvider>
   );
 }

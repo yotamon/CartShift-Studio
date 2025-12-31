@@ -476,7 +476,8 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-bold text-surface-900 dark:text-white mb-1">
-                          {t(`portal.activity.actions.${activity.action}` as any)}
+                          {t(`activity.actions.${activity.action?.toLowerCase() || ''}` as any) ||
+                            (activity.action ? activity.action.replace(/_/g, ' ') : 'Activity')}
                         </p>
                         {activity.details && typeof activity.details.requestTitle === 'string' && (
                           <p className="text-xs text-surface-500 truncate">

@@ -71,7 +71,8 @@ export function subscribeToOrgActivities(
 
 export function subscribeToRequestActivities(
   requestId: string,
-  callback: (activities: ActivityLog[]) => void
+  callback: (activities: ActivityLog[]) => void,
+  orgId?: string
 ): () => void {
   let unsubscribe: (() => void) | null = null;
   let isUnsubscribed = false;
@@ -80,11 +81,22 @@ export function subscribeToRequestActivities(
     .then(() => {
       if (isUnsubscribed) return;
       const db = getFirestoreDb();
-      const q = query(
-        collection(db, ACTIVITIES_COLLECTION),
-        where('requestId', '==', requestId),
-        orderBy('createdAt', 'desc')
-      );
+      let q;
+
+      if (orgId) {
+        q = query(
+          collection(db, ACTIVITIES_COLLECTION),
+          where('requestId', '==', requestId),
+          where('orgId', '==', orgId),
+          orderBy('createdAt', 'desc')
+        );
+      } else {
+        q = query(
+          collection(db, ACTIVITIES_COLLECTION),
+          where('requestId', '==', requestId),
+          orderBy('createdAt', 'desc')
+        );
+      }
 
       unsubscribe = onSnapshot(
         q,

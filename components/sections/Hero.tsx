@@ -53,15 +53,15 @@ export const Hero: React.FC = () => {
     <section className="relative min-h-[100dvh] flex items-center justify-center py-16 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#f0f4f8] dark:bg-surface-950">
       {/* Background Ambience */}
       <div className="absolute inset-0 bg-gradient-to-br from-surface-100 via-[#e8f0f8] to-surface-200 dark:from-surface-950 dark:to-surface-900"></div>
-      <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid.svg')] opacity-[0.06] dark:opacity-5"></div>
+      <div className="absolute top-0 start-0 w-full h-full bg-[url('/grid.svg')] opacity-[0.06] dark:opacity-5"></div>
 
       {/* Animated Orbs with Parallax - Dramatic 3D depth */}
       <ParallaxLayer depth={2} baseSpeed={0.5}>
-        <div className="absolute top-[-15%] left-[-10%] w-[45rem] h-[45rem] bg-primary-500/15 dark:bg-primary-600/15 rounded-full blur-[120px] animate-slow-spin"></div>
+        <div className="absolute top-[-15%] start-[-10%] w-[45rem] h-[45rem] bg-primary-500/15 dark:bg-primary-600/15 rounded-full blur-[120px] animate-slow-spin"></div>
       </ParallaxLayer>
       <ParallaxLayer depth={3} baseSpeed={0.4}>
         <div
-          className="absolute bottom-[-15%] right-[-10%] w-[45rem] h-[45rem] bg-accent-500/10 dark:bg-accent-600/10 rounded-full blur-[120px] animate-slow-spin"
+          className="absolute bottom-[-15%] end-[-10%] w-[45rem] h-[45rem] bg-accent-500/10 dark:bg-accent-600/10 rounded-full blur-[120px] animate-slow-spin"
           style={{ animationDirection: 'reverse' }}
         ></div>
       </ParallaxLayer>
@@ -70,197 +70,197 @@ export const Hero: React.FC = () => {
 
       {/* TOP ROW - Left to Right */}
       <motion.div
-        className="absolute top-[8%] left-[5%] w-2 h-2 bg-primary-500/20 rounded-full"
+        className="absolute top-[8%] start-[5%] w-2 h-2 bg-primary-500/20 rounded-full"
         animate={{ scale: [1, 1.5, 1], opacity: [0.2, 0.5, 0.2] }}
         transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute top-[12%] left-[15%] w-20 h-20 border-2 border-primary-500/20 rounded-xl"
+        className="absolute top-[12%] start-[15%] w-20 h-20 border-2 border-primary-500/20 rounded-xl"
         animate={{ rotate: [0, 90, 180, 270, 360], y: [0, -15, 0, 15, 0] }}
         transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
       />
       <motion.div
-        className="absolute top-[5%] left-[28%] w-3 h-3 bg-accent-400/15 rounded-full"
+        className="absolute top-[5%] start-[28%] w-3 h-3 bg-accent-400/15 rounded-full"
         animate={{ y: [0, -15, 0], x: [0, 8, 0], opacity: [0.15, 0.4, 0.15] }}
         transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute top-[15%] left-[42%] w-14 h-14 border border-primary-400/15 rounded-2xl"
+        className="absolute top-[15%] start-[42%] w-14 h-14 border border-primary-400/15 rounded-2xl"
         animate={{ rotate: [0, -180, -360], scale: [1, 1.1, 1] }}
         transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
       />
       <motion.div
-        className="absolute top-[8%] right-[35%] w-1.5 h-1.5 bg-primary-600/25 rounded-full"
+        className="absolute top-[8%] end-[35%] w-1.5 h-1.5 bg-primary-600/25 rounded-full"
         animate={{ scale: [1, 1.8, 1], opacity: [0.25, 0.6, 0.25] }}
         transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
       />
       <motion.div
-        className="absolute top-[18%] right-[22%] w-10 h-10 border-2 border-accent-500/25 rounded-full"
+        className="absolute top-[18%] end-[22%] w-10 h-10 border-2 border-accent-500/25 rounded-full"
         animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.7, 0.3] }}
         transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute top-[6%] right-[12%] w-16 h-16 border border-primary-500/10 rounded-xl"
+        className="absolute top-[6%] end-[12%] w-16 h-16 border border-primary-500/10 rounded-xl"
         animate={{ rotate: [0, 45, 0, -45, 0], y: [0, -10, 0] }}
         transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute top-[14%] right-[4%] w-2.5 h-2.5 bg-accent-500/20 rounded-full"
+        className="absolute top-[14%] end-[4%] w-2.5 h-2.5 bg-accent-500/20 rounded-full"
         animate={{ scale: [1, 1.4, 1], y: [0, -12, 0], opacity: [0.2, 0.5, 0.2] }}
         transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
       />
 
       {/* UPPER-MID ROW */}
       <motion.div
-        className="absolute top-[28%] left-[3%] w-24 h-24 border border-accent-400/10 rounded-3xl"
+        className="absolute top-[28%] start-[3%] w-24 h-24 border border-accent-400/10 rounded-3xl"
         animate={{ rotate: [0, -30, 0, 30, 0] }}
         transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute top-[32%] left-[18%] w-5 h-5 bg-primary-500/20 rounded-lg"
+        className="absolute top-[32%] start-[18%] w-5 h-5 bg-primary-500/20 rounded-lg"
         animate={{ rotate: [0, 180, 360], scale: [1, 1.2, 1] }}
         transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
       />
       <motion.div
-        className="absolute top-[25%] left-[35%] w-8 h-8 border-2 border-accent-400/20 rounded-full"
+        className="absolute top-[25%] start-[35%] w-8 h-8 border-2 border-accent-400/20 rounded-full"
         animate={{ y: [0, -25, 0], rotate: [0, 360] }}
         transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute top-[30%] right-[30%] w-1.5 h-1.5 bg-accent-600/30 rounded-full"
+        className="absolute top-[30%] end-[30%] w-1.5 h-1.5 bg-accent-600/30 rounded-full"
         animate={{ scale: [1, 2, 1], opacity: [0.3, 0.7, 0.3] }}
         transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute top-[22%] right-[15%] w-12 h-12 bg-primary-500/5 rounded-xl"
+        className="absolute top-[22%] end-[15%] w-12 h-12 bg-primary-500/5 rounded-xl"
         animate={{ y: [0, 20, 0], rotate: [0, 45, 0] }}
         transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute top-[35%] right-[6%] w-18 h-18 border border-accent-500/15 rounded-2xl"
+        className="absolute top-[35%] end-[6%] w-18 h-18 border border-accent-500/15 rounded-2xl"
         animate={{ rotate: [0, 90, 0], scale: [1, 1.05, 1] }}
         transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
       />
 
       {/* MIDDLE ROW */}
       <motion.div
-        className="absolute top-[45%] left-[6%] w-6 h-6 border-2 border-primary-500/25 rounded-lg"
+        className="absolute top-[45%] start-[6%] w-6 h-6 border-2 border-primary-500/25 rounded-lg"
         animate={{ rotate: [0, -90, -180, -270, -360] }}
         transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
       />
       <motion.div
-        className="absolute top-[50%] left-[22%] w-2 h-2 bg-accent-500/15 rounded-full"
+        className="absolute top-[50%] start-[22%] w-2 h-2 bg-accent-500/15 rounded-full"
         animate={{ scale: [1, 1.6, 1], y: [0, -8, 0], opacity: [0.15, 0.45, 0.15] }}
         transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
       />
       <motion.div
-        className="absolute top-[42%] left-[38%] w-16 h-16 border border-primary-400/10 rounded-full"
+        className="absolute top-[42%] start-[38%] w-16 h-16 border border-primary-400/10 rounded-full"
         animate={{ scale: [1, 1.15, 1], opacity: [0.2, 0.5, 0.2] }}
         transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute top-[48%] right-[38%] w-2.5 h-2.5 bg-primary-400/12 rounded-full"
+        className="absolute top-[48%] end-[38%] w-2.5 h-2.5 bg-primary-400/12 rounded-full"
         animate={{ y: [0, -20, 0], x: [0, 10, 0], opacity: [0.12, 0.35, 0.12] }}
         transition={{ duration: 6.5, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute top-[52%] right-[25%] w-10 h-10 border-2 border-accent-400/20 rounded-xl"
+        className="absolute top-[52%] end-[25%] w-10 h-10 border-2 border-accent-400/20 rounded-xl"
         animate={{ rotate: [0, 60, 0, -60, 0], y: [0, -15, 0] }}
         transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute top-[44%] right-[8%] w-1.5 h-1.5 bg-accent-500/25 rounded-full"
+        className="absolute top-[44%] end-[8%] w-1.5 h-1.5 bg-accent-500/25 rounded-full"
         animate={{ scale: [1, 1.7, 1], opacity: [0.25, 0.55, 0.25] }}
         transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
       />
 
       {/* LOWER-MID ROW */}
       <motion.div
-        className="absolute top-[62%] left-[4%] w-3 h-3 bg-primary-600/18 rounded-full"
+        className="absolute top-[62%] start-[4%] w-3 h-3 bg-primary-600/18 rounded-full"
         animate={{ y: [0, -15, 0], scale: [1, 1.2, 1], opacity: [0.18, 0.4, 0.18] }}
         transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute top-[58%] left-[15%] w-14 h-14 border border-accent-500/15 rounded-2xl"
+        className="absolute top-[58%] start-[15%] w-14 h-14 border border-accent-500/15 rounded-2xl"
         animate={{ rotate: [0, -45, 0], y: [0, 15, 0] }}
         transition={{ duration: 13, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute top-[65%] left-[30%] w-6 h-6 border-2 border-primary-400/20 rounded-full"
+        className="absolute top-[65%] start-[30%] w-6 h-6 border-2 border-primary-400/20 rounded-full"
         animate={{ scale: [1, 1.4, 1], rotate: [0, 180, 360] }}
         transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute top-[60%] right-[32%] w-20 h-20 border border-accent-400/10 rounded-3xl"
+        className="absolute top-[60%] end-[32%] w-20 h-20 border border-accent-400/10 rounded-3xl"
         animate={{ rotate: [0, 30, 0, -30, 0], scale: [1, 1.08, 1] }}
         transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute top-[68%] right-[18%] w-2 h-2 bg-primary-500/22 rounded-full"
+        className="absolute top-[68%] end-[18%] w-2 h-2 bg-primary-500/22 rounded-full"
         animate={{ scale: [1, 1.6, 1], opacity: [0.22, 0.5, 0.22] }}
         transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.6 }}
       />
       <motion.div
-        className="absolute top-[55%] right-[5%] w-8 h-8 bg-accent-500/8 rounded-lg"
+        className="absolute top-[55%] end-[5%] w-8 h-8 bg-accent-500/8 rounded-lg"
         animate={{ y: [0, 25, 0], rotate: [0, -45, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
       />
 
       {/* BOTTOM ROW */}
       <motion.div
-        className="absolute bottom-[22%] left-[8%] w-12 h-12 border-2 border-accent-500/20 rounded-xl"
+        className="absolute bottom-[22%] start-[8%] w-12 h-12 border-2 border-accent-500/20 rounded-xl"
         animate={{ rotate: [0, 90, 180, 270, 360], scale: [1, 1.1, 1] }}
         transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
       />
       <motion.div
-        className="absolute bottom-[28%] left-[25%] w-1.5 h-1.5 bg-primary-500/28 rounded-full"
+        className="absolute bottom-[28%] start-[25%] w-1.5 h-1.5 bg-primary-500/28 rounded-full"
         animate={{ scale: [1, 1.8, 1], opacity: [0.28, 0.6, 0.28] }}
         transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 0.2 }}
       />
       <motion.div
-        className="absolute bottom-[18%] left-[40%] w-18 h-18 border border-primary-400/10 rounded-2xl"
+        className="absolute bottom-[18%] start-[40%] w-18 h-18 border border-primary-400/10 rounded-2xl"
         animate={{ rotate: [0, -60, 0], y: [0, -20, 0] }}
         transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute bottom-[25%] right-[35%] w-5 h-5 border-2 border-accent-400/25 rounded-full"
+        className="absolute bottom-[25%] end-[35%] w-5 h-5 border-2 border-accent-400/25 rounded-full"
         animate={{ y: [0, -15, 0], scale: [1, 1.3, 1] }}
         transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute bottom-[30%] right-[20%] w-2.5 h-2.5 bg-accent-600/15 rounded-full"
+        className="absolute bottom-[30%] end-[20%] w-2.5 h-2.5 bg-accent-600/15 rounded-full"
         animate={{ rotate: [0, 180, 360], y: [0, -8, 0], opacity: [0.15, 0.38, 0.15] }}
         transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
       />
       <motion.div
-        className="absolute bottom-[20%] right-[8%] w-16 h-16 border border-primary-500/15 rounded-3xl"
+        className="absolute bottom-[20%] end-[8%] w-16 h-16 border border-primary-500/15 rounded-3xl"
         animate={{ rotate: [0, 45, 0, -45, 0], scale: [1, 1.12, 1] }}
         transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute bottom-[35%] right-[3%] w-2 h-2 bg-primary-400/20 rounded-full"
+        className="absolute bottom-[35%] end-[3%] w-2 h-2 bg-primary-400/20 rounded-full"
         animate={{ scale: [1, 1.5, 1], opacity: [0.2, 0.48, 0.2] }}
         transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut' }}
       />
 
       {/* EXTRA ACCENT DOTS - scattered subtle pulsing dots with varied opacity/size */}
       <motion.div
-        className="absolute top-[38%] left-[48%] w-1.5 h-1.5 bg-accent-500/18 rounded-full"
+        className="absolute top-[38%] start-[48%] w-1.5 h-1.5 bg-accent-500/18 rounded-full"
         animate={{ scale: [1, 1.6, 1], opacity: [0.18, 0.42, 0.18] }}
         transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
       />
       <motion.div
-        className="absolute top-[72%] left-[12%] w-2.5 h-2.5 bg-primary-600/12 rounded-full"
+        className="absolute top-[72%] start-[12%] w-2.5 h-2.5 bg-primary-600/12 rounded-full"
         animate={{ scale: [1, 1.4, 1], opacity: [0.12, 0.32, 0.12] }}
         transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut', delay: 0.7 }}
       />
       <motion.div
-        className="absolute top-[20%] right-[42%] w-1.5 h-1.5 bg-accent-400/22 rounded-full"
+        className="absolute top-[20%] end-[42%] w-1.5 h-1.5 bg-accent-400/22 rounded-full"
         animate={{ scale: [1, 1.7, 1], opacity: [0.22, 0.5, 0.22] }}
         transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut', delay: 1.1 }}
       />
       <motion.div
-        className="absolute bottom-[40%] left-[52%] w-2 h-2 bg-primary-500/15 rounded-full"
+        className="absolute bottom-[40%] start-[52%] w-2 h-2 bg-primary-500/15 rounded-full"
         animate={{ scale: [1, 1.5, 1], opacity: [0.15, 0.38, 0.15] }}
         transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.9 }}
       />
@@ -444,7 +444,7 @@ export const Hero: React.FC = () => {
       </motion.div>
 
       {/* Decorative Elements */}
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#f0f4f8] dark:from-surface-950 via-[#f0f4f8]/60 dark:via-surface-950/50 to-transparent z-20"></div>
+      <div className="absolute bottom-0 start-0 end-0 h-40 bg-gradient-to-t from-[#f0f4f8] dark:from-surface-950 via-[#f0f4f8]/60 dark:via-surface-950/50 to-transparent z-20"></div>
     </section>
   );
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Comment } from '@/lib/types/portal';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -17,6 +17,33 @@ interface CommentItemProps {
 }
 
 const EMOJI_OPTIONS = ['👍', '❤️', '😂', '😮', '😢', '👏'];
+
+// Safely render comment content with @mentions highlighted
+const renderSafeContent = (content: string): React.ReactNode => {
+  // Split by newlines first, then handle mentions
+  const lines = content.split('\n');
+
+  return lines.map((line, lineIndex) => {
+    // Match @mentions (username can have spaces if followed by another word)
+    const parts = line.split(/(@\w+(?:\s\w+)?)/g);
+
+    return (
+      <span key={lineIndex}>
+        {parts.map((part, partIndex) => {
+          if (part.startsWith('@')) {
+            return (
+              <span key={partIndex} className="font-bold text-blue-500">
+                {part}
+              </span>
+            );
+          }
+          return part;
+        })}
+        {lineIndex < lines.length - 1 && <br />}
+      </span>
+    );
+  });
+};
 
 export const CommentItem = ({ comment, currentUserId, onReply, isReply = false }: CommentItemProps) => {
   const [showReactions, setShowReactions] = useState(false);
@@ -62,7 +89,7 @@ export const CommentItem = ({ comment, currentUserId, onReply, isReply = false }
     <div
       className={cn(
         "group relative flex gap-3 transition-all",
-        isReply ? "mt-3 ml-12" : "mt-6",
+        isReply ? "mt-3 ms-12" : "mt-6",
         isAuthor ? "flex-row-reverse" : "flex-row" // Keep threading consistent, but author styling different?
         // Actually for threading, usually all aligned left. Let's stick to left alignment for business chat but style current user differently.
       )}
@@ -96,20 +123,17 @@ export const CommentItem = ({ comment, currentUserId, onReply, isReply = false }
             className={cn(
               'p-3.5 rounded-2xl text-sm shadow-sm font-medium leading-relaxed relative z-10',
               isAuthor
-                ? 'bg-blue-600 text-white rounded-tr-none'
-                : 'bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-100 dark:border-surface-700 rounded-tl-none'
+                ? 'bg-blue-600 text-white rounded-se-none'
+                : 'bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 border border-surface-100 dark:border-surface-700 rounded-ss-none'
             )}
-            dangerouslySetInnerHTML={{
-              __html: comment.content
-                .replace(/\n/g, '<br />')
-                .replace(/(^|\s)@(\w+(\s\w+)?)/g, '$1<span class="font-bold text-blue-500">@$2</span>')
-            }}
-          />
+          >
+            {renderSafeContent(comment.content)}
+          </div>
 
           {/* Action strip (Reactions, Reply) */}
           <div className={cn(
             "absolute top-full mt-1 flex items-center gap-1 opacity-0 group-hover/bubble:opacity-100 transition-opacity",
-            isAuthor ? "right-0" : "left-0"
+            isAuthor ? "end-0" : "start-0"
           )}>
             <button
               onClick={() => setShowReactions(!showReactions)}
@@ -151,7 +175,7 @@ export const CommentItem = ({ comment, currentUserId, onReply, isReply = false }
           {Object.keys(reactions).length > 0 && (
             <div className={cn(
               "absolute -bottom-3 flex items-center gap-1",
-               isAuthor ? "right-1" : "left-1"
+               isAuthor ? "end-1" : "start-1"
             )}>
               {Object.entries(reactions).map(([emoji, users]) => (
                 <button

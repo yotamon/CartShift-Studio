@@ -183,14 +183,14 @@ export const Footer: React.FC = () => {
                   href="/privacy"
                   className="text-surface-500 dark:text-surface-500 hover:text-accent-600 dark:hover:text-accent-400 transition-colors"
                 >
-                  {isHe ? 'מדיניות פרטיות' : 'Privacy Policy'}
+                  {t('footer.links.privacy')}
                 </Link>
                 <span className="text-surface-300 dark:text-surface-700">|</span>
                 <Link
                   href="/terms"
                   className="text-surface-500 dark:text-surface-500 hover:text-accent-600 dark:hover:text-accent-400 transition-colors"
                 >
-                  {isHe ? 'תנאי שימוש' : 'Terms of Service'}
+                  {t('footer.links.terms')}
                 </Link>
               </div>
             </div>

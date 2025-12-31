@@ -253,11 +253,11 @@ export default function RequestsClient() {
         {/* Toolbar */}
         <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col lg:flex-row lg:items-center gap-4 bg-slate-50/50 dark:bg-slate-900/50 min-w-0">
           <div className="relative w-full lg:w-96 min-w-0 flex-shrink-0">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <Search className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
             <input
               type="text"
               placeholder={t('portal.header.searchPlaceholder')}
-              className="portal-input pl-10 h-10 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 font-medium w-full min-w-0 font-outfit"
+              className="portal-input ps-10 h-10 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 font-medium w-full min-w-0 font-outfit"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
@@ -306,7 +306,7 @@ export default function RequestsClient() {
                 onClick={clearSelection}
                 className="text-slate-600 dark:text-slate-300"
               >
-                <X size={14} className="mr-1" />
+                <X size={14} className="me-1" />
                 {t('portal.common.cancel' as never) || 'Cancel'}
               </PortalButton>
               <PortalButton
@@ -314,7 +314,7 @@ export default function RequestsClient() {
                 onClick={() => setShowPricingModal(true)}
                 className="bg-green-600 hover:bg-green-700 text-white"
               >
-                <DollarSign size={14} className="mr-1" />
+                <DollarSign size={14} className="me-1" />
                 {t('portal.requests.createPricingOffer' as never) || 'Create Pricing Offer'}
               </PortalButton>
             </div>
@@ -339,7 +339,7 @@ export default function RequestsClient() {
                     className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm active:scale-[0.98] transition-all"
                   >
                     <div className="flex items-start justify-between mb-3">
-                      <div className="flex flex-col min-w-0 mr-2">
+                      <div className="flex flex-col min-w-0 me-2">
                         <span className="font-bold text-slate-900 dark:text-white font-outfit truncate text-sm">
                           {req.title}
                         </span>
@@ -410,7 +410,7 @@ export default function RequestsClient() {
               </div>
 
               {/* Desktop Table View */}
-              <table className="hidden md:table w-full text-left border-collapse min-w-[600px]">
+              <table className="hidden md:table w-full text-start border-collapse min-w-[600px]">
                 <thead>
                   <tr className="bg-slate-50/50 dark:bg-slate-900/50 cursor-default">
                     {isAgency && (
@@ -428,7 +428,7 @@ export default function RequestsClient() {
                     <th className="px-3 md:px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center whitespace-nowrap hidden md:table-cell">
                       {t('portal.requests.table.created')}
                     </th>
-                    <th className="px-3 md:px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right whitespace-nowrap">
+                    <th className="px-3 md:px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-end whitespace-nowrap">
                       {t('portal.common.actions')}
                     </th>
                   </tr>
@@ -482,7 +482,7 @@ export default function RequestsClient() {
                               {req.title}
                             </span>
                             {req.lastComment && (
-                              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5 max-w-full flex items-center gap-1 pr-4">
+                              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5 max-w-full flex items-center gap-1 pe-4">
                                 <span className="font-bold text-slate-700 dark:text-slate-300 shrink-0">
                                   {req.lastComment.userName}:
                                 </span>
@@ -552,7 +552,7 @@ export default function RequestsClient() {
                             </span>
                           </div>
                         </td>
-                        <td className="px-3 md:px-6 py-4 text-right">
+                        <td className="px-3 md:px-6 py-4 text-end">
                           <div className="flex items-center justify-end gap-1">
                             <button
                               type="button"
@@ -614,7 +614,7 @@ export default function RequestsClient() {
                 !searchQuery && activeFilter === 'All' ? (
                   <Link href={`/portal/org/${orgId}/requests/new/`}>
                     <PortalButton className="h-11 px-8 font-outfit shadow-lg shadow-blue-500/20">
-                      <Plus size={18} className="mr-2" />
+                      <Plus size={18} className="me-2" />
                       {t('portal.requests.newRequest')}
                     </PortalButton>
                   </Link>
@@ -695,7 +695,7 @@ export default function RequestsClient() {
                       <span className="font-medium text-slate-900 dark:text-white text-sm truncate">
                         {req.title}
                       </span>
-                      <PortalBadge variant="gray" className="text-[9px] ml-auto shrink-0">
+                      <PortalBadge variant="gray" className="text-[9px] ms-auto shrink-0">
                         {req.type}
                       </PortalBadge>
                     </div>
@@ -771,7 +771,7 @@ export default function RequestsClient() {
                         />
                         <span className="text-slate-400">×</span>
                         <div className="relative flex-1">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
+                          <span className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
                             $
                           </span>
                           <input
@@ -787,7 +787,7 @@ export default function RequestsClient() {
                                 Math.round(parseFloat(e.target.value || '0') * 100)
                               )
                             }
-                            className="portal-input h-9 text-sm pl-7 w-full"
+                            className="portal-input h-9 text-sm ps-7 w-full"
                           />
                         </div>
                         {pricingLineItems.length > 1 && (
@@ -800,7 +800,7 @@ export default function RequestsClient() {
                         )}
                       </div>
                       {item.quantity > 0 && item.unitPrice > 0 && (
-                        <div className="text-right text-xs font-bold text-slate-500">
+                        <div className="text-end text-xs font-bold text-slate-500">
                           = {formatCurrency(item.unitPrice * item.quantity, pricingCurrency)}
                         </div>
                       )}
@@ -812,7 +812,7 @@ export default function RequestsClient() {
                   onClick={addLineItem}
                   className="mt-3 w-full p-2 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl text-slate-500 hover:border-blue-400 hover:text-blue-600 transition-colors text-sm font-medium"
                 >
-                  <Plus size={16} className="inline mr-1" />
+                  <Plus size={16} className="inline me-1" />
                   {t('portal.pricing.form.addItem' as never) || 'Add Item'}
                 </button>
               </div>
@@ -842,9 +842,9 @@ export default function RequestsClient() {
                 className="bg-green-600 hover:bg-green-700"
               >
                 {isCreatingPricing ? (
-                  <Loader2 size={16} className="animate-spin mr-2" />
+                  <Loader2 size={16} className="animate-spin me-2" />
                 ) : (
-                  <DollarSign size={16} className="mr-2" />
+                  <DollarSign size={16} className="me-2" />
                 )}
                 {t('portal.requests.createAndSend' as never) || 'Create & Send Offer'}
               </PortalButton>

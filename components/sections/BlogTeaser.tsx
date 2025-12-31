@@ -21,7 +21,7 @@ export const BlogTeaser: React.FC = () => {
 
   return (
     <section className="py-20 md:py-32 px-4 sm:px-6 lg:px-8 relative bg-surface-50 dark:bg-surface-900 overflow-hidden">
-      <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-screen max-w-[100vw] pointer-events-none">
+      <div className="absolute inset-y-0 start-1/2 -translate-x-1/2 w-screen max-w-[100vw] pointer-events-none">
         <div className="absolute -top-[250px] end-0 w-[500px] h-[500px] bg-gradient-to-bl from-accent-500/10 via-accent-500/5 to-transparent rounded-full blur-3xl"></div>
         <div className="absolute -bottom-[200px] start-0 w-[400px] h-[400px] bg-gradient-to-tr from-primary-500/10 via-primary-500/5 to-transparent rounded-full blur-3xl"></div>
         <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-primary-500/5 via-transparent to-accent-500/5 rounded-full blur-3xl"></div>
@@ -54,7 +54,7 @@ export const BlogTeaser: React.FC = () => {
               </motion.span>
 
               {/* Decorative accent line */}
-              <div className="absolute top-0 start-0 h-full w-1.5 bg-gradient-to-b from-primary-500 via-accent-500 to-primary-500 rtl:rounded-r-3xl ltr:rounded-l-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute top-0 start-0 h-full w-1.5 bg-gradient-to-b from-primary-500 via-accent-500 to-primary-500 rtl:rounded-e-3xl ltr:rounded-s-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
               <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-10">
                 <div className="flex-1">

@@ -77,6 +77,14 @@
         "destination": "/en/portal/signup/index.html"
       },
       {
+        "source": "/portal/oauth-callback",
+        "destination": "/en/portal/oauth-callback/index.html"
+      },
+      {
+        "source": "/portal/oauth-callback/**",
+        "destination": "/en/portal/oauth-callback/index.html"
+      },
+      {
         "source": "/portal/org",
         "destination": "/en/portal/org/template/dashboard/index.html"
       },

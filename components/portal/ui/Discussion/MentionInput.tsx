@@ -5,6 +5,8 @@ import { PortalUser } from '@/lib/types/portal';
 import { cn } from '@/lib/utils';
 import { User } from 'lucide-react';
 
+import { useTranslations } from 'next-intl';
+
 interface MentionInputProps {
   value: string;
   onChange: (value: string) => void;
@@ -28,16 +30,21 @@ export const MentionInput = ({
   const [mentionQuery, setMentionQuery] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const suggestionRef = useRef<HTMLDivElement>(null);
+  const t = useTranslations('portal.requests.detail');
 
   const filteredUsers = users.filter(user =>
     (user.name?.toLowerCase() || user.email.toLowerCase()).includes(mentionQuery.toLowerCase())
   ).slice(0, 5);
 
   useEffect(() => {
-    const lastAtPos = value.lastIndexOf('@', cursorPosition);
-    if (lastAtPos !== -1 && lastAtPos < cursorPosition) {
-      const query = value.slice(lastAtPos + 1, cursorPosition);
-      if (!query.includes(' ') && !query.includes('\n')) {
+    const textBeforeCursor = value.slice(0, cursorPosition);
+    const lastAtPos = textBeforeCursor.lastIndexOf('@');
+
+    if (lastAtPos !== -1) {
+      const query = textBeforeCursor.slice(lastAtPos + 1);
+      // Only show suggestions if no space after @ OR if we want to support spaces in names (more complex)
+      // For now, let's allow it but stop if there's a newline
+      if (!query.includes('\n')) {
         setMentionQuery(query);
         setShowSuggestions(true);
         setSuggestionIndex(0);
@@ -68,18 +75,21 @@ export const MentionInput = ({
   };
 
   const insertMention = (user: PortalUser) => {
-    const lastAtPos = value.lastIndexOf('@', cursorPosition);
+    const textBeforeCursor = value.slice(0, cursorPosition);
+    const lastAtPos = textBeforeCursor.lastIndexOf('@');
+
     if (lastAtPos !== -1) {
       const before = value.slice(0, lastAtPos);
       const after = value.slice(cursorPosition);
-      const newValue = `${before}@${user.name || user.email} ${after}`;
+      const mentionName = user.name || user.email;
+      const newValue = `${before}@${mentionName} ${after}`;
       onChange(newValue);
       setShowSuggestions(false);
 
       // Reset cursor position after insert
       setTimeout(() => {
         if (textareaRef.current) {
-          const newPos = lastAtPos + (user.name || user.email).length + 2;
+          const newPos = lastAtPos + mentionName.length + 2;
           textareaRef.current.selectionStart = newPos;
           textareaRef.current.selectionEnd = newPos;
           textareaRef.current.focus();
@@ -90,11 +100,11 @@ export const MentionInput = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value);
-    setCursorPosition(e.target.selectionStart);
+    setCursorPosition(e.target.selectionStart || 0);
   };
 
   const handleSelect = (e: React.SyntheticEvent<HTMLTextAreaElement>) => {
-    setCursorPosition(e.currentTarget.selectionStart);
+    setCursorPosition(e.currentTarget.selectionStart || 0);
   };
 
   return (
@@ -107,16 +117,16 @@ export const MentionInput = ({
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         disabled={disabled}
-        className="portal-input pr-14 min-h-[80px] py-4 resize-none bg-surface-50 dark:bg-surface-900 border-surface-200 dark:border-surface-800 focus:bg-white dark:focus:bg-surface-950 transition-all font-medium w-full"
+        className="portal-input min-h-[80px] py-4 resize-none bg-surface-50 dark:bg-surface-900 border-surface-200 dark:border-surface-800 focus:bg-white dark:focus:bg-surface-950 transition-all font-medium w-full"
       />
 
       {showSuggestions && filteredUsers.length > 0 && (
         <div
           ref={suggestionRef}
-          className="absolute bottom-full left-0 mb-2 w-64 bg-white dark:bg-surface-800 rounded-xl shadow-xl border border-surface-100 dark:border-surface-700 overflow-hidden z-50 animate-in slide-in-from-bottom-2 fade-in duration-200"
+          className="absolute bottom-full start-0 mb-2 w-64 bg-white dark:bg-surface-800 rounded-xl shadow-xl border border-surface-100 dark:border-surface-700 overflow-hidden z-50 animate-in slide-in-from-bottom-2 fade-in duration-200"
         >
           <div className="p-2 border-b border-surface-100 dark:border-surface-700 text-[10px] font-bold text-surface-400 uppercase tracking-widest">
-            Mention Member
+            {t('mentionMember')}
           </div>
           <div className="max-h-48 overflow-y-auto">
             {filteredUsers.map((user, index) => (
@@ -125,7 +135,7 @@ export const MentionInput = ({
                 type="button"
                 onClick={() => insertMention(user)}
                 className={cn(
-                  "w-full text-left px-3 py-2 flex items-center gap-2 transition-colors",
+                  "w-full text-start px-3 py-2 flex items-center gap-2 transition-colors",
                   index === suggestionIndex
                     ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300"
                     : "hover:bg-surface-50 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200"
@@ -139,7 +149,7 @@ export const MentionInput = ({
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{user.name || 'Unknown'}</p>
+                  <p className="text-sm font-medium truncate">{user.name || t('unknownUser')}</p>
                   <p className="text-xs text-surface-400 truncate">{user.email}</p>
                 </div>
               </button>

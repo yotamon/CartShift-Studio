@@ -95,7 +95,7 @@ export const MilestoneTimeline: React.FC<MilestoneTimelineProps> = ({
       {/* Progress Bar */}
       <div className="relative h-2 bg-surface-200 dark:bg-surface-700 rounded-full overflow-hidden">
         <motion.div
-          className="absolute inset-y-0 left-0 bg-gradient-to-r from-accent-500 to-primary-500 rounded-full"
+          className="absolute inset-y-0 start-0 bg-gradient-to-r from-accent-500 to-primary-500 rounded-full"
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.8, ease: 'easeOut' }}

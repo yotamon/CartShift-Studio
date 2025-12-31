@@ -78,7 +78,7 @@ export const FavoriteButton = ({
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.5, ease: "easeOut" }}
                   className={cn(
-                    "absolute top-1/2 left-1/2 w-1 h-1 rounded-full",
+                    "absolute top-1/2 start-1/2 w-1 h-1 rounded-full",
                     variant === 'heart' ? "bg-rose-500" : "bg-amber-400"
                   )}
                   style={{ marginLeft: -2, marginTop: -2 }}
@@ -92,7 +92,11 @@ export const FavoriteButton = ({
       {count !== undefined && (
         <span className={cn(
           "text-xs font-bold font-outfit transition-colors",
-          isActive ? "text-rose-600 dark:text-rose-400" : "text-slate-500"
+          isActive
+            ? variant === 'heart'
+              ? "text-rose-600 dark:text-rose-400"
+              : "text-amber-600 dark:text-amber-400"
+            : "text-slate-500"
         )}>
           {count + (isActive ? 1 : 0)}
         </span>

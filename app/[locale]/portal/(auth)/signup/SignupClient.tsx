@@ -142,13 +142,13 @@ function SignupForm() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   error={errors.password?.message}
-                  className="pr-10"
+                  className="pe-10"
                   {...register('password')}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors"
+                  className="absolute end-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors"
                   aria-label={showPassword ? t('portal.auth.hidePassword' as any) : t('portal.auth.showPassword' as any)}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -183,13 +183,13 @@ function SignupForm() {
                   type={showConfirmPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   error={errors.confirmPassword?.message}
-                  className="pr-10"
+                  className="pe-10"
                   {...register('confirmPassword')}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors"
+                  className="absolute end-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors"
                   aria-label={showConfirmPassword ? t('portal.auth.hidePassword' as any) : t('portal.auth.showPassword' as any)}
                 >
                   {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}

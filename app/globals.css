@@ -701,7 +701,7 @@ body {
   }
 
   .prose-article section[data-footnotes] a[data-footnote-backref] {
-    @apply text-primary-500 dark:text-primary-400 text-xs font-medium ml-1.5 no-underline hover:text-primary-600 dark:hover:text-primary-300;
+    @apply text-primary-500 dark:text-primary-400 text-xs font-medium ms-1.5 no-underline hover:text-primary-600 dark:hover:text-primary-300;
     opacity: 0.7;
     transition:
       opacity 0.2s ease,
@@ -814,7 +814,7 @@ body {
 
   .prose-article hr::before {
     content: '◆';
-    @apply absolute left-1/2 -translate-x-1/2 -translate-y-1/2 bg-surface-50 dark:bg-surface-900 px-4 text-surface-400 dark:text-surface-600 text-sm;
+    @apply absolute start-1/2 -translate-x-1/2 -translate-y-1/2 bg-surface-50 dark:bg-surface-900 px-4 text-surface-400 dark:text-surface-600 text-sm;
   }
 
   /* ===== ENHANCED TABLES ===== */
@@ -1757,7 +1757,7 @@ body {
   }
 
   .portal-sidebar {
-    @apply transition-all duration-300 ease-in-out border-r border-surface-200 dark:border-surface-800/50 bg-white/80 dark:bg-surface-900/80 backdrop-blur-xl z-[50];
+    @apply transition-all duration-300 ease-in-out border-e border-surface-200 dark:border-surface-800/50 bg-white/80 dark:bg-surface-900/80 backdrop-blur-xl z-[50];
   }
 
   .portal-header {

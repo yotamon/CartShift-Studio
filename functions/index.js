@@ -33,7 +33,7 @@ function applyCors(req, res) {
 		res.set("Access-Control-Allow-Origin", "*");
 	}
 
-	res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+	res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
 	res.set("Access-Control-Allow-Headers", "Content-Type");
 	return true;
 }
@@ -272,7 +272,7 @@ ${message ? `Message: ${message}` : ""}
 
 				const mailOptions = {
 					from: gmailUser.value(),
-					to: contactEmail.value() || "yotamon@gmail.com",
+					to: contactEmail.value() || "hello@cartshift.studio",
 					subject: `New Contact Form Submission from ${name}`,
 					text: emailContent
 				};
@@ -369,7 +369,7 @@ exports.onPortalRequestCreated = onDocumentCreated(
 		const orgName = orgSnap.exists ? orgSnap.data().name : "Unknown Organization";
 
 		await sendPortalEmail(
-			contactEmail.value() || "yotamon@gmail.com",
+			contactEmail.value() || "hello@cartshift.studio",
 			`New Request: ${requestData.title}`,
 			"new_request",
 			{
@@ -483,7 +483,7 @@ exports.onPortalCommentCreated = onDocumentCreated(
 
 		const targetEmail = isAgency
 			? await getUserEmail(requestData.createdBy) // Agency commented -> Notify client
-			: (contactEmail.value() || "yotamon@gmail.com"); // Client commented -> Notify admin
+			: (contactEmail.value() || "hello@cartshift.studio"); // Client commented -> Notify admin
 
 		if (!targetEmail) return;
 
@@ -493,5 +493,395 @@ exports.onPortalCommentCreated = onDocumentCreated(
 			commentText: commentData.content,
 			actionUrl: `${PORTAL_BASE_URL}/org/${commentData.orgId}/requests/${commentData.requestId}`
 		});
+	}
+);
+
+// ============================================
+// GOOGLE CALENDAR OAUTH CALLBACK
+// ============================================
+
+const googleClientId = defineSecret("GOOGLE_CLIENT_ID", { required: false });
+const googleClientSecret = defineSecret("GOOGLE_CLIENT_SECRET", { required: false });
+
+exports.googleCalendarOAuthCallback = onRequest(
+	{
+		cors: true,
+		maxInstances: 10,
+		secrets: [googleClientId, googleClientSecret]
+	},
+	async (req, res) => {
+		if (!applyCors(req, res)) {
+			return;
+		}
+
+		if (req.method === "OPTIONS") {
+			res.status(204).send("");
+			return;
+		}
+
+		if (req.method !== "POST") {
+			return res.status(405).json({ error: "Method not allowed" });
+		}
+
+		try {
+			const clientId = googleClientId.value();
+			const clientSecret = googleClientSecret.value();
+
+			if (!clientId || !clientSecret) {
+				console.error("[Google Calendar] Missing OAuth credentials");
+				return res.status(500).json({
+					success: false,
+					message: "Google OAuth not configured"
+				});
+			}
+
+			const { code, redirectUri } = req.body;
+
+			if (!code || !redirectUri) {
+				console.error("[Google Calendar] Missing parameters:", { hasCode: !!code, hasRedirectUri: !!redirectUri });
+				return res.status(400).json({
+					success: false,
+					message: "Missing code or redirectUri"
+				});
+			}
+
+			console.log("[Google Calendar] Exchanging code for tokens");
+			console.log("[Google Calendar] Redirect URI:", redirectUri);
+			console.log("[Google Calendar] Client ID:", clientId.substring(0, 20) + "...");
+			console.log("[Google Calendar] Code length:", code?.length || 0);
+
+			const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				body: new URLSearchParams({
+					code,
+					client_id: clientId,
+					client_secret: clientSecret,
+					redirect_uri: redirectUri,
+					grant_type: "authorization_code",
+				}),
+			});
+
+			if (!tokenResponse.ok) {
+				const errorText = await tokenResponse.text();
+				console.error("[Google Calendar] Token exchange error:", errorText);
+				let errorMessage = "Failed to exchange code for tokens";
+				try {
+					const errorJson = JSON.parse(errorText);
+					errorMessage = errorJson.error_description || errorJson.error || errorMessage;
+				} catch (e) {
+					errorMessage = errorText || errorMessage;
+				}
+				return res.status(400).json({
+					success: false,
+					message: errorMessage
+				});
+			}
+
+			const tokens = await tokenResponse.json();
+
+			return res.status(200).json({
+				access_token: tokens.access_token,
+				refresh_token: tokens.refresh_token,
+				expires_in: tokens.expires_in,
+				scope: tokens.scope,
+			});
+		} catch (error) {
+			console.error("[Google Calendar] Callback API error:", error);
+			return res.status(500).json({
+				success: false,
+				message: "Internal server error"
+			});
+		}
+	}
+);
+
+// ============================================
+// GOOGLE CALENDAR HELPERS
+// ============================================
+
+// Helper to verify Firebase ID Token
+async function verifyAuth(req) {
+	const authHeader = req.headers.authorization;
+	if (!authHeader || !authHeader.startsWith("Bearer ")) {
+		return null;
+	}
+	const idToken = authHeader.split("Bearer ")[1];
+	try {
+		const decodedToken = await admin.auth().verifyIdToken(idToken);
+		return decodedToken.uid;
+	} catch (error) {
+		console.error("Auth verification failed:", error);
+		return null;
+	}
+}
+
+// Helper to get a valid Google access token (refreshes if needed)
+async function getValidGoogleToken(userId) {
+	const integrationDoc = await admin.firestore().collection("agency_integrations").doc(`${userId}_google_calendar`).get();
+	if (!integrationDoc.exists) {
+		throw new Error("Google Calendar not connected");
+	}
+
+	const data = integrationDoc.data();
+	const now = Date.now();
+
+	// Check if tokenExpiry exists and is a Timestamp
+	let expiry = 0;
+	if (data.tokenExpiry && typeof data.tokenExpiry.toDate === 'function') {
+		expiry = data.tokenExpiry.toDate().getTime();
+	} else if (data.tokenExpiry) {
+		expiry = new Date(data.tokenExpiry).getTime();
+	}
+
+	// If token is still valid (with 5 min buffer), return it
+	if (expiry > now + 5 * 60 * 1000) {
+		return {
+			accessToken: data.accessToken,
+			selectedCalendarId: data.selectedCalendarId || 'primary'
+		};
+	}
+
+	// Otherwise, refresh it
+	if (!data.refreshToken) {
+		throw new Error("Token expired and no refresh token available");
+	}
+
+	console.log(`Refreshing Google token for user ${userId}`);
+	const clientId = googleClientId.value();
+	const clientSecret = googleClientSecret.value();
+
+	if (!clientId || !clientSecret) {
+		throw new Error("Google OAuth credentials not configured on server");
+	}
+
+	const response = await fetch("https://oauth2.googleapis.com/token", {
+		method: "POST",
+		headers: { "Content-Type": "application/x-www-form-urlencoded" },
+		body: new URLSearchParams({
+			client_id: clientId,
+			client_secret: clientSecret,
+			refresh_token: data.refreshToken,
+			grant_type: "refresh_token",
+		}),
+	});
+
+	if (!response.ok) {
+		const errorText = await response.text();
+		console.error("Token refresh failed:", errorText);
+		throw new Error("Failed to refresh Google token");
+	}
+
+	const tokens = await response.json();
+	const accessToken = tokens.access_token;
+	const newExpiry = new Date(now + tokens.expires_in * 1000);
+
+	// Update Firestore
+	await integrationDoc.ref.update({
+		accessToken: accessToken,
+		tokenExpiry: admin.firestore.Timestamp.fromDate(newExpiry),
+		updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+	});
+
+	return {
+		accessToken,
+		selectedCalendarId: data.selectedCalendarId || 'primary'
+	};
+}
+
+// ============================================
+// GOOGLE CALENDAR API ROUTES
+// ============================================
+
+// 1. List Calendars
+exports.googleCalendarListCalendars = onRequest(
+	{ cors: true, maxInstances: 5, secrets: [googleClientId, googleClientSecret] },
+	async (req, res) => {
+		if (!applyCors(req, res)) return;
+		if (req.method === "OPTIONS") return res.status(204).send("");
+
+		try {
+			const userId = await verifyAuth(req);
+			if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+			const { accessToken } = await getValidGoogleToken(userId);
+
+			const response = await fetch("https://www.googleapis.com/calendar/v3/users/me/calendarList", {
+				headers: { Authorization: `Bearer ${accessToken}` },
+			});
+
+			if (!response.ok) {
+				const error = await response.json();
+				return res.status(response.status).json(error);
+			}
+
+			const data = await response.json();
+			const calendars = (data.items || []).map(item => ({
+				id: item.id,
+				summary: item.summary,
+				primary: item.primary || false,
+				backgroundColor: item.backgroundColor,
+			}));
+
+			return res.status(200).json({ calendars });
+		} catch (error) {
+			console.error("List calendars error:", error);
+			return res.status(500).json({ error: error.message });
+		}
+	}
+);
+
+// 2. Create Event
+exports.googleCalendarCreateEvent = onRequest(
+	{ cors: true, maxInstances: 5, secrets: [googleClientId, googleClientSecret] },
+	async (req, res) => {
+		if (!applyCors(req, res)) return;
+		if (req.method === "OPTIONS") return res.status(204).send("");
+		if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+
+		try {
+			const userId = await verifyAuth(req);
+			if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+			const { accessToken, selectedCalendarId } = await getValidGoogleToken(userId);
+			const eventData = req.body;
+
+      const googleEvent = {
+        summary: eventData.title,
+        description: eventData.description,
+        start: { dateTime: eventData.startTime },
+        end: { dateTime: eventData.endTime },
+        attendees: eventData.attendees ? eventData.attendees.map(email => ({ email })) : [],
+        location: eventData.location,
+        reminders: {
+          useDefault: false,
+          overrides: [
+            { method: 'email', minutes: 24 * 60 },
+            { method: 'popup', minutes: 10 },
+          ],
+        },
+        conferenceData: {
+          createRequest: {
+            requestId: `meet-${Date.now()}`,
+            conferenceSolutionKey: { type: "hangoutsMeet" }
+          }
+        }
+      };
+
+      const calendarId = encodeURIComponent(selectedCalendarId || 'primary');
+      const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?conferenceDataVersion=1`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(googleEvent),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        return res.status(response.status).json(error);
+      }
+
+      const data = await response.json();
+      return res.status(200).json({
+        eventId: data.id,
+        meetLink: data.conferenceData?.entryPoints?.find(ep => ep.entryPointType === "video")?.uri,
+      });
+    } catch (error) {
+      console.error("Create event error:", error);
+      return res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+// 3. Get Free/Busy Intervals
+exports.googleCalendarGetFreeBusy = onRequest(
+  { cors: true, maxInstances: 5, secrets: [googleClientId, googleClientSecret] },
+  async (req, res) => {
+    if (!applyCors(req, res)) return;
+    if (req.method === "OPTIONS") return res.status(204).send("");
+    if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+
+    try {
+      const userId = await verifyAuth(req);
+      if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+      const { accessToken, selectedCalendarId } = await getValidGoogleToken(userId);
+      const { timeMin, timeMax } = req.body;
+
+      if (!timeMin || !timeMax) {
+        return res.status(400).json({ error: "Missing timeMin or timeMax" });
+      }
+
+      const response = await fetch("https://www.googleapis.com/calendar/v3/freeBusy", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          timeMin,
+          timeMax,
+          items: [{ id: selectedCalendarId || 'primary' }]
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        return res.status(response.status).json(error);
+      }
+
+      const data = await response.json();
+      			const busySlots = data.calendars?.[selectedCalendarId || 'primary']?.busy || [];
+
+			return res.status(200).json({ busy: busySlots });
+		} catch (error) {
+			console.error("Free/busy error:", error);
+			return res.status(500).json({ error: error.message });
+		}
+	}
+);
+
+// 4. Delete Event
+exports.googleCalendarDeleteEvent = onRequest(
+	{ cors: true, maxInstances: 5, secrets: [googleClientId, googleClientSecret] },
+	async (req, res) => {
+		if (!applyCors(req, res)) return;
+		if (req.method === "OPTIONS") return res.status(204).send("");
+		if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+
+		try {
+			const userId = await verifyAuth(req);
+			if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+			const { eventId, calendarId } = req.body;
+			if (!eventId) {
+				return res.status(400).json({ error: "Missing eventId" });
+			}
+
+			const { accessToken } = await getValidGoogleToken(userId);
+			const targetCalendar = calendarId ? encodeURIComponent(calendarId) : 'primary';
+
+			const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${targetCalendar}/events/${eventId}`, {
+				method: "DELETE",
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+			});
+
+			// 204 No Content is success for DELETE
+			if (!response.ok && response.status !== 204 && response.status !== 404 && response.status !== 410) { // 410 = GONE (already deleted)
+				const error = await response.json();
+				return res.status(response.status).json(error);
+			}
+
+			return res.status(200).json({ success: true });
+		} catch (error) {
+			console.error("Delete event error:", error);
+			return res.status(500).json({ error: error.message });
+		}
 	}
 );

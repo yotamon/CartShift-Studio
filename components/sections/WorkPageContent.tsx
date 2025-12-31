@@ -114,7 +114,7 @@ export const WorkPageContent: React.FC<WorkPageContentProps> = ({ caseStudies = 
 
                         {/* Featured Result Badge */}
                         {topResult && (
-                          <div className="absolute top-3 left-3 rtl:left-auto rtl:right-3">
+                          <div className="absolute top-3 start-3 rtl:start-auto rtl:end-3">
                             <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold backdrop-blur-sm ${
                               platformType === 'shopify'
                                 ? 'bg-green-500/90 text-white'
@@ -126,7 +126,7 @@ export const WorkPageContent: React.FC<WorkPageContentProps> = ({ caseStudies = 
                         )}
 
                         {/* Platform Badge */}
-                        <div className="absolute top-3 right-3 rtl:right-auto rtl:left-3">
+                        <div className="absolute top-3 end-3 rtl:end-auto rtl:start-3">
                           <span
                             className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-wide backdrop-blur-sm ${
                               platformType === 'shopify'

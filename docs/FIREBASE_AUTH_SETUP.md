@@ -18,10 +18,12 @@ I've implemented full Firebase Authentication for your CartShift Studio portal. 
 To complete the setup, you need to enable Email/Password authentication in your Firebase Console:
 
 ### Step 1: Go to Firebase Console
+
 1. Visit [Firebase Console](https://console.firebase.google.com/)
 2. Select your project: **cartshiftstudio**
 
 ### Step 2: Enable Email/Password Authentication
+
 1. Click on **Authentication** in the left sidebar
 2. Click on the **Sign-in method** tab
 3. Find **Email/Password** in the list of providers
@@ -30,6 +32,7 @@ To complete the setup, you need to enable Email/Password authentication in your 
 6. Click **Save**
 
 ### Step 3: (Optional) Create a Test User
+
 You can create a test user to verify everything works:
 
 1. Still in **Authentication**, click on the **Users** tab
@@ -79,18 +82,131 @@ NEXT_PUBLIC_FIREBASE_APP_ID=1:559544522324:web:988f4bc9f5485e4adbbfc1
 ## 🚨 Troubleshooting
 
 ### Error: "Authentication not configured"
+
 This means Firebase Authentication is not enabled in the console. Follow Step 2 above.
 
 ### Error: "Firebase Auth not available on server side"
+
 This is expected behavior. Firebase Auth initialization only happens on the client side.
 
 ### Error: "auth/invalid-credential"
+
 The email/password combination is incorrect.
 
 ### Error: "auth/user-not-found"
+
 No user exists with that email address. User needs to sign up first.
+
+### Error: "403: access_denied" - Google OAuth Verification Not Completed
+
+This error occurs when the Google OAuth consent screen is in "Testing" mode and your email is not added as a test user.
+
+**Solution: Add Test Users to Google OAuth Consent Screen**
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Select your project: **cartshiftstudio**
+3. Navigate to **APIs & Services** → **OAuth consent screen**
+4. Scroll down to **Test users** section
+5. Click **+ ADD USERS**
+6. Add your email address: `hello@cartshift.studio` (and any other emails that need access)
+7. Click **ADD**
+8. The users will now be able to authenticate with Google
+
+**Alternative: Publish the App (for Production)**
+If you're ready for production and want all users to access the app:
+
+1. In the OAuth consent screen, click **PUBLISH APP**
+2. Complete the verification process if required
+3. Note: Publishing requires app verification for sensitive scopes
+
+**For Google Calendar Integration:**
+The same OAuth consent screen configuration applies to Google Calendar integration. Make sure the test users are added there as well.
+
+### Error: "404 - Page Not Found" on OAuth Callback
+
+If you get a 404 error when Google redirects to `/portal/oauth-callback`, this has been fixed by:
+
+1. **Firebase Hosting Rewrite Rule**: Added rewrite rule in `firebase.json` to route `/portal/oauth-callback` to the correct locale path
+2. **Cloud Function**: Created `googleCalendarOAuthCallback` Cloud Function to handle token exchange
+3. **Environment Variables**: Make sure you have:
+   - `NEXT_PUBLIC_FIREBASE_FUNCTION_URL` - Your Cloud Functions base URL
+   - `GOOGLE_CLIENT_ID` (secret) - Set in Firebase Functions secrets
+   - `GOOGLE_CLIENT_SECRET` (secret) - Set in Firebase Functions secrets
+
+**To deploy the Cloud Function:**
+
+**PowerShell (Windows):**
+
+```powershell
+# Set GOOGLE_CLIENT_ID
+$clientId = "your-client-id"
+echo $clientId | firebase functions:secrets:set GOOGLE_CLIENT_ID
+
+# Set GOOGLE_CLIENT_SECRET
+$secret = "your-client-secret"
+echo $secret | firebase functions:secrets:set GOOGLE_CLIENT_SECRET
+
+# Deploy the function
+firebase deploy --only functions:googleCalendarOAuthCallback
+```
+
+**Bash/Linux/Mac:**
+
+```bash
+echo "your-client-id" | firebase functions:secrets:set GOOGLE_CLIENT_ID
+echo "your-client-secret" | firebase functions:secrets:set GOOGLE_CLIENT_SECRET
+firebase deploy --only functions:googleCalendarOAuthCallback
+```
+
+**Important**: The redirect URI in Google Cloud Console must match exactly: `https://cartshiftstudio.web.app/portal/oauth-callback`
+
+**Troubleshooting 400 Bad Request Error:**
+
+If you get a 400 error when connecting Google Calendar, check:
+
+1. **Redirect URI Mismatch** (Most Common):
+   - The redirect URI in Google Cloud Console OAuth credentials must match EXACTLY
+   - Check: [Google Cloud Console → APIs & Services → Credentials → OAuth 2.0 Client IDs]
+   - Authorized redirect URIs should include: `https://cartshiftstudio.web.app/portal/oauth-callback`
+   - Must match exactly (including `https://`, no trailing slash unless specified)
+
+2. **Missing Secrets in Firebase Functions**:
+
+   ```bash
+   # Check if secrets are set:
+   firebase functions:secrets:access GOOGLE_CLIENT_ID
+   firebase functions:secrets:access GOOGLE_CLIENT_SECRET
+
+   # If not set, set them:
+   firebase functions:secrets:set GOOGLE_CLIENT_ID="your-client-id"
+   firebase functions:secrets:set GOOGLE_CLIENT_SECRET="your-client-secret"
+   ```
+
+3. **Check Function Logs**:
+
+   ```bash
+   firebase functions:log --only googleCalendarOAuthCallback
+   ```
+
+   Look for detailed error messages from Google's OAuth API.
+
+4. **Verify Client ID/Secret Match**:
+   - Go to [Google Cloud Console → APIs & Services → Credentials](https://console.cloud.google.com/apis/credentials)
+   - Find your OAuth 2.0 Client ID
+   - Click on it to view details
+   - **IMPORTANT**: The Client ID and Client Secret must be from the SAME OAuth client
+   - Verify:
+     - Client ID in Firebase secret matches the Client ID in Google Cloud Console
+     - Client Secret in Firebase secret matches the Client Secret shown in Google Cloud Console
+   - If you see "The OAuth client was not found" error, it means the Client ID and Secret don't match
+
+5. **Check Redirect URI in Google Cloud Console**:
+   - In the OAuth client details, check "Authorized redirect URIs"
+   - Must include exactly: `https://cartshiftstudio.web.app/portal/oauth-callback`
+   - The redirect URI used in the OAuth flow must match EXACTLY (including https://, no trailing slash)
 
 ## 📚 Additional Resources
 
 - [Firebase Authentication Docs](https://firebase.google.com/docs/auth)
 - [Firebase Console](https://console.firebase.google.com/project/cartshiftstudio/overview)
+- [Google OAuth Consent Screen Setup](https://console.cloud.google.com/apis/credentials/consent)

@@ -13,6 +13,19 @@
     "login": "Login",
     "portal": "Portal"
   },
+  "floatingActions": {
+    "bookCall": "Book a Call",
+    "whatsapp": "WhatsApp",
+    "whatsappMessage": "Hello! I'd like to get in touch.",
+    "openContact": "Open contact options"
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "description": "We encountered an unexpected error. Please try refreshing the page.",
+    "details": "Error details",
+    "tryAgain": "Try again",
+    "refresh": "Refresh page"
+  },
   "portal": {
     "loading": {
       "init": "Initializing Studio Environment",
@@ -197,7 +210,12 @@
           "upload": "Upload Photo",
           "change": "Change Photo",
           "removing": "Removing...",
-          "remove": "Remove"
+          "remove": "Remove",
+          "sizeError": "Image size must be less than 2MB",
+          "uploadSuccess": "Profile photo updated",
+          "uploadError": "Failed to upload photo",
+          "removeSuccess": "Profile photo removed",
+          "removeError": "Failed to remove photo"
         },
         "save": "Update Profile",
         "success": "Your profile has been updated!",
@@ -206,6 +224,18 @@
       "general": {
         "title": "Organization Profile",
         "subtitle": "Basic information and appearance",
+        "logoLabel": "Organization Logo",
+        "logoUpload": "Upload Logo",
+        "logoChange": "Change Logo",
+        "logoRemove": "Remove Logo",
+        "logoHint": "PNG, JPG up to 2MB. Square images work best.",
+        "logo": {
+          "sizeError": "Logo size must be less than 2MB",
+          "uploadSuccess": "Organization logo updated",
+          "uploadError": "Failed to upload logo",
+          "removeSuccess": "Organization logo removed",
+          "removeError": "Failed to remove logo"
+        },
         "orgName": "Organization Name",
         "orgNamePlaceholder": "e.g. Acme Corp",
         "industry": "Industry / Niche",
@@ -326,7 +356,8 @@
         "requests": "Requests",
         "pricing": "Pricing Offers",
         "team": "Team",
-        "files": "Files"
+        "files": "Files",
+        "consultations": "Consultations"
       }
     },
     "header": {
@@ -378,7 +409,8 @@
       "prev": "Prev",
       "next": "Next",
       "recently": "Recently",
-      "general": "General"
+      "general": "General",
+      "total": "Total"
     },
     "dashboard": {
       "title": "Dashboard",
@@ -475,7 +507,58 @@
         "started_work": "Project moved to production",
         "paid_request": "Payment verified & secured",
         "added_comment": "New message in discussion",
-        "added_attachment": "Attachment added"
+        "added_attachment": "Attachment added",
+        "scheduled_consultation": "Consultation scheduled",
+        "completed_consultation": "Consultation completed",
+        "canceled_consultation": "Consultation canceled",
+        "marked_no_show": "Marked as no-show"
+      }
+    },
+    "consultations": {
+      "title": "Consultations",
+      "subtitle": "Manage client meetings and consultations",
+      "clientSubtitle": "View your scheduled meetings and consultation history",
+      "schedule": "Schedule Consultation",
+      "scheduleCall": "Schedule a Call",
+      "scheduleNow": "Schedule Now",
+      "searchPlaceholder": "Search consultations...",
+      "upcoming": "Upcoming",
+      "past": "Past Consultations",
+      "notes": "Meeting Notes",
+      "actionItems": "Action Items",
+      "stats": {
+        "upcoming": "Upcoming",
+        "completed": "Completed",
+        "canceled": "Canceled",
+        "total": "Total"
+      },
+      "empty": {
+        "title": "No consultations found",
+        "description": "Schedule your first consultation to get started"
+      },
+      "noUpcoming": "No upcoming consultations",
+      "noUpcomingDesc": "Ready to discuss your project? Schedule a call with our team.",
+      "types": {
+        "onboarding": "Onboarding Call",
+        "strategy": "Strategy Session",
+        "project_review": "Project Review",
+        "support": "Support Call"
+      },
+      "status": {
+        "scheduled": "Scheduled",
+        "completed": "Completed",
+        "canceled": "Canceled",
+        "no_show": "No Show"
+      },
+      "form": {
+        "type": "Type",
+        "title": "Meeting Title",
+        "titlePlaceholder": "e.g., Strategy Discussion",
+        "date": "Date",
+        "time": "Time",
+        "duration": "Duration",
+        "notes": "Agenda / Notes",
+        "notesPlaceholder": "What will you discuss?"
       }
     },
     "requests": {
@@ -500,12 +583,23 @@
       "createAndSend": "Create & Send Offer",
       "status": {
         "new": "New",
+        "needs_info": "Needs Info",
         "quoted": "Quoted",
+        "accepted": "Accepted",
+        "declined": "Declined",
         "queued": "Queued",
         "in_progress": "In Progress",
         "in_review": "In Review",
         "delivered": "Delivered",
-        "closed": "Closed"
+        "paid": "Paid",
+        "closed": "Closed",
+        "canceled": "Canceled"
+      },
+      "clientStatus": {
+        "submitted": "Submitted",
+        "in_progress": "In Progress",
+        "in_review": "In Review",
+        "completed": "Completed"
       },
       "priority": {
         "low": "Low",
@@ -617,7 +711,10 @@
         "submitRevision": "Submit Revision",
         "reportIssue": "Report Issue",
         "commentPlaceholder": "Share feedback or ask a question...",
-        "noComments": "No messages yet"
+        "noComments": "No messages yet",
+        "replyingTo": "Replying to",
+        "mentionMember": "Mention Member",
+        "unknownUser": "Unknown"
       },
       "types": {
         "audit": "Strategic Audit",
@@ -668,6 +765,10 @@
         "errors": {
           "sameOrgRequired": "Please select requests from the same client organization."
         }
+      },
+      "pricing": {
+        "subtitle": "Manage pricing offers across all client organizations.",
+        "revenue": "Revenue"
       },
       "workboard": {
         "title": "Project Workboard",
@@ -840,6 +941,34 @@
               "failed": "Failed to save service"
             }
           }
+        },
+        "integrations": {
+          "subtitle": "Connect your favorite tools",
+          "connected": "Connected",
+          "googleCalendar": {
+            "title": "Google Calendar",
+            "description": "Sync consultations with your Google Calendar and get automatic Meet links.",
+            "connect": "Connect Google Calendar",
+            "connecting": "Connecting...",
+            "disconnect": "Disconnect",
+            "disconnectConfirm": "Are you sure you want to disconnect Google Calendar?",
+            "syncNow": "Sync Now",
+            "syncing": "Syncing...",
+            "account": "Account",
+            "lastSync": "Last synced",
+            "calendars": "Calendars",
+            "feature1": "Auto-create calendar events for consultations",
+            "feature2": "Get Google Meet links automatically",
+            "feature3": "View your availability in the portal"
+          },
+          "slack": {
+            "title": "Slack",
+            "description": "Get notifications in your Slack workspace"
+          },
+          "stripe": {
+            "title": "Stripe",
+            "description": "Accept payments on your pricing offers"
+          }
         }
       }
     },
@@ -893,146 +1022,12 @@
       },
       "confirmCancel": "Are you sure you want to cancel this invitation?"
     },
-    "settings": {
-      "title": "Settings",
-      "subtitle": "Manage your organization and workspace preferences.",
-      "tabs": {
-        "general": "General",
-        "profile": "My Profile",
-        "notifications": "Notifications",
-        "security": "Security",
-        "billing": "Billing"
-      },
-      "profile": {
-        "title": "Personal Profile",
-        "subtitle": "Manage your individual identity and appearance",
-        "name": "Full Name",
-        "namePlaceholder": "Your Name",
-        "email": "Email Address",
-        "avatar": {
-          "title": "Profile Photo",
-          "desc": "Upload a professional thumbnail to represent you across the portal.",
-          "upload": "Upload Photo",
-          "change": "Change Photo",
-          "removing": "Removing...",
-          "remove": "Remove"
-        },
-        "save": "Update Profile",
-        "success": "Your profile has been updated!",
-        "error": "Failed to update profile"
-      },
-      "general": {
-        "title": "Organization Profile",
-        "subtitle": "Basic info & Appearance",
-        "orgName": "Organization Name",
-        "orgNamePlaceholder": "e.g. Acme Corp",
-        "industry": "Industry / Niche",
-        "industryPlaceholder": "e.g. Technology, SaaS",
-        "website": "Business Website",
-        "websitePlaceholder": "https://acme.com",
-        "bio": "Business Overview",
-        "bioPlaceholder": "Give us a brief context about what you do...",
-        "save": "Save Profile",
-        "saving": "Processing...",
-        "success": "Profile updated successfully!",
-        "error": "Failed to save settings",
-        "permissionDenied": "You do not have permission to access this organization",
-        "orgNotFound": "Organization not found",
-        "newWorkspace": {
-          "title": "New Workspace",
-          "description": "Need another workspace? Create a separate organization for a different team.",
-          "button": "Create Organization"
-        },
-        "dangerZone": {
-          "title": "Danger Zone",
-          "description": "Permanently delete this organization and all its data. This cannot be undone.",
-          "button": "Delete Workspace"
-        },
-        "onboarding": {
-          "title": "Restart Tour",
-          "description": "Re-experience the portal walkthrough to discover new features.",
-          "button": "Start Tour",
-          "success": "Onboarding will start on next page load",
-          "error": "Failed to reset onboarding status"
-        }
-      },
-      "notifications": {
-        "title": "Channels & Alerts",
-        "subtitle": "Email Delivery Settings",
-        "requestUpdate": {
-          "label": "Request Milestone Updates",
-          "desc": "Notifications for every movement in your project's lifecycle."
-        },
-        "commentAlerts": {
-          "label": "Real-time Comment Alerts",
-          "desc": "Stay in the loop when specialists or team members engage."
-        },
-        "statusChange": {
-          "label": "Direct Delivery Status",
-          "desc": "High-priority alerts for 'Delivered' and 'In Review' statuses."
-        },
-        "marketing": {
-          "label": "Product & Design News",
-          "desc": "Occasional insights from our studio on scaling your business."
-        },
-        "syncing": "Syncing changes...",
-        "saved": "Settings are live",
-        "pushBeta": "Looking for browser push notifications?",
-        "pushBetaSub": "Beta testing starting early 2026"
-      },
-      "security": {
-        "title": "Security Layer",
-        "subtitle": "Control your access",
-        "changePassword": {
-          "title": "Change Password",
-          "desc": "Reset your password via a secure verification link sent to your email.",
-          "button": "Request Reset Link",
-          "sent": "Link Dispatched",
-          "success": "Link Dispatched",
-          "error": "Failed to send reset email."
-        },
-        "mfa": {
-          "title": "Multi-Factor Auth (MFA)",
-          "desc": "Add a mobile authenticator app for ultimate account protection.",
-          "badge": "Pipeline 2026"
-        },
-        "session": {
-          "title": "Active Session Info",
-          "email": "Email Identifier",
-          "provider": "Identity Provider",
-          "mailService": "Mail Service"
-        }
-      },
-      "billing": {
-        "title": "Investment & Plans",
-        "nextPayment": "Professional Tier Status",
-        "priority": "Partner Priority",
-        "proStatus": "Active Partner",
-        "investment": "Monthly Investment",
-        "workflowLimit": "Active Workflows",
-        "teamAvailability": "Team Availability",
-        "perMonth": "/ month",
-        "unlimited": "Unlimited",
-        "seats": "10 Active Seats",
-        "stripeDashboard": "Stripe Portal",
-        "invoicingHistory": "Bill History",
-        "activeSubscription": "Active Subscription",
-        "enterpriseStatus": "Contact for terms",
-        "plans": {
-          "free": "Free Tier",
-          "pro": "Pro Studio",
-          "enterprise": "Enterprise"
-        },
-        "encrypted": {
-          "title": "Bank-Grade Encryption",
-          "desc": "All transaction data is handled securely via Stripe, protected by AES-256 encryption. We never store your full payment details."
-        }
-      }
-    },
     "pricing": {
       "title": "Pricing Offers",
       "subtitle": "Create and manage pricing proposals for clients.",
       "newOffer": "New Offer",
+      "editOffer": "Edit Pricing Offer",
+      "editOfferDescription": "Update your pricing proposal.",
       "status": {
         "draft": "Draft",
         "sent": "Sent",
@@ -1047,6 +1042,7 @@
       "noOffersClient": "No pricing offers available yet.",
       "includedRequests": "Included Requests",
       "form": {
+        "offerDetails": "Offer Details",
         "titleLabel": "Offer Title",
         "titlePlaceholder": "e.g., Website Redesign Proposal",
         "descriptionLabel": "Description",
@@ -1065,11 +1061,16 @@
         "saveDraft": "Save Draft",
         "sendToClient": "Send to Client",
         "sending": "Sending...",
+        "saveChanges": "Save Changes",
+        "saving": "Saving...",
+        "linkedRequestsNote": "Linked requests cannot be changed after creation.",
         "selectRequests": "Select Requests",
         "selectRequestsDescription": "Choose requests to include in this pricing offer",
         "selected": "selected",
         "noRequestsAvailable": "No requests available",
-        "allRequestsInOffers": "All requests are already in pricing offers or paid"
+        "allRequestsInOffers": "All requests are already in pricing offers or paid",
+        "settings": "Settings",
+        "clientInfo": "Client Info"
       },
       "detail": {
         "breakdown": "Pricing Breakdown",
@@ -2078,5 +2079,194 @@
     "portalLogin": "Portal Login",
     "needHelp": "Need help?",
     "contactTeam": "Contact our team"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "subtitle": "Your privacy is important to us. Learn how we collect, use, and protect your information.",
+    "lastUpdated": "Last updated",
+    "toc": "Table of Contents",
+    "sections": {
+      "collect": {
+        "title": "Information We Collect",
+        "intro": "When you use our website or services, we may collect:",
+        "items": {
+          "contact": {
+            "title": "Contact Information",
+            "desc": "Name, email address, phone number, and company name when you fill out our contact forms."
+          },
+          "project": {
+            "title": "Project Information",
+            "desc": "Details about your project needs that you share with us."
+          },
+          "usage": {
+            "title": "Usage Data",
+            "desc": "Information about how you interact with our website, including pages visited and time spent."
+          },
+          "device": {
+            "title": "Device Information",
+            "desc": "Browser type, operating system, and device type."
+          }
+        }
+      },
+      "use": {
+        "title": "How We Use Your Information",
+        "intro": "We use the information we collect to:",
+        "items": [
+          "Respond to your inquiries and provide customer support",
+          "Send you information about our services",
+          "Improve our website and services",
+          "Comply with legal obligations"
+        ]
+      },
+      "sharing": {
+        "title": "Information Sharing",
+        "intro": "We do not sell your personal information. We may share your information with:",
+        "items": {
+          "providers": {
+            "title": "Service Providers",
+            "desc": "Third-party services that help us operate our business (e.g., email services, analytics)."
+          },
+          "legal": {
+            "title": "Legal Requirements",
+            "desc": "When required by law or to protect our rights."
+          }
+        }
+      },
+      "cookies": {
+        "title": "Cookies and Tracking",
+        "intro": "We use cookies and similar technologies to:",
+        "items": [
+          "Remember your preferences (like language selection)",
+          "Understand how you use our website",
+          "Improve our services"
+        ],
+        "control": "You can control cookies through your browser settings."
+      },
+      "security": {
+        "title": "Data Security",
+        "content": "We implement appropriate security measures to protect your personal information. However, no method of transmission over the internet is 100% secure."
+      },
+      "rights": {
+        "title": "Your Rights",
+        "intro": "You have the right to:",
+        "items": [
+          "Access the personal information we hold about you",
+          "Request correction of inaccurate information",
+          "Request deletion of your information",
+          "Opt out of marketing communications"
+        ]
+      },
+      "thirdParty": {
+        "title": "Third-Party Services",
+        "intro": "Our website may use third-party services including:",
+        "items": [
+          "Google Analytics for website analytics",
+          "Firebase for hosting and authentication"
+        ],
+        "note": "These services have their own privacy policies."
+      },
+      "contact": {
+        "title": "Contact Us",
+        "intro": "If you have questions about this privacy policy or your personal information, please contact us at:",
+        "email": "Email"
+      },
+      "changes": {
+        "title": "Changes to This Policy",
+        "content": "We may update this privacy policy from time to time. We will notify you of any changes by posting the new policy on this page."
+      }
+    }
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "subtitle": "Please read these terms carefully before using our services.",
+    "lastUpdated": "Last updated",
+    "toc": "Table of Contents",
+    "sections": {
+      "agreement": {
+        "title": "Agreement to Terms",
+        "content": "By accessing or using the CartShift Studio website and services, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services."
+      },
+      "services": {
+        "title": "Services",
+        "intro": "CartShift Studio provides web development and e-commerce services, including but not limited to:",
+        "items": [
+          "Shopify store development and customization",
+          "WordPress website development",
+          "Website maintenance and support",
+          "E-commerce consulting"
+        ]
+      },
+      "projectAgreements": {
+        "title": "Project Agreements",
+        "intro": "All project work is subject to a separate project agreement that outlines:",
+        "items": [
+          "Scope of work",
+          "Timeline and milestones",
+          "Pricing and payment terms",
+          "Deliverables"
+        ]
+      },
+      "payment": {
+        "title": "Payment Terms",
+        "intro": "Payment terms are specified in individual project agreements. Generally:",
+        "items": [
+          "Deposits are required before work begins",
+          "Milestone payments may be required for larger projects",
+          "Final payment is due upon project completion"
+        ]
+      },
+      "ip": {
+        "title": "Intellectual Property",
+        "intro": "Upon full payment, clients receive ownership of custom code and designs created specifically for their project. CartShift Studio retains the right to:",
+        "items": [
+          "Use work in our portfolio (with client permission)",
+          "Reuse general techniques and non-proprietary code"
+        ]
+      },
+      "clientResponsibilities": {
+        "title": "Client Responsibilities",
+        "intro": "Clients are responsible for:",
+        "items": [
+          "Providing necessary content, assets, and information",
+          "Timely feedback and approvals",
+          "Ensuring they have rights to provided content",
+          "Maintaining their own backups"
+        ]
+      },
+      "liability": {
+        "title": "Limitation of Liability",
+        "content": "CartShift Studio is not liable for indirect, incidental, or consequential damages. Our total liability is limited to the amount paid for the specific service in question."
+      },
+      "warranties": {
+        "title": "Warranties",
+        "content": "We warrant that our services will be performed professionally and in accordance with industry standards. We do not guarantee specific business results such as sales or traffic increases."
+      },
+      "termination": {
+        "title": "Termination",
+        "intro": "Either party may terminate a project agreement with written notice. In case of termination:",
+        "items": [
+          "Client pays for work completed to date",
+          "Client receives deliverables for paid work",
+          "Deposits may be non-refundable depending on work completed"
+        ]
+      },
+      "confidentiality": {
+        "title": "Confidentiality",
+        "content": "Both parties agree to keep confidential information private and not share it with third parties without permission."
+      },
+      "governingLaw": {
+        "title": "Governing Law",
+        "content": "These terms are governed by the laws of Israel. Any disputes will be resolved in the courts of Israel."
+      },
+      "changes": {
+        "title": "Changes to Terms",
+        "content": "We may update these terms from time to time. Continued use of our services after changes constitutes acceptance of the new terms."
+      },
+      "contact": {
+        "title": "Contact",
+        "intro": "For questions about these terms, contact us at:",
+        "email": "Email"
+      }
+    }
   }
 }

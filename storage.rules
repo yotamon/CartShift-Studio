@@ -10,44 +10,85 @@ service firebase.storage {
       return request.auth.uid;
     }
 
-    function getUserDoc() {
-      return get(/databases/(default)/documents/portal_users/$(getUserId()));
-    }
-
     function isAgencyUser() {
-      return isAuthenticated()
-        && (getUserDoc().data.accountType == 'AGENCY' || getUserDoc().data.isAgency == true);
+      return isAuthenticated() &&
+             firestore.exists(/databases/(default)/documents/portal_users/$(getUserId())) &&
+             (
+               firestore.get(/databases/(default)/documents/portal_users/$(getUserId())).data.get('isAgency', false) == true ||
+               firestore.get(/databases/(default)/documents/portal_users/$(getUserId())).data.get('accountType', '') == 'AGENCY'
+             );
     }
 
-    function getMemberDoc(orgId) {
-      return get(/databases/(default)/documents/portal_members/$(orgId + '_' + getUserId()));
+    function isOrgMemberCheck(orgId) {
+      return isAuthenticated() &&
+             firestore.exists(/databases/(default)/documents/portal_members/$(orgId + '_' + getUserId()));
+    }
+
+    function isOrgAdmin(orgId) {
+      return isOrgMemberCheck(orgId) && (
+        firestore.get(/databases/(default)/documents/portal_members/$(orgId + '_' + getUserId())).data.get('role', '') == 'owner' ||
+        firestore.get(/databases/(default)/documents/portal_members/$(orgId + '_' + getUserId())).data.get('role', '') == 'admin'
+      );
+    }
+
+    function isOrgOwner(orgId) {
+      return isAuthenticated() &&
+             firestore.exists(/databases/(default)/documents/portal_organizations/$(orgId)) &&
+             firestore.get(/databases/(default)/documents/portal_organizations/$(orgId)).data.get('createdBy', '') == getUserId();
     }
 
     function isOrgMember(orgId) {
-      return isAuthenticated() && (isAgencyUser() || getMemberDoc(orgId).exists());
+      return isAuthenticated() && (
+        isAgencyUser() ||
+        isOrgOwner(orgId) ||
+        firestore.exists(/databases/(default)/documents/portal_members/$(orgId + '_' + getUserId()))
+      );
+    }
+
+    function canAdminOrg(orgId) {
+      return isAuthenticated() && (
+        isAgencyUser() ||
+        isOrgOwner(orgId) ||
+        isOrgAdmin(orgId)
+      );
+    }
+
+    function isOwnerOfAvatar(userId) {
+      return isAuthenticated() && getUserId() == userId;
     }
 
     // Portal files
     match /portal/{orgId}/{allPaths=**} {
-      // Members or agency can read
       allow read: if isOrgMember(orgId);
-
-      // Only members or agency can upload
-      // Max file size: 50MB
-      allow write: if isOrgMember(orgId)
+      allow create, update: if isOrgMember(orgId)
                    && request.resource.size < 50 * 1024 * 1024;
+      allow delete: if isOrgMember(orgId);
     }
 
-    // User avatars
+    // User avatars/profile pictures
     match /avatars/{userId}/{allPaths=**} {
-      // Authenticated users can read any avatar (for displaying profile pictures)
       allow read: if isAuthenticated();
+      allow create, update: if isOwnerOfAvatar(userId)
+                   && request.resource.size < 2 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+      allow delete: if isOwnerOfAvatar(userId);
+    }
 
-      // Users can only upload/delete their own avatars
-      // Max file size: 2MB
-      allow write: if isAuthenticated()
-                   && getUserId() == userId
-                   && request.resource.size < 2 * 1024 * 1024;
+    // Organization logos/thumbnails
+    match /org-logos/{orgId}/{allPaths=**} {
+      // Public read access for displaying in UI
+      allow read: if true;
+
+      // Allow org members, owners, and admins to upload logos
+      allow create, update: if isAuthenticated() && (
+        isAgencyUser() ||
+        isOrgOwner(orgId) ||
+        isOrgMemberCheck(orgId) ||
+        isOrgAdmin(orgId)
+      ) && request.resource.size < 2 * 1024 * 1024
+       && request.resource.contentType.matches('image/.*');
+
+      allow delete: if canAdminOrg(orgId);
     }
   }
 }

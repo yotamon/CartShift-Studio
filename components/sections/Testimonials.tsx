@@ -23,22 +23,22 @@ export const Testimonials: React.FC = () => {
       <div className="absolute inset-0 pointer-events-none">
         {/* Ambient glow orbs with parallax */}
         <Parallax speed={0.12}>
-          <div className="absolute top-[8%] right-[5%] w-[400px] h-[400px] bg-accent-500/12 dark:bg-accent-500/6 rounded-full blur-[90px]"></div>
+          <div className="absolute top-[8%] end-[5%] w-[400px] h-[400px] bg-accent-500/12 dark:bg-accent-500/6 rounded-full blur-[90px]"></div>
         </Parallax>
         <Parallax speed={-0.15}>
-          <div className="absolute top-[50%] left-[3%] w-[450px] h-[450px] bg-primary-500/15 dark:bg-primary-500/8 rounded-full blur-[100px]"></div>
+          <div className="absolute top-[50%] start-[3%] w-[450px] h-[450px] bg-primary-500/15 dark:bg-primary-500/8 rounded-full blur-[100px]"></div>
         </Parallax>
         <Parallax speed={0.2}>
-          <div className="absolute top-[30%] left-[40%] w-[500px] h-[500px] bg-accent-400/10 dark:bg-accent-400/5 rounded-full blur-[120px]"></div>
+          <div className="absolute top-[30%] start-[40%] w-[500px] h-[500px] bg-accent-400/10 dark:bg-accent-400/5 rounded-full blur-[120px]"></div>
         </Parallax>
         <Parallax speed={-0.1}>
-          <div className="absolute bottom-[5%] right-[20%] w-[400px] h-[400px] bg-primary-400/12 dark:bg-primary-400/6 rounded-full blur-[100px]"></div>
+          <div className="absolute bottom-[5%] end-[20%] w-[400px] h-[400px] bg-primary-400/12 dark:bg-primary-400/6 rounded-full blur-[100px]"></div>
         </Parallax>
 
         {/* Floating geometric shapes - CTA style */}
         <Parallax speed={0.3}>
           <motion.div
-            className="absolute top-[15%] left-[8%] w-18 h-18 border-2 border-accent-500/15 dark:border-accent-400/10 rounded-xl"
+            className="absolute top-[15%] start-[8%] w-18 h-18 border-2 border-accent-500/15 dark:border-accent-400/10 rounded-xl"
             animate={{ rotate: [0, -90, -180, -270, -360], y: [0, 15, 0, -15, 0] }}
             transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
           />
@@ -46,7 +46,7 @@ export const Testimonials: React.FC = () => {
 
         <Parallax speed={-0.25}>
           <motion.div
-            className="absolute top-[70%] right-[10%] w-20 h-20 border-2 border-primary-500/15 dark:border-primary-400/10 rounded-full"
+            className="absolute top-[70%] end-[10%] w-20 h-20 border-2 border-primary-500/15 dark:border-primary-400/10 rounded-full"
             animate={{ scale: [1, 1.15, 1], opacity: [0.25, 0.45, 0.25] }}
             transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -54,7 +54,7 @@ export const Testimonials: React.FC = () => {
 
         <Parallax speed={0.18}>
           <motion.div
-            className="absolute top-[40%] right-[5%] w-24 h-24 border border-accent-400/10 dark:border-accent-300/6 rounded-2xl"
+            className="absolute top-[40%] end-[5%] w-24 h-24 border border-accent-400/10 dark:border-accent-300/6 rounded-2xl"
             animate={{ rotate: [0, 40, 0] }}
             transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -62,7 +62,7 @@ export const Testimonials: React.FC = () => {
 
         <Parallax speed={-0.35}>
           <motion.div
-            className="absolute top-[20%] right-[25%] w-12 h-12 bg-primary-500/6 dark:bg-primary-400/4 rounded-lg"
+            className="absolute top-[20%] end-[25%] w-12 h-12 bg-primary-500/6 dark:bg-primary-400/4 rounded-lg"
             animate={{ y: [0, -20, 0], rotate: [0, -45, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -70,7 +70,7 @@ export const Testimonials: React.FC = () => {
 
         <Parallax speed={0.22}>
           <motion.div
-            className="absolute bottom-[35%] left-[15%] w-14 h-14 border border-accent-500/12 dark:border-accent-400/8 rounded-full"
+            className="absolute bottom-[35%] start-[15%] w-14 h-14 border border-accent-500/12 dark:border-accent-400/8 rounded-full"
             animate={{ scale: [1, 1.3, 1], x: [0, -10, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -78,7 +78,7 @@ export const Testimonials: React.FC = () => {
 
         <Parallax speed={-0.18}>
           <motion.div
-            className="absolute top-[55%] left-[50%] w-10 h-10 border-2 border-primary-400/10 dark:border-primary-300/6 rounded-lg"
+            className="absolute top-[55%] start-[50%] w-10 h-10 border-2 border-primary-400/10 dark:border-primary-300/6 rounded-lg"
             animate={{ rotate: [-45, 0, -45], y: [0, 10, 0] }}
             transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -86,7 +86,7 @@ export const Testimonials: React.FC = () => {
 
         <Parallax speed={0.28}>
           <motion.div
-            className="absolute bottom-[25%] right-[40%] w-8 h-8 bg-accent-400/10 dark:bg-accent-300/6 rounded-full"
+            className="absolute bottom-[25%] end-[40%] w-8 h-8 bg-accent-400/10 dark:bg-accent-300/6 rounded-full"
             animate={{ scale: [1, 1.5, 1], opacity: [0.3, 0.6, 0.3] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
           />

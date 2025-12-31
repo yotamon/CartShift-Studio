@@ -11,17 +11,24 @@ import {
   DollarSign,
   Send,
   Eye,
+  Pencil,
+  Trash2,
 } from 'lucide-react';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
+import { Dropdown } from '@/components/ui/Dropdown';
 import {
   PricingRequest,
   PRICING_STATUS_CONFIG,
   PRICING_STATUS,
   formatCurrency,
 } from '@/lib/types/pricing';
-import { subscribeToOrgPricingRequests, sendPricingRequest } from '@/lib/services/pricing-requests';
+import {
+  subscribeToOrgPricingRequests,
+  sendPricingRequest,
+  deletePricingRequest,
+} from '@/lib/services/pricing-requests';
 import { format } from 'date-fns';
 import { enUS, he } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -102,6 +109,16 @@ export default function PricingListClient() {
     }
   };
 
+  const handleDelete = async (requestId: string) => {
+    if (!confirm('Are you sure you want to delete this pricing offer?')) return;
+    try {
+      await deletePricingRequest(requestId);
+    } catch (err) {
+      console.error('Failed to delete pricing request:', err);
+      alert('Failed to delete. Please try again.');
+    }
+  };
+
   const filteredRequests = requests.filter(req => {
     const matchesFilter = activeFilter === 'All' || req.status === activeFilter;
     const matchesSearch =
@@ -162,11 +179,11 @@ export default function PricingListClient() {
         {/* Toolbar */}
         <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col lg:flex-row lg:items-center gap-4 bg-slate-50/50 dark:bg-slate-900/50">
           <div className="relative w-full lg:w-96">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <Search className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
             <input
               type="text"
               placeholder={t('portal.header.searchPlaceholder')}
-              className="portal-input pl-10 h-10 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 font-medium w-full font-outfit"
+              className="portal-input ps-10 h-10 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 font-medium w-full font-outfit"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
@@ -204,7 +221,7 @@ export default function PricingListClient() {
               </p>
             </div>
           ) : filteredRequests.length > 0 ? (
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-start border-collapse">
               <thead>
                 <tr className="bg-slate-50/50 dark:bg-slate-900/50 cursor-default">
                   <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest">
@@ -219,7 +236,7 @@ export default function PricingListClient() {
                   <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">
                     {t('portal.common.date')}
                   </th>
-                  <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">
+                  <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-end">
                     {t('portal.common.actions')}
                   </th>
                 </tr>
@@ -290,13 +307,22 @@ export default function PricingListClient() {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-4 text-end">
                       <div className="flex items-center justify-end gap-1">
                         <Link href={`/portal/org/${orgId}/pricing/${req.id}/`}>
                           <button className="p-2 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20">
                             <Eye size={16} />
                           </button>
                         </Link>
+                        {isAgency &&
+                          (req.status === PRICING_STATUS.DRAFT ||
+                            req.status === PRICING_STATUS.SENT) && (
+                            <Link href={`/portal/org/${orgId}/pricing/${req.id}/edit`}>
+                              <button className="p-2 text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 transition-all rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/20">
+                                <Pencil size={16} />
+                              </button>
+                            </Link>
+                          )}
                         {isAgency && req.status === PRICING_STATUS.DRAFT && (
                           <button
                             onClick={() => handleSend(req.id)}
@@ -305,9 +331,53 @@ export default function PricingListClient() {
                             <Send size={16} />
                           </button>
                         )}
-                        <button className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
-                          <MoreVertical size={16} />
-                        </button>
+                        <Dropdown
+                          trigger={
+                            <button className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
+                              <MoreVertical size={16} />
+                            </button>
+                          }
+                          items={[
+                            {
+                              label: t('portal.common.view'),
+                              icon: <Eye size={14} />,
+                              onClick: () =>
+                                (window.location.href = `/portal/org/${orgId}/pricing/${req.id}`),
+                            },
+                            ...(isAgency &&
+                            (req.status === PRICING_STATUS.DRAFT ||
+                              req.status === PRICING_STATUS.SENT)
+                              ? [
+                                  {
+                                    label: t('portal.common.edit'),
+                                    icon: <Pencil size={14} />,
+                                    onClick: () =>
+                                      (window.location.href = `/portal/org/${orgId}/pricing/${req.id}/edit`),
+                                  },
+                                ]
+                              : []),
+                            ...(isAgency && req.status === PRICING_STATUS.DRAFT
+                              ? [
+                                  {
+                                    label: 'Send to Client',
+                                    icon: <Send size={14} />,
+                                    onClick: () => handleSend(req.id),
+                                  },
+                                ]
+                              : []),
+                            ...(isAgency
+                              ? [
+                                  {
+                                    label: t('portal.common.delete'),
+                                    icon: <Trash2 size={14} />,
+                                    variant: 'danger' as const,
+                                    onClick: () => handleDelete(req.id),
+                                  },
+                                ]
+                              : []),
+                          ]}
+                          align="right"
+                        />
                       </div>
                     </td>
                   </tr>

@@ -23,6 +23,7 @@ import {
   CheckCheck,
   Menu,
   DollarSign,
+  Calendar,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
@@ -290,9 +291,19 @@ export const PortalShell = ({
             href: '/portal/agency/inbox/',
           },
           {
+            label: t('portal.sidebar.nav.pricing' as any),
+            icon: DollarSign,
+            href: '/portal/agency/pricing/',
+          },
+          {
             label: t('portal.sidebar.nav.workboard'),
             icon: Kanban,
             href: '/portal/agency/workboard/',
+          },
+          {
+            label: t('portal.sidebar.nav.consultations' as any),
+            icon: Calendar,
+            href: '/portal/agency/consultations/',
           },
           {
             label: t('portal.sidebar.nav.clients'),
@@ -325,6 +336,11 @@ export const PortalShell = ({
             label: t('portal.sidebar.nav.team'),
             icon: Users,
             href: `/portal/org/${effectiveOrgId}/team/`,
+          },
+          {
+            label: t('portal.sidebar.nav.consultations' as any),
+            icon: Calendar,
+            href: `/portal/org/${effectiveOrgId}/consultations/`,
           },
           {
             label: t('portal.sidebar.nav.files'),
@@ -388,6 +404,112 @@ export const PortalShell = ({
     );
   }
 
+  const portalElements = mounted
+    ? createPortal(
+        <AnimatePresence>
+          {isNotificationOpen && (
+            <motion.div
+              ref={notificationDropdownRef}
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              className="fixed w-96 bg-white/90 dark:bg-surface-900/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-surface-200/60 dark:border-surface-800/50 overflow-hidden z-[100]"
+              style={{
+                top: `${notificationPosition.top}px`,
+                right:
+                  notificationPosition.right !== undefined
+                    ? `${notificationPosition.right}px`
+                    : undefined,
+                left:
+                  notificationPosition.left !== undefined
+                    ? `${notificationPosition.left}px`
+                    : undefined,
+              }}
+            >
+              <div className="p-6 border-b border-surface-200/50 dark:border-surface-800/30 flex items-center justify-between bg-white/50 dark:bg-surface-900/50">
+                <h3 className="text-base font-black text-surface-900 dark:text-white">
+                  {t('portal.header.notifications' as any) || 'Notifications'}
+                </h3>
+                {unreadCount > 0 && (
+                  <button
+                    onClick={handleMarkAllAsRead}
+                    className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1.5 hover:underline decoration-2 underline-offset-4 transition-all"
+                  >
+                    <CheckCheck size={14} />
+                    {t('portal.header.markAllRead' as any) || 'Mark all as read'}
+                  </button>
+                )}
+              </div>
+
+              <div className="max-h-[450px] overflow-y-auto portal-scrollbar bg-white/30 dark:bg-surface-900/10">
+                {notifications.length === 0 ? (
+                  <div className="p-12 text-center">
+                    <div className="w-16 h-16 bg-surface-50 dark:bg-surface-950 rounded-full flex items-center justify-center mx-auto mb-4 border border-surface-200 dark:border-surface-800">
+                      <Bell size={24} className="text-surface-300 dark:text-surface-700" />
+                    </div>
+                    <p className="text-sm text-surface-500 font-bold">
+                      {t('portal.header.noNotifications' as any) || 'No notifications'}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-surface-100 dark:divide-surface-800/50">
+                    {notifications.map(notification => {
+                      const createdAt = notification.createdAt?.toDate
+                        ? notification.createdAt.toDate()
+                        : new Date();
+                      return (
+                        <button
+                          key={notification.id}
+                          onClick={() => handleNotificationClick(notification)}
+                          className={cn(
+                            'w-full p-5 text-start hover:bg-surface-50/80 dark:hover:bg-surface-800/40 transition-all flex items-start gap-4 group',
+                            !notification.read && 'bg-blue-50/30 dark:bg-blue-900/10'
+                          )}
+                        >
+                          <div
+                            className={cn(
+                              'w-2 h-2 rounded-full mt-2 flex-shrink-0 transition-all group-hover:scale-150',
+                              !notification.read
+                                ? 'bg-blue-600'
+                                : 'bg-transparent border border-surface-300 dark:border-surface-700'
+                            )}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p
+                              className={cn(
+                                'text-sm font-bold mb-1 font-outfit leading-tight',
+                                !notification.read
+                                  ? 'text-surface-900 dark:text-white'
+                                  : 'text-surface-500'
+                              )}
+                            >
+                              {notification.title}
+                            </p>
+                            <p className="text-xs text-surface-500/80 mb-3 line-clamp-2 leading-relaxed font-medium">
+                              {notification.body}
+                            </p>
+                            <div className="flex items-center gap-2">
+                              <div className="px-2 py-0.5 rounded-md bg-surface-100 dark:bg-surface-800 text-[10px] font-black uppercase text-surface-400">
+                                {formatDistanceToNow(createdAt, {
+                                  addSuffix: true,
+                                  locale: locale === 'he' ? he : enUS,
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )
+    : null;
+
   return (
     <div
       className={cn(
@@ -401,7 +523,7 @@ export const PortalShell = ({
       {/* Skip to main content link for accessibility */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-6 focus:py-3 focus:bg-blue-600 focus:text-white focus:rounded-2xl focus:shadow-xl focus:outline-none"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:start-4 focus:z-[100] focus:px-6 focus:py-3 focus:bg-blue-600 focus:text-white focus:rounded-2xl focus:shadow-xl focus:outline-none"
       >
         {t('portal.accessibility.skipToContent' as any) || 'Skip to main content'}
       </a>
@@ -419,18 +541,19 @@ export const PortalShell = ({
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
       <aside
         className={cn(
-          'portal-sidebar fixed top-0 bottom-0 z-[70] flex flex-col',
+          'portal-sidebar fixed top-0 bottom-0 z-[70] flex flex-col transition-transform duration-300',
+          'bg-white dark:bg-surface-950/80 backdrop-blur-xl',
+          'border-e border-surface-200/50 dark:border-surface-800/30 shadow-2xl shadow-surface-950/20',
           'w-[85vw] max-w-sm',
-          'md:translate-x-0',
           locale === 'he' ? 'right-0' : 'left-0',
           isMobileMenuOpen
             ? 'translate-x-0'
             : locale === 'he'
-              ? 'translate-x-[100%]'
+              ? 'translate-x-full'
               : '-translate-x-full',
+          'md:translate-x-0',
           isSidebarOpen
             ? 'md:w-[var(--sidebar-width-expanded)]'
             : 'md:w-[var(--sidebar-width-collapsed)]'
@@ -502,10 +625,7 @@ export const PortalShell = ({
                 {isActive && isSidebarOpen && (
                   <motion.div
                     layoutId="nav-active-indicator"
-                    className={cn(
-                      'absolute w-1 h-6 bg-blue-600 rounded-full',
-                      locale === 'he' ? 'left-0' : 'right-0'
-                    )}
+                    className="absolute w-1 h-6 bg-blue-600 rounded-full start-0"
                   />
                 )}
               </Link>
@@ -523,19 +643,8 @@ export const PortalShell = ({
             )}
             aria-label={isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
           >
-            <div
-              className={cn(
-                'transition-transform duration-500',
-                isSidebarOpen
-                  ? locale === 'he'
-                    ? 'rotate-180'
-                    : 'rotate-0'
-                  : locale === 'he'
-                    ? 'rotate-0'
-                    : 'rotate-180'
-              )}
-            >
-              <ChevronLeft size={20} />
+            <div className="transition-transform duration-500">
+              <ChevronLeft size={20} className="rtl:rotate-180" />
             </div>
             {isSidebarOpen && (
               <span className="text-sm font-bold">{t('portal.sidebar.collapse')}</span>
@@ -551,7 +660,7 @@ export const PortalShell = ({
           >
             <LogOut
               size={20}
-              className="flex-shrink-0 group-hover:translate-x-1 transition-transform"
+              className="flex-shrink-0 group-hover:ltr:translate-x-1 group-hover:rtl:-translate-x-1 transition-transform"
             />
             {isSidebarOpen && <span className="text-sm">{t('portal.sidebar.signOut')}</span>}
           </button>
@@ -564,12 +673,12 @@ export const PortalShell = ({
           'portal-main',
           'transition-all duration-300',
           isSidebarOpen
-            ? 'md:pl-[var(--sidebar-width-expanded)] rtl:md:pl-0 rtl:md:pr-[var(--sidebar-width-expanded)]'
-            : 'md:pl-[var(--sidebar-width-collapsed)] rtl:md:pl-0 rtl:md:pr-[var(--sidebar-width-collapsed)]'
+            ? 'md:ps-[var(--sidebar-width-expanded)]'
+            : 'md:ps-[var(--sidebar-width-collapsed)]'
         )}
       >
         {/* Header */}
-        <header className="portal-header h-20 flex items-center justify-between px-6 md:px-10">
+        <header className="portal-header h-20 flex items-center justify-between px-6 md:px-10 bg-white/50 dark:bg-surface-950/50 backdrop-blur-md border-b border-surface-200/50 dark:border-surface-800/30 sticky top-0 z-50">
           <div className="flex items-center gap-6">
             <button
               onClick={() => setIsMobileMenuOpen(true)}
@@ -580,13 +689,13 @@ export const PortalShell = ({
             </button>
             <div className="relative hidden lg:block group">
               <Search
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-surface-400 group-focus-within:text-blue-500 transition-colors"
+                className="absolute start-4 top-1/2 -translate-y-1/2 text-surface-400 group-focus-within:text-blue-500 transition-colors"
                 size={18}
               />
               <input
                 type="text"
                 placeholder={t('portal.header.searchPlaceholder')}
-                className="portal-input pl-12 w-64 focus:w-80"
+                className="portal-input ps-12 w-64 focus:w-80"
               />
             </div>
           </div>
@@ -609,14 +718,14 @@ export const PortalShell = ({
                 >
                   <Bell size={20} className="group-hover:scale-110 transition-transform" />
                   {unreadCount > 0 && (
-                    <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-blue-600 rounded-full ring-2 ring-white dark:ring-surface-950 animate-pulse" />
+                    <span className="absolute top-2.5 end-2.5 w-2 h-2 bg-blue-600 rounded-full ring-2 ring-white dark:ring-surface-950 animate-pulse" />
                   )}
                 </button>
               </div>
             </div>
 
             {/* User Profile */}
-            <div className="flex items-center gap-4 border-l dark:border-surface-800 pl-4 md:pl-8">
+            <div className="flex items-center gap-4 border-s dark:border-surface-800 ps-4 md:ps-8">
               <div className="hidden sm:flex flex-col items-end leading-none gap-1.5">
                 <span className="text-sm font-black text-surface-900 dark:text-white">
                   {userData?.name || t('portal.header.authorizedMember' as never)}
@@ -656,111 +765,7 @@ export const PortalShell = ({
       </div>
 
       {/* Portal Elements */}
-      {mounted &&
-        createPortal(
-          <AnimatePresence>
-            {isNotificationOpen && (
-              <motion.div
-                ref={notificationDropdownRef}
-                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                className="fixed w-96 bg-white/90 dark:bg-surface-900/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-surface-200/60 dark:border-surface-800/50 overflow-hidden z-[100]"
-                style={{
-                  top: `${notificationPosition.top}px`,
-                  right:
-                    notificationPosition.right !== undefined
-                      ? `${notificationPosition.right}px`
-                      : undefined,
-                  left:
-                    notificationPosition.left !== undefined
-                      ? `${notificationPosition.left}px`
-                      : undefined,
-                }}
-              >
-                <div className="p-6 border-b border-surface-200/50 dark:border-surface-800/30 flex items-center justify-between bg-white/50 dark:bg-surface-900/50">
-                  <h3 className="text-base font-black text-surface-900 dark:text-white">
-                    {t('portal.header.notifications' as any) || 'Notifications'}
-                  </h3>
-                  {unreadCount > 0 && (
-                    <button
-                      onClick={handleMarkAllAsRead}
-                      className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1.5 hover:underline decoration-2 underline-offset-4 transition-all"
-                    >
-                      <CheckCheck size={14} />
-                      Mark all as read
-                    </button>
-                  )}
-                </div>
-
-                <div className="max-h-[450px] overflow-y-auto portal-scrollbar bg-white/30 dark:bg-surface-900/10">
-                  {notifications.length === 0 ? (
-                    <div className="p-12 text-center">
-                      <div className="w-16 h-16 bg-surface-50 dark:bg-surface-950 rounded-full flex items-center justify-center mx-auto mb-4 border border-surface-200 dark:border-surface-800">
-                        <Bell size={24} className="text-surface-300 dark:text-surface-700" />
-                      </div>
-                      <p className="text-sm text-surface-500 font-bold">
-                        {t('portal.header.noNotifications' as any) || 'No notifications'}
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="divide-y divide-surface-100 dark:divide-surface-800/50">
-                      {notifications.map(notification => {
-                        const createdAt = notification.createdAt?.toDate
-                          ? notification.createdAt.toDate()
-                          : new Date();
-                        return (
-                          <button
-                            key={notification.id}
-                            onClick={() => handleNotificationClick(notification)}
-                            className={cn(
-                              'w-full p-5 text-left rtl:text-right hover:bg-surface-50/80 dark:hover:bg-surface-800/40 transition-all flex items-start gap-4 group',
-                              !notification.read && 'bg-blue-50/30 dark:bg-blue-900/10'
-                            )}
-                          >
-                            <div
-                              className={cn(
-                                'w-2 h-2 rounded-full mt-2 flex-shrink-0 transition-all group-hover:scale-150',
-                                !notification.read
-                                  ? 'bg-blue-600'
-                                  : 'bg-transparent border border-surface-300 dark:border-surface-700'
-                              )}
-                            />
-                            <div className="flex-1 min-w-0">
-                              <p
-                                className={cn(
-                                  'text-sm font-bold mb-1 font-outfit leading-tight',
-                                  !notification.read
-                                    ? 'text-surface-900 dark:text-white'
-                                    : 'text-surface-500'
-                                )}
-                              >
-                                {notification.title}
-                              </p>
-                              <p className="text-xs text-surface-500/80 mb-3 line-clamp-2 leading-relaxed font-medium">
-                                {notification.body}
-                              </p>
-                              <div className="flex items-center gap-2">
-                                <div className="px-2 py-0.5 rounded-md bg-surface-100 dark:bg-surface-800 text-[10px] font-black uppercase text-surface-400">
-                                  {formatDistanceToNow(createdAt, {
-                                    addSuffix: true,
-                                    locale: locale === 'he' ? he : enUS,
-                                  })}
-                                </div>
-                              </div>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>,
-          document.body
-        )}
-
+      {portalElements}
       {/* Onboarding Tour for new users */}
       {showOnboarding && userData?.id && (
         <OnboardingTour

@@ -102,6 +102,7 @@ export interface UpdatePricingRequestData {
   clientNotes?: string;
   agencyNotes?: string;
   status?: PricingStatus;
+  requestIds?: string[];
 }
 
 // ============================================

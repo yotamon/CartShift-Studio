@@ -197,7 +197,8 @@ export function getFileIcon(mimeType: string): string {
 
 export function subscribeToRequestFiles(
   requestId: string,
-  callback: (files: FileAttachment[]) => void
+  callback: (files: FileAttachment[]) => void,
+  orgId?: string
 ): () => void {
   let unsubscribe: (() => void) | null = null;
   let isUnsubscribed = false;
@@ -206,11 +207,22 @@ export function subscribeToRequestFiles(
     .then(() => {
       if (isUnsubscribed) return;
       const db = getFirestoreDb();
-      const q = query(
-        collection(db, FILES_COLLECTION),
-        where('requestId', '==', requestId),
-        orderBy('uploadedAt', 'desc')
-      );
+      let q;
+
+      if (orgId) {
+        q = query(
+          collection(db, FILES_COLLECTION),
+          where('requestId', '==', requestId),
+          where('orgId', '==', orgId),
+          orderBy('uploadedAt', 'desc')
+        );
+      } else {
+        q = query(
+          collection(db, FILES_COLLECTION),
+          where('requestId', '==', requestId),
+          orderBy('uploadedAt', 'desc')
+        );
+      }
 
       unsubscribe = onSnapshot(
         q,

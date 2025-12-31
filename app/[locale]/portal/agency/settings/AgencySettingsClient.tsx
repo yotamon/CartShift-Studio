@@ -24,7 +24,18 @@ import { InviteTeamMemberForm } from '@/components/portal/forms/InviteTeamMember
 import { ManageServiceForm } from '@/components/portal/forms/ManageServiceForm';
 import { subscribeToServices, deleteService } from '@/lib/services/portal-services';
 import { Service, formatCurrency } from '@/lib/types/portal';
-import { Plus, Edit2, Trash2, Tag } from 'lucide-react';
+import { Plus, Edit2, Trash2, Tag, MessageSquare, Zap } from 'lucide-react';
+import {
+  GoogleCalendarIntegration,
+  IntegrationCard,
+  CalendarConnection,
+} from '@/components/portal/integrations';
+import {
+  initiateGoogleOAuth,
+  getCalendarConnection,
+  disconnectCalendar,
+  isGoogleCalendarConfigured,
+} from '@/lib/services/portal-google-calendar';
 
 interface AgencyProfile {
   name: string;
@@ -55,6 +66,7 @@ export default function AgencySettingsClient() {
   const [editingService, setEditingService] = useState<Service | undefined>(undefined);
   const [services, setServices] = useState<Service[]>([]);
   const [loadingServices, setLoadingServices] = useState(false);
+  const [calendarConnection, setCalendarConnection] = useState<CalendarConnection | null>(null);
   const [cancellingInvite, setCancellingInvite] = useState<string | null>(null);
   const [profileFormData, setProfileFormData] = useState({
     name: '',
@@ -133,6 +145,13 @@ export default function AgencySettingsClient() {
       return () => {
         unsubscribeServices();
       };
+    }
+
+    if (activeTab === 'integrations') {
+      // Load Google Calendar connection status
+      getCalendarConnection().then(connection => {
+        setCalendarConnection(connection);
+      });
     }
 
     return undefined;
@@ -374,13 +393,13 @@ export default function AgencySettingsClient() {
                         <Loader2 className="w-6 h-6 text-white animate-spin" />
                       </div>
                     )}
-                    <label className="absolute -bottom-1 -right-1 p-2 bg-blue-600 text-white rounded-xl shadow-lg cursor-pointer hover:bg-blue-700 transition-all hover:scale-110 active:scale-95">
+                    <label className="absolute -bottom-1 -end-1 p-2 bg-blue-600 text-white rounded-xl shadow-lg cursor-pointer hover:bg-blue-700 transition-all hover:scale-110 active:scale-95">
                       <Camera size={16} />
                       <input type="file" className="hidden" accept="image/*" onChange={handleAvatarUpload} disabled={uploadingAvatar} />
                     </label>
                   </div>
 
-                  <div className="flex-1 text-center md:text-left">
+                  <div className="flex-1 text-center md:text-start">
                     <h4 className="font-bold text-surface-900 dark:text-white mb-1 font-outfit">
                       {t('settings.profile.avatar.title')}
                     </h4>
@@ -529,7 +548,7 @@ export default function AgencySettingsClient() {
                     setIsServiceModalOpen(true);
                   }}
                 >
-                  <Plus size={18} className="mr-2" />
+                  <Plus size={18} className="me-2" />
                   Add Service
                 </PortalButton>
               </div>
@@ -651,13 +670,13 @@ export default function AgencySettingsClient() {
                 </div>
               ) : team.length > 0 ? (
                 <div className="overflow-hidden rounded-xl border border-surface-100 dark:border-surface-800">
-                  <table className="w-full text-left">
+                  <table className="w-full text-start">
                     <thead className="bg-surface-50 dark:bg-surface-900/50 text-[10px] font-black text-surface-400 uppercase tracking-widest">
                       <tr>
                         <th className="px-6 py-4">{t('agency.settings.team.table.member')}</th>
                         <th className="px-6 py-4">{t('agency.settings.team.table.status')}</th>
                         <th className="px-6 py-4">{t('agency.settings.team.table.joined')}</th>
-                        <th className="px-6 py-4 text-right">{t('agency.settings.team.table.action')}</th>
+                        <th className="px-6 py-4 text-end">{t('agency.settings.team.table.action')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
@@ -689,7 +708,7 @@ export default function AgencySettingsClient() {
                               {member.createdAt?.toDate ? member.createdAt.toDate().toLocaleDateString() : 'N/A'}
                             </span>
                           </td>
-                          <td className="px-6 py-4 text-right">
+                          <td className="px-6 py-4 text-end">
                             <button className="text-xs font-bold text-surface-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors uppercase tracking-widest">
                                {t('agency.settings.team.edit')}
                             </button>
@@ -748,18 +767,64 @@ export default function AgencySettingsClient() {
           )}
 
           {activeTab === 'integrations' && (
-            <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm">
-              <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-4 font-outfit">
-                {t('agency.settings.tabs.integrations')}
-              </h3>
-              <p className="text-sm text-surface-500 dark:text-surface-400 mb-6 underline-offset-4">
-                Connect third-party tools and services.
-              </p>
-              <div className="py-12 text-center opacity-40">
-                <Shield className="w-12 h-12 text-surface-300 dark:text-surface-700 mx-auto mb-3" />
-                <p className="text-[10px] font-black uppercase tracking-widest text-surface-500 dark:text-surface-400">Integrations coming soon</p>
-              </div>
-            </PortalCard>
+            <div className="space-y-6">
+              <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2.5 rounded-xl bg-purple-50 dark:bg-purple-900/20 text-purple-600 border border-purple-100 dark:border-purple-900/30">
+                    <Zap size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-surface-900 dark:text-white font-outfit">
+                      {t('agency.settings.tabs.integrations')}
+                    </h3>
+                    <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mt-0.5">
+                      {t('agency.settings.integrations.subtitle') || 'Connect your favorite tools'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {/* Google Calendar Integration */}
+                  <GoogleCalendarIntegration
+                    connection={calendarConnection}
+                    onConnect={async () => {
+                      if (!isGoogleCalendarConfigured()) {
+                        alert('Google Calendar integration requires configuration. Please add NEXT_PUBLIC_GOOGLE_CLIENT_ID to your environment variables.');
+                        return;
+                      }
+                      initiateGoogleOAuth();
+                    }}
+                    onDisconnect={async () => {
+                      await disconnectCalendar();
+                      setCalendarConnection(null);
+                    }}
+                    onSync={async () => {
+                      // Refresh connection status
+                      const connection = await getCalendarConnection();
+                      setCalendarConnection(connection);
+                    }}
+                  />
+
+                  {/* Coming Soon - Slack */}
+                  <IntegrationCard
+                    title={t('agency.settings.integrations.slack.title') || 'Slack'}
+                    description={t('agency.settings.integrations.slack.description') || 'Get notifications in your Slack workspace'}
+                    icon={MessageSquare}
+                    iconGradient="from-purple-500 to-pink-500"
+                    comingSoon
+                  />
+
+                  {/* Coming Soon - Stripe */}
+                  <IntegrationCard
+                    title={t('agency.settings.integrations.stripe.title') || 'Stripe'}
+                    description={t('agency.settings.integrations.stripe.description') || 'Accept payments on your pricing offers'}
+                    icon={CreditCard}
+                    iconGradient="from-indigo-500 to-purple-600"
+                    comingSoon
+                  />
+                </div>
+              </PortalCard>
+            </div>
           )}
 
           {activeTab === 'billing' && (

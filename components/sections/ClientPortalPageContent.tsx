@@ -102,7 +102,7 @@ export const ClientPortalPageContent: React.FC = () => {
       {/* The Pain - More Dramatic */}
       <Section background="light" className="relative overflow-hidden">
         {/* Background decoration */}
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-red-500/5 to-transparent pointer-events-none" />
+        <div className="absolute top-0 end-0 w-1/2 h-full bg-gradient-to-l from-red-500/5 to-transparent pointer-events-none" />
 
         <div className="max-w-6xl mx-auto relative">
           <motion.div
@@ -128,7 +128,7 @@ export const ClientPortalPageContent: React.FC = () => {
                 className="group"
               >
                 <div className="relative h-full p-6 bg-white dark:bg-surface-800 rounded-2xl border border-red-200/50 dark:border-red-500/20 hover:border-red-300 dark:hover:border-red-500/40 transition-all duration-300 hover:shadow-lg">
-                  <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-red-100 dark:bg-red-500/10 flex items-center justify-center opacity-60 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute top-4 end-4 w-8 h-8 rounded-full bg-red-100 dark:bg-red-500/10 flex items-center justify-center opacity-60 group-hover:opacity-100 transition-opacity">
                     <svg
                       className="w-4 h-4 text-red-500"
                       fill="none"
@@ -143,7 +143,7 @@ export const ClientPortalPageContent: React.FC = () => {
                       />
                     </svg>
                   </div>
-                  <p className="text-surface-700 dark:text-surface-200 leading-relaxed pr-8">
+                  <p className="text-surface-700 dark:text-surface-200 leading-relaxed pe-8">
                     {item}
                   </p>
                 </div>
@@ -156,8 +156,8 @@ export const ClientPortalPageContent: React.FC = () => {
       {/* The Differentiator - Elevated */}
       <Section background="default" className="relative overflow-hidden">
         {/* Gradient orbs */}
-        <div className="absolute top-20 -left-40 w-80 h-80 bg-primary-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-20 -right-40 w-80 h-80 bg-accent-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-20 -start-40 w-80 h-80 bg-primary-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-20 -end-40 w-80 h-80 bg-accent-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10">
           <motion.div
@@ -222,7 +222,7 @@ export const ClientPortalPageContent: React.FC = () => {
 
           <div className="relative mt-16">
             {/* Flowing connection line for desktop */}
-            <div className="hidden lg:block absolute left-0 right-0 top-16">
+            <div className="hidden lg:block absolute start-0 end-0 top-16">
               <svg className="w-full h-24" preserveAspectRatio="none" viewBox="0 0 1000 100">
                 <motion.path
                   d="M 0 50 Q 250 10, 500 50 T 1000 50"
@@ -429,7 +429,7 @@ export const ClientPortalPageContent: React.FC = () => {
                 className="group"
               >
                 <div className="relative h-full p-6 bg-white dark:bg-surface-800 rounded-2xl border-2 border-surface-200 dark:border-surface-700 group-hover:border-accent-500/50 shadow-md group-hover:shadow-xl transition-all duration-300">
-                  <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-green-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute top-3 end-3 w-2 h-2 rounded-full bg-green-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                   <p className="text-surface-800 dark:text-surface-100 font-semibold">{lane}</p>
                 </div>
               </motion.div>
@@ -463,9 +463,9 @@ export const ClientPortalPageContent: React.FC = () => {
       <Section background="light" className="relative overflow-hidden">
         {/* Animated gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-accent-500/10 to-primary-600/10" />
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-0 start-1/4 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl animate-pulse" />
         <div
-          className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent-500/20 rounded-full blur-3xl animate-pulse"
+          className="absolute bottom-0 end-1/4 w-96 h-96 bg-accent-500/20 rounded-full blur-3xl animate-pulse"
           style={{ animationDelay: '1s' }}
         />
 

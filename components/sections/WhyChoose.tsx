@@ -59,22 +59,22 @@ export const WhyChoose: React.FC = () => {
       <div className="absolute inset-0 pointer-events-none">
         {/* Ambient glow orbs with parallax */}
         <Parallax speed={0.15}>
-          <div className="absolute top-[5%] left-[3%] w-[450px] h-[450px] bg-primary-500/15 dark:bg-primary-500/8 rounded-full blur-[100px]"></div>
+          <div className="absolute top-[5%] start-[3%] w-[450px] h-[450px] bg-primary-500/15 dark:bg-primary-500/8 rounded-full blur-[100px]"></div>
         </Parallax>
         <Parallax speed={-0.12}>
-          <div className="absolute top-[55%] right-[5%] w-[400px] h-[400px] bg-accent-500/12 dark:bg-accent-500/6 rounded-full blur-[90px]"></div>
+          <div className="absolute top-[55%] end-[5%] w-[400px] h-[400px] bg-accent-500/12 dark:bg-accent-500/6 rounded-full blur-[90px]"></div>
         </Parallax>
         <Parallax speed={0.18}>
-          <div className="absolute top-[35%] right-[30%] w-[550px] h-[550px] bg-primary-400/10 dark:bg-primary-400/5 rounded-full blur-[130px]"></div>
+          <div className="absolute top-[35%] end-[30%] w-[550px] h-[550px] bg-primary-400/10 dark:bg-primary-400/5 rounded-full blur-[130px]"></div>
         </Parallax>
         <Parallax speed={-0.1}>
-          <div className="absolute bottom-[10%] left-[25%] w-[500px] h-[500px] bg-accent-400/12 dark:bg-accent-400/6 rounded-full blur-[110px]"></div>
+          <div className="absolute bottom-[10%] start-[25%] w-[500px] h-[500px] bg-accent-400/12 dark:bg-accent-400/6 rounded-full blur-[110px]"></div>
         </Parallax>
 
         {/* Floating geometric shapes - CTA style */}
         <Parallax speed={0.35}>
           <motion.div
-            className="absolute top-[12%] left-[10%] w-20 h-20 border-2 border-primary-500/15 dark:border-primary-400/10 rounded-xl"
+            className="absolute top-[12%] start-[10%] w-20 h-20 border-2 border-primary-500/15 dark:border-primary-400/10 rounded-xl"
             animate={{ rotate: [0, 90, 180, 270, 360], y: [0, -20, 0, 20, 0] }}
             transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
           />
@@ -82,7 +82,7 @@ export const WhyChoose: React.FC = () => {
 
         <Parallax speed={-0.28}>
           <motion.div
-            className="absolute top-[75%] right-[12%] w-16 h-16 border-2 border-accent-500/15 dark:border-accent-400/10 rounded-full"
+            className="absolute top-[75%] end-[12%] w-16 h-16 border-2 border-accent-500/15 dark:border-accent-400/10 rounded-full"
             animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -90,7 +90,7 @@ export const WhyChoose: React.FC = () => {
 
         <Parallax speed={0.22}>
           <motion.div
-            className="absolute top-[50%] left-[5%] w-28 h-28 border border-primary-400/8 dark:border-primary-300/6 rounded-2xl"
+            className="absolute top-[50%] start-[5%] w-28 h-28 border border-primary-400/8 dark:border-primary-300/6 rounded-2xl"
             animate={{ rotate: [0, -35, 0] }}
             transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -98,7 +98,7 @@ export const WhyChoose: React.FC = () => {
 
         <Parallax speed={-0.32}>
           <motion.div
-            className="absolute top-[22%] right-[8%] w-14 h-14 bg-accent-500/6 dark:bg-accent-400/4 rounded-lg"
+            className="absolute top-[22%] end-[8%] w-14 h-14 bg-accent-500/6 dark:bg-accent-400/4 rounded-lg"
             animate={{ y: [0, 25, 0], rotate: [0, 45, 0] }}
             transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -106,7 +106,7 @@ export const WhyChoose: React.FC = () => {
 
         <Parallax speed={0.18}>
           <motion.div
-            className="absolute bottom-[30%] right-[35%] w-12 h-12 border border-primary-500/10 dark:border-primary-400/6 rounded-full"
+            className="absolute bottom-[30%] end-[35%] w-12 h-12 border border-primary-500/10 dark:border-primary-400/6 rounded-full"
             animate={{ scale: [1, 1.25, 1], x: [0, 12, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -114,7 +114,7 @@ export const WhyChoose: React.FC = () => {
 
         <Parallax speed={-0.2}>
           <motion.div
-            className="absolute top-[60%] left-[40%] w-10 h-10 border-2 border-accent-400/8 dark:border-accent-300/5 rounded-lg"
+            className="absolute top-[60%] start-[40%] w-10 h-10 border-2 border-accent-400/8 dark:border-accent-300/5 rounded-lg"
             animate={{ rotate: [45, 90, 45], y: [0, -12, 0] }}
             transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -122,7 +122,7 @@ export const WhyChoose: React.FC = () => {
 
         <Parallax speed={0.28}>
           <motion.div
-            className="absolute bottom-[40%] left-[60%] w-8 h-8 bg-primary-400/8 dark:bg-primary-300/5 rounded-full"
+            className="absolute bottom-[40%] start-[60%] w-8 h-8 bg-primary-400/8 dark:bg-primary-300/5 rounded-full"
             animate={{ scale: [1, 1.4, 1], opacity: [0.4, 0.7, 0.4] }}
             transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
           />

@@ -21,6 +21,7 @@ interface PackageCardProps {
   features: string[];
   cta: string;
   popular?: boolean;
+  popularBadge?: string;
   index: number;
 }
 
@@ -32,6 +33,7 @@ const PackageCard: React.FC<PackageCardProps> = ({
   features,
   cta,
   popular,
+  popularBadge,
   index,
 }) => (
   <motion.div
@@ -42,10 +44,10 @@ const PackageCard: React.FC<PackageCardProps> = ({
     className="relative h-full"
   >
     {popular && (
-      <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+      <div className="absolute -top-3 start-1/2 -translate-x-1/2 z-10">
         <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-yellow-400 text-yellow-900 text-xs font-bold uppercase tracking-wide">
           <Icon name="star" size={12} />
-          Most Popular
+          {popularBadge || 'Most Popular'}
         </span>
       </div>
     )}
@@ -167,10 +169,11 @@ export const PricingPageContent: React.FC = () => {
     cta: { title: string; titleSpan: string; description: string; button: string };
   };
 
+  const popularBadgeText = isHe ? 'הכי פופולרי' : 'Most Popular';
   const packages = [
     { ...pricing.packages.storeAudit, index: 0 },
     { ...pricing.packages.quickLaunch, index: 1 },
-    { ...pricing.packages.growthUpgrade, popular: true, index: 2 },
+    { ...pricing.packages.growthUpgrade, popular: true, popularBadge: popularBadgeText, index: 2 },
     { ...pricing.packages.customBuild, index: 3 },
   ];
 

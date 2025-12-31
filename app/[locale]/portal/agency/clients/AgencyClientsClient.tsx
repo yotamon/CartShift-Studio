@@ -17,12 +17,14 @@ import {
 } from 'lucide-react';
 import { getOrganizationsWithStats } from '@/lib/services/portal-organizations';
 import { Organization } from '@/lib/types/portal';
-import { Link } from '@/i18n/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
+import { Dropdown } from '@/components/ui/Dropdown';
 
 export default function AgencyClientsClient() {
   const t = useTranslations('portal');
+  const router = useRouter();
   const [organizations, setOrganizations] = useState<(Organization & { memberCount: number; requestCount: number })[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -72,11 +74,11 @@ export default function AgencyClientsClient() {
 
         <div className="flex flex-col md:flex-row md:items-center gap-4 bg-white dark:bg-surface-900/50 p-4 rounded-2xl border border-surface-200 dark:border-surface-800 shadow-sm">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400" size={18} />
+            <Search className="absolute start-3 top-1/2 -translate-y-1/2 text-surface-400" size={18} />
             <input
               type="text"
               placeholder={t('agency.clients.searchPlaceholder')}
-              className="portal-input pl-11 h-11 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900/50"
+              className="portal-input ps-11 h-11 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900/50"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -109,9 +111,19 @@ export default function AgencyClientsClient() {
                       >
                         {org.status ? t(`agency.clients.badge.${org.status}` as any) : t('agency.clients.badge.active')}
                       </PortalBadge>
-                      <button className="text-surface-300 hover:text-surface-900 dark:hover:text-white transition-colors p-1">
-                        <MoreVertical size={18} />
-                      </button>
+                      <div className="text-surface-300 hover:text-surface-900 dark:hover:text-white transition-colors">
+                        <Dropdown
+                          trigger={<MoreVertical size={18} />}
+                          align="right"
+                          items={[
+                            {
+                              label: t('agency.clients.detail.overview'),
+                              icon: <ArrowUpRight size={16} />,
+                              onClick: () => router.push(`/portal/agency/clients/${org.id}/`)
+                            }
+                          ]}
+                        />
+                      </div>
                     </div>
                   </div>
 

@@ -289,10 +289,10 @@ export const CreateRequestForm = ({ orgId }: CreateRequestFormProps) => {
             </div>
 
             {/* Selected Files List */}
-            <div className="space-y-2 max-h-[160px] overflow-y-auto portal-scrollbar pr-2">
+            <div className="space-y-2 max-h-[160px] overflow-y-auto portal-scrollbar pe-2">
               {selectedFiles.length > 0 ? (
                 selectedFiles.map((file, idx) => (
-                  <div key={`${file.name}-${idx}`} className="flex items-center justify-between p-3 bg-surface-50 dark:bg-surface-900/50 rounded-xl border border-surface-100 dark:border-surface-800 animate-in slide-in-from-right-2 duration-300">
+                  <div key={`${file.name}-${idx}`} className="flex items-center justify-between p-3 bg-surface-50 dark:bg-surface-900/50 rounded-xl border border-surface-100 dark:border-surface-800 animate-in slide-in-from-end-2 duration-300">
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="p-2 rounded-lg bg-white dark:bg-surface-800 text-surface-400 shadow-sm">
                         <File size={16} />

@@ -350,7 +350,7 @@ export default function CreatePricingForm() {
                       type="button"
                       onClick={() => toggleRequestSelection(request.id)}
                       className={cn(
-                        'w-full text-left p-4 rounded-xl border-2 transition-all duration-200',
+                        'w-full text-start p-4 rounded-xl border-2 transition-all duration-200',
                         isSelected
                           ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                           : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
@@ -452,7 +452,7 @@ export default function CreatePricingForm() {
                   </div>
                   <div className="col-span-3">
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
+                      <span className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
                         {CURRENCY_CONFIG[watchedCurrency]?.symbol || '$'}
                       </span>
                       <input
@@ -462,7 +462,7 @@ export default function CreatePricingForm() {
                         type="number"
                         min={0}
                         step={0.01}
-                        className="portal-input w-full text-sm pl-7"
+                        className="portal-input w-full text-sm ps-7"
                         placeholder="0.00"
                       />
                     </div>
@@ -532,12 +532,12 @@ export default function CreatePricingForm() {
                 <div className="relative">
                   <CalendarIcon
                     size={16}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                    className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400"
                   />
                   <input
                     {...register('validUntil')}
                     type="date"
-                    className="portal-input w-full pl-10"
+                    className="portal-input w-full ps-10"
                   />
                 </div>
               </div>

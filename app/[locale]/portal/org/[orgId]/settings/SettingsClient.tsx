@@ -20,13 +20,22 @@ import {
   RefreshCw,
   User as UserIcon,
   Camera,
+  ImageIcon,
 } from 'lucide-react';
 import { PortalAvatar } from '@/components/portal/ui/PortalAvatar';
-import { getFirebaseStorage, waitForAuth } from '@/lib/firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { cn } from '@/lib/utils';
 import { getOrganization, updateOrganization } from '@/lib/services/portal-organizations';
 import { updatePortalUser } from '@/lib/services/portal-users';
+import {
+  uploadUserProfilePicture,
+  deleteUserProfilePicture,
+  uploadOrganizationLogo,
+  deleteOrganizationLogo,
+  regenerateOrganizationLogoUrl,
+  convertToPublicUrl,
+  validateStorageRules,
+} from '@/lib/services/portal-uploads';
+import { getFirebaseStorage } from '@/lib/firebase';
 import { resetPassword } from '@/lib/services/auth';
 import { CreateOrganizationForm } from '@/components/portal/forms/CreateOrganizationForm';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
@@ -71,16 +80,47 @@ export default function SettingsClient() {
   });
   const [profileSaving, setProfileSaving] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingOrgLogo, setUploadingOrgLogo] = useState(false);
+  const [logoLoadError, setLogoLoadError] = useState(false);
 
   useEffect(() => {
     async function fetchOrganization() {
       if (!orgId || typeof orgId !== 'string') return;
 
       setLoading(true);
+
+      // Validate storage rules on component mount
+      console.log('🔥 [DEBUG] Validating storage rules...');
+      const rulesValid = await validateStorageRules();
+      if (!rulesValid) {
+        console.warn(
+          '🔥 [DEBUG] Storage rules validation failed - this may cause permission errors'
+        );
+      }
+
       try {
         const org = await getOrganization(orgId);
         if (org) {
+          // Convert token-based logo URLs to public URLs immediately
+          if (org.logoUrl) {
+            try {
+              const storage = getFirebaseStorage();
+              const bucket = storage.app.options.storageBucket || '';
+              const publicUrl = convertToPublicUrl(org.logoUrl, bucket);
+              if (publicUrl && publicUrl !== org.logoUrl) {
+                // Update in background without blocking UI
+                regenerateOrganizationLogoUrl(orgId, org.logoUrl, true).catch(() => {
+                  // Silently fail - will retry on error
+                });
+                org.logoUrl = publicUrl;
+              }
+            } catch (error) {
+              // Silently fail - will retry on error
+            }
+          }
+
           setOrganization(org);
+          setLogoLoadError(false);
           setFormData({
             name: org.name || '',
             website: org.website || '',
@@ -246,38 +286,118 @@ export default function SettingsClient() {
     if (!file || !user) return;
 
     if (file.size > 2 * 1024 * 1024) {
-      showFeedback('error', 'Image size must be less than 2MB');
+      showFeedback('error', t('portal.settings.profile.avatar.sizeError'));
       return;
     }
 
     setUploadingAvatar(true);
     try {
-      await waitForAuth();
-      const storage = getFirebaseStorage();
-      const storageRef = ref(storage, `avatars/${user.uid}/${Date.now()}_${file.name}`);
-      await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
+      const url = await uploadUserProfilePicture(user.uid, file);
       setProfileFormData(prev => ({ ...prev, photoUrl: url }));
-
-      // Auto-save the new photo URL
-      await updatePortalUser(user.uid, { photoUrl: url });
-      showFeedback('success', 'Profile photo updated');
+      showFeedback('success', t('portal.settings.profile.avatar.uploadSuccess'));
     } catch (error) {
       console.error('Error uploading avatar:', error);
-      showFeedback('error', 'Failed to upload photo');
+      showFeedback('error', t('portal.settings.profile.avatar.uploadError'));
     } finally {
       setUploadingAvatar(false);
     }
   };
 
   const removeAvatar = async () => {
-    if (!user) return;
+    if (!user || !profileFormData.photoUrl) return;
     try {
+      await deleteUserProfilePicture(user.uid, profileFormData.photoUrl);
       setProfileFormData(prev => ({ ...prev, photoUrl: '' }));
-      await updatePortalUser(user.uid, { photoUrl: '' });
-      showFeedback('success', 'Profile photo removed');
+      showFeedback('success', t('portal.settings.profile.avatar.removeSuccess'));
     } catch (error) {
       console.error('Error removing avatar:', error);
+      showFeedback('error', t('portal.settings.profile.avatar.removeError'));
+    }
+  };
+
+  const handleLogoError = async () => {
+    console.log('🔥 [DEBUG] handleLogoError called', {
+      logoUrl: organization?.logoUrl,
+      orgId,
+      userId: user?.uid,
+    });
+
+    if (!organization?.logoUrl || !orgId || typeof orgId !== 'string') {
+      console.log('🔥 [DEBUG] Early return - missing logoUrl or orgId');
+      setLogoLoadError(true);
+      return;
+    }
+
+    try {
+      console.log('🔥 [DEBUG] Attempting to regenerate logo URL...');
+      const newUrl = await regenerateOrganizationLogoUrl(orgId, organization.logoUrl);
+      console.log('🔥 [DEBUG] regenerateOrganizationLogoUrl returned:', newUrl);
+      if (newUrl) {
+        setOrganization((prev: any) => ({ ...prev, logoUrl: newUrl }));
+        setLogoLoadError(false);
+        console.log('🔥 [DEBUG] Logo URL regenerated successfully');
+      } else {
+        setLogoLoadError(true);
+        console.log('🔥 [DEBUG] Logo URL regeneration failed - no new URL');
+      }
+    } catch (error) {
+      console.warn('🔥 [DEBUG] Failed to regenerate logo URL:', error);
+      setLogoLoadError(true);
+    }
+  };
+
+  const handleOrgLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    console.log('🔥 [DEBUG] handleOrgLogoUpload called', {
+      fileName: file?.name,
+      fileSize: file?.size,
+      fileType: file?.type,
+      orgId,
+      userId: user?.uid,
+    });
+
+    if (!file || !orgId || typeof orgId !== 'string') {
+      console.log('🔥 [DEBUG] Early return - missing file or orgId');
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      console.log('🔥 [DEBUG] File size too large:', file.size);
+      showFeedback('error', t('portal.settings.general.logo.sizeError'));
+      return;
+    }
+
+    setUploadingOrgLogo(true);
+    setLogoLoadError(false);
+
+    try {
+      console.log('🔥 [DEBUG] Calling uploadOrganizationLogo...');
+      const url = await uploadOrganizationLogo(orgId, file);
+      console.log('🔥 [DEBUG] uploadOrganizationLogo returned:', url);
+      setOrganization((prev: any) => ({ ...prev, logoUrl: url }));
+      showFeedback('success', t('portal.settings.general.logo.uploadSuccess'));
+    } catch (error) {
+      console.error('🔥 [DEBUG] Error uploading org logo:', error);
+      console.error('🔥 [DEBUG] Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        code: error instanceof Error && 'code' in error ? (error as any).code : undefined,
+        stack: error instanceof Error ? error.stack : undefined,
+      });
+      showFeedback('error', t('portal.settings.general.logo.uploadError'));
+    } finally {
+      setUploadingOrgLogo(false);
+    }
+  };
+
+  const removeOrgLogo = async () => {
+    if (!orgId || typeof orgId !== 'string' || !organization?.logoUrl) return;
+    try {
+      await deleteOrganizationLogo(orgId, organization.logoUrl);
+      setOrganization((prev: any) => ({ ...prev, logoUrl: null }));
+      showFeedback('success', t('portal.settings.general.logo.removeSuccess'));
+    } catch (error) {
+      console.error('Error removing org logo:', error);
+      showFeedback('error', t('portal.settings.general.logo.removeError'));
     }
   };
 
@@ -359,6 +479,65 @@ export default function SettingsClient() {
                 </div>
 
                 <div className="space-y-6">
+                  {/* Organization Logo Upload */}
+                  <div className="pb-6 border-b border-slate-100 dark:border-slate-800">
+                    <label className="block text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-4">
+                      {t('portal.settings.general.logoLabel')}
+                    </label>
+                    <div className="flex items-center gap-6">
+                      <div className="relative group">
+                        <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:border-blue-400 dark:group-hover:border-blue-500">
+                          {organization?.logoUrl && !logoLoadError ? (
+                            <img
+                              src={organization.logoUrl}
+                              alt={organization.name || 'Organization logo'}
+                              className="w-full h-full object-cover"
+                              onError={handleLogoError}
+                              onLoad={() =>
+                                console.log(
+                                  '🔥 [DEBUG] Logo image loaded successfully:',
+                                  organization.logoUrl
+                                )
+                              }
+                            />
+                          ) : (
+                            <Building2 size={32} className="text-slate-300 dark:text-slate-600" />
+                          )}
+                        </div>
+                        {uploadingOrgLogo && (
+                          <div className="absolute inset-0 bg-white/80 dark:bg-slate-900/80 rounded-2xl flex items-center justify-center">
+                            <Loader2 size={24} className="animate-spin text-blue-500" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <label className="portal-btn portal-btn-secondary text-xs cursor-pointer">
+                          <Camera size={14} />
+                          {t('portal.settings.general.logoUpload')}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleOrgLogoUpload}
+                            disabled={uploadingOrgLogo}
+                          />
+                        </label>
+                        {organization?.logoUrl && (
+                          <button
+                            onClick={removeOrgLogo}
+                            disabled={uploadingOrgLogo}
+                            className="text-xs font-bold text-rose-500 hover:text-rose-600 dark:text-rose-400 dark:hover:text-rose-300 transition-colors disabled:opacity-50"
+                          >
+                            {t('portal.settings.general.logoRemove')}
+                          </button>
+                        )}
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
+                          {t('portal.settings.general.logoHint')}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <PortalInput
                       label={t('portal.settings.general.orgName')}
@@ -420,7 +599,7 @@ export default function SettingsClient() {
                     onClick={() => setShowCreateOrgModal(true)}
                     className="w-full shadow-lg shadow-emerald-500/10 bg-emerald-600 hover:bg-emerald-700 font-outfit"
                   >
-                    <Plus size={18} className="mr-2" />
+                    <Plus size={18} className="me-2" />
                     {t('portal.settings.general.newWorkspace.button')}
                   </PortalButton>
                 </PortalCard>
@@ -439,7 +618,7 @@ export default function SettingsClient() {
                     variant="outline"
                     className="w-full shadow-lg shadow-blue-500/10 border-blue-300 dark:border-blue-800 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 font-outfit"
                   >
-                    <RefreshCw size={18} className="mr-2" />
+                    <RefreshCw size={18} className="me-2" />
                     {t('portal.settings.general.onboarding.button')}
                   </PortalButton>
                 </PortalCard>
@@ -496,7 +675,7 @@ export default function SettingsClient() {
                           <Loader2 className="w-6 h-6 text-white animate-spin" />
                         </div>
                       )}
-                      <label className="absolute -bottom-1 -right-1 p-2 bg-blue-600 text-white rounded-xl shadow-lg cursor-pointer hover:bg-blue-700 transition-all hover:scale-110 active:scale-95">
+                      <label className="absolute -bottom-1 -end-1 p-2 bg-blue-600 text-white rounded-xl shadow-lg cursor-pointer hover:bg-blue-700 transition-all hover:scale-110 active:scale-95">
                         <Camera size={16} />
                         <input
                           type="file"
@@ -508,7 +687,7 @@ export default function SettingsClient() {
                       </label>
                     </div>
 
-                    <div className="flex-1 text-center md:text-left">
+                    <div className="flex-1 text-center md:text-start">
                       <h4 className="font-bold text-slate-900 dark:text-white mb-1 font-outfit">
                         {t('portal.settings.profile.avatar.title')}
                       </h4>
@@ -774,7 +953,7 @@ export default function SettingsClient() {
                 className="border-surface-200 dark:border-surface-800 shadow-xl overflow-hidden bg-white dark:bg-slate-950"
               >
                 <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 p-8 text-white relative">
-                  <div className="absolute right-0 top-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                  <div className="absolute end-0 top-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
                   <div className="relative z-10">
                     <div className="flex items-center justify-between mb-6">
                       <PortalBadge className="bg-white/20 text-white border-white/20 uppercase font-black tracking-widest text-[9px] px-3">
@@ -809,7 +988,7 @@ export default function SettingsClient() {
                           : organization?.plan === 'enterprise'
                             ? 'Custom'
                             : '$0'}
-                        <span className="text-sm font-medium opacity-40 ml-1">
+                        <span className="text-sm font-medium opacity-40 ms-1">
                           {organization?.plan === 'enterprise'
                             ? ''
                             : t('portal.settings.billing.perMonth')}

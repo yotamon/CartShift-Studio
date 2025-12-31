@@ -38,6 +38,16 @@ const nextConfig = {
         destination: '/:locale/portal/org/template/pricing/pricing/',
       },
 
+      // Pricing Edit - ANY pricingId → /pricing/pricing/edit/
+      {
+        source: '/:locale/portal/org/:orgId/pricing/:pricingId/edit/',
+        destination: '/:locale/portal/org/template/pricing/pricing/edit/',
+      },
+      {
+        source: '/:locale/portal/org/:orgId/pricing/:pricingId/edit',
+        destination: '/:locale/portal/org/template/pricing/pricing/edit/',
+      },
+
       // Request Detail - ANY requestId → /requests/request/
       {
         source: '/:locale/portal/org/:orgId/requests/:requestId/',

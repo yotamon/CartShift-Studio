@@ -137,6 +137,7 @@ export const LanguageSwitcher = () => {
   };
 
   const currentLanguage = locale as 'en' | 'he';
+  const isRtl = currentLanguage === 'he';
 
   const dropdownContent = (
     <AnimatePresence>
@@ -150,7 +151,7 @@ export const LanguageSwitcher = () => {
           className="fixed w-36 bg-white dark:bg-surface-800 rounded-xl shadow-lg border border-surface-200 dark:border-white/10 overflow-hidden z-[60]"
           style={{
             top: `${position.top}px`,
-            right: `${position.right}px`,
+            ...(isRtl ? { left: `${window.innerWidth - position.right - buttonRef.current!.getBoundingClientRect().width}px` } : { right: `${position.right}px` }),
           }}
         >
           <div className="p-1">

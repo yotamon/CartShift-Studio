@@ -60,7 +60,7 @@ export const RequestDiscussion = ({
   const getReplies = (parentId: string) => comments.filter(c => c.parentId === parentId);
 
   return (
-    <div className="space-y-4 animate-in slide-in-from-right-4 duration-500">
+    <div className="space-y-4 animate-in slide-in-from-end-4 duration-500">
       <h3 className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest flex items-center gap-2 px-1">
         <MessageSquare size={14} className="text-blue-500" />{' '}
         {t('requests.detail.discussion')}
@@ -115,15 +115,15 @@ export const RequestDiscussion = ({
 
           {/* Reply Context */}
           {replyTo && (
-            <div className="flex items-center justify-between bg-surface-50 dark:bg-surface-900 p-2 rounded-lg mb-2 text-xs border-l-2 border-blue-500">
+            <div className="flex items-center justify-between bg-surface-50 dark:bg-surface-900 p-2 rounded-lg mb-2 text-xs border-s-2 border-blue-500">
               <span className="text-surface-500">
-                Replying to <span className="font-bold">{replyTo.userName}</span>
+                {t('requests.detail.replyingTo')} <span className="font-bold">{replyTo.userName}</span>
               </span>
               <button
                 onClick={() => setReplyTo(null)}
                 className="text-surface-400 hover:text-surface-600"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
             </div>
           )}
@@ -141,7 +141,7 @@ export const RequestDiscussion = ({
             <button
               onClick={handleSubmit}
               disabled={isSubmitting || !newComment.trim()}
-              className="absolute right-3 bottom-3 p-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50 disabled:shadow-none"
+              className="absolute end-3 bottom-3 p-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50 disabled:shadow-none"
             >
               {isSubmitting ? (
                 <Loader2 size={18} className="animate-spin" />

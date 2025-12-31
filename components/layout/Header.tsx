@@ -147,7 +147,7 @@ export const Header: React.FC = () => {
         ease: [0.25, 0.1, 0.25, 1],
       }}
       className={`
-        fixed top-0 left-0 right-0 z-50
+        fixed top-0 start-0 end-0 z-50
         transition-all duration-300 ease-out
         ${
           isAtTop
@@ -364,7 +364,7 @@ export const Header: React.FC = () => {
                     </Link>
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-surface-600 dark:text-surface-400">
-                        Settings
+                        {t('nav.settings')}
                       </span>
                       <div className="flex items-center gap-3">
                         <LanguageSwitcher />

@@ -15,6 +15,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { getFirestoreDb, waitForAuth } from '@/lib/firebase';
+import { deepClean } from '@/lib/utils';
 import {
   PricingRequest,
   CreatePricingRequestData,
@@ -215,8 +216,12 @@ export async function updatePricingRequest(
   if (data.clientNotes !== undefined) updateData.clientNotes = data.clientNotes?.trim() || null;
   if (data.agencyNotes !== undefined) updateData.agencyNotes = data.agencyNotes?.trim() || null;
   if (data.status !== undefined) updateData.status = data.status;
+  if (data.requestIds !== undefined) updateData.requestIds = data.requestIds;
 
-  await updateDoc(docRef, updateData);
+  // Recursively clean the data to remove any undefined values (especially in nested lineItems)
+  const cleanedData = deepClean(updateData);
+
+  await updateDoc(docRef, cleanedData);
 }
 
 export async function sendPricingRequest(requestId: string): Promise<void> {
@@ -481,6 +486,104 @@ export async function getPricingStats(orgId: string): Promise<{
     accepted: requests.filter((r) => r.status === PRICING_STATUS.ACCEPTED).length,
     paid: paidRequests.length,
     totalRevenue,
+  };
+}
+
+// ============================================
+// AGENCY FUNCTIONS (ALL ORGS)
+// ============================================
+
+/**
+ * Get all pricing requests across all organizations (for agency use)
+ */
+export async function getAllPricingRequests(options?: {
+  status?: PricingStatus | PricingStatus[];
+  limit?: number;
+}): Promise<PricingRequest[]> {
+  await waitForAuth();
+  const db = getFirestoreDb();
+  let q = query(
+    collection(db, PRICING_REQUESTS_COLLECTION),
+    orderBy('createdAt', 'desc')
+  );
+
+  if (options?.status) {
+    const statuses = Array.isArray(options.status) ? options.status : [options.status];
+    q = query(q, where('status', 'in', statuses));
+  }
+
+  if (options?.limit) {
+    q = query(q, limit(options.limit));
+  }
+
+  try {
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as PricingRequest[];
+  } catch (error: unknown) {
+    const firebaseError = error as { code?: string };
+    if (firebaseError.code === 'permission-denied') {
+      console.error('Permission denied accessing all pricing requests');
+      return [];
+    }
+    throw error;
+  }
+}
+
+/**
+ * Subscribe to all pricing requests across all organizations (for agency use)
+ */
+export function subscribeToAllPricingRequests(
+  callback: (requests: PricingRequest[]) => void,
+  options?: {
+    status?: PricingStatus[];
+  }
+): () => void {
+  let unsubscribe: (() => void) | null = null;
+  let isUnsubscribed = false;
+
+  waitForAuth()
+    .then(() => {
+      if (isUnsubscribed) return;
+      const db = getFirestoreDb();
+      const q = query(
+        collection(db, PRICING_REQUESTS_COLLECTION),
+        orderBy('createdAt', 'desc')
+      );
+
+      unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          let requests = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as PricingRequest[];
+
+          // Client-side filtering for status if needed
+          if (options?.status && options.status.length > 0) {
+            requests = requests.filter((r) => options.status!.includes(r.status));
+          }
+
+          callback(requests);
+        },
+        (error) => {
+          console.error('Error in all pricing requests snapshot:', error);
+          callback([]);
+        }
+      );
+    })
+    .catch(error => {
+      console.error('Error waiting for auth in subscribeToAllPricingRequests:', error);
+      callback([]);
+    });
+
+  return () => {
+    isUnsubscribed = true;
+    if (unsubscribe) {
+      unsubscribe();
+    }
   };
 }
 

@@ -1,4 +1,4 @@
-import { setRequestLocale } from 'next-intl/server';
+import { setRequestLocale, getMessages } from 'next-intl/server';
 import DashboardClient from './DashboardClient';
 import { getPortalStaticOrgParams } from '@/lib/portal-static-params';
 
@@ -11,5 +11,6 @@ export async function generateStaticParams() {
 export default async function DashboardPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale as 'en' | 'he');
-  return <DashboardClient />;
+  const messages = await getMessages();
+  return <DashboardClient messages={messages} locale={locale} />;
 }

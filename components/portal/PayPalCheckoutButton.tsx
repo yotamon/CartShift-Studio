@@ -30,7 +30,7 @@ export function PayPalCheckoutButton({
     return (
       <div className="flex items-center justify-center py-4">
         <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
-        <span className="ml-2 text-sm text-surface-500">{t('portal.common.loading')}</span>
+        <span className="ms-2 text-sm text-surface-500">{t('portal.common.loading')}</span>
       </div>
     );
   }
@@ -38,7 +38,9 @@ export function PayPalCheckoutButton({
   if (isRejected) {
     return (
       <div className="text-center py-4">
-        <p className="text-red-500 text-sm">Failed to load payment system. Please refresh the page.</p>
+        <p className="text-red-500 text-sm">
+          {t('portal.payment.loadError' as any) || 'Failed to load payment system. Please refresh the page.'}
+        </p>
       </div>
     );
   }

@@ -335,7 +335,7 @@ export default function InviteClient() {
                 <PortalButton onClick={handleAcceptInvite} disabled={accepting} className="w-full">
                   {accepting ? (
                     <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <Loader2 className="w-4 h-4 me-2 animate-spin" />
                       {t('portal.invite.accepting')}
                     </>
                   ) : (

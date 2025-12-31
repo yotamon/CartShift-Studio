@@ -130,7 +130,7 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
               <div
                 className={cn(
                   'absolute top-10 bottom-0 w-0.5 bg-surface-100 dark:bg-surface-800',
-                  isHe ? 'right-6' : 'left-6'
+                  isHe ? 'end-6' : 'start-6'
                 )}
               />
             )}
@@ -141,7 +141,7 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
               }
               className={cn(
                 'flex items-start gap-4 p-3.5 rounded-2xl hover:bg-surface-50 dark:hover:bg-surface-900/50 transition-all cursor-pointer group hover-lift-sm',
-                isHe && 'flex-row-reverse text-right'
+                isHe && 'flex-row-reverse text-end'
               )}
             >
               {/* Icon Container */}

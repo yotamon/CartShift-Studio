@@ -188,13 +188,15 @@ export default function TeamClient() {
           </h3>
           <PortalCard
             noPadding
-            className="border-surface-200 dark:border-surface-800 shadow-sm overflow-hidden bg-white dark:bg-surface-950"
+            className="border-surface-200 dark:border-surface-800 shadow-sm !overflow-visible bg-white dark:bg-surface-950"
+            style={{ overflow: 'visible' }}
           >
-            <div className="divide-y divide-surface-100 dark:divide-surface-800">
+            <div className="divide-y divide-surface-100 dark:divide-surface-800 !overflow-visible" style={{ overflow: 'visible' }}>
               {members.map(member => (
                 <div
                   key={member.id}
-                  className="p-5 flex items-center justify-between hover:bg-surface-50/50 dark:hover:bg-surface-900/30 transition-colors group"
+                  className="p-5 flex items-center justify-between hover:bg-surface-50/50 dark:hover:bg-surface-900/30 transition-colors group !overflow-visible relative"
+                  style={{ overflow: 'visible' }}
                 >
                   <div className="flex items-center gap-4">
                     <PortalAvatar
@@ -210,7 +212,7 @@ export default function TeamClient() {
                       <p className="text-xs font-bold text-surface-400">{member.email}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-8">
+                  <div className="flex items-center gap-8 !overflow-visible" style={{ overflow: 'visible' }}>
                     <div className="hidden lg:flex flex-col items-end">
                       <span className="text-[10px] font-black text-surface-900 dark:text-white uppercase tracking-widest">
                         {member.role}
@@ -224,7 +226,8 @@ export default function TeamClient() {
                         ? t('portal.team.roles.owner')
                         : t('portal.team.roles.member')}
                     </PortalBadge>
-                    <Dropdown
+                    <div className="!overflow-visible relative" style={{ overflow: 'visible' }}>
+                      <Dropdown
                       trigger={
                         <span className="text-surface-400 hover:text-surface-900 dark:hover:text-white p-2 transition-colors rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 inline-flex">
                           <MoreHorizontal size={18} />
@@ -250,6 +253,7 @@ export default function TeamClient() {
                         },
                       ]}
                     />
+                    </div>
                   </div>
                 </div>
               ))}
@@ -343,7 +347,7 @@ export default function TeamClient() {
           </PortalCard>
 
           <PortalCard className="bg-slate-900 border-none shadow-2xl relative overflow-hidden group">
-            <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-blue-600/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000" />
+            <div className="absolute -end-8 -bottom-8 w-32 h-32 bg-blue-600/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000" />
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
                 <h4 className="font-bold text-sm text-white font-outfit">

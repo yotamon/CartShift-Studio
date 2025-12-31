@@ -18,7 +18,7 @@ export const CTABanner: React.FC = () => {
       {/* Animated mesh gradient background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-br from-primary-500/8 via-transparent to-accent-500/8 dark:from-primary-500/5 dark:to-accent-500/5"></div>
-        <div className="absolute top-0 left-0 w-full h-full">
+        <div className="absolute top-0 start-0 w-full h-full">
           <svg
             className="absolute inset-0 w-full h-full opacity-[0.03] dark:opacity-[0.08]"
             viewBox="0 0 100 100"
@@ -36,7 +36,7 @@ export const CTABanner: React.FC = () => {
 
       {/* Floating geometric shapes */}
       <motion.div
-        className="absolute top-20 left-[15%] w-20 h-20 border-2 border-primary-500/20 rounded-xl"
+        className="absolute top-20 start-[15%] w-20 h-20 border-2 border-primary-500/20 rounded-xl"
         animate={{
           rotate: [0, 90, 180, 270, 360],
           y: [0, -20, 0, 20, 0],
@@ -44,7 +44,7 @@ export const CTABanner: React.FC = () => {
         transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
       />
       <motion.div
-        className="absolute bottom-20 right-[15%] w-16 h-16 border-2 border-accent-500/20 rounded-full"
+        className="absolute bottom-20 end-[15%] w-16 h-16 border-2 border-accent-500/20 rounded-full"
         animate={{
           scale: [1, 1.2, 1],
           opacity: [0.3, 0.6, 0.3],
@@ -52,14 +52,14 @@ export const CTABanner: React.FC = () => {
         transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute top-1/2 left-[5%] w-24 h-24 border border-primary-400/10 rounded-2xl"
+        className="absolute top-1/2 start-[5%] w-24 h-24 border border-primary-400/10 rounded-2xl"
         animate={{
           rotate: [0, -45, 0],
         }}
         transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute top-1/3 right-[8%] w-12 h-12 bg-accent-500/5 rounded-lg"
+        className="absolute top-1/3 end-[8%] w-12 h-12 bg-accent-500/5 rounded-lg"
         animate={{
           y: [0, 30, 0],
           rotate: [0, 45, 0],
@@ -68,9 +68,9 @@ export const CTABanner: React.FC = () => {
       />
 
       {/* Ambient Glow Orbs - Enhanced */}
-      <div className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-primary-500/15 dark:bg-primary-500/20 rounded-full blur-[150px] animate-pulse"></div>
+      <div className="absolute top-1/2 start-1/4 w-[500px] h-[500px] bg-primary-500/15 dark:bg-primary-500/20 rounded-full blur-[150px] animate-pulse"></div>
       <div
-        className="absolute top-1/2 right-1/4 w-[400px] h-[400px] bg-accent-500/12 dark:bg-accent-500/15 rounded-full blur-[120px] animate-pulse"
+        className="absolute top-1/2 end-1/4 w-[400px] h-[400px] bg-accent-500/12 dark:bg-accent-500/15 rounded-full blur-[120px] animate-pulse"
         style={{ animationDelay: '1s' }}
       ></div>
 
@@ -90,7 +90,7 @@ export const CTABanner: React.FC = () => {
           {/* Inner content */}
           <div className="relative rounded-xl md:rounded-[2rem] p-8 md:p-12 lg:p-14 bg-white dark:bg-surface-900 text-center overflow-hidden">
             {/* Inner decorative orb */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-b from-primary-500/10 to-transparent rounded-full blur-3xl"></div>
+            <div className="absolute top-0 start-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-b from-primary-500/10 to-transparent rounded-full blur-3xl"></div>
 
             <div className="relative z-10 space-y-6 md:space-y-8">
               <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold text-surface-900 dark:text-white leading-[1.1] tracking-tight">

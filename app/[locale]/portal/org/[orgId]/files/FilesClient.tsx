@@ -163,11 +163,11 @@ export default function FilesClient() {
       >
         <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/30 dark:bg-slate-900/30">
           <div className="relative w-full md:w-96">
-            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search size={18} className="absolute start-4 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               placeholder={t('portal.files.searchPlaceholder')}
-              className="w-full pl-11 pr-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-900 dark:text-white"
+              className="w-full ps-11 pe-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-900 dark:text-white"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
@@ -181,7 +181,7 @@ export default function FilesClient() {
 
         <div className="overflow-x-auto">
           {filteredFiles.length > 0 ? (
-            <table className="w-full text-left">
+            <table className="w-full text-start">
               <thead>
                 <tr className="bg-slate-50/50 dark:bg-slate-900/50">
                   <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit">
@@ -196,7 +196,7 @@ export default function FilesClient() {
                   <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit">
                     {t('portal.files.table.transmission')}
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit text-right">
+                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit text-end">
                     {t('portal.files.table.actions')}
                   </th>
                 </tr>
@@ -245,7 +245,7 @@ export default function FilesClient() {
                           : t('portal.files.recentlyAdded')}
                       </span>
                     </td>
-                    <td className="px-6 py-5 text-right">
+                    <td className="px-6 py-5 text-end">
                       <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
                         <a
                           href={file.url}

@@ -114,13 +114,13 @@ function LoginForm() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   error={errors.password?.message}
-                  className="pr-10"
+                  className="pe-10"
                   {...register('password')}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors"
+                  className="absolute end-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors"
                   aria-label={showPassword ? t('portal.auth.hidePassword' as any) : t('portal.auth.showPassword' as any)}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -167,7 +167,7 @@ function LoginForm() {
             className="w-full h-11 border-surface-200 dark:border-surface-800"
             type="button"
           >
-            <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 me-3" viewBox="0 0 24 24">
               <path
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                 fill="#4285F4"

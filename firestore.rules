@@ -1,9 +1,9 @@
+// Rules updated
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper functions
     function isAuthenticated() {
       return request.auth != null;
     }
@@ -12,109 +12,228 @@ service cloud.firestore {
       return request.auth.uid;
     }
 
-    function getUserData() {
-      return get(/databases/$(database)/documents/portal_users/$(getUserId())).data;
-    }
-
-    function isAgency() {
+    function isMemberOfOrg(orgId) {
       return isAuthenticated() &&
-        exists(/databases/$(database)/documents/portal_users/$(getUserId())) &&
-        (getUserData().get('isAgency', false) == true || getUserData().get('accountType', '') == 'AGENCY');
+             orgId != null && orgId != '' &&
+             exists(/databases/$(database)/documents/portal_members/$(orgId + '_' + getUserId()));
     }
 
-    function isMember(orgId) {
-      return isAuthenticated() && (
-        isAgency() ||
-        exists(/databases/$(database)/documents/portal_members/$(orgId + '_' + getUserId()))
+    function isOrgOwner(orgId) {
+      return isAuthenticated() &&
+             orgId != null && orgId != '' &&
+             exists(/databases/$(database)/documents/portal_organizations/$(orgId)) &&
+             get(/databases/$(database)/documents/portal_organizations/$(orgId)).data.createdBy == getUserId();
+    }
+
+    function isAgencyUser() {
+      return isAuthenticated() &&
+             exists(/databases/$(database)/documents/portal_users/$(getUserId())) &&
+             (
+               get(/databases/$(database)/documents/portal_users/$(getUserId())).data.get('isAgency', false) == true ||
+               get(/databases/$(database)/documents/portal_users/$(getUserId())).data.get('accountType', '') == 'AGENCY'
+             );
+    }
+
+    function canAccessOrg(orgId) {
+      return orgId != null && orgId != '' && (
+        isAgencyUser() ||
+        isMemberOfOrg(orgId) ||
+        isOrgOwner(orgId)
       );
     }
 
-    function isMemberAdmin(orgId) {
-      return isAuthenticated() && (
-        isAgency() || (
-          exists(/databases/$(database)/documents/portal_members/$(orgId + '_' + getUserId())) &&
-          get(/databases/$(database)/documents/portal_members/$(orgId + '_' + getUserId())).data.get('role', 'member') in ['owner', 'admin']
-        )
+    function getMemberDoc(orgId) {
+      return get(/databases/$(database)/documents/portal_members/$(orgId + '_' + getUserId()));
+    }
+
+    function isOrgAdmin(orgId) {
+      return isMemberOfOrg(orgId) && (
+        getMemberDoc(orgId).data.get('role', '') == 'owner' ||
+        getMemberDoc(orgId).data.get('role', '') == 'admin'
       );
     }
 
-    // Portal Users - authenticated users can read/write their own, read all others
+    function canAdminOrg(orgId) {
+      return isAuthenticated() && (
+        isOrgOwner(orgId) ||
+        isAgencyUser() ||
+        isOrgAdmin(orgId)
+      );
+    }
+
     match /portal_users/{userId} {
-      allow read: if isAuthenticated() && (getUserId() == userId || isAgency());
+      allow read: if isAuthenticated();
       allow create: if isAuthenticated() && getUserId() == userId;
       allow update: if isAuthenticated() && getUserId() == userId;
       allow delete: if false;
     }
 
-    // Portal Organizations - allow all authenticated users to read (prevents permission errors)
     match /portal_organizations/{orgId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated() && request.resource.data.get('createdBy', '') == getUserId();
-      allow update, delete: if isMemberAdmin(orgId);
+      allow update: if canAdminOrg(orgId);
+      allow delete: if false;
     }
 
-    // Portal Members - allow read if authenticated, write if admin
     match /portal_members/{memberId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated();
-      allow update, delete: if isAuthenticated() && (isAgency() || isMemberAdmin(resource.data.orgId));
+      allow read: if isAuthenticated() && (
+        memberId == (resource.data.get('orgId', '') + '_' + getUserId()) ||
+        canAccessOrg(resource.data.get('orgId', ''))
+      );
+      allow create: if isAuthenticated() && (
+        memberId == (request.resource.data.get('orgId', '') + '_' + getUserId()) ||
+        isOrgOwner(request.resource.data.get('orgId', ''))
+      );
+      allow update: if resource != null && canAdminOrg(resource.data.get('orgId', ''));
+      allow delete: if false;
     }
 
-    // Portal Invites - public read for invite acceptance, authenticated write
     match /portal_invites/{inviteId} {
-      allow read: if isAuthenticated();
-      allow create, update, delete: if isAuthenticated() && (isAgency() || isMemberAdmin(request.resource.data.orgId));
+      allow read: if isAuthenticated() && (
+        resource != null && (
+          resource.data.get('email', '') == request.auth.token.email ||
+          canAccessOrg(resource.data.get('orgId', '')) ||
+          resource.data.get('isAgency', false) == true
+        )
+      );
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && resource != null && (
+        resource.data.get('email', '') == request.auth.token.email ||
+        canAccessOrg(resource.data.get('orgId', '')) ||
+        isAgencyUser()
+      );
+      allow delete: if resource != null && canAdminOrg(resource.data.get('orgId', ''));
     }
 
-    // Portal Requests
     match /portal_requests/{requestId} {
-      allow read: if isAuthenticated() && (isAgency() || isMember(resource.data.orgId));
-      allow create: if isAuthenticated() && (isAgency() || isMember(request.resource.data.orgId));
-      allow update, delete: if isAuthenticated() && (isAgency() || isMember(resource.data.orgId));
+      allow read: if isAuthenticated() && (
+        isAgencyUser() ||
+        resource.data.get('createdBy', '') == getUserId() ||
+        canAccessOrg(resource.data.get('orgId', ''))
+      );
+      allow create: if isAuthenticated() && (
+        isAgencyUser() ||
+        isMemberOfOrg(request.resource.data.get('orgId', '')) ||
+        isOrgOwner(request.resource.data.get('orgId', ''))
+      );
+      allow update: if isAuthenticated() && resource != null && (
+        resource.data.get('createdBy', '') == getUserId() ||
+        canAccessOrg(resource.data.get('orgId', ''))
+      );
+      allow delete: if false;
     }
 
-    // Portal Comments
     match /portal_comments/{commentId} {
-      allow read: if isAuthenticated() && (isAgency() || isMember(resource.data.orgId));
-      allow create: if isAuthenticated() && (isAgency() || isMember(request.resource.data.orgId));
-      allow update, delete: if isAuthenticated() && (isAgency() || isMember(resource.data.orgId));
+      function getRequestOrgIdFromRequest() {
+        return exists(/databases/$(database)/documents/portal_requests/$(request.resource.data.get('requestId', '')))
+          ? get(/databases/$(database)/documents/portal_requests/$(request.resource.data.get('requestId', ''))).data.get('orgId', '')
+          : '';
+      }
+      allow read: if isAuthenticated() && (
+        isAgencyUser() ||
+        (resource != null && (
+          canAccessOrg(resource.data.get('orgId', '')) ||
+          resource.data.get('createdBy', '') == getUserId()
+        ))
+      );
+      allow create: if isAuthenticated() && (
+        isMemberOfOrg(getRequestOrgIdFromRequest()) ||
+        isOrgOwner(getRequestOrgIdFromRequest())
+      );
+      allow update: if isAuthenticated() && resource != null && (
+        resource.data.get('createdBy', '') == getUserId() ||
+        isAgencyUser()
+      );
+      allow delete: if isAuthenticated() && resource != null && (
+        resource.data.get('createdBy', '') == getUserId() ||
+        isAgencyUser()
+      );
     }
 
-    // Portal Files
     match /portal_files/{fileId} {
-      allow read: if isAuthenticated() && (isAgency() || isMember(resource.data.orgId));
-      allow create: if isAuthenticated() && (isAgency() || isMember(request.resource.data.orgId));
-      allow update, delete: if isAuthenticated() && (isAgency() || isMember(resource.data.orgId));
+      allow read: if isAuthenticated() && (
+        isAgencyUser() ||
+        (resource != null && (
+          canAccessOrg(resource.data.get('orgId', '')) ||
+          resource.data.get('uploadedBy', '') == getUserId()
+        ))
+      );
+      allow create: if isAuthenticated() && (
+        isMemberOfOrg(request.resource.data.get('orgId', '')) ||
+        isOrgOwner(request.resource.data.get('orgId', ''))
+      );
+      allow update: if isAuthenticated() && resource != null && (
+        resource.data.get('uploadedBy', '') == getUserId() ||
+        isAgencyUser()
+      );
+      allow delete: if isAuthenticated() && resource != null && (
+        resource.data.get('uploadedBy', '') == getUserId() ||
+        isAgencyUser()
+      );
     }
 
-    // Portal Notifications - users can only access their own
     match /portal_notifications/{notificationId} {
-      allow read: if isAuthenticated() && (resource == null || resource.data.userId == getUserId());
-      allow create: if isAuthenticated() && request.resource.data.userId == getUserId();
-      allow update, delete: if isAuthenticated() && resource != null && resource.data.userId == getUserId();
+      allow read: if isAuthenticated() && resource != null && resource.data.get('userId', '') == getUserId();
+      allow create: if isAuthenticated() && request.resource.data.get('userId', '') == getUserId();
+      allow update, delete: if isAuthenticated() && resource != null && resource.data.get('userId', '') == getUserId();
     }
 
-    // Portal Pricing Requests
     match /portal_pricing_requests/{requestId} {
-      allow read: if isAuthenticated() && (isAgency() || isMember(resource.data.orgId));
-      allow create: if isAuthenticated() && (isAgency() || isMember(request.resource.data.orgId));
-      allow update, delete: if isAuthenticated() && (isAgency() || isMember(resource.data.orgId));
+      allow read: if isAuthenticated() && (
+        isAgencyUser() ||
+        (resource != null && (
+          canAccessOrg(resource.data.get('orgId', '')) ||
+          resource.data.get('createdBy', '') == getUserId()
+        ))
+      );
+      allow create: if isAuthenticated() && (
+        isMemberOfOrg(request.resource.data.get('orgId', '')) ||
+        isOrgOwner(request.resource.data.get('orgId', ''))
+      );
+      allow update: if isAuthenticated() && resource != null && (
+        canAccessOrg(resource.data.get('orgId', '')) ||
+        resource.data.get('createdBy', '') == getUserId()
+      );
+      allow delete: if false;
     }
 
-    // Portal Activities
     match /portal_activities/{activityId} {
-      allow read: if isAuthenticated() && (isAgency() || isMember(resource.data.orgId));
-      allow create: if isAuthenticated() && (isAgency() || isMember(request.resource.data.orgId));
+      allow read: if isAuthenticated() && (
+        isAgencyUser() ||
+        resource.data.get('userId', '') == getUserId() ||
+        canAccessOrg(resource.data.get('orgId', ''))
+      );
+      allow create: if isAuthenticated();
       allow update, delete: if false;
     }
 
-    // Agencies - users can read all, write only to their own (document ID = user ID)
+    match /portal_consultations/{consultationId} {
+      allow read: if isAuthenticated() && (
+        isAgencyUser() ||
+        (resource != null && canAccessOrg(resource.data.get('orgId', '')))
+      );
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && resource != null && (
+        isAgencyUser() ||
+        canAccessOrg(resource.data.get('orgId', '')) ||
+        resource.data.get('createdBy', '') == getUserId()
+      );
+      allow delete: if isAuthenticated() && isAgencyUser();
+    }
+
     match /agencies/{agencyId} {
       allow read: if isAuthenticated();
       allow write: if isAuthenticated() && getUserId() == agencyId;
     }
 
-    // Default: deny all other access
+    match /agency_integrations/{integrationId} {
+      allow read: if isAuthenticated() && (
+        integrationId.matches("^" + getUserId() + "_.*") ||
+        isAgencyUser()
+      );
+      allow create, update, delete: if isAuthenticated() && integrationId.matches("^" + getUserId() + "_.*");
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

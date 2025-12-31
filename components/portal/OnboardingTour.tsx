@@ -198,7 +198,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
           className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden"
         >
           {/* Progress Bar */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-slate-100 dark:bg-slate-800">
+          <div className="absolute top-0 start-0 end-0 h-1 bg-slate-100 dark:bg-slate-800">
             <motion.div
               className="h-full bg-gradient-to-r from-blue-500 to-indigo-500"
               initial={{ width: 0 }}
@@ -211,7 +211,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
           {!isLastStep && (
             <button
               onClick={handleSkip}
-              className="absolute top-4 right-4 rtl:right-auto rtl:left-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="absolute top-4 end-4 rtl:end-auto rtl:start-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
               aria-label={t('portal.onboarding.skip')}
             >
               <X size={20} />

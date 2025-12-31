@@ -125,7 +125,7 @@ export function RequestMilestones({ request, isAgency }: RequestMilestonesProps)
             </div>
           </div>
 
-          <div className="relative pl-8 space-y-8 before:absolute before:left-3 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-100 dark:before:bg-surface-800">
+          <div className="relative ps-8 space-y-8 before:absolute before:start-3 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-100 dark:before:bg-surface-800">
             {milestones.length > 0 ? (
               milestones.map(ms => {
                 const isActive = ms.id === request.currentMilestoneId;
@@ -136,7 +136,7 @@ export function RequestMilestones({ request, isAgency }: RequestMilestonesProps)
                     <div
                       onClick={() => handleToggleStatus(ms)}
                       className={cn(
-                        'absolute -left-8 mt-1 w-6.5 h-6.5 rounded-full border-4 border-white dark:border-surface-950 flex items-center justify-center transition-all z-10',
+                        'absolute -start-8 mt-1 w-6.5 h-6.5 rounded-full border-4 border-white dark:border-surface-950 flex items-center justify-center transition-all z-10',
                         isAgency && !isEditing ? 'cursor-pointer hover:scale-110 active:scale-95' : '',
                         isCompleted
                           ? 'bg-emerald-500 text-white'

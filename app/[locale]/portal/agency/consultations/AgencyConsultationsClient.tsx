@@ -1,0 +1,461 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations, useLocale } from 'next-intl';
+import { format } from 'date-fns';
+import { enUS, he } from 'date-fns/locale';
+import {
+  Calendar,
+  Clock,
+  Users,
+  Video,
+  Plus,
+  Search,
+  Filter,
+  MoreVertical,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
+  Building2,
+  ChevronRight,
+  UserPlus,
+  Target,
+  ClipboardCheck,
+  Headphones,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { PortalButton } from '@/components/portal/ui/PortalButton';
+import {
+  Consultation,
+  CONSULTATION_TYPE_CONFIG,
+  CONSULTATION_STATUS_CONFIG,
+  ConsultationType,
+  ConsultationStatus,
+  CONSULTATION_STATUS,
+} from '@/lib/types/portal';
+import {
+  subscribeToAllConsultations,
+  completeConsultation,
+  cancelConsultation,
+} from '@/lib/services/portal-consultations';
+import { getOrganization, getAllOrganizations } from '@/lib/services/portal-organizations';
+import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
+import ScheduleConsultationForm from '@/components/portal/ScheduleConsultationForm';
+import { Organization } from '@/lib/types/portal';
+
+const typeIcons: Record<ConsultationType, React.ElementType> = {
+  onboarding: UserPlus,
+  strategy: Target,
+  project_review: ClipboardCheck,
+  support: Headphones,
+};
+
+const statusIcons: Record<ConsultationStatus, React.ElementType> = {
+  scheduled: Calendar,
+  completed: CheckCircle2,
+  canceled: XCircle,
+  no_show: AlertCircle,
+};
+
+export default function AgencyConsultationsClient() {
+  const t = useTranslations();
+  const locale = useLocale();
+  const { userData } = usePortalAuth();
+  const [consultations, setConsultations] = useState<Consultation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<ConsultationStatus | 'all'>('all');
+  const [orgNames, setOrgNames] = useState<Record<string, string>>({});
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+
+  const dateLocale = locale === 'he' ? he : enUS;
+
+  useEffect(() => {
+    const unsubscribe = subscribeToAllConsultations(
+      data => {
+        setConsultations(data);
+        setLoading(false);
+        // Fetch org names for display
+        const uniqueOrgIds = [...new Set(data.map(c => c.orgId))];
+        uniqueOrgIds.forEach(async orgId => {
+          if (!orgNames[orgId]) {
+            const org = await getOrganization(orgId);
+            if (org) {
+              setOrgNames(prev => ({ ...prev, [orgId]: org.name }));
+            }
+          }
+        });
+      },
+      statusFilter !== 'all' ? { status: [statusFilter] } : undefined
+    );
+
+    return () => unsubscribe();
+  }, [statusFilter]);
+
+  // Fetch organizations for the schedule picker
+  useEffect(() => {
+    getAllOrganizations().then(orgs => {
+      setOrganizations(orgs);
+    });
+  }, []);
+
+  const filteredConsultations = consultations.filter(c => {
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      return (
+        c.title.toLowerCase().includes(query) ||
+        (orgNames[c.orgId] || '').toLowerCase().includes(query)
+      );
+    }
+    return true;
+  });
+
+  const handleComplete = async (consultation: Consultation) => {
+    if (!userData) return;
+    await completeConsultation(
+      consultation.id,
+      consultation.orgId,
+      userData.id,
+      userData.name || 'Agency'
+    );
+  };
+
+  const handleCancel = async (consultation: Consultation) => {
+    if (!userData) return;
+    await cancelConsultation(
+      consultation.id,
+      consultation.orgId,
+      userData.id,
+      userData.name || 'Agency'
+    );
+  };
+
+  const upcomingCount = consultations.filter(
+    c => c.status === CONSULTATION_STATUS.SCHEDULED
+  ).length;
+
+  return (
+    <div className="p-6 md:p-10 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-black text-surface-900 dark:text-white font-outfit tracking-tight">
+            {t('portal.consultations.title' as any) || 'Consultations'}
+          </h1>
+          <p className="text-surface-500 dark:text-surface-400 mt-1">
+            {t('portal.consultations.subtitle' as any) ||
+              'Manage client meetings and consultations'}
+          </p>
+        </div>
+        <PortalButton variant="primary" className="gap-2" onClick={() => setShowScheduleModal(true)}>
+          <Plus size={18} />
+          {t('portal.consultations.schedule' as any) || 'Schedule Consultation'}
+        </PortalButton>
+      </div>
+
+      {/* Schedule Modal */}
+      <AnimatePresence>
+        {showScheduleModal && (
+          <>
+            {/* Org Picker if no org selected */}
+            {!selectedOrg ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                onClick={(e) => e.target === e.currentTarget && setShowScheduleModal(false)}
+              >
+                <motion.div
+                  initial={{ scale: 0.95, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="bg-white dark:bg-surface-900 rounded-2xl shadow-2xl w-full max-w-md p-6"
+                >
+                  <h3 className="text-lg font-bold text-surface-900 dark:text-white mb-4">
+                    Select Client Organization
+                  </h3>
+                  <div className="space-y-2 max-h-80 overflow-auto">
+                    {organizations.map(org => (
+                      <button
+                        key={org.id}
+                        onClick={() => setSelectedOrg(org)}
+                        className="w-full p-3 text-start rounded-xl border border-surface-200 dark:border-surface-700 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all"
+                      >
+                        <p className="font-bold text-surface-900 dark:text-white">{org.name}</p>
+                        {org.industry && (
+                          <p className="text-sm text-surface-500">{org.industry}</p>
+                        )}
+                      </button>
+                    ))}
+                    {organizations.length === 0 && (
+                      <p className="text-center text-surface-500 py-4">No client organizations found</p>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => setShowScheduleModal(false)}
+                    className="mt-4 w-full py-2 text-surface-500 hover:text-surface-700 text-sm font-medium"
+                  >
+                    Cancel
+                  </button>
+                </motion.div>
+              </motion.div>
+            ) : (
+              <ScheduleConsultationForm
+                orgId={selectedOrg.id}
+                orgName={selectedOrg.name}
+                onClose={() => {
+                  setShowScheduleModal(false);
+                  setSelectedOrg(null);
+                }}
+                onSuccess={() => {
+                  // Refresh will happen automatically via subscription
+                }}
+              />
+            )}
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="p-4 bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+              <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-black text-surface-900 dark:text-white">
+                {upcomingCount}
+              </p>
+              <p className="text-xs text-surface-500 font-medium">
+                {t('portal.consultations.stats.upcoming' as any) || 'Upcoming'}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="p-4 bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+              <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-black text-surface-900 dark:text-white">
+                {consultations.filter(c => c.status === CONSULTATION_STATUS.COMPLETED).length}
+              </p>
+              <p className="text-xs text-surface-500 font-medium">
+                {t('portal.consultations.stats.completed' as any) || 'Completed'}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="p-4 bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-surface-100 dark:bg-surface-800 flex items-center justify-center">
+              <XCircle className="w-5 h-5 text-surface-500" />
+            </div>
+            <div>
+              <p className="text-2xl font-black text-surface-900 dark:text-white">
+                {consultations.filter(c => c.status === CONSULTATION_STATUS.CANCELED).length}
+              </p>
+              <p className="text-xs text-surface-500 font-medium">
+                {t('portal.consultations.stats.canceled' as any) || 'Canceled'}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="p-4 bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+              <Clock className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-black text-surface-900 dark:text-white">
+                {consultations.length}
+              </p>
+              <p className="text-xs text-surface-500 font-medium">
+                {t('portal.consultations.stats.total' as any) || 'Total'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div className="relative flex-1">
+          <Search
+            className="absolute start-4 top-1/2 -translate-y-1/2 text-surface-400"
+            size={18}
+          />
+          <input
+            type="text"
+            placeholder={t('portal.consultations.searchPlaceholder' as any) || 'Search consultations...'}
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            className="portal-input ps-12 w-full"
+          />
+        </div>
+        <div className="flex gap-2">
+          {['all', 'scheduled', 'completed', 'canceled'].map(status => (
+            <button
+              key={status}
+              onClick={() => setStatusFilter(status as ConsultationStatus | 'all')}
+              className={cn(
+                'px-4 py-2 rounded-xl text-sm font-bold transition-all',
+                statusFilter === status
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 hover:bg-surface-200 dark:hover:bg-surface-700'
+              )}
+            >
+              {status === 'all'
+                ? t('portal.common.all')
+                : CONSULTATION_STATUS_CONFIG[status as ConsultationStatus]?.[
+                    locale === 'he' ? 'labelHe' : 'label'
+                  ] || status}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Consultations List */}
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+        </div>
+      ) : filteredConsultations.length === 0 ? (
+        <div className="text-center py-20">
+          <div className="w-16 h-16 bg-surface-100 dark:bg-surface-800 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Calendar className="w-8 h-8 text-surface-400" />
+          </div>
+          <h3 className="text-lg font-bold text-surface-700 dark:text-surface-300 mb-2">
+            {t('portal.consultations.empty.title' as any) || 'No consultations found'}
+          </h3>
+          <p className="text-surface-500 text-sm">
+            {t('portal.consultations.empty.description' as any) ||
+              'Schedule your first consultation to get started'}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <AnimatePresence>
+            {filteredConsultations.map((consultation, index) => {
+              const TypeIcon = typeIcons[consultation.type];
+              const StatusIcon = statusIcons[consultation.status];
+              const typeConfig = CONSULTATION_TYPE_CONFIG[consultation.type];
+              const statusConfig = CONSULTATION_STATUS_CONFIG[consultation.status];
+              const scheduledDate = consultation.scheduledAt?.toDate
+                ? consultation.scheduledAt.toDate()
+                : new Date();
+
+              return (
+                <motion.div
+                  key={consultation.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="group p-5 bg-white dark:bg-surface-900 rounded-2xl border border-surface-200 dark:border-surface-800 hover:border-blue-300 dark:hover:border-blue-800 transition-all"
+                >
+                  <div className="flex items-start gap-4">
+                    <div
+                      className={cn(
+                        'w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0',
+                        typeConfig.bgColor
+                      )}
+                    >
+                      <TypeIcon className={cn('w-6 h-6', typeConfig.color)} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <h3 className="text-lg font-bold text-surface-900 dark:text-white truncate">
+                            {consultation.title}
+                          </h3>
+                          <div className="flex items-center gap-3 mt-1 text-sm text-surface-500">
+                            <span className="flex items-center gap-1">
+                              <Building2 size={14} />
+                              {orgNames[consultation.orgId] || 'Loading...'}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Calendar size={14} />
+                              {format(scheduledDate, 'MMM d, yyyy', { locale: dateLocale })}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Clock size={14} />
+                              {format(scheduledDate, 'HH:mm', { locale: dateLocale })}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Users size={14} />
+                              {consultation.duration} min
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={cn(
+                              'px-3 py-1 rounded-lg text-xs font-bold',
+                              statusConfig.bgColor,
+                              statusConfig.color
+                            )}
+                          >
+                            {locale === 'he' ? statusConfig.labelHe : statusConfig.label}
+                          </span>
+                          {consultation.externalCalendarLink && (
+                            <a
+                              href={consultation.externalCalendarLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 rounded-lg bg-surface-100 dark:bg-surface-800 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                            >
+                              <Video size={16} className="text-blue-600" />
+                            </a>
+                          )}
+                          {consultation.status === CONSULTATION_STATUS.SCHEDULED && (
+                            <div className="flex gap-1">
+                              <button
+                                onClick={() => handleComplete(consultation)}
+                                className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
+                                title="Mark as completed"
+                              >
+                                <CheckCircle2 size={16} className="text-green-600" />
+                              </button>
+                              <button
+                                onClick={() => handleCancel(consultation)}
+                                className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
+                                title="Cancel"
+                              >
+                                <XCircle size={16} className="text-red-600" />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      {consultation.description && (
+                        <p className="mt-2 text-sm text-surface-600 dark:text-surface-400 line-clamp-2">
+                          {consultation.description}
+                        </p>
+                      )}
+                      {consultation.meetingNotes && (
+                        <div className="mt-3 p-3 bg-surface-50 dark:bg-surface-800/50 rounded-lg">
+                          <p className="text-xs font-bold text-surface-500 mb-1">
+                            Meeting Notes
+                          </p>
+                          <p className="text-sm text-surface-700 dark:text-surface-300 line-clamp-2">
+                            {consultation.meetingNotes}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
+      )}
+    </div>
+  );
+}

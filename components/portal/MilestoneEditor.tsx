@@ -280,7 +280,7 @@ export const MilestoneEditor: React.FC<MilestoneEditorProps> = ({
           isLoading={isSaving}
           disabled={isSaving}
         >
-          <Save size={16} className="mr-2" />
+          <Save size={16} className="me-2" />
           {isHe ? 'שמור שלבים' : 'Save Milestones'}
         </PortalButton>
       </div>

@@ -64,12 +64,12 @@ export function ManageServiceForm({ service, onSuccess, onCancel }: ManageServic
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
       <div className="w-full max-w-lg animate-in zoom-in-95 duration-300">
         <PortalCard className="relative p-8 shadow-2xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
           <button
             onClick={onCancel}
-            className="absolute right-6 top-6 p-2 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all font-outfit"
+            className="absolute end-6 top-6 p-2 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all font-outfit"
           >
             <X size={20} />
           </button>
@@ -177,7 +177,7 @@ export function ManageServiceForm({ service, onSuccess, onCancel }: ManageServic
                 isLoading={loading}
                 className="flex-1 font-outfit shadow-xl shadow-blue-500/20"
               >
-                <Save size={18} className="mr-2" />
+                <Save size={18} className="me-2" />
                 {service ? t('actions.update') : t('actions.create')}
               </PortalButton>
             </div>

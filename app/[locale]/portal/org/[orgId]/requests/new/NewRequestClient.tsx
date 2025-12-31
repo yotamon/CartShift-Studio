@@ -46,7 +46,7 @@ export default function NewRequestClient() {
             <h3 className="font-bold text-blue-900 dark:text-blue-400 mb-2 flex items-center gap-2">
               <Info size={18} /> {t('portal.requests.new.tips.title')}
             </h3>
-            <ul className="text-xs text-blue-800/80 dark:text-blue-300/80 space-y-2 list-disc pl-4 leading-relaxed">
+            <ul className="text-xs text-blue-800/80 dark:text-blue-300/80 space-y-2 list-disc ps-4 leading-relaxed">
               <li>{t('portal.requests.new.tips.tip1')}</li>
               <li>{t('portal.requests.new.tips.tip2')}</li>
               <li>{t('portal.requests.new.tips.tip3')}</li>
