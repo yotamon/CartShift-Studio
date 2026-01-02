@@ -362,12 +362,17 @@ export function subscribeToOrgRequests(
           callback(requests);
         },
         error => {
-          console.error('Error in org requests snapshot:', error);
+          console.error('[portal-requests] Error in org requests snapshot:', error);
           if (error.code === 'permission-denied') {
+            console.error('[portal-requests] Permission denied for orgId:', orgId);
+            console.error('[portal-requests] Error details:', {
+              code: error.code,
+              message: error.message,
+              orgId,
+            });
             console.error(
-              'Permission denied. User may not be a member of this organization or rules may not have propagated yet.'
+              '[portal-requests] User may not be a member of this organization or rules may not have propagated yet.'
             );
-            console.error('Organization ID:', orgId);
           }
           callback([]);
         }

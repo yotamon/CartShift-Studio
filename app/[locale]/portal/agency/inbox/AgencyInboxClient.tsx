@@ -16,6 +16,7 @@ import {
   Check,
   Plus,
   Trash2,
+  ShieldCheck,
 } from 'lucide-react';
 import { getAllRequests } from '@/lib/services/portal-requests';
 import { getAllOrganizations } from '@/lib/services/portal-organizations';
@@ -42,12 +43,14 @@ import { cn } from '@/lib/utils';
 export default function AgencyInboxClient() {
   const t = useTranslations('portal');
   const locale = useLocale();
-  const { userData } = usePortalAuth();
+  const { userData, loading: authLoading, isAuthenticated, user } = usePortalAuth();
   const [requests, setRequests] = useState<Request[]>([]);
   const [organizations, setOrganizations] = useState<Record<string, Organization>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isRepairing, setIsRepairing] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   // Multi-select for pricing offers
   const [selectedRequestIds, setSelectedRequestIds] = useState<string[]>([]);
@@ -61,6 +64,13 @@ export default function AgencyInboxClient() {
 
   useEffect(() => {
     async function fetchData() {
+      if (!userData?.isAgency) {
+        if (!authLoading && isAuthenticated) {
+           setLoading(false);
+        }
+        return;
+      }
+
       setLoading(true);
       setError(null);
       try {
@@ -88,8 +98,50 @@ export default function AgencyInboxClient() {
         setLoading(false);
       }
     }
-    fetchData();
+
+    if (!authLoading) {
+      fetchData();
+    }
+  }, [userData, authLoading, isAuthenticated]);
+
+  // Prevent hydration mismatch for time-sensitive content
+  useEffect(() => {
+    setIsMounted(true);
   }, []);
+
+  const handleRepair = async () => {
+    if (!user) return;
+    setIsRepairing(true);
+    try {
+        const { getFirestore, doc, updateDoc, setDoc, getDoc } = await import('firebase/firestore');
+        const db = getFirestore();
+        const userRef = doc(db, 'portal_users', user.uid);
+        const snap = await getDoc(userRef);
+
+        const updateData = {
+            isAgency: true,
+            accountType: 'AGENCY',
+            updatedAt: new Date()
+        };
+
+        if (snap.exists()) {
+            await updateDoc(userRef, updateData);
+        } else {
+            await setDoc(userRef, {
+                ...updateData,
+                email: user.email,
+                name: user.displayName || 'Agency Admin',
+                createdAt: new Date()
+            });
+        }
+        window.location.reload();
+    } catch (err) {
+        console.error('Repair failed:', err);
+        alert('Permission repair failed. Check console for details.');
+    } finally {
+        setIsRepairing(false);
+    }
+  };
 
   // Multi-select helpers
   const toggleRequestSelection = (requestId: string) => {
@@ -98,23 +150,21 @@ export default function AgencyInboxClient() {
         return prev.filter(id => id !== requestId);
       }
 
-      if (prev.length > 0) {
-        const selectedReqs = requests.filter(r => prev.includes(r.id));
-        const newReq = requests.find(r => r.id === requestId);
+      const selectedReqs = requests.filter(r => prev.includes(r.id));
+      const newReq = requests.find(r => r.id === requestId);
 
-        if (newReq && selectedReqs.length > 0) {
-          const selectedOrgId = selectedReqs[0]?.orgId;
-          if (selectedOrgId && newReq.orgId !== selectedOrgId) {
-            // Show which organizations are involved
-            const selectedOrgName = organizations[selectedOrgId]?.name || 'Unknown';
-            const newOrgName = organizations[newReq.orgId]?.name || 'Unknown';
-            alert(
-              `${t('agency.inbox.errors.sameOrgRequired')}\n\n` +
-              `Currently selected: ${selectedOrgName}\n` +
-              `Trying to add: ${newOrgName}`
-            );
-            return prev;
-          }
+      if (newReq && selectedReqs.length > 0) {
+        const selectedOrgId = selectedReqs[0]?.orgId;
+        if (selectedOrgId && newReq.orgId !== selectedOrgId) {
+          // Show which organizations are involved
+          const selectedOrgName = organizations[selectedOrgId]?.name || 'Unknown';
+          const newOrgName = organizations[newReq.orgId]?.name || 'Unknown';
+          alert(
+            `${t('agency.inbox.errors.sameOrgRequired')}\n\n` +
+            `Currently selected: ${selectedOrgName}\n` +
+            `Trying to add: ${newOrgName}`
+          );
+          return prev;
         }
       }
 
@@ -159,7 +209,6 @@ export default function AgencyInboxClient() {
     );
     if (validItems.length === 0) return;
 
-    // All selected requests must be from the same org for a single pricing offer
     const selectedReqs = requests.filter(r => selectedRequestIds.includes(r.id));
     const uniqueOrgIds = [...new Set(selectedReqs.map(r => r.orgId))];
 
@@ -195,7 +244,6 @@ export default function AgencyInboxClient() {
       await sendPricingRequest(pricingOffer.id);
       clearSelection();
 
-      // Refresh requests to show updated pricingOfferId
       const refreshedRequests = await getAllRequests();
       setRequests(refreshedRequests);
     } catch (error) {
@@ -290,10 +338,28 @@ export default function AgencyInboxClient() {
         )}
 
         <div className="divide-y divide-slate-100 dark:divide-slate-800">
-          {loading ? (
+          {loading || (authLoading && !error) ? (
             <div className="py-20 flex flex-col items-center justify-center space-y-3">
               <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
               <p className="text-sm font-medium text-surface-400">{t('agency.inbox.loading')}</p>
+            </div>
+          ) : !userData?.isAgency && isAuthenticated ? (
+            <div className="py-20 text-center px-4">
+              <ShieldCheck className="w-16 h-16 text-red-100 dark:text-red-900/20 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-surface-900 dark:text-white">Agency Access Required</h3>
+              <p className="text-surface-500 dark:text-surface-400 text-sm mt-1 max-w-sm mx-auto mb-6">
+                Your account ({user?.email}) does not have permissions to access the Agency Inbox.
+              </p>
+              <PortalButton
+                onClick={handleRepair}
+                disabled={isRepairing}
+                variant="outline"
+                size="sm"
+                className="border-red-200 text-red-600 hover:bg-red-50"
+              >
+                {isRepairing ? <Loader2 className="animate-spin me-2" size={14} /> : null}
+                Repair Permissions
+              </PortalButton>
             </div>
           ) : error ? (
             <div className="py-20 text-center">
@@ -393,12 +459,12 @@ export default function AgencyInboxClient() {
                         <div className="md:col-span-1 text-end flex items-center justify-end gap-4">
                           <div className="flex flex-col items-end">
                             <span className="text-[10px] font-bold text-surface-500 whitespace-nowrap uppercase tracking-widest leading-none mb-1">
-                              {req.createdAt?.toDate
+                              {isMounted && req.createdAt?.toDate
                                 ? formatDistanceToNow(req.createdAt.toDate(), {
                                     addSuffix: true,
                                     locale: locale === 'he' ? he : enUS,
                                   })
-                                : t('common.recently' as any)}
+                                : '—'}
                             </span>
                           </div>
                           <button

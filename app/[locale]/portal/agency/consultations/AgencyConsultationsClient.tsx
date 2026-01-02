@@ -74,6 +74,8 @@ export default function AgencyConsultationsClient() {
   const dateLocale = locale === 'he' ? he : enUS;
 
   useEffect(() => {
+    if (!userData?.isAgency) return;
+
     const unsubscribe = subscribeToAllConsultations(
       data => {
         setConsultations(data);
@@ -82,9 +84,13 @@ export default function AgencyConsultationsClient() {
         const uniqueOrgIds = [...new Set(data.map(c => c.orgId))];
         uniqueOrgIds.forEach(async orgId => {
           if (!orgNames[orgId]) {
-            const org = await getOrganization(orgId);
-            if (org) {
-              setOrgNames(prev => ({ ...prev, [orgId]: org.name }));
+            try {
+                const org = await getOrganization(orgId);
+                if (org) {
+                  setOrgNames(prev => ({ ...prev, [orgId]: org.name }));
+                }
+            } catch (err) {
+                console.warn(`Could not fetch details for org ${orgId}:`, err);
             }
           }
         });
@@ -93,14 +99,20 @@ export default function AgencyConsultationsClient() {
     );
 
     return () => unsubscribe();
-  }, [statusFilter]);
+  }, [statusFilter, userData]);
 
   // Fetch organizations for the schedule picker
   useEffect(() => {
-    getAllOrganizations().then(orgs => {
-      setOrganizations(orgs);
-    });
-  }, []);
+    if (!userData?.isAgency) return;
+
+    getAllOrganizations()
+        .then(orgs => {
+          setOrganizations(orgs);
+        })
+        .catch(err => {
+            console.error('Failed to fetch organizations:', err);
+        });
+  }, [userData]);
 
   const filteredConsultations = consultations.filter(c => {
     if (searchQuery) {

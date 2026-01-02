@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslations, useLocale } from 'next-intl';
-import { format, formatDistanceToNow } from 'date-fns';
+import { format } from 'date-fns';
 import { enUS, he } from 'date-fns/locale';
 import {
   Calendar,
@@ -12,7 +12,6 @@ import {
   ExternalLink,
   CheckCircle2,
   XCircle,
-  AlertCircle,
   UserPlus,
   Target,
   ClipboardCheck,
@@ -26,12 +25,13 @@ import {
   CONSULTATION_TYPE_CONFIG,
   CONSULTATION_STATUS_CONFIG,
   ConsultationType,
-  ConsultationStatus,
   CONSULTATION_STATUS,
 } from '@/lib/types/portal';
-import { subscribeToOrgConsultations } from '@/lib/services/portal-consultations';
+import { subscribeToOrgConsultations, cancelConsultation } from '@/lib/services/portal-consultations';
+import { deleteCalendarEvent } from '@/lib/services/portal-google-calendar';
 import { getScheduleUrl } from '@/lib/schedule';
 import { trackBookCallClick } from '@/lib/analytics';
+import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 
 const typeIcons: Record<ConsultationType, React.ElementType> = {
   onboarding: UserPlus,
@@ -47,12 +47,19 @@ interface ConsultationsClientProps {
 export default function ConsultationsClient({ orgId }: ConsultationsClientProps) {
   const t = useTranslations();
   const locale = useLocale();
+  const { userData } = usePortalAuth();
   const [consultations, setConsultations] = useState<Consultation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [cancelingId, setCancelingId] = useState<string | null>(null);
 
   const dateLocale = locale === 'he' ? he : enUS;
 
   useEffect(() => {
+    if (!orgId || typeof orgId !== 'string' || orgId === 'template') {
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = subscribeToOrgConsultations(orgId, data => {
       setConsultations(data);
       setLoading(false);
@@ -71,6 +78,33 @@ export default function ConsultationsClient({ orgId }: ConsultationsClientProps)
   const handleScheduleClick = () => {
     trackBookCallClick('portal_consultations');
     window.open(getScheduleUrl(), '_blank');
+  };
+
+  const handleCancel = async (consultation: Consultation) => {
+    if (!confirm(t('portal.consultations.cancelConfirm' as any) || 'Are you sure you want to cancel this consultation?')) {
+      return;
+    }
+
+    setCancelingId(consultation.id);
+    try {
+      await cancelConsultation(
+        consultation.id,
+        consultation.orgId,
+        userData?.id || 'unknown',
+        userData?.name || 'User'
+      );
+
+      if (consultation.externalEventId) {
+        // Attempt to delete from Google Calendar
+        // We don't block on this, and failures are logged in the service
+        deleteCalendarEvent(consultation.externalEventId).catch(console.error);
+      }
+    } catch (error) {
+      console.error('Failed to cancel consultation:', error);
+      alert('Failed to cancel consultation');
+    } finally {
+      setCancelingId(null);
+    }
   };
 
   return (
@@ -192,17 +226,31 @@ export default function ConsultationsClient({ orgId }: ConsultationsClientProps)
                         </div>
                       )}
                     </div>
-                    {consultation.externalCalendarLink && (
-                      <a
-                        href={consultation.externalCalendarLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-colors"
-                      >
-                        <Video size={16} />
-                        Join
-                      </a>
-                    )}
+                    <div className="flex flex-col gap-2">
+                        {consultation.externalCalendarLink && (
+                        <a
+                            href={consultation.externalCalendarLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-colors justify-center"
+                        >
+                            <Video size={16} />
+                            Join
+                        </a>
+                        )}
+                        <button
+                            onClick={() => handleCancel(consultation)}
+                            disabled={cancelingId === consultation.id}
+                            className="flex items-center gap-2 px-4 py-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl font-medium text-sm transition-colors justify-center disabled:opacity-50"
+                        >
+                            {cancelingId === consultation.id ? (
+                                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                                <XCircle size={16} />
+                            )}
+                            Cancel
+                        </button>
+                    </div>
                   </div>
                 </motion.div>
               );

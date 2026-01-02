@@ -8,7 +8,7 @@ import { Shield, CreditCard, Save, Settings2, Building2, Loader2, Camera, User a
 import { cn } from '@/lib/utils';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { db, getAuthInstance } from '@/lib/services/firebase-client';
+import { db, getFirebaseAuth } from '@/lib/firebase';
 import { getAgencyTeam } from '@/lib/services/portal-agency';
 import { updatePortalUser } from '@/lib/services/portal-users';
 import { getFirebaseStorage, waitForAuth } from '@/lib/firebase';
@@ -174,7 +174,7 @@ export default function AgencySettingsClient() {
 
     setSaving(true);
     try {
-      const auth = getAuthInstance();
+      const auth = getFirebaseAuth();
       const currentUser = auth.currentUser;
 
       if (!currentUser || !currentUser.uid) {

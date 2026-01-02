@@ -40,7 +40,7 @@ export async function createPricingRequest(
   data: CreatePricingRequestData
 ): Promise<PricingRequest> {
   // Add IDs to line items
-  const lineItems: PricingLineItem[] = data.lineItems.map((item) => ({
+  const lineItems: PricingLineItem[] = data.lineItems.map(item => ({
     ...item,
     id: generateLineItemId(),
   }));
@@ -150,7 +150,7 @@ export async function getPricingRequestsByOrg(
 
   try {
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({
+    return snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
     })) as PricingRequest[];
@@ -363,7 +363,7 @@ export function subscribeToPricingRequest(
       const docRef = doc(db, PRICING_REQUESTS_COLLECTION, requestId);
       unsubscribe = onSnapshot(
         docRef,
-        (snapshot) => {
+        snapshot => {
           if (!snapshot.exists()) {
             callback(null);
             return;
@@ -373,7 +373,7 @@ export function subscribeToPricingRequest(
             ...snapshot.data(),
           } as PricingRequest);
         },
-        (error) => {
+        error => {
           console.error('Error in pricing request snapshot:', error);
           callback(null);
         }
@@ -426,20 +426,20 @@ export function subscribeToOrgPricingRequests(
 
       unsubscribe = onSnapshot(
         q,
-        (snapshot) => {
-          let requests = snapshot.docs.map((doc) => ({
+        snapshot => {
+          let requests = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
           })) as PricingRequest[];
 
           // Client-side filtering for status if needed
           if (options?.status && options.status.length > 0) {
-            requests = requests.filter((r) => options.status!.includes(r.status));
+            requests = requests.filter(r => options.status!.includes(r.status));
           }
 
           callback(requests);
         },
-        (error) => {
+        error => {
           console.error('Error in org pricing requests snapshot:', error);
           callback([]);
         }
@@ -472,18 +472,22 @@ export async function getPricingStats(orgId: string): Promise<{
 }> {
   const requests = await getPricingRequestsByOrg(orgId);
 
-  const paidRequests = requests.filter((r) => r.status === PRICING_STATUS.PAID);
+  const paidRequests = requests.filter(r => r.status === PRICING_STATUS.PAID);
   const totalRevenue = paidRequests.reduce((sum, r) => sum + r.totalAmount, 0);
 
   return {
     total: requests.length,
-    draft: requests.filter((r) => r.status === PRICING_STATUS.DRAFT).length,
-    pending: requests.filter((r) =>
-      ([PRICING_STATUS.SENT, PRICING_STATUS.CLIENT_EDITED, PRICING_STATUS.ACCEPTED] as PricingStatus[]).includes(
-        r.status
-      )
+    draft: requests.filter(r => r.status === PRICING_STATUS.DRAFT).length,
+    pending: requests.filter(r =>
+      (
+        [
+          PRICING_STATUS.SENT,
+          PRICING_STATUS.CLIENT_EDITED,
+          PRICING_STATUS.ACCEPTED,
+        ] as PricingStatus[]
+      ).includes(r.status)
     ).length,
-    accepted: requests.filter((r) => r.status === PRICING_STATUS.ACCEPTED).length,
+    accepted: requests.filter(r => r.status === PRICING_STATUS.ACCEPTED).length,
     paid: paidRequests.length,
     totalRevenue,
   };
@@ -502,10 +506,7 @@ export async function getAllPricingRequests(options?: {
 }): Promise<PricingRequest[]> {
   await waitForAuth();
   const db = getFirestoreDb();
-  let q = query(
-    collection(db, PRICING_REQUESTS_COLLECTION),
-    orderBy('createdAt', 'desc')
-  );
+  let q = query(collection(db, PRICING_REQUESTS_COLLECTION), orderBy('createdAt', 'desc'));
 
   if (options?.status) {
     const statuses = Array.isArray(options.status) ? options.status : [options.status];
@@ -518,7 +519,7 @@ export async function getAllPricingRequests(options?: {
 
   try {
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({
+    return snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
     })) as PricingRequest[];
@@ -548,27 +549,24 @@ export function subscribeToAllPricingRequests(
     .then(() => {
       if (isUnsubscribed) return;
       const db = getFirestoreDb();
-      const q = query(
-        collection(db, PRICING_REQUESTS_COLLECTION),
-        orderBy('createdAt', 'desc')
-      );
+      const q = query(collection(db, PRICING_REQUESTS_COLLECTION), orderBy('createdAt', 'desc'));
 
       unsubscribe = onSnapshot(
         q,
-        (snapshot) => {
-          let requests = snapshot.docs.map((doc) => ({
+        snapshot => {
+          let requests = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
           })) as PricingRequest[];
 
           // Client-side filtering for status if needed
           if (options?.status && options.status.length > 0) {
-            requests = requests.filter((r) => options.status!.includes(r.status));
+            requests = requests.filter(r => options.status!.includes(r.status));
           }
 
           callback(requests);
         },
-        (error) => {
+        error => {
           console.error('Error in all pricing requests snapshot:', error);
           callback([]);
         }
@@ -640,4 +638,3 @@ export async function isRequestInActivePricingOffer(requestId: string): Promise<
 
   return !inactiveStatuses.includes(offer.status);
 }
-

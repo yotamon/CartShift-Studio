@@ -35,7 +35,8 @@ service cloud.firestore {
     }
 
     function canAccessOrg(orgId) {
-      return orgId != null && orgId != '' && (
+      return isAuthenticated() &&
+             orgId != null && orgId != '' && (
         isAgencyUser() ||
         isMemberOfOrg(orgId) ||
         isOrgOwner(orgId)
@@ -69,14 +70,23 @@ service cloud.firestore {
     }
 
     match /portal_organizations/{orgId} {
-      allow read: if isAuthenticated();
+      // Agency users can read any organization, members can read their own org
+      allow read: if isAuthenticated() && (
+        isAgencyUser() ||
+        resource == null ||
+        exists(/databases/$(database)/documents/portal_members/$(orgId + '_' + getUserId())) ||
+        resource.data.createdBy == getUserId()
+      );
       allow create: if isAuthenticated() && request.resource.data.get('createdBy', '') == getUserId();
-      allow update: if canAdminOrg(orgId);
+      // Allow admins OR members to update (needed for Shopify integration settings)
+      allow update: if canAdminOrg(orgId) || isMemberOfOrg(orgId);
       allow delete: if false;
     }
 
     match /portal_members/{memberId} {
       allow read: if isAuthenticated() && (
+        isAgencyUser() ||
+        resource == null ||
         memberId == (resource.data.get('orgId', '') + '_' + getUserId()) ||
         canAccessOrg(resource.data.get('orgId', ''))
       );
@@ -90,14 +100,14 @@ service cloud.firestore {
 
     match /portal_invites/{inviteId} {
       allow read: if isAuthenticated() && (
-        resource != null && (
-          resource.data.get('email', '') == request.auth.token.email ||
-          canAccessOrg(resource.data.get('orgId', '')) ||
-          resource.data.get('isAgency', false) == true
-        )
+        resource == null ||
+        resource.data.get('email', '') == request.auth.token.email ||
+        canAccessOrg(resource.data.get('orgId', '')) ||
+        resource.data.get('isAgency', false) == true
       );
       allow create: if isAuthenticated();
-      allow update: if isAuthenticated() && resource != null && (
+      allow update: if isAuthenticated() && (
+        resource == null ||
         resource.data.get('email', '') == request.auth.token.email ||
         canAccessOrg(resource.data.get('orgId', '')) ||
         isAgencyUser()
@@ -108,6 +118,7 @@ service cloud.firestore {
     match /portal_requests/{requestId} {
       allow read: if isAuthenticated() && (
         isAgencyUser() ||
+        resource == null ||
         resource.data.get('createdBy', '') == getUserId() ||
         canAccessOrg(resource.data.get('orgId', ''))
       );
@@ -116,7 +127,8 @@ service cloud.firestore {
         isMemberOfOrg(request.resource.data.get('orgId', '')) ||
         isOrgOwner(request.resource.data.get('orgId', ''))
       );
-      allow update: if isAuthenticated() && resource != null && (
+      allow update: if isAuthenticated() && (
+        resource == null ||
         resource.data.get('createdBy', '') == getUserId() ||
         canAccessOrg(resource.data.get('orgId', ''))
       );
@@ -131,20 +143,22 @@ service cloud.firestore {
       }
       allow read: if isAuthenticated() && (
         isAgencyUser() ||
-        (resource != null && (
-          canAccessOrg(resource.data.get('orgId', '')) ||
-          resource.data.get('createdBy', '') == getUserId()
-        ))
+        resource == null ||
+        canAccessOrg(resource.data.get('orgId', '')) ||
+        resource.data.get('createdBy', '') == getUserId()
       );
       allow create: if isAuthenticated() && (
+        isAgencyUser() ||
         isMemberOfOrg(getRequestOrgIdFromRequest()) ||
         isOrgOwner(getRequestOrgIdFromRequest())
       );
-      allow update: if isAuthenticated() && resource != null && (
+      allow update: if isAuthenticated() && (
+        resource == null ||
         resource.data.get('createdBy', '') == getUserId() ||
         isAgencyUser()
       );
-      allow delete: if isAuthenticated() && resource != null && (
+      allow delete: if isAuthenticated() && (
+        resource == null ||
         resource.data.get('createdBy', '') == getUserId() ||
         isAgencyUser()
       );
@@ -153,44 +167,44 @@ service cloud.firestore {
     match /portal_files/{fileId} {
       allow read: if isAuthenticated() && (
         isAgencyUser() ||
-        (resource != null && (
-          canAccessOrg(resource.data.get('orgId', '')) ||
-          resource.data.get('uploadedBy', '') == getUserId()
-        ))
+        resource == null ||
+        canAccessOrg(resource.data.get('orgId', '')) ||
+        resource.data.get('uploadedBy', '') == getUserId()
       );
       allow create: if isAuthenticated() && (
+        isAgencyUser() ||
         isMemberOfOrg(request.resource.data.get('orgId', '')) ||
         isOrgOwner(request.resource.data.get('orgId', ''))
       );
-      allow update: if isAuthenticated() && resource != null && (
-        resource.data.get('uploadedBy', '') == getUserId() ||
-        isAgencyUser()
-      );
-      allow delete: if isAuthenticated() && resource != null && (
+      allow update, delete: if isAuthenticated() && (
+        resource == null ||
         resource.data.get('uploadedBy', '') == getUserId() ||
         isAgencyUser()
       );
     }
 
     match /portal_notifications/{notificationId} {
-      allow read: if isAuthenticated() && resource != null && resource.data.get('userId', '') == getUserId();
-      allow create: if isAuthenticated() && request.resource.data.get('userId', '') == getUserId();
-      allow update, delete: if isAuthenticated() && resource != null && resource.data.get('userId', '') == getUserId();
+      allow read, write: if isAuthenticated() && (
+        resource == null ||
+        resource.data.get('userId', '') == getUserId() ||
+        request.resource.data.get('userId', '') == getUserId()
+      );
     }
 
     match /portal_pricing_requests/{requestId} {
       allow read: if isAuthenticated() && (
         isAgencyUser() ||
-        (resource != null && (
-          canAccessOrg(resource.data.get('orgId', '')) ||
-          resource.data.get('createdBy', '') == getUserId()
-        ))
+        resource == null ||
+        canAccessOrg(resource.data.get('orgId', '')) ||
+        resource.data.get('createdBy', '') == getUserId()
       );
       allow create: if isAuthenticated() && (
+        isAgencyUser() ||
         isMemberOfOrg(request.resource.data.get('orgId', '')) ||
         isOrgOwner(request.resource.data.get('orgId', ''))
       );
-      allow update: if isAuthenticated() && resource != null && (
+      allow update: if isAuthenticated() && (
+        resource == null ||
         canAccessOrg(resource.data.get('orgId', '')) ||
         resource.data.get('createdBy', '') == getUserId()
       );
@@ -200,6 +214,7 @@ service cloud.firestore {
     match /portal_activities/{activityId} {
       allow read: if isAuthenticated() && (
         isAgencyUser() ||
+        resource == null ||
         resource.data.get('userId', '') == getUserId() ||
         canAccessOrg(resource.data.get('orgId', ''))
       );
@@ -210,13 +225,16 @@ service cloud.firestore {
     match /portal_consultations/{consultationId} {
       allow read: if isAuthenticated() && (
         isAgencyUser() ||
-        (resource != null && canAccessOrg(resource.data.get('orgId', '')))
+        resource == null ||
+        resource.data.get('createdBy', '') == getUserId() ||
+        canAccessOrg(resource.data.get('orgId', ''))
       );
       allow create: if isAuthenticated();
-      allow update: if isAuthenticated() && resource != null && (
+      allow update: if isAuthenticated() && (
+        resource == null ||
         isAgencyUser() ||
-        canAccessOrg(resource.data.get('orgId', '')) ||
-        resource.data.get('createdBy', '') == getUserId()
+        resource.data.get('createdBy', '') == getUserId() ||
+        canAccessOrg(resource.data.get('orgId', ''))
       );
       allow delete: if isAuthenticated() && isAgencyUser();
     }
@@ -228,10 +246,13 @@ service cloud.firestore {
 
     match /agency_integrations/{integrationId} {
       allow read: if isAuthenticated() && (
-        integrationId.matches("^" + getUserId() + "_.*") ||
-        isAgencyUser()
+        isAgencyUser() ||
+        integrationId.matches("^" + request.auth.uid + "(_.*|$)")
       );
-      allow create, update, delete: if isAuthenticated() && integrationId.matches("^" + getUserId() + "_.*");
+      allow create, update, delete: if isAuthenticated() && (
+        isAgencyUser() || // Allow agency users to manage their own OR shared integrations
+        integrationId.matches("^" + request.auth.uid + "(_.*|$)")
+      );
     }
 
     match /{document=**} {
@@ -239,3 +260,4 @@ service cloud.firestore {
     }
   }
 }
+

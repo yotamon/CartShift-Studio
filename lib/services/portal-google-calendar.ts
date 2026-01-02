@@ -13,8 +13,7 @@ import {
   serverTimestamp,
   Timestamp,
 } from 'firebase/firestore';
-import { db } from './firebase-client';
-import { getAuthInstance } from './firebase-client';
+import { db, getFirebaseAuth } from '@/lib/firebase';
 import { buildFirebaseFunctionUrl } from './firebase';
 import {
     ConsultationType,
@@ -216,7 +215,7 @@ async function storeGoogleTokens(tokens: {
   scope: string;
   email?: string;
 }): Promise<void> {
-  const auth = getAuthInstance();
+  const auth = getFirebaseAuth();
   const user = auth.currentUser;
 
   if (!user) {
@@ -245,7 +244,7 @@ async function storeGoogleTokens(tokens: {
  * Updates the selected calendar settings
  */
 export async function updateCalendarSettings(selectedCalendarId: string): Promise<void> {
-  const auth = getAuthInstance();
+  const auth = getFirebaseAuth();
   const user = auth.currentUser;
 
   if (!user) {
@@ -260,7 +259,7 @@ export async function updateCalendarSettings(selectedCalendarId: string): Promis
  * Gets the current Google Calendar connection status
  */
 export async function getCalendarConnection(): Promise<GoogleCalendarConnection> {
-  const auth = getAuthInstance();
+  const auth = getFirebaseAuth();
   const user = auth.currentUser;
 
   if (!user) {
@@ -300,7 +299,7 @@ export async function getCalendarConnection(): Promise<GoogleCalendarConnection>
  * Disconnects Google Calendar integration
  */
 export async function disconnectCalendar(): Promise<void> {
-  const auth = getAuthInstance();
+  const auth = getFirebaseAuth();
   const user = auth.currentUser;
 
   if (!user) {
@@ -345,7 +344,7 @@ export async function listCalendars(): Promise<CalendarInfo[]> {
   }
 
   try {
-    const auth = getAuthInstance();
+    const auth = getFirebaseAuth();
     const user = auth.currentUser;
     if (!user) throw new Error('User not authenticated');
     const token = await user.getIdToken();
@@ -387,7 +386,7 @@ export async function createCalendarEvent(event: CalendarEvent): Promise<{ event
   }
 
   try {
-    const auth = getAuthInstance();
+    const auth = getFirebaseAuth();
     const user = auth.currentUser;
     if (!user) throw new Error('User not authenticated');
     const token = await user.getIdToken();
@@ -430,7 +429,7 @@ export async function deleteCalendarEvent(eventId: string, calendarId?: string):
   if (!connection.connected) return;
 
   try {
-    const auth = getAuthInstance();
+    const auth = getFirebaseAuth();
     const user = auth.currentUser;
     if (!user) throw new Error('User not authenticated');
     const token = await user.getIdToken();
@@ -476,7 +475,7 @@ export async function getFreeBusyIntervals(timeMin: Date, timeMax: Date): Promis
   }
 
   try {
-    const auth = getAuthInstance();
+    const auth = getFirebaseAuth();
     const user = auth.currentUser;
     if (!user) throw new Error('User not authenticated');
     const token = await user.getIdToken();

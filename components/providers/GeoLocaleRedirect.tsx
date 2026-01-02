@@ -28,6 +28,11 @@ export function GeoLocaleRedirect() {
   const router = useRouter();
 
   useEffect(() => {
+    // Skip geo redirect for portal routes - user has already chosen their locale
+    if (pathname.includes('/portal')) {
+      return;
+    }
+
     // Skip if user has manually set a preference
     const userPreference = localStorage.getItem(USER_LOCALE_PREFERENCE_KEY);
     if (userPreference) {
@@ -114,7 +119,9 @@ export function GeoLocaleRedirect() {
     }
 
     detectAndRedirect();
-  }, [locale, pathname, router]);
+    // Only run on mount or when pathname changes significantly (not on every render)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return null;
 }

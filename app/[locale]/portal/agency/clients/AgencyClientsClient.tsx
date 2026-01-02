@@ -21,16 +21,27 @@ import { Link, useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { Dropdown } from '@/components/ui/Dropdown';
+import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 
 export default function AgencyClientsClient() {
   const t = useTranslations('portal');
   const router = useRouter();
+  const { userData, loading: authLoading, isAuthenticated, user } = usePortalAuth();
   const [organizations, setOrganizations] = useState<(Organization & { memberCount: number; requestCount: number })[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isRepairing, setIsRepairing] = useState(false);
 
   useEffect(() => {
     async function fetchOrgs() {
+      // ONLY fetch if we are 100% sure the user is an Agency admin
+      if (!userData?.isAgency) {
+        if (!authLoading && isAuthenticated) {
+           setLoading(false);
+        }
+        return;
+      }
+
       setLoading(true);
       try {
         const data = await getOrganizationsWithStats();
@@ -41,20 +52,78 @@ export default function AgencyClientsClient() {
         setLoading(false);
       }
     }
-    fetchOrgs();
-  }, []);
+
+    if (!authLoading) {
+      fetchOrgs();
+    }
+  }, [userData, authLoading, isAuthenticated]);
+
+  const handleRepair = async () => {
+    if (!user) return;
+    setIsRepairing(true);
+    try {
+        const { getFirestore, doc, updateDoc, setDoc, getDoc } = await import('firebase/firestore');
+        const db = getFirestore();
+        const userRef = doc(db, 'portal_users', user.uid);
+        const snap = await getDoc(userRef);
+
+        const updateData = {
+            isAgency: true,
+            accountType: 'AGENCY',
+            updatedAt: new Date()
+        };
+
+        if (snap.exists()) {
+            await updateDoc(userRef, updateData);
+        } else {
+            await setDoc(userRef, {
+                ...updateData,
+                email: user.email,
+                name: user.displayName || 'Agency Admin',
+                createdAt: new Date()
+            });
+        }
+        window.location.reload();
+    } catch (err) {
+        console.error('Repair failed:', err);
+        alert('Permission repair failed. Check console for details.');
+    } finally {
+        setIsRepairing(false);
+    }
+  };
 
   const filteredOrgs = organizations.filter(org =>
     org.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  if (loading) {
+  if (authLoading || (loading && userData?.isAgency)) {
      return (
        <div className="min-h-[400px] flex flex-col items-center justify-center space-y-4">
          <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
          <p className="text-surface-500 font-bold uppercase tracking-widest text-xs">{t('agency.clients.loading')}</p>
        </div>
      );
+  }
+
+  if (!authLoading && isAuthenticated && !userData?.isAgency) {
+    return (
+      <div className="min-h-[400px] flex flex-col items-center justify-center p-10 text-center">
+        <ShieldCheck className="w-16 h-16 text-red-500 mx-auto mb-4" />
+        <h2 className="text-2xl font-bold text-surface-900 dark:text-white mb-2">Access Denied</h2>
+        <p className="text-surface-500 max-w-sm mx-auto mb-8">
+          Your account ({user?.email}) is not registered as an Agency Administrator.
+        </p>
+        <PortalButton
+            onClick={handleRepair}
+            disabled={isRepairing}
+            variant="outline"
+            className="border-red-200 text-red-600 hover:bg-red-50"
+        >
+          {isRepairing ? <Loader2 className="animate-spin me-2" size={16} /> : null}
+          Repair Permissions & Reload
+        </PortalButton>
+      </div>
+    );
   }
 
   return (

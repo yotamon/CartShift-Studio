@@ -1,5 +1,5 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -21,7 +21,7 @@ export function deepClean<T>(obj: T): T {
     return obj as unknown as T;
   }
 
-  // Handle Firestore Timestamps (check for toDate method to avoid direct dependency if possible, 
+  // Handle Firestore Timestamps (check for toDate method to avoid direct dependency if possible,
   // but checking constructor name is also a common trick)
   if ((obj as any).constructor?.name === 'Timestamp' || typeof (obj as any).toDate === 'function') {
     return obj;
@@ -43,7 +43,3 @@ export function deepClean<T>(obj: T): T {
 
   return result;
 }
-
-
-
-

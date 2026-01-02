@@ -51,7 +51,15 @@ export function subscribeToOrgActivities(
           callback(activities);
         },
         (error) => {
-          console.error('Error in activities snapshot:', error);
+          console.error('[portal-activities] Error in activities snapshot:', error);
+          if (error.code === 'permission-denied') {
+            console.error('[portal-activities] Permission denied for orgId:', orgId);
+            console.error('[portal-activities] Error details:', {
+              code: error.code,
+              message: error.message,
+              orgId,
+            });
+          }
           callback([]);
         }
       );

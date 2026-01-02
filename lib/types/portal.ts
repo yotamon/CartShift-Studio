@@ -146,6 +146,13 @@ export interface Organization {
   plan?: 'free' | 'pro' | 'enterprise';
   createdAt: Timestamp;
   updatedAt: Timestamp;
+
+  // Shopify Integration
+  shopifyDomain?: string;              // e.g., "mystore.myshopify.com"
+  shopifyCollaboratorCode?: string;    // 4-digit collaborator code
+  shopifyAccessStatus?: 'pending' | 'requested' | 'connected' | 'revoked';
+  shopifyAccessRequestedAt?: Timestamp;
+  shopifyConnectedAt?: Timestamp;
 }
 
 export interface OrganizationMember {

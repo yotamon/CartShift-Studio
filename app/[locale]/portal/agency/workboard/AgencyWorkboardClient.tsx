@@ -16,6 +16,8 @@ import {
 import { PortalAvatar, PortalAvatarGroup } from '@/components/portal/ui/PortalAvatar';
 import { getAllRequests } from '@/lib/services/portal-requests';
 import { Request } from '@/lib/types/portal';
+import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
+import { ShieldCheck } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { formatDistanceToNow } from 'date-fns';
@@ -24,11 +26,21 @@ import { enUS, he } from 'date-fns/locale';
 export default function AgencyWorkboardClient() {
   const t = useTranslations('portal');
   const locale = useLocale();
+  const { userData, loading: authLoading, isAuthenticated, user } = usePortalAuth();
   const [requests, setRequests] = useState<Request[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isRepairing, setIsRepairing] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
+      if (!userData?.isAgency) {
+        if (!authLoading && isAuthenticated) {
+           setLoading(false);
+        }
+        return;
+      }
+
       setLoading(true);
       try {
         const data = await getAllRequests();
@@ -39,8 +51,50 @@ export default function AgencyWorkboardClient() {
         setLoading(false);
       }
     }
-    fetchData();
+
+    if (!authLoading) {
+      fetchData();
+    }
+  }, [userData, authLoading, isAuthenticated]);
+
+  // Prevent hydration mismatch for time-sensitive content
+  useEffect(() => {
+    setIsMounted(true);
   }, []);
+
+  const handleRepair = async () => {
+    if (!user) return;
+    setIsRepairing(true);
+    try {
+        const { getFirestore, doc, updateDoc, setDoc, getDoc } = await import('firebase/firestore');
+        const db = getFirestore();
+        const userRef = doc(db, 'portal_users', user.uid);
+        const snap = await getDoc(userRef);
+
+        const updateData = {
+            isAgency: true,
+            accountType: 'AGENCY',
+            updatedAt: new Date()
+        };
+
+        if (snap.exists()) {
+            await updateDoc(userRef, updateData);
+        } else {
+            await setDoc(userRef, {
+                ...updateData,
+                email: user.email,
+                name: user.displayName || 'Agency Admin',
+                createdAt: new Date()
+            });
+        }
+        window.location.reload();
+    } catch (err) {
+        console.error('Repair failed:', err);
+        alert('Permission repair failed. Check console for details.');
+    } finally {
+        setIsRepairing(false);
+    }
+  };
 
   const columns = [
     {
@@ -65,13 +119,34 @@ export default function AgencyWorkboardClient() {
     return requests.filter(req => statuses.includes(req.status));
   };
 
-  if (loading) {
+  if (authLoading || (loading && userData?.isAgency)) {
     return (
       <div className="min-h-[400px] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
         <p className="text-surface-500 font-bold uppercase tracking-widest text-xs">
           {t('agency.workboard.loading')}
         </p>
+      </div>
+    );
+  }
+
+  if (!authLoading && isAuthenticated && !userData?.isAgency) {
+    return (
+      <div className="min-h-[400px] flex flex-col items-center justify-center p-10 text-center">
+        <ShieldCheck className="w-16 h-16 text-red-500 mx-auto mb-4" />
+        <h2 className="text-2xl font-bold text-surface-900 dark:text-white mb-2">Access Denied</h2>
+        <p className="text-surface-500 max-w-sm mx-auto mb-8">
+          Your account ({user?.email}) is not registered as an Agency Administrator.
+        </p>
+        <PortalButton
+            onClick={handleRepair}
+            disabled={isRepairing}
+            variant="outline"
+            className="border-red-200 text-red-600 hover:bg-red-50"
+        >
+          {isRepairing ? <Loader2 className="animate-spin me-2" size={16} /> : null}
+          Repair Permissions & Reload
+        </PortalButton>
       </div>
     );
   }
@@ -170,10 +245,10 @@ export default function AgencyWorkboardClient() {
                         <div className="flex items-center gap-1.5 text-surface-400">
                           <Clock size={12} className="text-surface-300" />
                           <span className="text-[10px] font-bold uppercase tracking-tighter">
-                            {req.createdAt?.toDate ? formatDistanceToNow(req.createdAt.toDate(), {
+                            {isMounted && req.createdAt?.toDate ? formatDistanceToNow(req.createdAt.toDate(), {
                               addSuffix: true,
                               locale: locale === 'he' ? he : enUS,
-                            }) : 'now'}
+                            }) : '—'}
                           </span>
                         </div>
                       </div>

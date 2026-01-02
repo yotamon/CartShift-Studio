@@ -91,12 +91,18 @@ export default function ScheduleConsultationForm({
   useEffect(() => {
     if (isConnected && scheduledDate) {
       setCheckingAvailability(true);
-      const start = new Date(scheduledDate);
-      start.setHours(0, 0, 0, 0);
-      const end = new Date(scheduledDate);
-      end.setHours(23, 59, 59, 999);
+      const dateObj = new Date(scheduledDate);
 
-      getFreeBusyIntervals(start, end)
+      // Expand the window to cover timezone differences
+      // We check 24h before and 48h after standard UTC midnight of the date
+      // to ensures we capture the "local" day regardless of offset.
+      const timeMin = new Date(dateObj);
+      timeMin.setDate(timeMin.getDate() - 1);
+
+      const timeMax = new Date(dateObj);
+      timeMax.setDate(timeMax.getDate() + 2);
+
+      getFreeBusyIntervals(timeMin, timeMax)
         .then(slots => {
           setBusySlots(slots);
         })
@@ -148,7 +154,11 @@ export default function ScheduleConsultationForm({
         description,
         scheduledAt,
         duration,
-        externalCalendarLink: calendarResult.fallbackLink,
+        // If auto-created, save the real Meet link and Event ID
+        // If fallback, current behavior is to save the 'Add to Calendar' link, which is okay but not ideal for 'externalCalendarLink' field which usually implies meeting link.
+        // Better to save nothing and let user add it. But for now, let's prioritize the Meet link.
+        externalCalendarLink: calendarResult.success ? calendarResult.meetLink : undefined,
+        externalEventId: calendarResult.success ? calendarResult.eventId : undefined,
       };
 
       await createConsultation(userData.id, userData.name || 'Agency', consultationData);

@@ -175,14 +175,88 @@ export const PortalShell = ({
 
   useEffect(() => {
     const updatePosition = () => {
-      if (notificationButtonRef.current) {
-        const rect = notificationButtonRef.current.getBoundingClientRect();
+      if (notificationButtonRef.current && notificationDropdownRef.current) {
+        const buttonRect = notificationButtonRef.current.getBoundingClientRect();
+        const dropdownWidth = 384;
+        const dropdownHeight = 450;
+        const gap = 8;
+        const padding = 16;
         const isRTL = document.documentElement.dir === 'rtl';
-        setNotificationPosition({
-          top: rect.bottom + 8,
-          right: isRTL ? 0 : window.innerWidth - rect.right,
-          left: isRTL ? rect.left : 0,
-        });
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        const maxDropdownWidth = Math.min(dropdownWidth, viewportWidth - padding * 2);
+
+        let top = buttonRect.bottom + gap;
+        let right: number | undefined;
+        let left: number | undefined;
+
+        if (isRTL) {
+          const spaceOnRight = viewportWidth - buttonRect.right;
+          const spaceOnLeft = buttonRect.left;
+
+          if (spaceOnRight >= maxDropdownWidth + padding) {
+            right = viewportWidth - buttonRect.right;
+            left = undefined;
+          } else if (spaceOnLeft >= maxDropdownWidth + padding) {
+            left = Math.max(padding, buttonRect.left - maxDropdownWidth);
+            right = undefined;
+          } else {
+            right = padding;
+            left = undefined;
+          }
+
+          if (right !== undefined) {
+            const calculatedRight = right;
+            const actualWidth = Math.min(maxDropdownWidth, viewportWidth - calculatedRight - padding);
+            if (calculatedRight + actualWidth > viewportWidth - padding) {
+              right = padding;
+            }
+          }
+          if (left !== undefined && left < padding) {
+            left = padding;
+          }
+        } else {
+          const spaceOnRight = viewportWidth - buttonRect.right;
+          const spaceOnLeft = buttonRect.left;
+
+          if (spaceOnRight >= maxDropdownWidth + padding) {
+            right = viewportWidth - buttonRect.right;
+            left = undefined;
+          } else if (spaceOnLeft >= maxDropdownWidth + padding) {
+            left = Math.max(padding, buttonRect.left - maxDropdownWidth);
+            right = undefined;
+          } else {
+            right = padding;
+            left = undefined;
+          }
+
+          if (right !== undefined) {
+            const calculatedRight = right;
+            const actualWidth = Math.min(maxDropdownWidth, viewportWidth - calculatedRight - padding);
+            if (calculatedRight + actualWidth > viewportWidth - padding) {
+              right = padding;
+            }
+          }
+          if (left !== undefined) {
+            const actualWidth = Math.min(maxDropdownWidth, viewportWidth - left - padding);
+            if (left + actualWidth > viewportWidth - padding) {
+              left = viewportWidth - actualWidth - padding;
+            }
+            if (left < padding) {
+              left = padding;
+            }
+          }
+        }
+
+        if (top + dropdownHeight > viewportHeight - padding) {
+          top = Math.max(padding, buttonRect.top - dropdownHeight - gap);
+        }
+        if (top < padding) {
+          top = padding;
+        }
+
+        setNotificationPosition({ top, right, left });
       }
     };
 
@@ -190,12 +264,13 @@ export const PortalShell = ({
       updatePosition();
       window.addEventListener('scroll', updatePosition, true);
       window.addEventListener('resize', updatePosition);
+      const timeoutId = setTimeout(updatePosition, 0);
+      return () => {
+        clearTimeout(timeoutId);
+        window.removeEventListener('scroll', updatePosition, true);
+        window.removeEventListener('resize', updatePosition);
+      };
     }
-
-    return () => {
-      window.removeEventListener('scroll', updatePosition, true);
-      window.removeEventListener('resize', updatePosition);
-    };
   }, [isNotificationOpen]);
 
   useEffect(() => {
@@ -413,7 +488,7 @@ export const PortalShell = ({
               initial={{ opacity: 0, y: 10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
-              className="fixed w-96 bg-white/90 dark:bg-surface-900/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-surface-200/60 dark:border-surface-800/50 overflow-hidden z-[100]"
+              className="fixed max-w-96 w-[calc(100vw-2rem)] bg-white/90 dark:bg-surface-900/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-surface-200/60 dark:border-surface-800/50 overflow-hidden z-[100]"
               style={{
                 top: `${notificationPosition.top}px`,
                 right:
@@ -424,6 +499,7 @@ export const PortalShell = ({
                   notificationPosition.left !== undefined
                     ? `${notificationPosition.left}px`
                     : undefined,
+                maxWidth: 'min(384px, calc(100vw - 2rem))',
               }}
             >
               <div className="p-6 border-b border-surface-200/50 dark:border-surface-800/30 flex items-center justify-between bg-white/50 dark:bg-surface-900/50">

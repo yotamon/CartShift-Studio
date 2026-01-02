@@ -31,12 +31,13 @@ import { useTranslations, useLocale } from 'next-intl';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS, he } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { ShopifyStoreIntegration } from '@/components/portal/integrations';
 
 export default function AgencyClientDetailClient({ clientId: initialClientId }: { clientId: string }) {
   const t = useTranslations('portal');
   const locale = useLocale();
   const clientId = useResolvedClientId() || initialClientId;
-  const { isAgency, userData, loading: authLoading } = usePortalAuth();
+  const { userData, loading: authLoading } = usePortalAuth();
 
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [requests, setRequests] = useState<Request[]>([]);
@@ -44,6 +45,7 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
   const [members, setMembers] = useState<OrganizationMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     if (!clientId) {
@@ -130,6 +132,11 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
       return undefined;
     }
   }, [clientId, authLoading, userData]);
+
+  // Prevent hydration mismatch for time-sensitive content
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Calculate stats
   const activeRequests = requests.filter(r =>
@@ -433,10 +440,10 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
                           <div className="flex items-center gap-1.5 text-surface-400">
                             <Clock size={12} />
                             <span className="text-[10px] font-bold uppercase tracking-tighter">
-                              {formatDistanceToNow(request.createdAt.toDate(), {
+                              {isMounted ? formatDistanceToNow(request.createdAt.toDate(), {
                                 addSuffix: true,
                                 locale: locale === 'he' ? he : enUS,
-                              })}
+                              }) : '—'}
                             </span>
                           </div>
                         )}
@@ -489,10 +496,10 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
                         <div className="flex items-center gap-1.5 text-surface-400 flex-shrink-0">
                           <Clock size={12} />
                           <span className="text-[10px] font-bold uppercase tracking-tighter">
-                            {formatDistanceToNow(activity.createdAt.toDate(), {
+                            {isMounted ? formatDistanceToNow(activity.createdAt.toDate(), {
                               addSuffix: true,
                               locale: locale === 'he' ? he : enUS,
-                            })}
+                            }) : '—'}
                           </span>
                         </div>
                       )}
@@ -585,6 +592,23 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
                 </div>
               </div>
             </PortalCard>
+          </div>
+
+          {/* Shopify Store Integration */}
+          <div>
+            <div className="flex items-center justify-between mb-6 px-2">
+              <h2 className="text-xl font-black text-surface-900 dark:text-white uppercase tracking-tight">
+                Shopify Store
+              </h2>
+            </div>
+
+            <ShopifyStoreIntegration
+              organization={organization}
+              isAgencyView={true}
+              onUpdate={() => {
+                // Refresh organization data
+              }}
+            />
           </div>
 
           {/* Team Members */}

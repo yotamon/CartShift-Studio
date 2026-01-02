@@ -157,6 +157,12 @@ export async function updateOrganization(
     website?: string;
     industry?: string;
     bio?: string;
+    // Shopify integration fields
+    shopifyDomain?: string;
+    shopifyCollaboratorCode?: string;
+    shopifyAccessStatus?: 'pending' | 'requested' | 'connected' | 'revoked';
+    shopifyAccessRequestedAt?: import('firebase/firestore').Timestamp;
+    shopifyConnectedAt?: import('firebase/firestore').Timestamp;
   }
 ): Promise<void> {
   const db = getFirestoreDb();

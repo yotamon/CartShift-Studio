@@ -14,7 +14,7 @@ import {
   onSnapshot,
   serverTimestamp,
 } from 'firebase/firestore';
-import { db } from './firebase-client';
+import { getFirestoreDb, waitForAuth } from '@/lib/firebase';
 import {
   Consultation,
   ConsultationType,
@@ -43,6 +43,7 @@ export interface CreateConsultationData {
   isBillable?: boolean;
   hourlyRate?: number;
   currency?: Currency;
+  externalEventId?: string; // Google Calendar Event ID
 }
 
 export async function createConsultation(
@@ -72,6 +73,10 @@ export async function createConsultation(
     consultationData.externalCalendarLink = data.externalCalendarLink;
   }
 
+  if (data.externalEventId) {
+    consultationData.externalEventId = data.externalEventId;
+  }
+
   if (data.hourlyRate !== undefined) {
     consultationData.hourlyRate = data.hourlyRate;
   }
@@ -80,6 +85,8 @@ export async function createConsultation(
     consultationData.currency = data.currency;
   }
 
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = await addDoc(collection(db, CONSULTATIONS_COLLECTION), consultationData);
 
   // Log activity
@@ -109,6 +116,8 @@ export async function createConsultation(
 // ============================================
 
 export async function getConsultation(consultationId: string): Promise<Consultation | null> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = doc(db, CONSULTATIONS_COLLECTION, consultationId);
   const docSnap = await getDoc(docRef);
 
@@ -127,6 +136,8 @@ export async function getConsultationsByOrg(
     upcoming?: boolean;
   }
 ): Promise<Consultation[]> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   let q = query(
     collection(db, CONSULTATIONS_COLLECTION),
     where('orgId', '==', orgId),
@@ -162,6 +173,8 @@ export async function getAllConsultations(
     limit?: number;
   }
 ): Promise<Consultation[]> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   let q = query(
     collection(db, CONSULTATIONS_COLLECTION),
     orderBy('scheduledAt', 'desc')
@@ -184,6 +197,8 @@ export async function getUpcomingConsultations(
   orgId?: string,
   count = 5
 ): Promise<Consultation[]> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   let q = query(
     collection(db, CONSULTATIONS_COLLECTION),
     where('scheduledAt', '>=', Timestamp.now()),
@@ -230,6 +245,8 @@ export async function updateConsultation(
   consultationId: string,
   data: UpdateConsultationData
 ): Promise<void> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = doc(db, CONSULTATIONS_COLLECTION, consultationId);
 
   const updateData: Record<string, unknown> = {
@@ -260,6 +277,8 @@ export async function completeConsultation(
   meetingNotes?: string,
   actionItems?: string[]
 ): Promise<void> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = doc(db, CONSULTATIONS_COLLECTION, consultationId);
 
   await updateDoc(docRef, {
@@ -287,6 +306,8 @@ export async function cancelConsultation(
   userName: string,
   reason?: string
 ): Promise<void> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = doc(db, CONSULTATIONS_COLLECTION, consultationId);
 
   await updateDoc(docRef, {
@@ -314,6 +335,8 @@ export async function markNoShow(
   userId: string,
   userName: string
 ): Promise<void> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = doc(db, CONSULTATIONS_COLLECTION, consultationId);
 
   await updateDoc(docRef, {
@@ -336,6 +359,8 @@ export async function markNoShow(
 // ============================================
 
 export async function deleteConsultation(consultationId: string): Promise<void> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   const docRef = doc(db, CONSULTATIONS_COLLECTION, consultationId);
   await deleteDoc(docRef);
 }
@@ -352,42 +377,70 @@ export function subscribeToOrgConsultations(
     upcoming?: boolean;
   }
 ): () => void {
-  let q = query(
-    collection(db, CONSULTATIONS_COLLECTION),
-    where('orgId', '==', orgId),
-    orderBy('scheduledAt', 'desc')
-  );
+  let unsubscribe: (() => void) | null = null;
+  let isUnsubscribed = false;
 
-  if (options?.status && options.status.length > 0) {
-    q = query(q, where('status', 'in', options.status));
+  if (!orgId || orgId === 'template') {
+    callback([]);
+    return () => {};
   }
 
-  if (options?.upcoming) {
-    q = query(
-      collection(db, CONSULTATIONS_COLLECTION),
-      where('orgId', '==', orgId),
-      where('scheduledAt', '>=', Timestamp.now()),
-      where('status', '==', CONSULTATION_STATUS.SCHEDULED),
-      orderBy('scheduledAt', 'asc')
-    );
-  }
+  waitForAuth()
+    .then(() => {
+      if (isUnsubscribed) return;
+      const db = getFirestoreDb();
+      let q = query(
+        collection(db, CONSULTATIONS_COLLECTION),
+        where('orgId', '==', orgId),
+        orderBy('scheduledAt', 'desc')
+      );
 
-  const unsubscribe = onSnapshot(
-    q,
-    snapshot => {
-      const consultations = snapshot.docs.map(d => ({
-        id: d.id,
-        ...d.data(),
-      })) as Consultation[];
-      callback(consultations);
-    },
-    error => {
-      console.error('[portal-consultations] Subscription error:', error);
+      if (options?.status && options.status.length > 0) {
+        q = query(q, where('status', 'in', options.status));
+      }
+
+      if (options?.upcoming) {
+        q = query(
+          collection(db, CONSULTATIONS_COLLECTION),
+          where('orgId', '==', orgId),
+          where('scheduledAt', '>=', Timestamp.now()),
+          where('status', '==', CONSULTATION_STATUS.SCHEDULED),
+          orderBy('scheduledAt', 'asc')
+        );
+      }
+
+      unsubscribe = onSnapshot(
+        q,
+        snapshot => {
+          const consultations = snapshot.docs.map(d => ({
+            id: d.id,
+            ...d.data(),
+          })) as Consultation[];
+          callback(consultations);
+        },
+        error => {
+          console.error('[portal-consultations] Subscription error:', error);
+          if (error.code === 'permission-denied') {
+            console.error(
+              'Permission denied. User may not be a member of this organization or rules may not have propagated yet.'
+            );
+            console.error('Organization ID:', orgId);
+          }
+          callback([]);
+        }
+      );
+    })
+    .catch(error => {
+      console.error('Error waiting for auth in subscribeToOrgConsultations:', error);
       callback([]);
-    }
-  );
+    });
 
-  return unsubscribe;
+  return () => {
+    isUnsubscribed = true;
+    if (unsubscribe) {
+      unsubscribe();
+    }
+  };
 }
 
 export function subscribeToAllConsultations(
@@ -396,55 +449,89 @@ export function subscribeToAllConsultations(
     status?: ConsultationStatus[];
   }
 ): () => void {
-  let q = query(
-    collection(db, CONSULTATIONS_COLLECTION),
-    orderBy('scheduledAt', 'desc')
-  );
+  let unsubscribe: (() => void) | null = null;
+  let isUnsubscribed = false;
 
-  if (options?.status && options.status.length > 0) {
-    q = query(q, where('status', 'in', options.status));
-  }
+  waitForAuth()
+    .then(() => {
+      if (isUnsubscribed) return;
+      const db = getFirestoreDb();
+      let q = query(
+        collection(db, CONSULTATIONS_COLLECTION),
+        orderBy('scheduledAt', 'desc')
+      );
 
-  const unsubscribe = onSnapshot(
-    q,
-    snapshot => {
-      const consultations = snapshot.docs.map(d => ({
-        id: d.id,
-        ...d.data(),
-      })) as Consultation[];
-      callback(consultations);
-    },
-    error => {
-      console.error('[portal-consultations] Subscription error:', error);
+      if (options?.status && options.status.length > 0) {
+        q = query(q, where('status', 'in', options.status));
+      }
+
+      unsubscribe = onSnapshot(
+        q,
+        snapshot => {
+          const consultations = snapshot.docs.map(d => ({
+            id: d.id,
+            ...d.data(),
+          })) as Consultation[];
+          callback(consultations);
+        },
+        error => {
+          console.error('[portal-consultations] Subscription error:', error);
+          callback([]);
+        }
+      );
+    })
+    .catch(error => {
+      console.error('Error waiting for auth in subscribeToAllConsultations:', error);
       callback([]);
-    }
-  );
+    });
 
-  return unsubscribe;
+  return () => {
+    isUnsubscribed = true;
+    if (unsubscribe) {
+      unsubscribe();
+    }
+  };
 }
 
 export function subscribeToConsultation(
   consultationId: string,
   callback: (consultation: Consultation | null) => void
 ): () => void {
-  const docRef = doc(db, CONSULTATIONS_COLLECTION, consultationId);
+  let unsubscribe: (() => void) | null = null;
+  let isUnsubscribed = false;
 
-  const unsubscribe = onSnapshot(
-    docRef,
-    snapshot => {
-      if (!snapshot.exists()) {
-        callback(null);
-        return;
-      }
-      callback({ id: snapshot.id, ...snapshot.data() } as Consultation);
-    },
-    error => {
-      console.error('[portal-consultations] Subscription error:', error);
+  waitForAuth()
+    .then(() => {
+      if (isUnsubscribed) return;
+      const db = getFirestoreDb();
+      const docRef = doc(db, CONSULTATIONS_COLLECTION, consultationId);
+
+      unsubscribe = onSnapshot(
+        docRef,
+        snapshot => {
+          if (!snapshot.exists()) {
+            callback(null);
+            return;
+          }
+          callback({ id: snapshot.id, ...snapshot.data() } as Consultation);
+        },
+        error => {
+          console.error('[portal-consultations] Subscription error:', error);
+          callback(null);
+        }
+      );
+    })
+    .catch(error => {
+      console.error('Error waiting for auth in subscribeToConsultation:', error);
       callback(null);
-    }
-  );
+    });
 
-  return unsubscribe;
+  return () => {
+    isUnsubscribed = true;
+    if (unsubscribe) {
+      unsubscribe();
+    }
+  };
 }
 
 // ============================================
@@ -457,6 +544,8 @@ export async function getConsultationStats(orgId?: string): Promise<{
   completed: number;
   canceled: number;
 }> {
+  await waitForAuth();
+  const db = getFirestoreDb();
   let q = query(collection(db, CONSULTATIONS_COLLECTION));
 
   if (orgId) {

@@ -43,6 +43,7 @@ import { PortalSwitch } from '@/components/portal/ui/PortalSwitch';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
+import { ShopifyStoreIntegration } from '@/components/portal/integrations';
 
 export default function SettingsClient() {
   const orgId = useResolvedOrgId();
@@ -623,6 +624,25 @@ export default function SettingsClient() {
                   </PortalButton>
                 </PortalCard>
               </div>
+
+              {/* Shopify Store Integration */}
+              {organization && (
+                <div className="mt-8">
+                  <h3 className="text-sm font-black text-slate-500 uppercase tracking-widest mb-4 px-1">
+                    {t('portal.settings.general.storeIntegrations')}
+                  </h3>
+                  <ShopifyStoreIntegration
+                    organization={organization}
+                    onUpdate={async () => {
+                      // Refetch organization data
+                      if (orgId && typeof orgId === 'string') {
+                        const org = await getOrganization(orgId);
+                        if (org) setOrganization(org);
+                      }
+                    }}
+                  />
+                </div>
+              )}
 
               <PortalCard className="border-rose-200 dark:border-rose-900/20 bg-rose-50/20 dark:bg-rose-900/5 shadow-sm">
                 <h3 className="text-lg font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2 font-outfit">
