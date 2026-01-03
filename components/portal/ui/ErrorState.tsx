@@ -1,17 +1,34 @@
 'use client';
 
 import { ReactNode } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { AlertCircle, RefreshCw, ArrowLeft, Headphones, Home } from 'lucide-react';
 import { PortalButton } from './PortalButton';
 import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 
-interface ErrorStateProps {
+const errorStateVariants = cva(
+  "flex items-center",
+  {
+    variants: {
+      variant: {
+        default: "py-16 flex-col justify-center text-center",
+        inline: "gap-3 p-4 rounded-xl bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-900/40",
+        fullPage: "min-h-[60vh] flex-col justify-center p-8 text-center",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+);
+
+interface ErrorStateProps
+  extends VariantProps<typeof errorStateVariants> {
   title?: string;
   message?: string;
   errorCode?: string;
-  variant?: 'default' | 'inline' | 'fullPage';
   icon?: ReactNode;
   onRetry?: () => void;
   onGoBack?: () => void;
@@ -24,7 +41,7 @@ export function ErrorState({
   title,
   message,
   errorCode,
-  variant = 'default',
+  variant,
   icon,
   onRetry,
   onGoBack,
@@ -40,10 +57,7 @@ export function ErrorState({
   if (variant === 'inline') {
     return (
       <div
-        className={cn(
-          'flex items-center gap-3 p-4 rounded-xl bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-900/40',
-          className
-        )}
+        className={cn(errorStateVariants({ variant }), className)}
         role="alert"
       >
         <AlertCircle size={20} className="text-rose-500 flex-shrink-0" />
@@ -68,10 +82,7 @@ export function ErrorState({
   if (variant === 'fullPage') {
     return (
       <div
-        className={cn(
-          'min-h-[60vh] flex flex-col items-center justify-center p-8 text-center',
-          className
-        )}
+        className={cn(errorStateVariants({ variant }), className)}
         role="alert"
       >
         <div className="w-24 h-24 bg-rose-50 dark:bg-rose-900/20 rounded-[2rem] flex items-center justify-center mx-auto mb-8 border border-rose-100 dark:border-rose-900/30 shadow-xl shadow-rose-500/10">
@@ -123,7 +134,7 @@ export function ErrorState({
   // Default variant
   return (
     <div
-      className={cn('py-16 flex flex-col items-center justify-center text-center', className)}
+      className={cn(errorStateVariants({ variant }), className)}
       role="alert"
     >
       <div className="w-16 h-16 bg-rose-50 dark:bg-rose-900/20 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-rose-100 dark:border-rose-900/30">
@@ -157,3 +168,5 @@ export function ErrorState({
     </div>
   );
 }
+
+export { errorStateVariants };

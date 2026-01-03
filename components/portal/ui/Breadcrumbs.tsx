@@ -5,8 +5,29 @@ import { usePathname } from '@/i18n/navigation';
 import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { ChevronRight, Home } from 'lucide-react';
+import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { isRTLLocale } from '@/lib/locale-config';
+
+const breadcrumbItemVariants = cva(
+  "truncate max-w-[200px] transition-colors",
+  {
+    variants: {
+      active: {
+        true: "font-semibold text-surface-900 dark:text-white",
+        false: "text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-200 hover:underline underline-offset-4 decoration-2 decoration-surface-300 dark:decoration-surface-700 max-w-[150px]",
+      },
+      truncated: {
+        true: "text-surface-400 px-1",
+        false: "",
+      },
+    },
+    defaultVariants: {
+      active: false,
+      truncated: false,
+    },
+  }
+);
 
 interface BreadcrumbsProps {
   className?: string;
@@ -132,10 +153,10 @@ export function Breadcrumbs({
             )}
           />
           {item.label === '...' ? (
-            <span className="text-surface-400 px-1">...</span>
+            <span className={breadcrumbItemVariants({ truncated: true })}>...</span>
           ) : item.isLast ? (
             <span
-              className="font-semibold text-surface-900 dark:text-white truncate max-w-[200px]"
+              className={breadcrumbItemVariants({ active: true })}
               aria-current="page"
             >
               {item.label}
@@ -143,7 +164,7 @@ export function Breadcrumbs({
           ) : (
             <Link
               href={item.href}
-              className="text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-200 transition-colors hover:underline underline-offset-4 decoration-2 decoration-surface-300 dark:decoration-surface-700 truncate max-w-[150px]"
+              className={breadcrumbItemVariants({ active: false })}
             >
               {item.label}
             </Link>
@@ -153,3 +174,5 @@ export function Breadcrumbs({
     </nav>
   );
 }
+
+export { breadcrumbItemVariants };

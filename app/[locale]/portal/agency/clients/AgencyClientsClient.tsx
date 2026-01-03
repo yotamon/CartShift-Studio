@@ -15,50 +15,33 @@ import {
   Loader2,
   ShieldCheck,
 } from 'lucide-react';
-import { getOrganizationsWithStats } from '@/lib/services/portal-organizations';
-import { Organization } from '@/lib/types/portal';
 import { Link, useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { Dropdown } from '@/components/ui/Dropdown';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
+import { useAgencyClients } from '@/lib/hooks/useAgencyClients';
 
 export default function AgencyClientsClient() {
   const t = useTranslations('portal');
   const router = useRouter();
   const { userData, loading: authLoading, isAuthenticated, user } = usePortalAuth();
-  const [organizations, setOrganizations] = useState<
-    (Organization & { memberCount: number; requestCount: number })[]
-  >([]);
+  const {
+    organizations,
+    loading: clientsLoading,
+  } = useAgencyClients();
+
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [isRepairing, setIsRepairing] = useState(false);
 
   useEffect(() => {
-    async function fetchOrgs() {
-      // ONLY fetch if we are 100% sure the user is an Agency admin
-      if (!userData?.isAgency) {
-        if (!authLoading && isAuthenticated) {
-          setLoading(false);
-        }
-        return;
-      }
-
-      setLoading(true);
-      try {
-        const data = await getOrganizationsWithStats();
-        setOrganizations(data);
-      } catch (error) {
-        console.error('Error fetching organizations:', error);
-      } finally {
-        setLoading(false);
-      }
+    // Sync loading state or use derived state
+    if (!authLoading && !clientsLoading) {
+      setLoading(false);
     }
+  }, [authLoading, clientsLoading]);
 
-    if (!authLoading) {
-      fetchOrgs();
-    }
-  }, [userData, authLoading, isAuthenticated]);
 
   const handleRepair = async () => {
     if (!user) return;

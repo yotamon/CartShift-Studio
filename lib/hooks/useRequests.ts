@@ -1,19 +1,40 @@
-import { RequestStatus } from '@/lib/schemas/portal';
+'use client';
 
-interface Request {
-  id: string;
-  orgId: string;
-  title: string;
-  description: string;
-  status: RequestStatus;
-  createdAt?: { toDate: () => Date };
-}
+import { useQuery } from '@tanstack/react-query';
+import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
+import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
+import { getRequestsByOrg, getAllRequests } from '@/lib/services/portal-requests';
 
-export function useRequests(_orgId?: string) {
+export function useRequests() {
+  const orgId = useResolvedOrgId();
+  const { loading: authLoading, isAuthenticated, isAgency } = usePortalAuth();
+
+  const shouldFetch = isAuthenticated && !authLoading && (isAgency || (orgId && typeof orgId === 'string'));
+
+  const {
+    data: requests = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: isAgency ? ['all-requests'] : ['org-requests', orgId],
+    queryFn: async () => {
+      if (isAgency) {
+        return getAllRequests();
+      } else {
+        return getRequestsByOrg(orgId as string);
+      }
+    },
+    enabled: Boolean(shouldFetch),
+    refetchInterval: 10000, // Refresh every 10s for lists
+    staleTime: 60 * 1000, // 1 minute stale time
+  });
+
+  const loading = authLoading || (shouldFetch && isLoading);
+  const errorMsg = error instanceof Error ? error.message : (error as string | null);
+
   return {
-    requests: [] as Request[],
-    loading: false,
-    error: null as string | null,
+    requests,
+    loading,
+    error: errorMsg,
   };
 }
-

@@ -7,6 +7,7 @@ import {
   limit,
   onSnapshot,
   serverTimestamp,
+  getDocs,
 } from 'firebase/firestore';
 import { getFirestoreDb, waitForAuth } from '@/lib/firebase';
 import { ActivityLog } from '@/lib/types/portal';
@@ -20,6 +21,56 @@ export async function logActivity(data: Omit<ActivityLog, 'id' | 'createdAt'>): 
     ...data,
     createdAt: serverTimestamp(),
   });
+}
+
+export async function getRequestActivities(
+  requestId: string,
+  orgId?: string
+): Promise<ActivityLog[]> {
+  await waitForAuth();
+  const db = getFirestoreDb();
+  let q;
+
+  if (orgId) {
+    q = query(
+      collection(db, ACTIVITIES_COLLECTION),
+      where('requestId', '==', requestId),
+      where('orgId', '==', orgId),
+      orderBy('createdAt', 'desc')
+    );
+  } else {
+    q = query(
+      collection(db, ACTIVITIES_COLLECTION),
+      where('requestId', '==', requestId),
+      orderBy('createdAt', 'desc')
+    );
+  }
+
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as ActivityLog[];
+}
+
+export async function getOrgActivities(
+  orgId: string,
+  maxItems: number = 20
+): Promise<ActivityLog[]> {
+  await waitForAuth();
+  const db = getFirestoreDb();
+  const q = query(
+    collection(db, ACTIVITIES_COLLECTION),
+    where('orgId', '==', orgId),
+    orderBy('createdAt', 'desc'),
+    limit(maxItems)
+  );
+
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as ActivityLog[];
 }
 
 export function subscribeToOrgActivities(

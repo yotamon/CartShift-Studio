@@ -3,14 +3,80 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from "@/lib/motion";
 import { Heart, Star } from 'lucide-react';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
-interface FavoriteButtonProps {
+const favoriteButtonVariants = cva(
+  "group relative flex items-center gap-2 p-2 rounded-full transition-colors",
+  {
+    variants: {
+      variant: {
+        heart: "",
+        star: "",
+      },
+      active: {
+        true: "",
+        false: "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800",
+      },
+      // Compound variants to handle specific color combos
+    },
+    compoundVariants: [
+      {
+        variant: "heart",
+        active: true,
+        class: "text-rose-500 bg-rose-50 dark:bg-rose-900/20",
+      },
+      {
+        variant: "star",
+        active: true,
+        class: "text-amber-500 bg-amber-50 dark:bg-amber-900/20",
+      },
+    ],
+    defaultVariants: {
+      variant: "heart",
+      active: false,
+    },
+  }
+);
+
+const countVariants = cva(
+  "text-xs font-bold font-outfit transition-colors",
+  {
+    variants: {
+      variant: {
+        heart: "",
+        star: "",
+      },
+      active: {
+        true: "",
+        false: "text-slate-500",
+      },
+    },
+    compoundVariants: [
+      {
+        variant: "heart",
+        active: true,
+        class: "text-rose-600 dark:text-rose-400",
+      },
+      {
+        variant: "star",
+        active: true,
+        class: "text-amber-600 dark:text-amber-400",
+      },
+    ],
+    defaultVariants: {
+      variant: "heart",
+      active: false,
+    },
+  }
+);
+
+interface FavoriteButtonProps
+  extends Omit<VariantProps<typeof favoriteButtonVariants>, 'active'> {
   initialIsActive?: boolean;
   onToggle?: (isActive: boolean) => void;
   className?: string;
   count?: number;
-  variant?: 'heart' | 'star';
 }
 
 export const FavoriteButton = ({
@@ -31,17 +97,13 @@ export const FavoriteButton = ({
   };
 
   const Icon = variant === 'heart' ? Heart : Star;
+  // Determine particle color based on variant
+  const particleColorClass = variant === 'heart' ? "bg-rose-500" : "bg-amber-400";
 
   return (
     <button
       onClick={handleClick}
-      className={cn(
-        "group relative flex items-center gap-2 p-2 rounded-full transition-colors",
-        isActive
-          ? "text-rose-500 bg-rose-50 dark:bg-rose-900/20"
-          : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800",
-        className
-      )}
+      className={cn(favoriteButtonVariants({ variant, active: isActive }), className)}
       aria-label={isActive ? "Unfavorite" : "Favorite"}
     >
       <div className="relative">
@@ -79,7 +141,7 @@ export const FavoriteButton = ({
                   transition={{ duration: 0.5, ease: "easeOut" }}
                   className={cn(
                     "absolute top-1/2 start-1/2 w-1 h-1 rounded-full",
-                    variant === 'heart' ? "bg-rose-500" : "bg-amber-400"
+                    particleColorClass
                   )}
                   style={{ marginLeft: -2, marginTop: -2 }}
                 />
@@ -90,17 +152,12 @@ export const FavoriteButton = ({
       </div>
 
       {count !== undefined && (
-        <span className={cn(
-          "text-xs font-bold font-outfit transition-colors",
-          isActive
-            ? variant === 'heart'
-              ? "text-rose-600 dark:text-rose-400"
-              : "text-amber-600 dark:text-amber-400"
-            : "text-slate-500"
-        )}>
+        <span className={cn(countVariants({ variant, active: isActive }))}>
           {count + (isActive ? 1 : 0)}
         </span>
       )}
     </button>
   );
 };
+
+export { favoriteButtonVariants };

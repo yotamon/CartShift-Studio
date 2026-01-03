@@ -3,9 +3,25 @@
 import React from 'react';
 import { Link } from '@/i18n/navigation';
 import { ChevronRight, Home } from 'lucide-react';
+import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { useLocale } from 'next-intl';
 import { isRTLLocale } from '@/lib/locale-config';
+
+const breadcrumbItemVariants = cva(
+  "font-medium truncate max-w-[200px] transition-colors",
+  {
+    variants: {
+      active: {
+        true: "text-surface-900 dark:text-white",
+        false: "text-surface-500 dark:text-surface-400 hover:text-surface-700 dark:hover:text-surface-200",
+      },
+    },
+    defaultVariants: {
+      active: false,
+    },
+  }
+);
 
 export interface BreadcrumbItem {
   label: string;
@@ -53,12 +69,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className }) => {
               />
               {isLast || !item.href ? (
                 <span
-                  className={cn(
-                    'font-medium truncate max-w-[200px]',
-                    isLast
-                      ? 'text-surface-900 dark:text-white'
-                      : 'text-surface-500 dark:text-surface-400'
-                  )}
+                  className={cn(breadcrumbItemVariants({ active: isLast }))}
                   aria-current={isLast ? 'page' : undefined}
                 >
                   {item.label}
@@ -66,7 +77,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className }) => {
               ) : (
                 <Link
                   href={item.href}
-                  className="font-medium text-surface-500 dark:text-surface-400 hover:text-surface-700 dark:hover:text-surface-200 transition-colors truncate max-w-[200px]"
+                  className={cn(breadcrumbItemVariants({ active: false }))}
                 >
                   {item.label}
                 </Link>
@@ -78,3 +89,5 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className }) => {
     </nav>
   );
 };
+
+export { breadcrumbItemVariants };

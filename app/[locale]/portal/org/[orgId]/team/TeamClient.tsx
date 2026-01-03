@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import {
   UserPlus,
   Shield,
@@ -24,8 +24,6 @@ import { SkeletonMemberCard, PortalSkeleton } from '@/components/portal/ui/Porta
 import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
 import {
   cancelInvite,
-  subscribeToMembers,
-  subscribeToInvites,
 } from '@/lib/services/portal-organizations';
 import { OrganizationMember, Invite } from '@/lib/types/portal';
 import { format } from 'date-fns';
@@ -34,58 +32,16 @@ import { InviteTeamMemberForm } from '@/components/portal/forms/InviteTeamMember
 import { cn } from '@/lib/utils';
 import { useTranslations, useLocale } from 'next-intl';
 import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
+import { useTeam } from '@/lib/hooks/useTeam';
 
 export default function TeamClient() {
   const orgId = useResolvedOrgId();
-  const [members, setMembers] = useState<OrganizationMember[]>([]);
-  const [invites, setInvites] = useState<Invite[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { members, invites, loading, error } = useTeam();
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [cancellingInvite, setCancellingInvite] = useState<string | null>(null);
   const [copiedInviteId, setCopiedInviteId] = useState<string | null>(null);
   const t = useTranslations();
   const locale = useLocale();
-
-  const membersReceivedRef = useRef(false);
-  const invitesReceivedRef = useRef(false);
-
-  useEffect(() => {
-    if (!orgId || typeof orgId !== 'string') return undefined;
-
-    setLoading(true);
-    setError(null);
-    membersReceivedRef.current = false;
-    invitesReceivedRef.current = false;
-
-    try {
-      const unsubscribeMembers = subscribeToMembers(orgId, data => {
-        setMembers(data);
-        membersReceivedRef.current = true;
-        if (membersReceivedRef.current && invitesReceivedRef.current) {
-          setLoading(false);
-        }
-      });
-
-      const unsubscribeInvites = subscribeToInvites(orgId, data => {
-        setInvites(data);
-        invitesReceivedRef.current = true;
-        if (membersReceivedRef.current && invitesReceivedRef.current) {
-          setLoading(false);
-        }
-      });
-
-      return () => {
-        unsubscribeMembers();
-        unsubscribeInvites();
-      };
-    } catch (err) {
-      console.error('Failed to subscribe to team data:', err);
-      setError(t('portal.team.errors.load'));
-      setLoading(false);
-      return undefined;
-    }
-  }, [orgId]);
 
   const handleInviteSuccess = async () => {
     setShowInviteModal(false);

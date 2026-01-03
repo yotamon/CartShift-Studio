@@ -12,13 +12,9 @@ import {
   Video,
   Plus,
   Search,
-  Filter,
-  MoreVertical,
   CheckCircle2,
   XCircle,
-  AlertCircle,
   Building2,
-  ChevronRight,
   UserPlus,
   Target,
   ClipboardCheck,
@@ -35,13 +31,13 @@ import {
   CONSULTATION_STATUS,
 } from '@/lib/types/portal';
 import {
-  subscribeToAllConsultations,
   completeConsultation,
   cancelConsultation,
 } from '@/lib/services/portal-consultations';
-import { getOrganization, getAllOrganizations } from '@/lib/services/portal-organizations';
+import { getAllOrganizations } from '@/lib/services/portal-organizations';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import ScheduleConsultationForm from '@/components/portal/ScheduleConsultationForm';
+import { useConsultations } from '@/lib/hooks/useConsultations';
 import { Organization } from '@/lib/types/portal';
 
 const typeIcons: Record<ConsultationType, React.ElementType> = {
@@ -51,57 +47,28 @@ const typeIcons: Record<ConsultationType, React.ElementType> = {
   support: Headphones,
 };
 
-const statusIcons: Record<ConsultationStatus, React.ElementType> = {
-  scheduled: Calendar,
-  completed: CheckCircle2,
-  canceled: XCircle,
-  no_show: AlertCircle,
-};
+
 
 export default function AgencyConsultationsClient() {
   const t = useTranslations();
   const locale = useLocale();
   const { userData } = usePortalAuth();
-  const [consultations, setConsultations] = useState<Consultation[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<ConsultationStatus | 'all'>('all');
-  const [orgNames, setOrgNames] = useState<Record<string, string>>({});
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
 
   const dateLocale = getDateLocale(locale);
 
-  useEffect(() => {
-    if (!userData?.isAgency) return;
+  const {
+    consultations,
+    loading: consultationsLoading,
+  } = useConsultations({ status: statusFilter });
 
-    const unsubscribe = subscribeToAllConsultations(
-      data => {
-        setConsultations(data);
-        setLoading(false);
-        // Fetch org names for display
-        const uniqueOrgIds = [...new Set(data.map(c => c.orgId))];
-        uniqueOrgIds.forEach(async orgId => {
-          if (!orgNames[orgId]) {
-            try {
-              const org = await getOrganization(orgId);
-              if (org) {
-                setOrgNames(prev => ({ ...prev, [orgId]: org.name }));
-              }
-            } catch (err) {
-              console.warn(`Could not fetch details for org ${orgId}:`, err);
-            }
-          }
-        });
-      },
-      statusFilter !== 'all' ? { status: [statusFilter] } : undefined
-    );
+  const loading = consultationsLoading;
 
-    return () => unsubscribe();
-  }, [statusFilter, userData]);
-
-  // Fetch organizations for the schedule picker
+  // Fetch organizations for the schedule picker and org names
   useEffect(() => {
     if (!userData?.isAgency) return;
 
@@ -113,6 +80,13 @@ export default function AgencyConsultationsClient() {
         console.error('Failed to fetch organizations:', err);
       });
   }, [userData]);
+
+  const orgNames = organizations.reduce((acc, org) => {
+    acc[org.id] = org.name;
+    return acc;
+  }, {} as Record<string, string>);
+
+
 
   const filteredConsultations = consultations.filter(c => {
     if (searchQuery) {
@@ -359,7 +333,7 @@ export default function AgencyConsultationsClient() {
           <AnimatePresence>
             {filteredConsultations.map((consultation, index) => {
               const TypeIcon = typeIcons[consultation.type];
-              const StatusIcon = statusIcons[consultation.status];
+
               const typeConfig = CONSULTATION_TYPE_CONFIG[consultation.type];
               const statusConfig = CONSULTATION_STATUS_CONFIG[consultation.status];
               const scheduledDate = consultation.scheduledAt?.toDate

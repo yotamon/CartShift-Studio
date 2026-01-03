@@ -1,6 +1,42 @@
 'use client';
 
+import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
+
+const switchTrackVariants = cva(
+  "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2",
+  {
+    variants: {
+      checked: {
+        true: "bg-blue-600",
+        false: "bg-surface-200 dark:bg-surface-800",
+      },
+      disabled: {
+        true: "opacity-50 cursor-not-allowed",
+        false: "",
+      },
+    },
+    defaultVariants: {
+      checked: false,
+      disabled: false,
+    },
+  }
+);
+
+const switchThumbVariants = cva(
+  "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+  {
+    variants: {
+      checked: {
+        true: "translate-x-5 rtl:-translate-x-5",
+        false: "translate-x-0",
+      },
+    },
+    defaultVariants: {
+      checked: false,
+    },
+  }
+);
 
 interface PortalSwitchProps {
   label?: string;
@@ -8,6 +44,7 @@ interface PortalSwitchProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
   disabled?: boolean;
+  className?: string; // Add className prop for flexibility
 }
 
 export const PortalSwitch = ({
@@ -16,12 +53,14 @@ export const PortalSwitch = ({
   checked,
   onChange,
   disabled = false,
+  className,
 }: PortalSwitchProps) => {
   return (
-    <div className="flex items-start justify-between gap-4 py-2">
+    <div className={cn("flex items-start justify-between gap-4 py-2", className)}>
       <div className="flex-1">
         {label && (
-          <label className="text-sm font-bold text-surface-900 dark:text-white block mb-0.5">
+          <label className="text-sm font-bold text-surface-900 dark:text-white block mb-0.5" onClick={() => !disabled && onChange(!checked)}>
+             {/* made label clickable for better UX */}
             {label}
           </label>
         )}
@@ -36,20 +75,14 @@ export const PortalSwitch = ({
         role="switch"
         aria-checked={checked}
         onClick={() => !disabled && onChange(!checked)}
-        className={cn(
-          "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2",
-          checked ? "bg-blue-600" : "bg-surface-200 dark:bg-surface-800",
-          disabled && "opacity-50 cursor-not-allowed"
-        )}
+        className={cn(switchTrackVariants({ checked, disabled }))}
+        disabled={disabled}
       >
-        <span
-          className={cn(
-            "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
-            checked ? "translate-x-5 rtl:-translate-x-5" : "translate-x-0"
-          )}
-        />
+        <span className={cn(switchThumbVariants({ checked }))} />
       </button>
     </div>
   );
 };
+
+export { switchTrackVariants, switchThumbVariants };
 

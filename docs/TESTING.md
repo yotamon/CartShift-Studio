@@ -1,102 +1,150 @@
-# Testing Checklist
+# Portal Testing Documentation
 
-## Cross-Browser Testing
+## Overview
 
-Test the following browsers:
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-- Mobile browsers (iOS Safari, Chrome Mobile)
+A comprehensive testing suite has been set up for the CartShift Studio portal functionality using Vitest and React Testing Library.
 
-## Functionality Testing
+## Test Infrastructure
 
-### Forms
-- [ ] Homepage hero form submission
-- [ ] Contact page form submission
-- [ ] Form validation (required fields, email format)
-- [ ] Error messages display correctly
-- [ ] Success states work properly
-- [ ] Form submission tracking in analytics
+### Setup Files
+- `vitest.config.ts` - Vitest configuration with React plugin and path aliases
+- `tests/setup.ts` - Global test setup with jsdom environment and cleanup
+- `tests/utils/test-utils.tsx` - Testing utilities with NextIntl provider
+- `tests/utils/mock-firebase.ts` - Firebase mocking utilities
 
-### Navigation
-- [ ] Desktop navigation menu works
-- [ ] Mobile hamburger menu opens/closes
-- [ ] Solutions dropdown works on desktop
-- [ ] All links navigate correctly
-- [ ] Active page highlighting (if implemented)
+### Test Scripts
 
-### Blog
-- [ ] Blog listing page displays posts
-- [ ] Individual post pages load correctly
-- [ ] Markdown content renders properly
-- [ ] Related posts display (if available)
-- [ ] Category filtering works
+```bash
+# Run tests in watch mode
+pnpm test
 
-### Responsive Design
-- [ ] Mobile (320px - 768px)
-- [ ] Tablet (768px - 1024px)
-- [ ] Desktop (1024px+)
-- [ ] All sections stack properly on mobile
-- [ ] Forms are usable on mobile
-- [ ] Touch targets are large enough (min 44x44px)
+# Run tests once
+pnpm test:run
 
-## Performance Testing
+# Run tests with UI
+pnpm test:ui
+```
 
-### Lighthouse Audits
-Run Lighthouse audits and target:
-- Performance: 90+
-- Accessibility: 95+
-- Best Practices: 90+
-- SEO: 95+
+## Test Coverage
 
-### Core Web Vitals
-- [ ] LCP (Largest Contentful Paint) < 2.5s
-- [ ] FID (First Input Delay) < 100ms
-- [ ] CLS (Cumulative Layout Shift) < 0.1
+### Authentication Tests
+- **Location**: `tests/portal/auth/login.test.tsx`
+- **Coverage**:
+  - Login form rendering
+  - Form validation
+  - Email format validation
+  - Error handling
 
-### Load Testing
-- [ ] Pages load quickly (< 3s on 3G)
-- [ ] Images are optimized
-- [ ] No render-blocking resources
-- [ ] Code splitting works correctly
+### Portal Root Tests
+- **Location**: `tests/portal/root.test.tsx`
+- **Coverage**:
+  - Loading states
+  - Authentication redirects
+  - Agency user routing
+  - Organization routing
+  - Onboarding flow
 
-## Accessibility Testing
+### Dashboard Tests
+- **Location**: `tests/portal/dashboard.test.tsx`
+- **Coverage**:
+  - Loading states
+  - Access control
+  - Data subscription
+  - Error handling
+  - UI rendering
 
-- [ ] Semantic HTML structure
-- [ ] ARIA labels on interactive elements
-- [ ] Keyboard navigation works throughout
-- [ ] Focus indicators visible
-- [ ] Color contrast meets WCAG AA standards
-- [ ] Alt text on all images
-- [ ] Screen reader testing (NVDA/JAWS/VoiceOver)
+### Settings Tests
+- **Location**: `tests/portal/settings.test.tsx`
+- **Coverage**:
+  - Settings page rendering
+  - Loading states
+  - Form functionality
 
-## SEO Testing
+### Requests Tests
+- **Location**: `tests/portal/requests.test.tsx`
+- **Coverage**:
+  - Request list rendering
+  - Loading states
+  - Access control
+  - New request button
 
-- [ ] All pages have unique meta titles
-- [ ] All pages have meta descriptions
-- [ ] Schema markup validates
-- [ ] Sitemap.xml is accessible
-- [ ] Robots.txt is configured
-- [ ] Canonical URLs are set
-- [ ] Open Graph tags work
-- [ ] Twitter Card tags work
+### Portal Shell Tests
+- **Location**: `tests/portal/portal-shell.test.tsx`
+- **Coverage**:
+  - Navigation rendering
+  - Authentication checks
+  - Authorization logic
+  - Loading states
 
-## Content Review
+## Mocking Strategy
 
-- [ ] All copy is proofread
-- [ ] All links work (no 404s)
-- [ ] Images have appropriate alt text
-- [ ] Contact information is correct
-- [ ] Social media links (if any) work
+### Firebase Mocks
+- Auth state changes
+- Firestore subscriptions
+- User data
+- Organization data
 
-## Analytics Testing
+### Next.js Mocks
+- Navigation (useRouter, usePathname)
+- Search params
+- Internationalization
 
-- [ ] Google Analytics loads correctly
-- [ ] Form submissions are tracked
-- [ ] Page views are tracked
-- [ ] Events fire correctly
+## Running Tests
 
+### Basic Usage
+```bash
+pnpm test:run
+```
 
+### Watch Mode
+```bash
+pnpm test
+```
 
+### With UI
+```bash
+pnpm test:ui
+```
 
+## Test Structure
+
+```
+tests/
+├── setup.ts                    # Global setup
+├── utils/
+│   ├── test-utils.tsx          # Test utilities
+│   └── mock-firebase.ts        # Firebase mocks
+└── portal/
+    ├── auth/
+    │   └── login.test.tsx
+    ├── root.test.tsx
+    ├── dashboard.test.tsx
+    ├── settings.test.tsx
+    ├── requests.test.tsx
+    └── portal-shell.test.tsx
+```
+
+## Adding New Tests
+
+1. Create test file in appropriate directory
+2. Import test utilities:
+   ```tsx
+   import { render, screen, waitFor } from '../utils/test-utils';
+   import { setupFirebaseMocks, mockUserData } from '../utils/mock-firebase';
+   ```
+3. Set up mocks for required dependencies
+4. Write test cases following existing patterns
+
+## Known Issues
+
+- Some tests may need additional mocking for complex components
+- React state updates in async operations may need `act()` wrapping
+- Some integration tests are simplified placeholders
+
+## Future Improvements
+
+- Add E2E tests with Playwright
+- Increase test coverage for edge cases
+- Add visual regression tests
+- Test error boundaries
+- Add performance tests

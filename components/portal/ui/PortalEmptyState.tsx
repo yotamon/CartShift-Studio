@@ -1,13 +1,29 @@
 import React from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { LucideIcon } from 'lucide-react';
 
-interface PortalEmptyStateProps {
+const emptyStateVariants = cva(
+  "flex flex-col items-center justify-center text-center p-8",
+  {
+    variants: {
+      variant: {
+        default: "bg-slate-50/50 dark:bg-slate-900/20 border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl",
+        plain: "",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+);
+
+interface PortalEmptyStateProps
+  extends VariantProps<typeof emptyStateVariants> {
   icon: LucideIcon;
   title: string;
   description: string;
   action?: React.ReactNode;
-  variant?: 'default' | 'plain';
   className?: string;
 }
 
@@ -16,17 +32,12 @@ export const PortalEmptyState = ({
   title,
   description,
   action,
-  variant = 'default',
+  variant,
   className,
 }: PortalEmptyStateProps) => {
   return (
     <div
-      className={cn(
-        'flex flex-col items-center justify-center text-center p-8',
-        variant === 'default' &&
-          'bg-slate-50/50 dark:bg-slate-900/20 border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl',
-        className
-      )}
+      className={cn(emptyStateVariants({ variant }), className)}
     >
       <div className="relative group mb-6">
         <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-purple-500/20 rounded-2xl blur-xl group-hover:scale-110 transition-transform duration-500" />

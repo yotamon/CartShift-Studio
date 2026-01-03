@@ -1031,69 +1031,33 @@ body {
     @apply text-[11px] text-surface-500 dark:text-surface-500;
   }
 
-  /* Portal Input Styles */
-  .portal-input {
-    @apply w-full px-4 py-2.5 rounded-xl border border-surface-200 dark:border-white/10 bg-white dark:bg-white/5 text-surface-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-all duration-200;
-    @apply focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500;
+  /* Portal Typography */
+  .portal-heading-xl {
+    @apply text-2xl md:text-3xl font-bold text-surface-900 dark:text-white tracking-tight;
   }
 
-  .portal-input:disabled {
-    @apply bg-surface-50 dark:bg-white/5 cursor-not-allowed opacity-60;
+  .portal-heading-lg {
+    @apply text-xl md:text-2xl font-bold text-surface-900 dark:text-white tracking-tight;
   }
 
-  .portal-input-with-icon {
-    @apply ps-10;
+  .portal-heading-md {
+    @apply text-lg md:text-xl font-bold text-surface-900 dark:text-white;
   }
 
-  .portal-input-error {
-    @apply border-red-300 dark:border-red-500/50 focus:ring-red-500/20 focus:border-red-500;
+  .portal-heading-sm {
+    @apply text-base md:text-lg font-semibold text-surface-900 dark:text-white;
   }
 
-  /* Portal Buttons */
-  .portal-btn {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-semibold transition-all duration-200;
-    @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500;
+  .portal-body {
+    @apply text-sm text-surface-700 dark:text-surface-300;
   }
 
-  .portal-btn-primary {
-    @apply bg-primary-600 text-white hover:bg-primary-700 active:scale-95;
-    box-shadow:
-      0 4px 12px rgba(2, 132, 199, 0.2),
-      0 0 0 1px rgba(2, 132, 199, 0.1);
+  .portal-body-sm {
+    @apply text-xs text-surface-600 dark:text-surface-400;
   }
 
-  .portal-btn-primary:hover {
-    box-shadow:
-      0 6px 20px rgba(2, 132, 199, 0.3),
-      0 0 0 1px rgba(2, 132, 199, 0.2);
-  }
-
-  .portal-btn-secondary {
-    @apply bg-surface-100 dark:bg-white/10 text-surface-700 dark:text-white hover:bg-surface-200 dark:hover:bg-white/15 active:scale-95;
-  }
-
-  .portal-btn-ghost {
-    @apply bg-transparent text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-white/5 active:scale-95;
-  }
-
-  .portal-btn-danger {
-    @apply bg-red-600 text-white hover:bg-red-700 active:scale-95;
-  }
-
-  .portal-btn-sm {
-    @apply px-3 py-1.5 text-sm;
-  }
-
-  .portal-btn-lg {
-    @apply px-6 py-3.5 text-base;
-  }
-
-  .portal-btn-icon {
-    @apply p-2.5;
-  }
-
-  .portal-btn:disabled {
-    @apply opacity-50 cursor-not-allowed;
+  .portal-body-xs {
+    @apply text-[11px] text-surface-500 dark:text-surface-500;
   }
 
   /* Portal Scrollbar */
@@ -1122,148 +1086,6 @@ body {
 
   .scrollbar-hide::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
-  }
-
-  /* Portal Card */
-  .portal-card {
-    @apply bg-white dark:bg-surface-800/50 rounded-2xl border border-surface-200 dark:border-white/10 transition-all duration-200;
-    box-shadow:
-      0 1px 3px rgba(0, 0, 0, 0.05),
-      0 0 0 1px rgba(0, 0, 0, 0.02);
-  }
-
-  .dark .portal-card {
-    box-shadow:
-      0 1px 3px rgba(0, 0, 0, 0.3),
-      0 0 0 1px rgba(255, 255, 255, 0.05);
-  }
-
-  .portal-card:hover {
-    @apply border-surface-300 dark:border-white/20;
-    box-shadow:
-      0 8px 16px rgba(0, 0, 0, 0.08),
-      0 0 0 1px rgba(0, 0, 0, 0.03);
-  }
-
-  .dark .portal-card:hover {
-    box-shadow:
-      0 8px 16px rgba(0, 0, 0, 0.4),
-      0 0 0 1px rgba(255, 255, 255, 0.1);
-  }
-
-  .portal-card-body {
-    @apply p-6;
-  }
-
-  .portal-card-header {
-    @apply px-6 pt-6 pb-4 border-b border-surface-200 dark:border-white/10;
-  }
-
-  .portal-card-footer {
-    @apply px-6 pt-4 pb-6 border-t border-surface-200 dark:border-white/10;
-  }
-
-  /* Portal Badge */
-  .portal-badge {
-    @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold;
-  }
-
-  .portal-badge-primary {
-    @apply bg-primary-100 dark:bg-primary-500/20 text-primary-800 dark:text-primary-200;
-  }
-
-  .portal-badge-success {
-    @apply bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-200;
-  }
-
-  .portal-badge-warning {
-    @apply bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-200;
-  }
-
-  .portal-badge-danger {
-    @apply bg-red-100 dark:bg-red-500/20 text-red-800 dark:text-red-200;
-  }
-
-  .portal-badge-info {
-    @apply bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-blue-200;
-  }
-
-  /* Color variants matching PortalBadge.tsx */
-  .portal-badge-blue {
-    @apply bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-blue-200;
-  }
-
-  .portal-badge-green {
-    @apply bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-200;
-  }
-
-  .portal-badge-yellow {
-    @apply bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-200;
-  }
-
-  .portal-badge-red {
-    @apply bg-rose-100 dark:bg-rose-500/20 text-rose-800 dark:text-rose-200;
-  }
-
-  /* Portal Avatar */
-  .portal-avatar {
-    @apply flex items-center justify-center rounded-full font-semibold uppercase bg-gradient-to-br from-primary-500 to-accent-500 text-white;
-  }
-
-  .portal-avatar-sm {
-    @apply w-8 h-8 text-xs;
-  }
-
-  .portal-avatar-md {
-    @apply w-10 h-10 text-sm;
-  }
-
-  .portal-avatar-lg {
-    @apply w-12 h-12 text-base;
-  }
-
-  /* Portal Empty State */
-  .portal-empty {
-    @apply flex flex-col items-center justify-center py-12 px-4 text-center;
-  }
-
-  .portal-empty-icon {
-    @apply w-16 h-16 text-surface-300 dark:text-surface-600 mb-4;
-  }
-
-  .portal-empty-title {
-    @apply text-lg font-semibold text-surface-900 dark:text-white mb-2;
-  }
-
-  .portal-empty-text {
-    @apply text-sm text-surface-500 dark:text-surface-400 max-w-md;
-  }
-
-  /* Portal Skeleton Loaders */
-  .portal-skeleton {
-    @apply animate-pulse bg-surface-200 dark:bg-surface-700 rounded-lg;
-  }
-
-  .portal-skeleton-text {
-    @apply h-4 my-2;
-  }
-
-  .portal-skeleton-title {
-    @apply h-6 my-3;
-  }
-
-  .portal-skeleton-avatar {
-    @apply w-10 h-10 rounded-full;
-  }
-
-  @keyframes portal-skeleton-pulse {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.5;
-    }
   }
 
   /* Portal Transitions */

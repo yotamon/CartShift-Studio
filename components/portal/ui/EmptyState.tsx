@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { PortalButton } from './PortalButton';
 import { useTranslations } from 'next-intl';
@@ -28,7 +29,22 @@ type EmptyStateVariant =
   | 'messages'
   | 'generic';
 
-interface EmptyStateProps {
+const emptyStateVariants = cva(
+  "flex flex-col items-center justify-center text-center",
+  {
+    variants: {
+      compact: {
+        true: "py-8",
+        false: "py-16",
+      },
+    },
+    defaultVariants: {
+      compact: false,
+    },
+  }
+);
+
+interface EmptyStateProps extends VariantProps<typeof emptyStateVariants> {
   variant?: EmptyStateVariant;
   title?: string;
   description?: string;
@@ -39,7 +55,6 @@ interface EmptyStateProps {
   secondaryActionLabel?: string;
   onSecondaryAction?: () => void;
   className?: string;
-  compact?: boolean;
 }
 
 const getDefaultContent = (t: ReturnType<typeof useTranslations>): Record<EmptyStateVariant, { icon: ReactNode; title: string; description: string }> => ({
@@ -107,79 +122,69 @@ export function EmptyState({
   const defaultContent = getDefaultContent(t);
   const content = defaultContent[variant];
 
-  if (compact) {
-    return (
-      <div
-        className={cn(
-          'py-8 flex flex-col items-center justify-center text-center',
-          className
-        )}
-      >
-        <div className="w-12 h-12 bg-surface-100 dark:bg-surface-800 rounded-xl flex items-center justify-center mb-4 text-surface-400">
-          {icon || content.icon}
-        </div>
-        <p className="text-sm font-bold text-surface-600 dark:text-surface-400 mb-1">
-          {title || content.title}
-        </p>
-        <p className="text-xs text-surface-400 dark:text-surface-500 max-w-xs">
-          {description || content.description}
-        </p>
-        {(actionLabel || onAction || actionHref) && (
-          <PortalButton
-            size="sm"
-            className="mt-4"
-            onClick={onAction}
-            {...(actionHref && { as: 'a', href: actionHref })}
-          >
-            <Plus size={14} className="me-1.5" />
-            {actionLabel || t('portal.common.getStarted')}
-          </PortalButton>
-        )}
-      </div>
-    );
-  }
-
   return (
-    <div
-      className={cn(
-        'py-16 flex flex-col items-center justify-center text-center',
-        className
+    <div className={cn(emptyStateVariants({ compact }), className)}>
+      {compact ? (
+        <>
+          <div className="w-12 h-12 bg-surface-100 dark:bg-surface-800 rounded-xl flex items-center justify-center mb-4 text-surface-400">
+            {icon || content.icon}
+          </div>
+          <p className="text-sm font-bold text-surface-600 dark:text-surface-400 mb-1">
+            {title || content.title}
+          </p>
+          <p className="text-xs text-surface-400 dark:text-surface-500 max-w-xs">
+            {description || content.description}
+          </p>
+          {(actionLabel || onAction || actionHref) && (
+            <PortalButton
+              size="sm"
+              className="mt-4"
+              onClick={onAction}
+              {...(actionHref && { as: 'a', href: actionHref })}
+            >
+              <Plus size={14} className="me-1.5" />
+              {actionLabel || t('portal.common.getStarted')}
+            </PortalButton>
+          )}
+        </>
+      ) : (
+        <>
+          {/* Icon with gradient background */}
+          <div className="relative mb-8">
+            <div className="w-20 h-20 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-surface-800 dark:to-surface-900 rounded-3xl flex items-center justify-center border border-surface-200 dark:border-surface-700 text-surface-400 dark:text-surface-500 shadow-lg shadow-surface-200/50 dark:shadow-none">
+              {icon || content.icon}
+            </div>
+            {/* Decorative dots */}
+            <div className="absolute -top-2 -end-2 w-3 h-3 bg-blue-400 rounded-full opacity-60" />
+            <div className="absolute -bottom-1 -start-3 w-2 h-2 bg-purple-400 rounded-full opacity-40" />
+          </div>
+
+          <h3 className="text-xl font-bold text-surface-900 dark:text-white mb-2">
+            {title || content.title}
+          </h3>
+          <p className="text-sm text-surface-500 dark:text-surface-400 max-w-sm mb-8 leading-relaxed">
+            {description || content.description}
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {(actionLabel || onAction || actionHref) && (
+              <PortalButton
+                onClick={onAction}
+                className="shadow-lg shadow-blue-500/20"
+                {...(actionHref && { as: 'a', href: actionHref })}
+              >
+                <Plus size={16} className="me-2" />
+                {actionLabel || t('portal.common.getStarted')}
+              </PortalButton>
+            )}
+            {secondaryActionLabel && onSecondaryAction && (
+              <PortalButton variant="outline" onClick={onSecondaryAction}>
+                {secondaryActionLabel}
+              </PortalButton>
+            )}
+          </div>
+        </>
       )}
-    >
-      {/* Icon with gradient background */}
-      <div className="relative mb-8">
-        <div className="w-20 h-20 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-surface-800 dark:to-surface-900 rounded-3xl flex items-center justify-center border border-surface-200 dark:border-surface-700 text-surface-400 dark:text-surface-500 shadow-lg shadow-surface-200/50 dark:shadow-none">
-          {icon || content.icon}
-        </div>
-        {/* Decorative dots */}
-        <div className="absolute -top-2 -end-2 w-3 h-3 bg-blue-400 rounded-full opacity-60" />
-        <div className="absolute -bottom-1 -start-3 w-2 h-2 bg-purple-400 rounded-full opacity-40" />
-      </div>
-
-      <h3 className="text-xl font-bold text-surface-900 dark:text-white mb-2">
-        {title || content.title}
-      </h3>
-      <p className="text-sm text-surface-500 dark:text-surface-400 max-w-sm mb-8 leading-relaxed">
-        {description || content.description}
-      </p>
-
-      <div className="flex flex-wrap items-center justify-center gap-3">
-        {(actionLabel || onAction || actionHref) && (
-          <PortalButton
-            onClick={onAction}
-            className="shadow-lg shadow-blue-500/20"
-            {...(actionHref && { as: 'a', href: actionHref })}
-          >
-            <Plus size={16} className="me-2" />
-            {actionLabel || t('portal.common.getStarted')}
-          </PortalButton>
-        )}
-        {secondaryActionLabel && onSecondaryAction && (
-          <PortalButton variant="outline" onClick={onSecondaryAction}>
-            {secondaryActionLabel}
-          </PortalButton>
-        )}
-      </div>
     </div>
   );
 }
@@ -202,3 +207,5 @@ export function EmptyColumnState({ className }: { className?: string }) {
     </div>
   );
 }
+
+export { emptyStateVariants };

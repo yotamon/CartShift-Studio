@@ -1,6 +1,6 @@
 'use client';
 
-import { format } from 'date-fns';
+import { format, formatDistanceToNow } from 'date-fns';
 import { getDateLocale } from '@/lib/locale-config';
 import { Timestamp } from 'firebase/firestore';
 import {
@@ -11,50 +11,41 @@ import {
   PortalUser,
 } from '@/lib/types/portal';
 
+import { BadgeVariant } from '@/components/portal/ui/PortalBadge';
+
 // ============================================
 // STATUS COLOR MAPPING
 // ============================================
 
 /**
  * Maps internal color names to PortalBadge variant colors.
- * Consolidates duplicated mapStatusColor functions across the codebase.
+ * Simplified to pass through colors that are now supported by PortalBadge (CVA).
  *
  * Handles colors from both:
  * - STATUS_CONFIG (request status colors)
  * - PRICING_STATUS_CONFIG (pricing status colors)
- *
- * @example
- * ```tsx
- * <PortalBadge variant={mapStatusColor(STATUS_CONFIG[status].color)}>
- *   {statusLabel}
- * </PortalBadge>
- * ```
  */
-export function mapStatusColor(color: string): 'blue' | 'green' | 'yellow' | 'red' | 'gray' {
-  // Handle purple variants -> blue
-  if (color === 'purple') return 'blue';
-  // Handle green variants -> green
-  if (color === 'emerald' || color === 'green') return 'green';
-  // Handle orange -> yellow
-  if (color === 'orange') return 'yellow';
-  // Direct mappings
-  if (['blue', 'green', 'yellow', 'red', 'gray'].includes(color)) {
-    return color as 'blue' | 'green' | 'yellow' | 'red' | 'gray';
+export function mapStatusColor(color: string): BadgeVariant {
+  // Direct mappings for supported variants
+  if (['blue', 'green', 'yellow', 'red', 'purple', 'gray', 'emerald', 'orange'].includes(color)) {
+    return color as BadgeVariant;
   }
+
+  // Backwards compatibility or fallbacks
   return 'gray';
 }
 
 /**
  * Get the badge variant for a request status (agency view).
  */
-export function getStatusBadgeVariant(status: RequestStatus): 'blue' | 'green' | 'yellow' | 'red' | 'gray' {
+export function getStatusBadgeVariant(status: RequestStatus): BadgeVariant {
   return mapStatusColor(STATUS_CONFIG[status]?.color || 'gray');
 }
 
 /**
  * Get the badge variant for a request status (client view - simplified).
  */
-export function getClientStatusBadgeVariant(status: RequestStatus): 'blue' | 'green' | 'yellow' | 'red' | 'gray' {
+export function getClientStatusBadgeVariant(status: RequestStatus): BadgeVariant {
   const clientStatus = CLIENT_STATUS_MAP[status];
   return mapStatusColor(CLIENT_STATUS_CONFIG[clientStatus]?.color || 'gray');
 }
@@ -62,16 +53,8 @@ export function getClientStatusBadgeVariant(status: RequestStatus): 'blue' | 'gr
 /**
  * Get the badge variant for a pricing request status.
  * Use with PRICING_STATUS_CONFIG from lib/types/pricing.
- *
- * @example
- * ```tsx
- * import { PRICING_STATUS_CONFIG } from '@/lib/types/pricing';
- * <PortalBadge variant={getPricingStatusBadgeVariant(PRICING_STATUS_CONFIG[status]?.color)}>
- *   {statusLabel}
- * </PortalBadge>
- * ```
  */
-export function getPricingStatusBadgeVariant(color: string): 'blue' | 'green' | 'yellow' | 'red' | 'gray' {
+export function getPricingStatusBadgeVariant(color: string): BadgeVariant {
   return mapStatusColor(color || 'gray');
 }
 
@@ -115,7 +98,7 @@ export function formatPortalDate(
 }
 
 /**
- * Formats a relative time (e.g., "2 hours ago", "3 days ago").
+ * Formats a relative time (e.g., "2 hours ago", "3 days ago") using date-fns.
  */
 export function formatRelativeTime(
   timestamp: Timestamp | Date | undefined | null,
@@ -129,26 +112,10 @@ export function formatRelativeTime(
       ? timestamp.toDate()
       : new Date(timestamp as any);
 
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMinutes = Math.floor(diffMs / (1000 * 60));
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  // Localized relative time strings (can be extended)
-  if (locale === 'he') {
-    if (diffMinutes < 1) return 'עכשיו';
-    if (diffMinutes < 60) return `לפני ${diffMinutes} דקות`;
-    if (diffHours < 24) return `לפני ${diffHours} שעות`;
-    if (diffDays < 7) return `לפני ${diffDays} ימים`;
-  } else {
-    if (diffMinutes < 1) return 'Just now';
-    if (diffMinutes < 60) return `${diffMinutes} min ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
-  }
-
-  return formatPortalDate(timestamp, 'MMM d', locale);
+  return formatDistanceToNow(date, {
+    addSuffix: true,
+    locale: getDateLocale(locale)
+  });
 }
 
 // ============================================

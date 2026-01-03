@@ -1,49 +1,56 @@
 'use client';
 
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
-interface SkeletonProps {
-  className?: string;
-  variant?: 'default' | 'circular' | 'rounded' | 'text';
+const skeletonVariants = cva(
+  "bg-surface-200 dark:bg-surface-800",
+  {
+    variants: {
+      variant: {
+        default: "rounded-lg",
+        circular: "rounded-full",
+        rounded: "rounded-2xl",
+        text: "rounded-md h-4",
+      },
+      animation: {
+        pulse: "animate-pulse",
+        shimmer: "skeleton-shimmer",
+        none: "",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      animation: "pulse",
+    },
+  }
+);
+
+interface SkeletonProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof skeletonVariants> {
   width?: string | number;
   height?: string | number;
-  animation?: 'pulse' | 'shimmer' | 'none';
 }
 
 export function Skeleton({
   className,
-  variant = 'default',
+  variant,
+  animation,
   width,
   height,
-  animation = 'pulse',
+  ...props
 }: SkeletonProps) {
-  const variantStyles = {
-    default: 'rounded-lg',
-    circular: 'rounded-full',
-    rounded: 'rounded-2xl',
-    text: 'rounded-md h-4',
-  };
-
-  const animationStyles = {
-    pulse: 'animate-pulse',
-    shimmer: 'skeleton-shimmer',
-    none: '',
-  };
-
   return (
     <div
-      className={cn(
-        'bg-surface-200 dark:bg-surface-800',
-        variantStyles[variant],
-        animationStyles[animation],
-        className
-      )}
+      className={cn(skeletonVariants({ variant, animation }), className)}
       style={{
         width: typeof width === 'number' ? `${width}px` : width,
         height: typeof height === 'number' ? `${height}px` : height,
       }}
       aria-hidden="true"
       role="presentation"
+      {...props}
     />
   );
 }
@@ -66,14 +73,24 @@ export function SkeletonText({ lines = 3, className }: { lines?: number; classNa
   );
 }
 
-export function SkeletonAvatar({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
-  const sizeStyles = {
-    sm: 'w-8 h-8',
-    md: 'w-10 h-10',
-    lg: 'w-12 h-12',
-  };
+const avatarSizeVariants = cva(
+  "",
+  {
+    variants: {
+      size: {
+        sm: "w-8 h-8",
+        md: "w-10 h-10",
+        lg: "w-12 h-12",
+      },
+    },
+    defaultVariants: {
+      size: "md",
+    },
+  }
+);
 
-  return <Skeleton variant="circular" className={sizeStyles[size]} />;
+export function SkeletonAvatar({ size }: { size?: VariantProps<typeof avatarSizeVariants>['size'] }) {
+  return <Skeleton variant="circular" className={avatarSizeVariants({ size })} />;
 }
 
 export function SkeletonCard({ className }: { className?: string }) {
@@ -126,3 +143,5 @@ export function SkeletonTable({ rows = 5 }: { rows?: number }) {
     </div>
   );
 }
+
+export { skeletonVariants, avatarSizeVariants };

@@ -24,10 +24,9 @@ import { PortalBadge } from '@/components/portal/ui/PortalBadge';
 import { SkeletonTable } from '@/components/portal/ui/PortalSkeleton';
 import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
 import { Dropdown } from '@/components/ui/Dropdown';
-import { subscribeToOrgRequests, subscribeToAllRequests } from '@/lib/services/portal-requests';
 import { createPricingRequest, sendPricingRequest } from '@/lib/services/pricing-requests';
+import { useRequests } from '@/lib/hooks/useRequests';
 import {
-  Request,
   Currency,
   CURRENCY_CONFIG,
   formatCurrency,
@@ -51,19 +50,14 @@ import {
 export default function RequestsClient() {
   const orgId = useResolvedOrgId();
   const router = useRouter();
-  const { userData, loading: authLoading, isAuthenticated, isAgency } = usePortalAuth();
-  const [requests, setRequests] = useState<Request[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { userData, loading: authLoading, isAgency } = usePortalAuth();
+  const {
+    requests,
+    loading: requestsLoading,
+    error: requestsError,
+  } = useRequests();
+
   const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
   const [activeFilter, setActiveFilter] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -96,37 +90,15 @@ export default function RequestsClient() {
     : ['All', ...clientFilters];
 
   useEffect(() => {
-    if (authLoading) return undefined;
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
-    if (!isAuthenticated || !userData) {
-      setLoading(false);
-      return undefined;
-    }
+  const loading = authLoading || requestsLoading;
+  const error = requestsError;
 
-    setLoading(true);
-    setError(null);
-
-    try {
-      const unsubscribe = isAgency
-        ? subscribeToAllRequests(data => {
-            setRequests(data);
-            setLoading(false);
-          })
-        : orgId && typeof orgId === 'string'
-          ? subscribeToOrgRequests(orgId, data => {
-              setRequests(data);
-              setLoading(false);
-            })
-          : () => {};
-
-      return () => unsubscribe();
-    } catch (err) {
-      console.error('Failed to subscribe to requests:', err);
-      setError(t('portal.common.error'));
-      setLoading(false);
-      return undefined;
-    }
-  }, [orgId, authLoading, isAuthenticated, userData, isAgency, t]);
 
   // Reset to page 1 when filter or search changes
   useEffect(() => {

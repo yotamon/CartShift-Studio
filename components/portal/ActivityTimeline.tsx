@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from "@/lib/motion";
 import { timelineItem, timelineItemRTL } from "@/lib/animation-variants";
 import { useLocale, useTranslations } from 'next-intl';
+import { cva } from 'class-variance-authority';
 import {
   CheckCircle2,
   Clock,
@@ -13,6 +14,7 @@ import {
   RotateCcw,
   Plus,
 } from 'lucide-react';
+
 import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
 import { cn } from '@/lib/utils';
 import { ActivityLog } from '@/lib/types/portal';
@@ -36,54 +38,38 @@ const formatTimeAgo = (timestamp: Timestamp, locale: string): string => {
   });
 };
 
-const getActionConfig = (action: string): { icon: React.ComponentType<any>; color: string } => {
-  switch (action) {
-    case 'CREATED_REQUEST':
-      return {
-        icon: Plus,
-        color: 'text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30',
-      };
-    case 'ASSIGNED_REQUEST':
-      return {
-        icon: UserPlus,
-        color: 'text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/30',
-      };
-    case 'ADDED_PRICING':
-      return {
-        icon: DollarSign,
-        color: 'text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30',
-      };
-    case 'ACCEPTED_QUOTE':
-      return {
-        icon: CheckCircle2,
-        color: 'text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30',
-      };
-    case 'DECLINED_QUOTE':
-      return {
-        icon: RotateCcw,
-        color: 'text-rose-600 dark:text-rose-400 bg-rose-100 dark:bg-rose-900/30',
-      };
-    case 'STARTED_WORK':
-      return {
-        icon: Play,
-        color: 'text-blue-500 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20',
-      };
-    case 'PAID_REQUEST':
-      return {
-        icon: Zap,
-        color: 'text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30',
-      };
-    case 'ADDED_COMMENT':
-      return {
-        icon: MessageSquare,
-        color: 'text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-900/30',
-      };
-    default:
-      return {
-        icon: Clock,
-        color: 'text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-900/30',
-      };
+const activityIconVariants = cva(
+  "flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center z-10 border border-transparent group-hover:border-surface-200 dark:group-hover:border-surface-700 transition-all",
+  {
+    variants: {
+      action: {
+        CREATED_REQUEST: "text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30",
+        ASSIGNED_REQUEST: "text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/30",
+        ADDED_PRICING: "text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30",
+        ACCEPTED_QUOTE: "text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30",
+        DECLINED_QUOTE: "text-rose-600 dark:text-rose-400 bg-rose-100 dark:bg-rose-900/30",
+        STARTED_WORK: "text-blue-500 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20",
+        PAID_REQUEST: "text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30",
+        ADDED_COMMENT: "text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-900/30",
+        DEFAULT: "text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-900/30",
+      },
+    },
+    defaultVariants: {
+      action: "DEFAULT",
+    },
   }
+);
+
+const ACTION_ICONS: Record<string, typeof Plus> = {
+  CREATED_REQUEST: Plus,
+  ASSIGNED_REQUEST: UserPlus,
+  ADDED_PRICING: DollarSign,
+  ACCEPTED_QUOTE: CheckCircle2,
+  DECLINED_QUOTE: RotateCcw,
+  STARTED_WORK: Play,
+  PAID_REQUEST: Zap,
+  ADDED_COMMENT: MessageSquare,
+  DEFAULT: Clock,
 };
 
 export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
@@ -116,8 +102,7 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
   return (
     <div className={cn('space-y-1', className)}>
       {visibleActivities.map((activity, index) => {
-        const config = getActionConfig(activity.action);
-        const Icon = config.icon;
+        const Icon = ACTION_ICONS[activity.action] || ACTION_ICONS.DEFAULT;
 
         return (
           <motion.div
@@ -149,10 +134,7 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
             >
               {/* Icon Container */}
               <div
-                className={cn(
-                  'flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center z-10 border border-transparent group-hover:border-surface-200 dark:group-hover:border-surface-700 transition-all',
-                  config.color
-                )}
+                className={cn(activityIconVariants({ action: activity.action as any }))}
               >
                 <Icon size={18} />
               </div>

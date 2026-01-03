@@ -1,30 +1,37 @@
-'use client';
-
 import React from 'react';
-import { useTranslations } from 'next-intl';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
-interface PortalAvatarProps {
+const avatarVariants = cva(
+  "rounded-full object-cover shrink-0",
+  {
+    variants: {
+      size: {
+        xs: "w-5 h-5 text-[9px]",
+        sm: "w-7 h-7 text-[10px]",
+        md: "w-9 h-9 text-xs",
+        lg: "w-11 h-11 text-sm",
+      },
+    },
+    defaultVariants: {
+      size: "md",
+    },
+  }
+);
+
+export interface PortalAvatarProps
+  extends VariantProps<typeof avatarVariants> {
   name?: string;
   src?: string;
-  size?: 'xs' | 'sm' | 'md' | 'lg';
   className?: string;
 }
 
 export const PortalAvatar: React.FC<PortalAvatarProps> = ({
   name,
   src,
-  size = 'md',
+  size,
   className,
 }) => {
-  const t = useTranslations();
-  const sizeClasses = {
-    xs: 'w-5 h-5 text-[9px]',
-    sm: 'w-7 h-7 text-[10px]',
-    md: 'w-9 h-9 text-xs',
-    lg: 'w-11 h-11 text-sm',
-  };
-
   const initials = name
     ? name
         .split(' ')
@@ -32,14 +39,15 @@ export const PortalAvatar: React.FC<PortalAvatarProps> = ({
         .join('')
         .slice(0, 2)
         .toUpperCase()
+        .substring(0, 2)
     : '?';
 
   if (src) {
     return (
       <img
         src={src}
-        alt={name || t('portal.common.avatar')}
-        className={cn('rounded-full object-cover', sizeClasses[size], className)}
+        alt={name || 'Avatar'}
+        className={cn(avatarVariants({ size }), className)}
       />
     );
   }
@@ -47,8 +55,8 @@ export const PortalAvatar: React.FC<PortalAvatarProps> = ({
   return (
     <div
       className={cn(
-        'rounded-full bg-primary-500 text-white flex items-center justify-center font-semibold',
-        sizeClasses[size],
+        avatarVariants({ size }),
+        "flex items-center justify-center font-semibold text-white bg-primary-500",
         className
       )}
     >
@@ -56,6 +64,9 @@ export const PortalAvatar: React.FC<PortalAvatarProps> = ({
     </div>
   );
 };
+
+export { avatarVariants };
+
 
 interface PortalAvatarGroupProps {
   children: React.ReactNode;

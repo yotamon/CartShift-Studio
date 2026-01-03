@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from '@/lib/motion';
 import { useTranslations, useLocale } from 'next-intl';
 import { format } from 'date-fns';
@@ -28,13 +28,13 @@ import {
   CONSULTATION_STATUS,
 } from '@/lib/types/portal';
 import {
-  subscribeToOrgConsultations,
   cancelConsultation,
 } from '@/lib/services/portal-consultations';
 import { deleteCalendarEvent } from '@/lib/services/portal-google-calendar';
 import { getScheduleUrl } from '@/lib/schedule';
 import { trackBookCallClick } from '@/lib/analytics';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
+import { useConsultations } from '@/lib/hooks/useConsultations';
 
 const typeIcons: Record<ConsultationType, React.ElementType> = {
   onboarding: UserPlus,
@@ -43,33 +43,22 @@ const typeIcons: Record<ConsultationType, React.ElementType> = {
   support: Headphones,
 };
 
-interface ConsultationsClientProps {
-  orgId: string;
-}
 
-export default function ConsultationsClient({ orgId }: ConsultationsClientProps) {
+
+export default function ConsultationsClient() {
   const t = useTranslations();
   const locale = useLocale();
   const { userData } = usePortalAuth();
-  const [consultations, setConsultations] = useState<Consultation[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [cancelingId, setCancelingId] = useState<string | null>(null);
+  const {
+    consultations,
+    loading: consultationsLoading,
+  } = useConsultations();
 
+  const [cancelingId, setCancelingId] = useState<string | null>(null);
   const dateLocale = getDateLocale(locale);
 
-  useEffect(() => {
-    if (!orgId || typeof orgId !== 'string' || orgId === 'template') {
-      setLoading(false);
-      return;
-    }
+  const loading = consultationsLoading;
 
-    const unsubscribe = subscribeToOrgConsultations(orgId, data => {
-      setConsultations(data);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, [orgId]);
 
   const upcomingConsultations = consultations.filter(
     c => c.status === CONSULTATION_STATUS.SCHEDULED

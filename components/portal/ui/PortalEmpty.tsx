@@ -1,45 +1,57 @@
 import React from 'react';
 import { LucideIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
 
-interface PortalEmptyProps {
+const emptyVariants = cva(
+  "mx-auto mb-4",
+  {
+    variants: {
+      variant: {
+        default: "text-surface-400 dark:text-surface-500",
+        success: "text-green-500 dark:text-green-400",
+        warning: "text-amber-500 dark:text-amber-400",
+        error: "text-red-500 dark:text-red-400",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+);
+
+interface PortalEmptyProps extends VariantProps<typeof emptyVariants> {
   title?: string;
   description?: string;
   icon?: LucideIcon | React.ReactNode;
-  variant?: 'default' | 'success' | 'warning' | 'error';
   action?: React.ReactNode;
+  className?: string; // and className
 }
 
 export const PortalEmpty: React.FC<PortalEmptyProps> = ({
   title,
   description,
   icon,
-  variant = 'default',
+  variant,
   action,
+  className,
 }) => {
   const t = useTranslations();
-  const variantStyles = {
-    default: 'text-surface-400 dark:text-surface-500',
-    success: 'text-green-500 dark:text-green-400',
-    warning: 'text-amber-500 dark:text-amber-400',
-    error: 'text-red-500 dark:text-red-400',
-  };
 
   const renderIcon = () => {
     if (!icon) return null;
 
-    // If icon is a React element (e.g., <Building2 size={48} />)
     if (React.isValidElement(icon)) {
-      return <div className={`mx-auto mb-4 ${variantStyles[variant]}`}>{icon}</div>;
+      return <div className={cn(emptyVariants({ variant }))}>{icon}</div>;
     }
 
-    // If icon is a LucideIcon component
     const Icon = icon as LucideIcon;
-    return <Icon className={`w-12 h-12 mx-auto mb-4 ${variantStyles[variant]}`} />;
+    return <Icon className={cn("w-12 h-12", emptyVariants({ variant }))} />;
   };
 
   return (
-    <div className="text-center py-12">
+    <div className={cn("text-center py-12", className)}>
       {renderIcon()}
       <h3 className="font-semibold text-surface-900 dark:text-white mb-2">
         {title || t('portal.emptyState.generic.title')}
@@ -53,4 +65,6 @@ export const PortalEmpty: React.FC<PortalEmptyProps> = ({
     </div>
   );
 };
+
+export { emptyVariants };
 

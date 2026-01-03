@@ -1300,76 +1300,48 @@
       }
     },
     "agency": {
-      "clients": {
-        "title": "לקוחות",
-        "subtitle": "גישה ישירה וניהול לכל הארגונים השותפים.",
-        "onboard": "צרף לקוח חדש",
-        "searchPlaceholder": "חפש לפי שם חברה...",
-        "activeAccounts": "חשבונות פעילים",
-        "export": "ייצוא ביצועים",
-        "loading": "מאחזר תיק לקוחות...",
-        "tickets": "כרטיסים פתוחים",
-        "members": "חברים",
-        "enterprise": "שותף ארגוני",
-        "emptyTitle": "לא נמצאו לקוחות",
-        "emptyDesc": "או שאין לך לקוחות פעילים או שהם לא תואמים לקריטריוני החיפוש שלך.",
-        "badge": {
-          "active": "פעיל",
-          "inactive": "לא פעיל",
-          "suspended": "מושעה"
-        },
-        "plans": {
-          "free": "מסלול חופשי",
-          "pro": "שותף פרו",
-          "enterprise": "שותף ארגוני"
-        },
-        "detail": {
-          "overview": "סקירת לקוח"
-        }
-      }
-    },
-    "agency": {
       "inbox": {
-      "title": "תיבת דואר סוכנות",
-      "subtitle": "מבט גלובלי על כל בקשות הלקוחות והתקשורת.",
-      "searchPlaceholder": "חיפוש בקשות...",
-      "activeItems": "פריטים פעילים",
-      "loading": "טוען תיבת דואר סוכנות...",
-      "emptyTitle": "תיבת הדואר שלך ריקה",
-      "emptyDesc": "כל בקשות הלקוחות טופלו או מוינו.",
-      "clientOrg": "ארגון לקוח",
-      "accessRequired": "נדרש גישה לסוכנות",
-      "accessDenied": "לחשבון שלכם ({email}) אין הרשאות לגשת לתיבת הדואר של הסוכנות.",
-      "accessDeniedTitle": "גישה נדחתה",
-      "notRegisteredAsAdmin": "החשבון שלכם ({email}) לא רשום כמנהל סוכנות.",
-      "repairPermissions": "תיקון הרשאות",
-      "repairFailed": "תיקון ההרשאות נכשל. בדקו את הקונסולה לפרטים.",
-      "errors": {
-        "sameOrgRequired": "אנא בחרו בקשות מאותו ארגון לקוח."
-      }
-    },
-    "pricing": {
-      "subtitle": "ניהול הצעות מחיר בכל ארגוני הלקוחות.",
-      "revenue": "הכנסות"
-    },
-    "workboard": {
-      "title": "לוח עבודה פרויקטים",
-      "subtitle": "סטטוס בזמן אמת של כל פרויקטי הלקוחות הפעילים בסוכנות.",
-      "loading": "מסנכרן לוח קנבן...",
-      "roadmap": "מפת דרכים רבעון 4",
-      "assign": "הקצה פריט",
-      "emptyColumn": "אין משימות פעילות",
-      "moved": "הכרטיס הועבר",
-      "moveError": "ההעברה נכשלה",
-      "columns": {
-        "backlog": "חדש וצבר",
-        "inProgress": "בטיפול",
-        "review": "משוב וסקירה",
-        "delivered": "נמסר"
+        "title": "תיבת דואר סוכנות",
+        "subtitle": "מבט גלובלי על כל בקשות הלקוחות והתקשורת.",
+        "searchPlaceholder": "חיפוש בקשות...",
+        "activeItem": "פריט פעיל",
+        "activeItems": "פריטים פעילים",
+        "loading": "טוען תיבת דואר סוכנות...",
+        "emptyTitle": "תיבת הדואר שלך ריקה",
+        "emptyDesc": "כל בקשות הלקוחות טופלו או מוינו.",
+        "clientOrg": "ארגון לקוח",
+        "accessRequired": "נדרש גישה לסוכנות",
+        "accessDenied": "לחשבון שלכם ({email}) אין הרשאות לגשת לתיבת הדואר של הסוכנות.",
+        "accessDeniedTitle": "גישה נדחתה",
+        "notRegisteredAsAdmin": "החשבון שלכם ({email}) לא רשום כמנהל סוכנות.",
+        "repairPermissions": "תיקון הרשאות",
+        "repairFailed": "תיקון ההרשאות נכשל. בדקו את הקונסולה לפרטים.",
+        "errors": {
+          "sameOrgRequired": "אנא בחרו בקשות מאותו ארגון לקוח."
+        }
       },
-      "viewRequest": "הצג בקשה"
-    },
-    "clients": {
+      "pricing": {
+        "subtitle": "ניהול הצעות מחיר בכל ארגוני הלקוחות.",
+        "revenue": "הכנסות"
+      },
+      "workboard": {
+        "title": "לוח עבודה פרויקטים",
+        "subtitle": "סטטוס בזמן אמת של כל פרויקטי הלקוחות הפעילים בסוכנות.",
+        "loading": "מסנכרן לוח קנבן...",
+        "roadmap": "מפת דרכים רבעון 4",
+        "assign": "הקצה פריט",
+        "emptyColumn": "אין משימות פעילות",
+        "moved": "הכרטיס הועבר",
+        "moveError": "ההעברה נכשלה",
+        "columns": {
+          "backlog": "חדש וצבר",
+          "inProgress": "בטיפול",
+          "review": "משוב וסקירה",
+          "delivered": "נמסר"
+        },
+        "viewRequest": "הצג בקשה"
+      },
+      "clients": {
       "title": "תיק לקוחות",
       "subtitle": "גישה ישירה וניהול לכל הארגונים השותפים.",
       "onboard": "צרף לקוח חדש",
@@ -1450,166 +1422,166 @@
           "emptyTitle": "אין פעילות אחרונה",
           "emptyDesc": "טרם נרשמה פעילות ללקוח זה."
         }
-      }
-    },
-    "settings": {
-      "title": "הגדרות סוכנות",
-      "subtitle": "ניהול הגדרות גלובליות של הסוכנות וברירות מחדל של הצוות.",
-      "tabs": {
-        "profile": "פרופיל סוכנות",
-        "services": "חבילות שירות",
-        "team": "צוות פנימי",
-        "integrations": "אינטגרציות",
-        "billing": "תשלומים"
       },
-      "profile": {
-        "title": "פרופיל סוכנות",
-        "nameLabel": "שם הסוכנות",
-        "namePlaceholder": "שם הסוכנות שלך",
-        "emailLabel": "אימייל תמיכה",
-        "emailPlaceholder": "support@agency.com",
-        "websiteLabel": "אתר הסוכנות",
-        "websitePlaceholder": "https://agency.com",
-        "phoneLabel": "מספר טלפון",
-        "phonePlaceholder": "+972-50-000-0000",
-        "descLabel": "תיאור הסוכנות",
-        "descPlaceholder": "תיאור קצר על הסוכנות והשירותים שלכם...",
-        "save": "שמור שינויים",
-        "saving": "שומר...",
-        "success": "ההגדרות נשמרו בהצלחה!"
-      },
-      "team": {
-        "title": "צוות פנימי",
-        "subtitle": "ניהול חברי צוות הסוכנות והרשאות.",
-        "invite": "הזמן חבר צוות",
-        "table": {
-          "member": "חבר",
-          "status": "סטטוס",
-          "joined": "הצטרף",
-          "action": "פעולה"
+      "settings": {
+        "title": "הגדרות סוכנות",
+        "subtitle": "ניהול הגדרות גלובליות של הסוכנות וברירות מחדל של הצוות.",
+        "tabs": {
+          "profile": "פרופיל סוכנות",
+          "services": "חבילות שירות",
+          "team": "צוות פנימי",
+          "integrations": "אינטגרציות",
+          "billing": "תשלומים"
         },
-        "active": "פעיל",
-        "inactive": "לא פעיל",
-        "suspended": "מושעה",
-        "edit": "עריכה",
-        "noMembers": "לא נמצאו חברי צוות",
-        "pendingInvites": "הזמנות ממתינות",
-        "cancelInvite": "בטל"
-      },
-      "services": {
-        "title": "קטלוג שירותים",
-        "subtitle": "הגדר ונהל את השירותים שהסוכנות שלך מציעה.",
-        "add": "הוסף שירות",
-        "empty": "טרם הוגדרו שירותים",
-        "emptyDesc": "צור את השירות הראשון שלך כדי להתחיל להציע אותו ללקוחות.",
-        "form": {
-          "addTitle": "הוספת שירות חדש",
-          "addSubtitle": "צור שירות חדש עבור הלקוחות שלך.",
-          "editTitle": "עריכת שירות",
-          "editSubtitle": "עדכן את פרטי השירות בקטלוג.",
-          "fields": {
-            "name": "שם השירות",
-            "namePlaceholder": "למשל: תחזוקת אתר",
-            "basePrice": "מחיר בסיס",
-            "currency": "מטבע",
-            "category": "קטגוריה",
-            "categoryPlaceholder": "למשל: פיתוח, עיצוב, SEO",
-            "description": "תיאור",
-            "descriptionPlaceholder": "תאר בקצרה מה השירות כולל...",
-            "active": "פעיל וגלוי ללקוחות"
-          },
-          "actions": {
-            "create": "צור שירות",
-            "update": "עדכן שירות",
-            "cancel": "ביטול"
-          },
-          "errors": {
-            "required": "שם ומחיר הם שדות חובה",
-            "failed": "שמירת השירות נכשלה"
-          }
-        }
-      },
-      "integrations": {
-        "subtitle": "חבר את הכלים האהובים עליך",
-        "connected": "מחובר",
-        "googleCalendar": {
-          "title": "לוח שנה של Google",
-          "description": "סנכרן פגישות ייעוץ עם לוח השנה של Google וקבל קישורי Meet באופן אוטומטי.",
-          "connect": "חבר לוח שנה Google",
-          "connecting": "מתחבר...",
-          "disconnect": "נתק",
-          "disconnectConfirm": "האם אתה בטוח שברצונך לנתק את לוח השנה של Google?",
-          "syncNow": "סנכרן עכשיו",
-          "syncing": "מסנכרן...",
-          "account": "חשבון",
-          "lastSync": "סונכרן לאחרונה",
-          "calendars": "לוחות שנה",
-          "feature1": "יצירה אוטומטית של אירועים עבור פגישות ייעוץ",
-          "feature2": "קבל קישורי Google Meet באופן אוטומטי",
-          "feature3": "צפה בזמינות שלך בפורטל"
+        "profile": {
+          "title": "פרופיל סוכנות",
+          "nameLabel": "שם הסוכנות",
+          "namePlaceholder": "שם הסוכנות שלך",
+          "emailLabel": "אימייל תמיכה",
+          "emailPlaceholder": "support@agency.com",
+          "websiteLabel": "אתר הסוכנות",
+          "websitePlaceholder": "https://agency.com",
+          "phoneLabel": "מספר טלפון",
+          "phonePlaceholder": "+972-50-000-0000",
+          "descLabel": "תיאור הסוכנות",
+          "descPlaceholder": "תיאור קצר על הסוכנות והשירותים שלכם...",
+          "save": "שמור שינויים",
+          "saving": "שומר...",
+          "success": "ההגדרות נשמרו בהצלחה!"
         },
-        "slack": {
-          "title": "Slack",
-          "description": "קבל התראות בסביבת העבודה שלך ב-Slack"
+        "team": {
+          "title": "צוות פנימי",
+          "subtitle": "ניהול חברי צוות הסוכנות והרשאות.",
+          "invite": "הזמן חבר צוות",
+          "table": {
+            "member": "חבר",
+            "status": "סטטוס",
+            "joined": "הצטרף",
+            "action": "פעולה"
+          },
+          "active": "פעיל",
+          "inactive": "לא פעיל",
+          "suspended": "מושעה",
+          "edit": "עריכה",
+          "noMembers": "לא נמצאו חברי צוות",
+          "pendingInvites": "הזמנות ממתינות",
+          "cancelInvite": "בטל"
         },
-        "stripe": {
-          "title": "Stripe",
-          "description": "קבל תשלומים על הצעות המחיר שלך"
-        },
-        "shopify": {
-          "title": "גישה לחנות Shopify",
-          "description": "אפשר גישת שותף מהירה ומאובטחת לחנות Shopify שלך.",
-          "storeUrl": "כתובת החנות",
-          "collaboratorCode": "קוד שותף",
-          "status": {
-            "pending": "ממתין",
-            "requested": "גישה התבקשה",
-            "connected": "מחובר",
-            "revoked": "בוטל"
-          },
-          "statusMessages": {
-            "pending": "ממתין לסוכנות שלך לבקש גישה לחנות שלך.",
-            "requested": "גישה התבקשה. אנא אשר בניהול החנות שלך ב-Shopify.",
-            "connected": "לסוכנות שלך יש גישת שותף מלאה לחנות שלך."
-          },
-          "features": {
-            "feature1": "אפשר התאמות ועדכוני תבניות מהירים",
-            "feature2": "אפשר לסוכנות שלך לנהל אפליקציות ואינטגרציות",
-            "feature3": "גישת שותף מאובטחת ללא שימוש במושב צוות"
-          },
+        "services": {
+          "title": "קטלוג שירותים",
+          "subtitle": "הגדר ונהל את השירותים שהסוכנות שלך מציעה.",
+          "add": "הוסף שירות",
+          "empty": "טרם הוגדרו שירותים",
+          "emptyDesc": "צור את השירות הראשון שלך כדי להתחיל להציע אותו ללקוחות.",
           "form": {
-            "storeUrl": "כתובת חנות Shopify שלך",
-            "storeUrlHint": "הזן את כתובת .myshopify.com של החנות שלך (לדוגמה: yourstore.myshopify.com)",
-            "collaboratorCode": "קוד בקשת שותף",
-            "collaboratorCodeHint": "נמצא בניהול Shopify > הגדרות > משתמשים > אבטחה. השאר ריק אם לא מופעל.",
-            "optional": "אופציונלי",
-            "infoTitle": "איפה למצוא את קוד השותף?",
-            "infoDesc": "בניהול Shopify שלך, עבור להגדרות > משתמשים והרשאות > אבטחה. אם מופעל, תראה קוד בן 4 ספרות.",
-            "save": "שמור פרטי חנות",
-            "saving": "שומר...",
-            "cancel": "ביטול"
+            "addTitle": "הוספת שירות חדש",
+            "addSubtitle": "צור שירות חדש עבור הלקוחות שלך.",
+            "editTitle": "עריכת שירות",
+            "editSubtitle": "עדכן את פרטי השירות בקטלוג.",
+            "fields": {
+              "name": "שם השירות",
+              "namePlaceholder": "למשל: תחזוקת אתר",
+              "basePrice": "מחיר בסיס",
+              "currency": "מטבע",
+              "category": "קטגוריה",
+              "categoryPlaceholder": "למשל: פיתוח, עיצוב, SEO",
+              "description": "תיאור",
+              "descriptionPlaceholder": "תאר בקצרה מה השירות כולל...",
+              "active": "פעיל וגלוי ללקוחות"
+            },
+            "actions": {
+              "create": "צור שירות",
+              "update": "עדכן שירות",
+              "cancel": "ביטול"
+            },
+            "errors": {
+              "required": "שם ומחיר הם שדות חובה",
+              "failed": "שמירת השירות נכשלה"
+            }
+          }
+        },
+          "integrations": {
+          "subtitle": "חבר את הכלים האהובים עליך",
+          "connected": "מחובר",
+          "googleCalendar": {
+            "title": "לוח שנה של Google",
+            "description": "סנכרן פגישות ייעוץ עם לוח השנה של Google וקבל קישורי Meet באופן אוטומטי.",
+            "connect": "חבר לוח שנה Google",
+            "connecting": "מתחבר...",
+            "disconnect": "נתק",
+            "disconnectConfirm": "האם אתה בטוח שברצונך לנתק את לוח השנה של Google?",
+            "syncNow": "סנכרן עכשיו",
+            "syncing": "מסנכרן...",
+            "account": "חשבון",
+            "lastSync": "סונכרן לאחרונה",
+            "calendars": "לוחות שנה",
+            "feature1": "יצירה אוטומטית של אירועים עבור פגישות ייעוץ",
+            "feature2": "קבל קישורי Google Meet באופן אוטומטי",
+            "feature3": "צפה בזמינות שלך בפורטל"
           },
-          "actions": {
-            "connect": "חבר חנות",
-            "edit": "ערוך פרטי חנות"
+          "slack": {
+            "title": "Slack",
+            "description": "קבל התראות בסביבת העבודה שלך ב-Slack"
           },
-          "errors": {
-            "invalidDomain": "אנא הזן כתובת .myshopify.com תקינה",
-            "invalidCode": "קוד שותף חייב להכיל 4 ספרות",
-            "saveFailed": "השמירה נכשלה. אנא נסה שוב."
+          "stripe": {
+            "title": "Stripe",
+            "description": "קבל תשלומים על הצעות המחיר שלך"
           },
-          "agency": {
-            "notConnected": "חנות Shopify לא מחוברת",
-            "notConnectedDesc": "הלקוח עדיין לא חיבר את חנות Shopify שלו.",
-            "requestAccess": "בקש גישת שותף",
-            "markRequested": "סמן כהתבקש",
-            "markConnected": "סמן כמחובר",
-            "openPartnerDashboard": "פתח לוח שותפים",
-            "openAdmin": "פתח ניהול חנות"
+          "shopify": {
+            "title": "גישה לחנות Shopify",
+            "description": "אפשר גישת שותף מהירה ומאובטחת לחנות Shopify שלך.",
+            "storeUrl": "כתובת החנות",
+            "collaboratorCode": "קוד שותף",
+            "status": {
+              "pending": "ממתין",
+              "requested": "גישה התבקשה",
+              "connected": "מחובר",
+              "revoked": "בוטל"
+            },
+            "statusMessages": {
+              "pending": "ממתין לסוכנות שלך לבקש גישה לחנות שלך.",
+              "requested": "גישה התבקשה. אנא אשר בניהול החנות שלך ב-Shopify.",
+              "connected": "לסוכנות שלך יש גישת שותף מלאה לחנות שלך."
+            },
+            "features": {
+              "feature1": "אפשר התאמות ועדכוני תבניות מהירים",
+              "feature2": "אפשר לסוכנות שלך לנהל אפליקציות ואינטגרציות",
+              "feature3": "גישת שותף מאובטחת ללא שימוש במושב צוות"
+            },
+            "form": {
+              "storeUrl": "כתובת חנות Shopify שלך",
+              "storeUrlHint": "הזן את כתובת .myshopify.com של החנות שלך (לדוגמה: yourstore.myshopify.com)",
+              "collaboratorCode": "קוד בקשת שותף",
+              "collaboratorCodeHint": "נמצא בניהול Shopify > הגדרות > משתמשים > אבטחה. השאר ריק אם לא מופעל.",
+              "optional": "אופציונלי",
+              "infoTitle": "איפה למצוא את קוד השותף?",
+              "infoDesc": "בניהול Shopify שלך, עבור להגדרות > משתמשים והרשאות > אבטחה. אם מופעל, תראה קוד בן 4 ספרות.",
+              "save": "שמור פרטי חנות",
+              "saving": "שומר...",
+              "cancel": "ביטול"
+            },
+            "actions": {
+              "connect": "חבר חנות",
+              "edit": "ערוך פרטי חנות"
+            },
+            "errors": {
+              "invalidDomain": "אנא הזן כתובת .myshopify.com תקינה",
+              "invalidCode": "קוד שותף חייב להכיל 4 ספרות",
+              "saveFailed": "השמירה נכשלה. אנא נסה שוב."
+            },
+            "agency": {
+              "notConnected": "חנות Shopify לא מחוברת",
+              "notConnectedDesc": "הלקוח עדיין לא חיבר את חנות Shopify שלו.",
+              "requestAccess": "בקש גישת שותף",
+              "markRequested": "סמן כהתבקש",
+              "markConnected": "סמן כמחובר",
+              "openPartnerDashboard": "פתח לוח שותפים",
+              "openAdmin": "פתח ניהול חנות"
+            }
           }
         }
       }
-    }
+        }
     }
   },
   "heroForm": {

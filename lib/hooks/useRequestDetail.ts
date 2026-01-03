@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { subscribeToRequest } from '@/lib/services/portal-requests';
-import { subscribeToRequestComments } from '@/lib/services/portal-comments';
-import { subscribeToRequestActivities } from '@/lib/services/portal-activities';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { getRequest } from '@/lib/services/portal-requests';
+import { getCommentsByRequest } from '@/lib/services/portal-comments';
+import { getRequestActivities } from '@/lib/services/portal-activities';
 import { getOrganization } from '@/lib/services/portal-organizations';
 import { getAgencyTeam } from '@/lib/services/portal-agency';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
@@ -17,7 +17,7 @@ import {
   PortalUser,
 } from '@/lib/types/portal';
 
-interface UseRequestDetailResult {
+export interface UseRequestDetailResult {
   // Data
   request: Request | null;
   comments: Comment[];
@@ -46,147 +46,99 @@ interface UseRequestDetailResult {
 
 /**
  * Hook for fetching and subscribing to request detail data.
- * Handles all subscriptions for request, comments, activities, and related data.
- *
- * @example
- * ```tsx
- * const {
- *   request,
- *   comments,
- *   loading,
- *   error,
- *   showAgencyActions,
- * } = useRequestDetail();
- *
- * if (loading) return <Skeleton />;
- * if (error) return <ErrorState message={error} />;
- * ```
+ * Refactored to use @tanstack/react-query due to superior caching and background refetching.
  */
 export function useRequestDetail(): UseRequestDetailResult {
   const orgId = useResolvedOrgId();
   const requestId = useResolvedRequestId();
   const { userData, isAgency, loading: authLoading, isAuthenticated } = usePortalAuth();
+  const queryClient = useQueryClient();
 
-  // Core data states
-  const [request, setRequest] = useState<Request | null>(null);
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [activities, setActivities] = useState<ActivityLog[]>([]);
-  const [organization, setOrganization] = useState<Organization | null>(null);
-  const [agencyTeam, setAgencyTeam] = useState<PortalUser[]>([]);
+  const enabled = Boolean(isAuthenticated && requestId && typeof requestId === 'string');
 
-  // UI states
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // 1. Request Detail
+  const {
+    data: request,
+    isLoading: requestLoading,
+    error: requestError
+  } = useQuery({
+    queryKey: ['request', requestId],
+    queryFn: () => getRequest(requestId as string),
+    enabled,
+    staleTime: 1000 * 60, // 1 minute stale time to prevent immediate refetch on navigation
+  });
 
-  // Subscribe to request, comments, and activities
-  useEffect(() => {
-    if (!requestId || typeof requestId !== 'string') {
-      setError('Invalid request ID');
-      setLoading(false);
-      return undefined;
-    }
+  // 2. Comments
+  const {
+    data: comments = []
+  } = useQuery({
+    queryKey: ['request-comments', requestId],
+    queryFn: () => getCommentsByRequest(requestId as string, Boolean(userData?.isAgency)),
+    enabled: enabled && Boolean(orgId),
+    refetchInterval: 5000, // Poll every 5s for new comments (simulating real-time lite)
+  });
 
-    if (authLoading) {
-      return undefined;
-    }
+  // 3. Activities
+  const {
+    data: activities = []
+  } = useQuery({
+    queryKey: ['request-activities', requestId],
+    queryFn: () => getRequestActivities(requestId as string, typeof orgId === 'string' ? orgId : undefined),
+    enabled: enabled && Boolean(orgId),
+    refetchInterval: 10000, // Poll every 10s for activities
+  });
 
-    if (!isAuthenticated) {
-      setError('Authentication required');
-      setLoading(false);
-      return undefined;
-    }
+  // 4. Organization (Static-ish)
+  const {
+    data: organization
+  } = useQuery({
+    queryKey: ['organization', orgId],
+    queryFn: () => getOrganization(orgId as string),
+    enabled: Boolean(orgId && typeof orgId === 'string' && isAuthenticated),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
 
-    setLoading(true);
-    setError(null);
+  // 5. Agency Team (Static-ish)
+  const {
+    data: agencyTeam = []
+  } = useQuery({
+    queryKey: ['agency-team'],
+    queryFn: getAgencyTeam,
+    enabled: Boolean(isAgency && isAuthenticated),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
 
-    const unsubscribers: (() => void)[] = [];
-
-    try {
-      // Subscribe to request data
-      const unsubscribeRequest = subscribeToRequest(requestId, (data, err) => {
-        if (err) {
-          setError(err.message);
-          setLoading(false);
-          return;
-        }
-        if (!data) {
-          setError('Request not found');
-          setLoading(false);
-          return;
-        }
-        setRequest(data);
-        setLoading(false);
-      });
-      unsubscribers.push(unsubscribeRequest);
-
-      // Subscribe to comments
-      if (typeof orgId === 'string') {
-        const unsubscribeComments = subscribeToRequestComments(
-          requestId,
-          (data) => setComments(data),
-          Boolean(userData?.isAgency),
-          orgId
-        );
-        unsubscribers.push(unsubscribeComments);
+  // Helper to update comments optimistically or manually
+  // This bridges the gap for components expecting setComments
+  const setComments = (action: React.SetStateAction<Comment[]>) => {
+    queryClient.setQueryData<Comment[]>(['request-comments', requestId], (oldData) => {
+      const current = oldData || [];
+      if (typeof action === 'function') {
+        return action(current);
       }
-
-      // Subscribe to activities
-      if (typeof orgId === 'string') {
-        const unsubscribeActivities = subscribeToRequestActivities(
-          requestId,
-          (data) => setActivities(data),
-          orgId
-        );
-        unsubscribers.push(unsubscribeActivities);
-      }
-    } catch (err) {
-      console.error('Failed to subscribe to request details:', err);
-      setError('Failed to load request details');
-      setLoading(false);
-    }
-
-    return () => {
-      unsubscribers.forEach((unsub) => unsub());
-    };
-  }, [requestId, orgId, userData, authLoading, isAuthenticated]);
-
-  // Fetch organization details (for invoice generation)
-  useEffect(() => {
-    if (orgId && typeof orgId === 'string') {
-      getOrganization(orgId)
-        .then((org) => {
-          if (org) setOrganization(org);
-        })
-        .catch(console.error);
-    }
-  }, [orgId]);
-
-  // Fetch agency team (for assignment dropdown)
-  useEffect(() => {
-    if (isAgency) {
-      getAgencyTeam()
-        .then(setAgencyTeam)
-        .catch(console.error);
-    }
-  }, [isAgency]);
+      return action;
+    });
+  };
 
   // Derived permissions
   const canAct = Boolean(userData);
   const showAgencyActions = canAct && isAgency;
   const showClientActions = canAct && !isAgency;
 
+  const errorMsg = requestError instanceof Error ? requestError.message : (requestError as string | null);
+
   return {
-    request,
+    request: request || null,
     comments,
     activities,
-    organization,
+    organization: organization || null,
     agencyTeam,
     userData: userData as PortalUser | null,
     isAgency,
     orgId: typeof orgId === 'string' ? orgId : null,
     requestId: typeof requestId === 'string' ? requestId : null,
-    loading: authLoading || loading,
-    error,
+    loading: authLoading || requestLoading,
+    error: errorMsg,
     canAct,
     showAgencyActions,
     showClientActions,

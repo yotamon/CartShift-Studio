@@ -1,119 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from '@/lib/motion';
-import { skeletonToContent } from '@/lib/animation-variants';
+import { useDashboardData } from '@/lib/hooks/useDashboardData';
 import { Clock, Plus, Loader2, AlertCircle } from 'lucide-react';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
-import { subscribeToOrgRequests } from '@/lib/services/portal-requests';
-import { subscribeToOrgActivities } from '@/lib/services/portal-activities';
-import { Request, ActivityLog } from '@/lib/types/portal';
-import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
-import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
 import { useTranslations, NextIntlClientProvider } from 'next-intl';
-import { getMemberByUserId, ensureMembership } from '@/lib/services/portal-organizations';
 import { Link } from '@/i18n/navigation';
 import { ClientAnalytics } from '@/components/portal/ClientAnalytics';
 import { ActivityTimeline } from '@/components/portal/ActivityTimeline';
 
 function DashboardClientContent() {
-  const orgId = useResolvedOrgId();
-  const { userData, loading: authLoading } = usePortalAuth();
-  const [requests, setRequests] = useState<Request[]>([]);
-  const [activities, setActivities] = useState<ActivityLog[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const t = useTranslations();
 
-  useEffect(() => {
-    if (!orgId || typeof orgId !== 'string' || authLoading) return undefined;
-
-    if (!userData) {
-      setLoading(false);
-      return undefined;
-    }
-
-    let unsubscribeRequests: (() => void) | undefined;
-    let unsubscribeActivities: (() => void) | undefined;
-
-    const checkAccess = async () => {
-      if (userData.isAgency) {
-        setLoading(true);
-        setError(null);
-        try {
-          unsubscribeRequests = subscribeToOrgRequests(orgId, data => {
-            setRequests(data);
-          });
-          unsubscribeActivities = subscribeToOrgActivities(orgId, data => {
-            setActivities(data);
-            setLoading(false);
-          });
-        } catch (err) {
-          console.error('Failed to subscribe to dashboard data:', err);
-          setError(t('portal.common.error'));
-          setLoading(false);
-        }
-        return;
-      }
-
-      try {
-        console.log(
-          `[DashboardClient] Checking access for orgId: ${orgId}, userId: ${userData.id}, userOrgs: ${JSON.stringify(userData.organizations)}`
-        );
-
-        let member = await getMemberByUserId(orgId, userData.id);
-        console.log(
-          `[DashboardClient] Initial membership check result:`,
-          member ? 'found' : 'not found'
-        );
-
-        if (!member) {
-          console.log(`[DashboardClient] Attempting to ensure membership...`);
-          member = await ensureMembership(orgId, userData.id, userData.email, userData.name);
-          console.log(`[DashboardClient] After ensureMembership:`, member ? 'found' : 'not found');
-        }
-
-        if (!member) {
-          console.warn(
-            `[DashboardClient] Access denied - No membership found for orgId: ${orgId}, userId: ${userData.id}, userOrgs: ${JSON.stringify(userData.organizations)}`
-          );
-          setError(t('portal.access.restrictedMessage'));
-          setLoading(false);
-          return;
-        }
-      } catch (err) {
-        console.error('[DashboardClient] Error checking membership:', err);
-        setError(t('portal.access.restrictedMessage'));
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-      setError(null);
-
-      try {
-        unsubscribeRequests = subscribeToOrgRequests(orgId, data => {
-          setRequests(data);
-        });
-        unsubscribeActivities = subscribeToOrgActivities(orgId, data => {
-          setActivities(data);
-          setLoading(false);
-        });
-      } catch (err) {
-        console.error('Failed to subscribe to dashboard data:', err);
-        setError(t('portal.common.error'));
-        setLoading(false);
-      }
-    };
-
-    checkAccess();
-
-    return () => {
-      if (unsubscribeRequests) unsubscribeRequests();
-      if (unsubscribeActivities) unsubscribeActivities();
-    };
-  }, [orgId, userData, authLoading, t]);
+  // Use the new TanStack Query hook
+  const {
+    requests,
+    activities,
+    loading,
+    error,
+    orgId
+  } = useDashboardData();
 
   if (loading) {
     return (
@@ -133,7 +39,9 @@ function DashboardClientContent() {
         <h2 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">
           {t('portal.dashboard.error.title')}
         </h2>
-        <p className="text-slate-500 max-w-sm">{error}</p>
+        <p className="text-slate-500 max-w-sm">
+          {error === 'access_denied' ? t('portal.access.restrictedMessage') : t('portal.common.error')}
+        </p>
         <PortalButton onClick={() => window.location.reload()}>
           {t('portal.dashboard.error.retry')}
         </PortalButton>

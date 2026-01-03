@@ -1,18 +1,37 @@
 import React from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
-interface PortalSkeletonProps {
-  className?: string;
-  children?: React.ReactNode;
+const skeletonVariants = cva(
+  "animate-pulse bg-surface-200 dark:bg-white/10 rounded-xl",
+  {
+    variants: {
+      variant: {
+        default: "",
+        circle: "rounded-full",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+);
+
+interface PortalSkeletonProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof skeletonVariants> {
 }
 
-export const PortalSkeleton: React.FC<PortalSkeletonProps> = ({ className, children }) => {
+export const PortalSkeleton: React.FC<PortalSkeletonProps> = ({
+  className,
+  variant,
+  children,
+  ...props
+}) => {
   return (
     <div
-      className={cn(
-        'animate-pulse bg-surface-200 dark:bg-white/10 rounded-xl',
-        className
-      )}
+      className={cn(skeletonVariants({ variant }), className)}
+      {...props}
     >
       {children}
     </div>

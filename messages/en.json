@@ -1265,39 +1265,11 @@
       }
     },
     "agency": {
-      "clients": {
-        "title": "Clients",
-        "subtitle": "Direct access and management for all partner organizations.",
-        "onboard": "Onboard New Client",
-        "searchPlaceholder": "Search by company name...",
-        "activeAccounts": "Active Accounts",
-        "export": "Performance Export",
-        "loading": "Retrieving Client Portfolio...",
-        "tickets": "Open Tickets",
-        "members": "Members",
-        "enterprise": "Enterprise Partner",
-        "emptyTitle": "No clients found",
-        "emptyDesc": "Either you have no active clients or they don't match your search criteria.",
-        "badge": {
-          "active": "ACTIVE",
-          "inactive": "INACTIVE",
-          "suspended": "SUSPENDED"
-        },
-        "plans": {
-          "free": "Free Starter",
-          "pro": "Pro Partner",
-          "enterprise": "Enterprise Partner"
-        },
-        "detail": {
-          "overview": "Client Overview"
-        }
-      }
-    },
-    "agency": {
       "inbox": {
         "title": "Agency Inbox",
         "subtitle": "Global view of all client requests and communications.",
         "searchPlaceholder": "Search requests...",
+        "activeItem": "Active Item",
         "activeItems": "Active Items",
         "loading": "Loading agency inbox...",
         "emptyTitle": "Your inbox is clear",
@@ -1415,12 +1387,11 @@
           "emptyTitle": "No recent activity",
           "emptyDesc": "No activity recorded for this client yet."
         }
-      }
-    },
-    "settings": {
-      "title": "Agency Settings",
-      "subtitle": "Manage global agency configurations and team defaults.",
-      "tabs": {
+      },
+      "settings": {
+        "title": "Agency Settings",
+        "subtitle": "Manage global agency configurations and team defaults.",
+        "tabs": {
         "profile": "Agency Profile",
         "services": "Service Packages",
         "team": "Internal Team",
@@ -2899,4 +2870,5 @@
       }
     }
   }
+}
 }

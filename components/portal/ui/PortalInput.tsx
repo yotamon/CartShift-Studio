@@ -1,8 +1,42 @@
 import React from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { Check, AlertCircle } from 'lucide-react';
 
-interface PortalInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+const inputVariants = cva(
+  "w-full px-4 py-2 rounded-xl border transition-all duration-200 bg-white dark:bg-surface-900 text-surface-900 dark:text-white placeholder:text-surface-400 focus:outline-none h-10 text-sm font-medium",
+  {
+    variants: {
+      state: {
+        default: "border-surface-200 dark:border-surface-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500",
+        error: "border-red-300 dark:border-red-900/50 focus:border-red-500 focus:ring-red-500/20 bg-red-50/10",
+        success: "border-emerald-300 dark:border-emerald-900/50 focus:border-emerald-500 focus:ring-emerald-500/20 bg-emerald-50/10",
+      },
+      isDisabled: {
+        true: "disabled:bg-surface-50 dark:disabled:bg-surface-800 disabled:text-surface-400 disabled:cursor-not-allowed",
+        false: "",
+      },
+      hasLeftIcon: {
+        true: "ps-10",
+        false: "ps-4",
+      },
+      hasRightIcon: {
+        true: "pe-10",
+        false: "pe-4",
+      },
+    },
+    defaultVariants: {
+      state: "default",
+      isDisabled: false,
+      hasLeftIcon: false,
+      hasRightIcon: false,
+    },
+  }
+);
+
+interface PortalInputProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
+    Omit<VariantProps<typeof inputVariants>, 'isDisabled' | 'hasLeftIcon' | 'hasRightIcon'> {
   label?: string;
   error?: string;
   success?: boolean;
@@ -13,6 +47,10 @@ interface PortalInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export const PortalInput = React.forwardRef<HTMLInputElement, PortalInputProps>(
   ({ label, error, success, className, leftIcon, rightIcon, hint, disabled, ...props }, ref) => {
+
+    const state = error ? 'error' : success ? 'success' : 'default';
+    const hasRightContent = Boolean(rightIcon || error || success);
+
     return (
       <div className="w-full space-y-1.5 group">
         {label && (
@@ -31,20 +69,12 @@ export const PortalInput = React.forwardRef<HTMLInputElement, PortalInputProps>(
             ref={ref}
             disabled={disabled}
             className={cn(
-              'portal-input w-full transition-all duration-200',
-              'bg-white dark:bg-surface-900',
-              'border border-surface-200 dark:border-surface-800',
-              'text-surface-900 dark:text-white placeholder:text-surface-400',
-              'focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none',
-              'disabled:bg-surface-50 dark:disabled:bg-surface-800 disabled:text-surface-400 disabled:cursor-not-allowed',
-              'rounded-lg h-10 py-2 text-sm font-medium',
-              leftIcon ? 'ps-10' : 'ps-4',
-              rightIcon || error || success ? 'pe-10' : 'pe-4',
-              error &&
-                'border-red-300 dark:border-red-900/50 focus:border-red-500 focus:ring-red-500/20 bg-red-50/10',
-              success &&
-                !error &&
-                'border-emerald-300 dark:border-emerald-900/50 focus:border-emerald-500 focus:ring-emerald-500/20 bg-emerald-50/10',
+              inputVariants({
+                state,
+                isDisabled: !!disabled,
+                hasLeftIcon: !!leftIcon,
+                hasRightIcon: hasRightContent
+              }),
               className
             )}
             {...props}
@@ -70,7 +100,6 @@ export const PortalInput = React.forwardRef<HTMLInputElement, PortalInputProps>(
         {/* Error Message */}
         {error && (
           <p className="text-xs text-red-600 dark:text-red-400 font-medium animate-in slide-in-from-top-1 duration-200 flex items-center gap-1.5">
-            {/* <AlertCircle size={12} /> */}
             {error}
           </p>
         )}
@@ -83,3 +112,5 @@ export const PortalInput = React.forwardRef<HTMLInputElement, PortalInputProps>(
 );
 
 PortalInput.displayName = 'PortalInput';
+
+export { inputVariants };
