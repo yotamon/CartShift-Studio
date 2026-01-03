@@ -37,11 +37,7 @@ interface OnboardingTourProps {
   onSkip: () => void;
 }
 
-export const OnboardingTour: React.FC<OnboardingTourProps> = ({
-  userId,
-  onComplete,
-  onSkip,
-}) => {
+export const OnboardingTour: React.FC<OnboardingTourProps> = ({ userId, onComplete, onSkip }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [mounted, setMounted] = useState(false);
   const t = useTranslations();
@@ -246,7 +242,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-3 font-outfit"
+              className="text-2xl font-bold text-slate-900 dark:text-white mb-3 font-outfit"
             >
               {step.title}
             </motion.h2>

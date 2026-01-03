@@ -66,7 +66,7 @@ export default function AgencyInboxClient() {
     async function fetchData() {
       if (!userData?.isAgency) {
         if (!authLoading && isAuthenticated) {
-           setLoading(false);
+          setLoading(false);
         }
         return;
       }
@@ -113,33 +113,33 @@ export default function AgencyInboxClient() {
     if (!user) return;
     setIsRepairing(true);
     try {
-        const { getFirestore, doc, updateDoc, setDoc, getDoc } = await import('firebase/firestore');
-        const db = getFirestore();
-        const userRef = doc(db, 'portal_users', user.uid);
-        const snap = await getDoc(userRef);
+      const { getFirestore, doc, updateDoc, setDoc, getDoc } = await import('firebase/firestore');
+      const db = getFirestore();
+      const userRef = doc(db, 'portal_users', user.uid);
+      const snap = await getDoc(userRef);
 
-        const updateData = {
-            isAgency: true,
-            accountType: 'AGENCY',
-            updatedAt: new Date()
-        };
+      const updateData = {
+        isAgency: true,
+        accountType: 'AGENCY',
+        updatedAt: new Date(),
+      };
 
-        if (snap.exists()) {
-            await updateDoc(userRef, updateData);
-        } else {
-            await setDoc(userRef, {
-                ...updateData,
-                email: user.email,
-                name: user.displayName || 'Agency Admin',
-                createdAt: new Date()
-            });
-        }
-        window.location.reload();
+      if (snap.exists()) {
+        await updateDoc(userRef, updateData);
+      } else {
+        await setDoc(userRef, {
+          ...updateData,
+          email: user.email,
+          name: user.displayName || 'Agency Admin',
+          createdAt: new Date(),
+        });
+      }
+      window.location.reload();
     } catch (err) {
-        console.error('Repair failed:', err);
-        alert('Permission repair failed. Check console for details.');
+      console.error('Repair failed:', err);
+      alert('Permission repair failed. Check console for details.');
     } finally {
-        setIsRepairing(false);
+      setIsRepairing(false);
     }
   };
 
@@ -161,8 +161,8 @@ export default function AgencyInboxClient() {
           const newOrgName = organizations[newReq.orgId]?.name || 'Unknown';
           alert(
             `${t('agency.inbox.errors.sameOrgRequired')}\n\n` +
-            `Currently selected: ${selectedOrgName}\n` +
-            `Trying to add: ${newOrgName}`
+              `Currently selected: ${selectedOrgName}\n` +
+              `Trying to add: ${newOrgName}`
           );
           return prev;
         }
@@ -213,13 +213,11 @@ export default function AgencyInboxClient() {
     const uniqueOrgIds = [...new Set(selectedReqs.map(r => r.orgId))];
 
     if (uniqueOrgIds.length > 1) {
-      const orgNames = uniqueOrgIds
-        .map(id => organizations[id]?.name || 'Unknown')
-        .join(', ');
+      const orgNames = uniqueOrgIds.map(id => organizations[id]?.name || 'Unknown').join(', ');
       alert(
         `${t('agency.inbox.errors.sameOrgRequired')}\n\n` +
-        `Selected requests are from: ${orgNames}\n\n` +
-        'Please select requests from only one client organization.'
+          `Selected requests are from: ${orgNames}\n\n` +
+          'Please select requests from only one client organization.'
       );
       return;
     }
@@ -266,7 +264,7 @@ export default function AgencyInboxClient() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-surface-900 dark:text-white font-outfit">
+          <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white font-outfit">
             {t('agency.inbox.title')}
           </h1>
           <p className="text-surface-500 dark:text-surface-400 mt-1">
@@ -275,7 +273,10 @@ export default function AgencyInboxClient() {
         </div>
       </div>
 
-      <PortalCard noPadding className="overflow-hidden border-surface-200 dark:border-surface-800 shadow-sm">
+      <PortalCard
+        noPadding
+        className="overflow-hidden border-surface-200 dark:border-surface-800 shadow-sm"
+      >
         <div className="p-4 border-b border-surface-100 dark:border-surface-800 flex items-center justify-between bg-white dark:bg-surface-950">
           <div className="flex items-center gap-4">
             <div className="relative">
@@ -346,7 +347,9 @@ export default function AgencyInboxClient() {
           ) : !userData?.isAgency && isAuthenticated ? (
             <div className="py-20 text-center px-4">
               <ShieldCheck className="w-16 h-16 text-red-100 dark:text-red-900/20 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-surface-900 dark:text-white">Agency Access Required</h3>
+              <h3 className="text-xl font-bold text-surface-900 dark:text-white">
+                Agency Access Required
+              </h3>
               <p className="text-surface-500 dark:text-surface-400 text-sm mt-1 max-w-sm mx-auto mb-6">
                 Your account ({user?.email}) does not have permissions to access the Agency Inbox.
               </p>

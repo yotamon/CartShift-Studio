@@ -1,0 +1,104 @@
+'use client';
+
+import { useDroppable } from '@dnd-kit/core';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { cn } from '@/lib/utils';
+import { PlusCircle, MoreHorizontal } from 'lucide-react';
+
+interface DroppableColumnProps {
+  id: string;
+  title: string;
+  itemIds: string[];
+  itemCount: number;
+  color?: 'slate' | 'blue' | 'amber' | 'emerald';
+  children: React.ReactNode;
+  onAddClick?: () => void;
+  onMoreClick?: () => void;
+  emptyMessage?: string;
+}
+
+export function DroppableColumn({
+  id,
+  title,
+  itemIds,
+  itemCount,
+  color = 'slate',
+  children,
+  onAddClick,
+  onMoreClick,
+  emptyMessage = 'No items',
+}: DroppableColumnProps) {
+  const { setNodeRef, isOver } = useDroppable({ id });
+
+  const colorStyles = {
+    slate: 'bg-slate-500',
+    blue: 'bg-blue-500',
+    amber: 'bg-amber-500',
+    emerald: 'bg-emerald-500',
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Column Header */}
+      <div className="flex items-center justify-between px-2 mb-2">
+        <div className="flex items-center gap-2">
+          <div className={cn('w-2 h-2 rounded-full', colorStyles[color])} />
+          <h3 className="text-xs font-black text-surface-900 dark:text-white uppercase tracking-widest">
+            {title}
+          </h3>
+          <span className="px-1.5 py-0.5 rounded-full bg-surface-100 dark:bg-surface-800 text-surface-500 dark:text-surface-400 text-[10px] font-black">
+            {itemCount}
+          </span>
+        </div>
+        {onMoreClick && (
+          <button
+            onClick={onMoreClick}
+            className="text-surface-400 hover:text-surface-900 dark:hover:text-white p-1 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+            aria-label="More options"
+          >
+            <MoreHorizontal size={16} />
+          </button>
+        )}
+      </div>
+
+      {/* Droppable Area */}
+      <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
+        <div
+          ref={setNodeRef}
+          className={cn(
+            'space-y-3 max-h-[calc(100vh-280px)] overflow-y-auto portal-scrollbar',
+            'min-h-[200px] rounded-2xl p-2 transition-colors duration-200',
+            isOver && 'bg-blue-50/50 dark:bg-blue-500/5 ring-2 ring-blue-500/30 ring-inset'
+          )}
+        >
+          {itemCount === 0 ? (
+            <div className="py-12 border-2 border-dashed border-surface-200 dark:border-surface-800 rounded-2xl flex flex-col items-center justify-center text-center opacity-50">
+              <PlusCircle size={24} className="mb-2 text-surface-400" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-surface-400">
+                {emptyMessage}
+              </span>
+            </div>
+          ) : (
+            children
+          )}
+        </div>
+      </SortableContext>
+
+      {/* Add Button */}
+      {onAddClick && (
+        <button
+          onClick={onAddClick}
+          className="w-full py-2.5 rounded-xl border border-dashed border-surface-200 dark:border-surface-800 hover:border-blue-300 hover:bg-blue-50/30 dark:hover:bg-blue-900/10 text-surface-400 hover:text-blue-600 transition-all flex items-center justify-center gap-2 group"
+        >
+          <PlusCircle size={14} className="group-hover:scale-110 transition-transform" />
+          <span className="text-[10px] font-black uppercase tracking-widest">
+            Add Item
+          </span>
+        </button>
+      )}
+    </div>
+  );
+}

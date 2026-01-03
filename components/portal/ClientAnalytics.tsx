@@ -3,14 +3,7 @@
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useLocale } from 'next-intl';
-import {
-  FileText,
-  Clock,
-  CheckCircle2,
-  DollarSign,
-  TrendingUp,
-  Activity
-} from 'lucide-react';
+import { FileText, Clock, CheckCircle2, DollarSign, TrendingUp, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
 import { Request, REQUEST_STATUS, RequestStatus } from '@/lib/types/portal';
@@ -42,7 +35,11 @@ const daysBetween = (start: Timestamp, end: Timestamp): number => {
 // Calculate average resolution time in days
 const calculateAvgResolutionTime = (requests: Request[]): number => {
   const completedRequests = requests.filter(
-    r => r.closedAt && (r.status === REQUEST_STATUS.CLOSED || r.status === REQUEST_STATUS.DELIVERED || r.status === REQUEST_STATUS.PAID)
+    r =>
+      r.closedAt &&
+      (r.status === REQUEST_STATUS.CLOSED ||
+        r.status === REQUEST_STATUS.DELIVERED ||
+        r.status === REQUEST_STATUS.PAID)
   );
 
   if (completedRequests.length === 0) return 0;
@@ -106,10 +103,7 @@ const getRecentRequests = (requests: Request[]): Request[] => {
   });
 };
 
-export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({
-  requests,
-  className,
-}) => {
+export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({ requests, className }) => {
   const locale = useLocale();
   const isHe = locale === 'he';
 
@@ -132,9 +126,12 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({
 
     const recentCount = recentRequests.length;
     const previousCount = previousPeriodRequests.length;
-    const trend = previousCount > 0
-      ? Math.round(((recentCount - previousCount) / previousCount) * 100)
-      : recentCount > 0 ? 100 : 0;
+    const trend =
+      previousCount > 0
+        ? Math.round(((recentCount - previousCount) / previousCount) * 100)
+        : recentCount > 0
+          ? 100
+          : 0;
 
     return {
       total: requests.length,
@@ -151,9 +148,14 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({
     {
       title: isHe ? 'סה״כ בקשות' : 'Total Requests',
       value: analytics.total,
-      subtitle: isHe ? `${analytics.recent} ב-30 יום אחרונים` : `${analytics.recent} in last 30 days`,
+      subtitle: isHe
+        ? `${analytics.recent} ב-30 יום אחרונים`
+        : `${analytics.recent} in last 30 days`,
       icon: FileText,
-      trend: analytics.trend !== 0 ? { value: Math.abs(analytics.trend), positive: analytics.trend > 0 } : undefined,
+      trend:
+        analytics.trend !== 0
+          ? { value: Math.abs(analytics.trend), positive: analytics.trend > 0 }
+          : undefined,
       color: 'text-blue-600 dark:text-blue-400',
       bgGradient: 'from-blue-500 to-indigo-600',
     },
@@ -201,7 +203,11 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({
         <PortalEmptyState
           icon={Activity}
           title={isHe ? 'אין נתונים עדיין' : 'No Data Yet'}
-          description={isHe ? 'צרו את הבקשה הראשונה שלכם כדי לראות אנליטיקס' : 'Create your first request to see analytics'}
+          description={
+            isHe
+              ? 'צרו את הבקשה הראשונה שלכם כדי לראות אנליטיקס'
+              : 'Create your first request to see analytics'
+          }
           variant="plain"
           className="bg-transparent border-0"
         />
@@ -224,38 +230,40 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({
               className="relative p-5 rounded-2xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 overflow-hidden group hover:shadow-lg transition-shadow hover-lift"
             >
               {/* Background gradient on hover */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${card.bgGradient} opacity-0 group-hover:opacity-5 transition-opacity`} />
+              <div
+                className={`absolute inset-0 bg-gradient-to-br ${card.bgGradient} opacity-0 group-hover:opacity-5 transition-opacity`}
+              />
 
               <div className="relative z-10">
                 <div className="flex items-start justify-between mb-3">
-                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${card.bgGradient} flex items-center justify-center`}>
+                  <div
+                    className={`w-10 h-10 rounded-xl bg-gradient-to-br ${card.bgGradient} flex items-center justify-center`}
+                  >
                     <CardIcon size={20} className="text-white" />
                   </div>
                   {card.trend && (
-                    <div className={cn(
-                      'flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full',
-                      card.trend.positive
-                        ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
-                        : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400'
-                    )}>
+                    <div
+                      className={cn(
+                        'flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full',
+                        card.trend.positive
+                          ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
+                          : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400'
+                      )}
+                    >
                       <TrendingUp size={12} className={cn(!card.trend.positive && 'rotate-180')} />
                       {card.trend.value}%
                     </div>
                   )}
                 </div>
 
-                <div className="text-2xl md:text-3xl font-bold text-surface-900 dark:text-white mb-1">
+                <div className="text-2xl font-bold text-surface-900 dark:text-white mb-1">
                   {card.value}
                 </div>
 
-                <div className="text-xs text-surface-500 truncate">
-                  {card.title}
-                </div>
+                <div className="text-xs text-surface-500 truncate">{card.title}</div>
 
                 {card.subtitle && (
-                  <div className="text-xs text-surface-400 mt-1 truncate">
-                    {card.subtitle}
-                  </div>
+                  <div className="text-xs text-surface-400 mt-1 truncate">{card.subtitle}</div>
                 )}
               </div>
             </motion.div>
@@ -273,15 +281,9 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({
         >
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-emerald-100 text-sm mb-1">
-                {cards[4].title}
-              </div>
-              <div className="text-3xl md:text-4xl font-bold">
-                {cards[4].value}
-              </div>
-              <div className="text-emerald-100 text-sm mt-1">
-                {cards[4].subtitle}
-              </div>
+              <div className="text-emerald-100 text-sm mb-1">{cards[4].title}</div>
+              <div className="text-2xl md:text-3xl font-bold">{cards[4].value}</div>
+              <div className="text-emerald-100 text-sm mt-1">{cards[4].subtitle}</div>
             </div>
             <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center">
               <DollarSign size={32} className="text-white" />
@@ -317,11 +319,13 @@ export const ClientAnalyticsCompact: React.FC<{
 
   return (
     <div className={cn('flex items-center gap-4', className)}>
-      {items.map((item) => (
+      {items.map(item => (
         <div key={item.label} className="flex items-center gap-2">
           <div className={cn('w-2 h-2 rounded-full', item.color)} />
           <span className="text-sm text-surface-500">{item.label}:</span>
-          <span className="text-sm font-semibold text-surface-900 dark:text-white">{item.value}</span>
+          <span className="text-sm font-semibold text-surface-900 dark:text-white">
+            {item.value}
+          </span>
         </div>
       ))}
     </div>

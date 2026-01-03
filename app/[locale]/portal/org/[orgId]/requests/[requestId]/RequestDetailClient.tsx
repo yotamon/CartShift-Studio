@@ -127,39 +127,39 @@ export default function RequestDetailClient() {
 
   const updateLineItem = (id: string, field: keyof PricingLineItem, value: string | number) => {
     setPricingLineItems(
-      pricingLineItems.map(item =>
-        item.id === id ? { ...item, [field]: value } : item
-      )
+      pricingLineItems.map(item => (item.id === id ? { ...item, [field]: value } : item))
     );
   };
 
   // Submit pricing form
   const handleAddPricing = async () => {
-    if (!requestId || typeof requestId !== 'string' || !orgId || typeof orgId !== 'string' || !userData) {
+    if (
+      !requestId ||
+      typeof requestId !== 'string' ||
+      !orgId ||
+      typeof orgId !== 'string' ||
+      !userData
+    ) {
       return;
     }
 
     // Validate line items
-    const validItems = pricingLineItems.filter(item =>
-      item.description.trim() && item.quantity > 0 && item.unitPrice > 0
+    const validItems = pricingLineItems.filter(
+      item => item.description.trim() && item.quantity > 0 && item.unitPrice > 0
     );
 
     if (validItems.length === 0) return;
 
     setIsAddingPricing(true);
     try {
-      await addPricingToRequest(
-        requestId,
-        orgId,
-        userData.id,
-        userData.name || userData.email,
-        {
-          lineItems: validItems,
-          currency: pricingCurrency,
-        }
-      );
+      await addPricingToRequest(requestId, orgId, userData.id, userData.name || userData.email, {
+        lineItems: validItems,
+        currency: pricingCurrency,
+      });
       setShowPricingForm(false);
-      setPricingLineItems([{ id: generateLineItemId(), description: '', quantity: 1, unitPrice: 0 }]);
+      setPricingLineItems([
+        { id: generateLineItemId(), description: '', quantity: 1, unitPrice: 0 },
+      ]);
     } catch (err) {
       console.error('Error adding pricing:', err);
     } finally {
@@ -169,15 +169,17 @@ export default function RequestDetailClient() {
 
   // Handlers for pricing actions
   const handleAcceptQuote = async () => {
-    if (!requestId || typeof requestId !== 'string' || !orgId || typeof orgId !== 'string' || !userData) return;
+    if (
+      !requestId ||
+      typeof requestId !== 'string' ||
+      !orgId ||
+      typeof orgId !== 'string' ||
+      !userData
+    )
+      return;
     setIsAccepting(true);
     try {
-      await acceptRequest(
-        requestId,
-        orgId,
-        userData.id,
-        userData.name || userData.email
-      );
+      await acceptRequest(requestId, orgId, userData.id, userData.name || userData.email);
     } catch (err) {
       console.error('Error accepting quote:', err);
     } finally {
@@ -186,15 +188,17 @@ export default function RequestDetailClient() {
   };
 
   const handleDeclineQuote = async () => {
-    if (!requestId || typeof requestId !== 'string' || !orgId || typeof orgId !== 'string' || !userData) return;
+    if (
+      !requestId ||
+      typeof requestId !== 'string' ||
+      !orgId ||
+      typeof orgId !== 'string' ||
+      !userData
+    )
+      return;
     setIsDeclining(true);
     try {
-      await declineRequest(
-        requestId,
-        orgId,
-        userData.id,
-        userData.name || userData.email
-      );
+      await declineRequest(requestId, orgId, userData.id, userData.name || userData.email);
     } catch (err) {
       console.error('Error declining quote:', err);
     } finally {
@@ -203,21 +207,31 @@ export default function RequestDetailClient() {
   };
 
   const handleStartWork = async () => {
-    if (!requestId || typeof requestId !== 'string' || !orgId || typeof orgId !== 'string' || !userData) return;
+    if (
+      !requestId ||
+      typeof requestId !== 'string' ||
+      !orgId ||
+      typeof orgId !== 'string' ||
+      !userData
+    )
+      return;
     try {
-      await startRequestWork(
-        requestId,
-        orgId,
-        userData.id,
-        userData.name || userData.email
-      );
+      await startRequestWork(requestId, orgId, userData.id, userData.name || userData.email);
     } catch (err) {
       console.error('Error starting work:', err);
     }
   };
 
   const handlePaymentSuccess = async (result: { paymentId?: string }) => {
-    if (!requestId || typeof requestId !== 'string' || !orgId || typeof orgId !== 'string' || !result.paymentId || !userData) return;
+    if (
+      !requestId ||
+      typeof requestId !== 'string' ||
+      !orgId ||
+      typeof orgId !== 'string' ||
+      !result.paymentId ||
+      !userData
+    )
+      return;
     try {
       await markRequestPaid(
         requestId,
@@ -302,9 +316,13 @@ export default function RequestDetailClient() {
       // Subscribe to activities
       let unsubscribeActivities: () => void;
       if (typeof orgId === 'string') {
-        unsubscribeActivities = subscribeToRequestActivities(requestId, (data) => {
-           setActivities(data);
-        }, orgId);
+        unsubscribeActivities = subscribeToRequestActivities(
+          requestId,
+          data => {
+            setActivities(data);
+          },
+          orgId
+        );
       } else {
         unsubscribeActivities = () => {};
       }
@@ -325,9 +343,11 @@ export default function RequestDetailClient() {
   // Fetch organization details for invoice generation
   useEffect(() => {
     if (orgId && typeof orgId === 'string') {
-      getOrganization(orgId).then(org => {
-        if (org) setOrganization(org);
-      }).catch(console.error);
+      getOrganization(orgId)
+        .then(org => {
+          if (org) setOrganization(org);
+        })
+        .catch(console.error);
     }
   }, [orgId]);
 
@@ -369,7 +389,7 @@ export default function RequestDetailClient() {
         userId: userData.id,
         userName: userData.name || userData.email,
         action: 'ADDED_ATTACHMENT',
-        details: { fileName: file.name }
+        details: { fileName: file.name },
       });
     } catch (err) {
       console.error('Failed to upload file:', err);
@@ -380,13 +400,13 @@ export default function RequestDetailClient() {
 
   useEffect(() => {
     if (isAgency) {
-      getAgencyTeam().then(team => {
-        setAgencyTeam(team);
-      }).catch(console.error);
+      getAgencyTeam()
+        .then(team => {
+          setAgencyTeam(team);
+        })
+        .catch(console.error);
     }
   }, [isAgency]);
-
-
 
   const handleStatusChange = async (newStatus: RequestStatus) => {
     if (!requestId || typeof requestId !== 'string' || !userData || !isAgency) return;
@@ -401,7 +421,7 @@ export default function RequestDetailClient() {
         userId: userData.id,
         userName: userData.name || userData.email,
         action: 'STATUS_CHANGED',
-        details: { status: newStatus }
+        details: { status: newStatus },
       });
     } catch (error) {
       console.error('Error updating status:', error);
@@ -414,27 +434,27 @@ export default function RequestDetailClient() {
         <span className="sr-only">Loading request details...</span>
         <div className="h-8 w-48 bg-surface-200 dark:bg-surface-800 rounded-lg" />
         <div className="flex flex-col md:flex-row gap-6">
-           <div className="flex-1 space-y-4">
-             <div className="flex items-center gap-4">
-               <PortalSkeleton className="h-10 w-3/4" />
-               <PortalSkeleton className="h-8 w-24 rounded-full" />
-             </div>
-             <PortalSkeleton className="h-6 w-1/3" />
-           </div>
+          <div className="flex-1 space-y-4">
+            <div className="flex items-center gap-4">
+              <PortalSkeleton className="h-10 w-3/4" />
+              <PortalSkeleton className="h-8 w-24 rounded-full" />
+            </div>
+            <PortalSkeleton className="h-6 w-1/3" />
+          </div>
         </div>
         <div className="flex items-center gap-2">
-           <PortalSkeleton className="h-10 w-24 rounded-xl" />
-           <PortalSkeleton className="h-10 w-28 rounded-xl" />
-           <PortalSkeleton className="h-10 w-24 rounded-xl" />
+          <PortalSkeleton className="h-10 w-24 rounded-xl" />
+          <PortalSkeleton className="h-10 w-28 rounded-xl" />
+          <PortalSkeleton className="h-10 w-24 rounded-xl" />
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-           <div className="lg:col-span-2 space-y-8">
-             <PortalSkeleton className="h-64 w-full rounded-2xl" />
-             <PortalSkeleton className="h-40 w-full rounded-2xl" />
-           </div>
-           <div className="space-y-6">
-             <PortalSkeleton className="h-48 w-full rounded-2xl" />
-           </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            <PortalSkeleton className="h-64 w-full rounded-2xl" />
+            <PortalSkeleton className="h-40 w-full rounded-2xl" />
+          </div>
+          <div className="space-y-6">
+            <PortalSkeleton className="h-48 w-full rounded-2xl" />
+          </div>
         </div>
       </div>
     );
@@ -481,20 +501,26 @@ export default function RequestDetailClient() {
           <ArrowLeft size={20} className="text-surface-500" />
         </Link>
         <div className="flex-1">
-            <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-3xl font-bold text-surface-900 dark:text-white leading-tight font-outfit">
-                {request.title}
-              </h1>
-              {isAgency ? (
-                <PortalBadge variant={mapStatusColor(STATUS_CONFIG[request.status]?.color || 'gray')}>
-                  {t(`requests.status.${request.status.toLowerCase()}` as any)}
-                </PortalBadge>
-              ) : (
-                <PortalBadge variant={mapStatusColor(CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[request.status]]?.color || 'gray')}>
-                  {t(`requests.clientStatus.${CLIENT_STATUS_MAP[request.status].toLowerCase()}` as any)}
-                </PortalBadge>
-              )}
-            </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-2xl font-bold text-surface-900 dark:text-white leading-tight font-outfit">
+              {request.title}
+            </h1>
+            {isAgency ? (
+              <PortalBadge variant={mapStatusColor(STATUS_CONFIG[request.status]?.color || 'gray')}>
+                {t(`requests.status.${request.status.toLowerCase()}` as any)}
+              </PortalBadge>
+            ) : (
+              <PortalBadge
+                variant={mapStatusColor(
+                  CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[request.status]]?.color || 'gray'
+                )}
+              >
+                {t(
+                  `requests.clientStatus.${CLIENT_STATUS_MAP[request.status].toLowerCase()}` as any
+                )}
+              </PortalBadge>
+            )}
+          </div>
           <div className="flex items-center gap-3 mt-1 underline-offset-4">
             <p className="text-xs font-black text-surface-400 uppercase tracking-widest">
               {request.id.slice(0, 8)}
@@ -504,13 +530,13 @@ export default function RequestDetailClient() {
               {request.type || t('requests.detail.designRequest')}
             </p>
           </div>
-          </div>
+        </div>
         <div className="flex items-center gap-2 self-start md:self-center">
-            <FavoriteButton
-              initialIsActive={false}
-              className="w-10 h-10 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm"
-              variant="star"
-            />
+          <FavoriteButton
+            initialIsActive={false}
+            className="w-10 h-10 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm"
+            variant="star"
+          />
         </div>
       </div>
 
@@ -518,10 +544,10 @@ export default function RequestDetailClient() {
         <button
           onClick={() => setActiveTab('overview')}
           className={cn(
-            "px-6 py-2.5 rounded-xl text-sm font-bold transition-all font-outfit",
+            'px-6 py-2.5 rounded-xl text-sm font-bold transition-all font-outfit',
             activeTab === 'overview'
-              ? "bg-white dark:bg-surface-800 text-blue-600 shadow-sm"
-              : "text-surface-500 hover:text-surface-700 dark:hover:text-surface-300"
+              ? 'bg-white dark:bg-surface-800 text-blue-600 shadow-sm'
+              : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
           )}
         >
           {t('requests.detail.overview')}
@@ -529,10 +555,10 @@ export default function RequestDetailClient() {
         <button
           onClick={() => setActiveTab('discussion')}
           className={cn(
-            "px-6 py-2.5 rounded-xl text-sm font-bold transition-all font-outfit flex items-center gap-2",
+            'px-6 py-2.5 rounded-xl text-sm font-bold transition-all font-outfit flex items-center gap-2',
             activeTab === 'discussion'
-              ? "bg-white dark:bg-surface-800 text-blue-600 shadow-sm"
-              : "text-surface-500 hover:text-surface-700 dark:hover:text-surface-300"
+              ? 'bg-white dark:bg-surface-800 text-blue-600 shadow-sm'
+              : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
           )}
         >
           {t('requests.detail.discussion')}
@@ -545,10 +571,10 @@ export default function RequestDetailClient() {
         <button
           onClick={() => setActiveTab('history')}
           className={cn(
-            "px-6 py-2.5 rounded-xl text-sm font-bold transition-all font-outfit flex items-center gap-2",
+            'px-6 py-2.5 rounded-xl text-sm font-bold transition-all font-outfit flex items-center gap-2',
             activeTab === 'history'
-              ? "bg-white dark:bg-surface-800 text-blue-600 shadow-sm"
-              : "text-surface-500 hover:text-surface-700 dark:hover:text-surface-300"
+              ? 'bg-white dark:bg-surface-800 text-blue-600 shadow-sm'
+              : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
           )}
         >
           <Clock size={16} />
@@ -556,10 +582,10 @@ export default function RequestDetailClient() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
           {activeTab === 'overview' ? (
-            <div className="space-y-8 animate-in slide-in-from-start-4 duration-500">
+            <div className="space-y-6 animate-in slide-in-from-start-4 duration-500">
               <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950">
                 <h3 className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest mb-4">
                   {t('requests.detail.details')}
@@ -608,17 +634,10 @@ export default function RequestDetailClient() {
               </PortalCard>
 
               {/* Milestones Section */}
-              <RequestMilestones
-                request={request}
-                isAgency={isAgency}
-              />
+              <RequestMilestones request={request} isAgency={isAgency} />
 
               {/* Assets Section */}
-              <RequestAttachments
-                request={request}
-                isAgency={isAgency}
-                orgId={orgId as string}
-              />
+              <RequestAttachments request={request} isAgency={isAgency} orgId={orgId as string} />
             </div>
           ) : activeTab === 'discussion' ? (
             <RequestDiscussion
@@ -646,7 +665,7 @@ export default function RequestDetailClient() {
                   parentId: parentId,
                   createdAt: Timestamp.now(),
                   reactions: {},
-                  mentions: []
+                  mentions: [],
                 };
 
                 setComments(prev => [...prev, optimisticComment]);
@@ -661,15 +680,14 @@ export default function RequestDetailClient() {
                     userData.photoUrl,
                     {
                       content: content,
-                      parentId: parentId
+                      parentId: parentId,
                     }
                   );
 
                   // Filter out temp, let subscription handle real
                   setTimeout(() => {
-                     setComments(prev => prev.filter(c => c.id !== tempId));
+                    setComments(prev => prev.filter(c => c.id !== tempId));
                   }, 1000);
-
                 } catch (error) {
                   console.error('Error sending comment:', error);
                   setComments(prev => prev.filter(c => c.id !== tempId));
@@ -683,10 +701,12 @@ export default function RequestDetailClient() {
           ) : (
             <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-500">
               <h3 className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest flex items-center gap-2 px-1">
-                <Clock size={14} className="text-blue-500" />{' '}
-                {t('requests.detail.historyTitle')}
+                <Clock size={14} className="text-blue-500" /> {t('requests.detail.historyTitle')}
               </h3>
-              <PortalCard noPadding className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950">
+              <PortalCard
+                noPadding
+                className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950"
+              >
                 <ActivityTimeline activities={activities} orgId={orgId as string} />
               </PortalCard>
             </div>
@@ -715,10 +735,12 @@ export default function RequestDetailClient() {
                 <div className="space-y-4">
                   {/* Currency Selector */}
                   <div>
-                    <label className="block text-xs font-bold text-surface-500 mb-2">{t('requests.detail.currency')}</label>
+                    <label className="block text-xs font-bold text-surface-500 mb-2">
+                      {t('requests.detail.currency')}
+                    </label>
                     <select
                       value={pricingCurrency}
-                      onChange={(e) => setPricingCurrency(e.target.value as Currency)}
+                      onChange={e => setPricingCurrency(e.target.value as Currency)}
                       className="portal-input h-10 text-sm"
                     >
                       {Object.entries(CURRENCY_CONFIG).map(([key, config]) => (
@@ -731,14 +753,19 @@ export default function RequestDetailClient() {
 
                   {/* Line Items */}
                   <div className="space-y-3">
-                    <label className="block text-xs font-bold text-surface-500">{t('requests.detail.lineItems')}</label>
-                    {pricingLineItems.map((item) => (
-                      <div key={item.id} className="p-3 bg-surface-50 dark:bg-surface-900 rounded-lg space-y-2">
+                    <label className="block text-xs font-bold text-surface-500">
+                      {t('requests.detail.lineItems')}
+                    </label>
+                    {pricingLineItems.map(item => (
+                      <div
+                        key={item.id}
+                        className="p-3 bg-surface-50 dark:bg-surface-900 rounded-lg space-y-2"
+                      >
                         <input
                           type="text"
                           placeholder={t('requests.detail.descriptionPlaceholder')}
                           value={item.description}
-                          onChange={(e) => updateLineItem(item.id, 'description', e.target.value)}
+                          onChange={e => updateLineItem(item.id, 'description', e.target.value)}
                           className="portal-input h-9 text-sm"
                         />
                         <div className="flex gap-2 items-center">
@@ -748,7 +775,9 @@ export default function RequestDetailClient() {
                               min="1"
                               placeholder={t('requests.detail.qty')}
                               value={item.quantity || ''}
-                              onChange={(e) => updateLineItem(item.id, 'quantity', parseInt(e.target.value) || 0)}
+                              onChange={e =>
+                                updateLineItem(item.id, 'quantity', parseInt(e.target.value) || 0)
+                              }
                               className="portal-input h-9 text-sm w-full"
                             />
                           </div>
@@ -764,7 +793,13 @@ export default function RequestDetailClient() {
                                 step="0.01"
                                 placeholder={t('requests.detail.price')}
                                 value={item.unitPrice ? (item.unitPrice / 100).toFixed(2) : ''}
-                                onChange={(e) => updateLineItem(item.id, 'unitPrice', Math.round(parseFloat(e.target.value || '0') * 100))}
+                                onChange={e =>
+                                  updateLineItem(
+                                    item.id,
+                                    'unitPrice',
+                                    Math.round(parseFloat(e.target.value || '0') * 100)
+                                  )
+                                }
                                 className="portal-input h-9 text-sm ps-7 w-full"
                               />
                             </div>
@@ -799,7 +834,9 @@ export default function RequestDetailClient() {
                   {/* Total */}
                   {pricingLineItems.some(item => item.quantity > 0 && item.unitPrice > 0) && (
                     <div className="pt-3 border-t border-surface-200 dark:border-surface-800 flex items-center justify-between">
-                      <span className="text-sm font-bold text-surface-600 dark:text-surface-400">{t('requests.detail.total')}</span>
+                      <span className="text-sm font-bold text-surface-600 dark:text-surface-400">
+                        {t('requests.detail.total')}
+                      </span>
                       <span className="text-lg font-black text-surface-900 dark:text-white font-outfit">
                         {formatCurrency(calculateTotalAmount(pricingLineItems), pricingCurrency)}
                       </span>
@@ -813,7 +850,9 @@ export default function RequestDetailClient() {
                       className="flex-1 h-10"
                       onClick={() => {
                         setShowPricingForm(false);
-                        setPricingLineItems([{ id: generateLineItemId(), description: '', quantity: 1, unitPrice: 0 }]);
+                        setPricingLineItems([
+                          { id: generateLineItemId(), description: '', quantity: 1, unitPrice: 0 },
+                        ]);
                       }}
                     >
                       {t('common.cancel')}
@@ -822,7 +861,12 @@ export default function RequestDetailClient() {
                       variant="primary"
                       className="flex-1 h-10"
                       onClick={handleAddPricing}
-                      disabled={isAddingPricing || !pricingLineItems.some(item => item.description.trim() && item.quantity > 0 && item.unitPrice > 0)}
+                      disabled={
+                        isAddingPricing ||
+                        !pricingLineItems.some(
+                          item => item.description.trim() && item.quantity > 0 && item.unitPrice > 0
+                        )
+                      }
                     >
                       {isAddingPricing ? (
                         <Loader2 size={16} className="animate-spin me-2" />
@@ -845,7 +889,7 @@ export default function RequestDetailClient() {
                 {t('requests.detail.pricingTitle')}
               </h4>
               <div className="space-y-3">
-                {request.lineItems.map((item) => (
+                {request.lineItems.map(item => (
                   <div
                     key={item.id}
                     className="flex items-center justify-between p-3 bg-surface-50 dark:bg-surface-900 rounded-lg"
@@ -865,13 +909,16 @@ export default function RequestDetailClient() {
                         {formatCurrency(item.unitPrice * item.quantity, request.currency || 'USD')}
                       </p>
                       <p className="text-xs text-surface-500 dark:text-surface-400">
-                        {item.quantity} × {formatCurrency(item.unitPrice, request.currency || 'USD')}
+                        {item.quantity} ×{' '}
+                        {formatCurrency(item.unitPrice, request.currency || 'USD')}
                       </p>
                     </div>
                   </div>
                 ))}
                 <div className="pt-3 mt-3 border-t border-surface-200 dark:border-surface-800 flex items-center justify-between">
-                  <span className="text-sm font-bold text-surface-600 dark:text-surface-400">{t('requests.detail.total')}</span>
+                  <span className="text-sm font-bold text-surface-600 dark:text-surface-400">
+                    {t('requests.detail.total')}
+                  </span>
                   <span className="text-xl font-black text-surface-900 dark:text-white font-outfit">
                     {formatCurrency(request.totalAmount || 0, request.currency || 'USD')}
                   </span>
@@ -924,11 +971,7 @@ export default function RequestDetailClient() {
               {/* Agency Start Work Button - Only for ACCEPTED status */}
               {showAgencyActions && request.status === 'ACCEPTED' && (
                 <div className="mt-6 pt-6 border-t border-surface-200 dark:border-surface-800">
-                  <PortalButton
-                    variant="primary"
-                    className="w-full h-12"
-                    onClick={handleStartWork}
-                  >
+                  <PortalButton variant="primary" className="w-full h-12" onClick={handleStartWork}>
                     <Zap size={18} className="me-2" />
                     {t('requests.detail.startWork')}
                   </PortalButton>
@@ -954,7 +997,7 @@ export default function RequestDetailClient() {
                         updatedAt: request.updatedAt,
                       }}
                       onSuccess={handlePaymentSuccess}
-                      onError={(err) => console.error('Payment error:', err)}
+                      onError={err => console.error('Payment error:', err)}
                     />
                   </PayPalProvider>
                 </div>
@@ -967,16 +1010,18 @@ export default function RequestDetailClient() {
               {t('requests.detail.workflowActions')}
             </h4>
             <div className="space-y-2">
-              {showAgencyActions && request.status !== 'CLOSED' && request.status !== 'CANCELED' && (
-                <PortalButton
-                  variant="outline"
-                  className="w-full justify-start h-12 border-surface-200 dark:border-surface-800 text-sm font-bold font-outfit"
-                  onClick={() => handleStatusChange('CLOSED')}
-                >
-                  <CheckCircle2 size={16} className="me-3 text-emerald-500" />{' '}
-                  {t('requests.detail.closeRequest')}
-                </PortalButton>
-              )}
+              {showAgencyActions &&
+                request.status !== 'CLOSED' &&
+                request.status !== 'CANCELED' && (
+                  <PortalButton
+                    variant="outline"
+                    className="w-full justify-start h-12 border-surface-200 dark:border-surface-800 text-sm font-bold font-outfit"
+                    onClick={() => handleStatusChange('CLOSED')}
+                  >
+                    <CheckCircle2 size={16} className="me-3 text-emerald-500" />{' '}
+                    {t('requests.detail.closeRequest')}
+                  </PortalButton>
+                )}
               {showAgencyActions && (
                 <div className="relative">
                   <input
@@ -1001,16 +1046,18 @@ export default function RequestDetailClient() {
                   </PortalButton>
                 </div>
               )}
-              {showClientActions && request.status !== 'CLOSED' && request.status !== 'CANCELED' && (
-                <PortalButton
-                  variant="outline"
-                  className="w-full justify-start h-12 border-surface-200 dark:border-surface-800 text-sm font-bold font-outfit"
-                  onClick={() => setShowRevisionModal(true)}
-                >
-                  <RotateCcw size={16} className="me-3 text-amber-500" />{' '}
-                  {t('requests.detail.requestRevision')}
-                </PortalButton>
-              )}
+              {showClientActions &&
+                request.status !== 'CLOSED' &&
+                request.status !== 'CANCELED' && (
+                  <PortalButton
+                    variant="outline"
+                    className="w-full justify-start h-12 border-surface-200 dark:border-surface-800 text-sm font-bold font-outfit"
+                    onClick={() => setShowRevisionModal(true)}
+                  >
+                    <RotateCcw size={16} className="me-3 text-amber-500" />{' '}
+                    {t('requests.detail.requestRevision')}
+                  </PortalButton>
+                )}
             </div>
           </PortalCard>
 
@@ -1023,21 +1070,29 @@ export default function RequestDetailClient() {
                 <div className="relative group/assign">
                   <select
                     className="absolute inset-0 opacity-0 cursor-pointer w-full"
-                    onChange={(e) => {
+                    onChange={e => {
                       const selected = agencyTeam.find(m => m.id === e.target.value);
-                      if (selected) handleAssignSpecialist(selected.id, selected.name || selected.email);
+                      if (selected)
+                        handleAssignSpecialist(selected.id, selected.name || selected.email);
                     }}
                     value={request.assignedTo || ''}
                     disabled={isAssigning}
                   >
-                    <option value="" disabled>{t('common.filter')}</option>
+                    <option value="" disabled>
+                      {t('common.filter')}
+                    </option>
                     {agencyTeam.map(member => (
                       <option key={member.id} value={member.id}>
                         {member.name || member.email}
                       </option>
                     ))}
                   </select>
-                  <PortalButton variant="outline" size="sm" className="h-7 px-2 text-[9px] font-black uppercase tracking-widest" isLoading={isAssigning}>
+                  <PortalButton
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-[9px] font-black uppercase tracking-widest"
+                    isLoading={isAssigning}
+                  >
                     {t('common.edit')}
                   </PortalButton>
                 </div>
@@ -1058,7 +1113,7 @@ export default function RequestDetailClient() {
                   {request.assignedToName || t('requests.detail.productTeam')}
                 </p>
                 <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest">
-                   {request.assignedTo ? t('requests.detail.specialist') : t('common.all')}
+                  {request.assignedTo ? t('requests.detail.specialist') : t('common.all')}
                 </p>
               </div>
             </div>
@@ -1100,7 +1155,7 @@ export default function RequestDetailClient() {
                   className="portal-input min-h-[160px] p-4 bg-surface-50 dark:bg-surface-900 border-surface-200 dark:border-surface-800 focus:bg-white dark:focus:bg-surface-950 transition-all font-medium resize-none text-sm"
                   placeholder={t('requests.detail.revisionPlaceholder')}
                   value={revisionNotes}
-                  onChange={(e) => setRevisionNotes(e.target.value)}
+                  onChange={e => setRevisionNotes(e.target.value)}
                 />
               </div>
 

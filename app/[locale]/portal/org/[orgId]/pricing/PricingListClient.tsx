@@ -155,7 +155,7 @@ export default function PricingListClient() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
             {t('portal.pricing.title')}
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">
@@ -179,7 +179,10 @@ export default function PricingListClient() {
         {/* Toolbar */}
         <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col lg:flex-row lg:items-center gap-4 bg-slate-50/50 dark:bg-slate-900/50">
           <div className="relative w-full lg:w-96">
-            <Search className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <Search
+              className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400"
+              size={16}
+            />
             <input
               type="text"
               placeholder={t('portal.header.searchPlaceholder')}

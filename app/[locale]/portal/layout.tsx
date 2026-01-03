@@ -1,5 +1,6 @@
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics';
 import { setRequestLocale } from 'next-intl/server';
+import { PortalProviders } from '@/components/portal/providers/PortalProviders';
 
 export default async function PortalLayout({
   children,
@@ -18,7 +19,9 @@ export default async function PortalLayout({
   return (
     <>
       <GoogleAnalytics />
-      {children}
+      <PortalProviders>
+        {children}
+      </PortalProviders>
     </>
   );
 }

@@ -37,9 +37,9 @@ export default function OAuthCallbackClient() {
 
       if (result.success) {
         setStatus('success');
-        // Redirect back to settings after a short delay
+        // Redirect back to settings integrations tab after a short delay
         setTimeout(() => {
-          router.push(`/${locale}/portal/agency/settings`);
+          router.push(`/${locale}/portal/agency/settings?tab=integrations`);
         }, 2000);
       } else {
         setStatus('error');

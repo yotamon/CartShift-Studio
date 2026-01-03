@@ -1,36 +1,85 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { Check, AlertCircle } from 'lucide-react';
 
 interface PortalInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
+  success?: boolean;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  hint?: string;
 }
 
 export const PortalInput = React.forwardRef<HTMLInputElement, PortalInputProps>(
-  ({ label, error, className, ...props }, ref) => {
+  ({ label, error, success, className, leftIcon, rightIcon, hint, disabled, ...props }, ref) => {
     return (
-      <div className="w-full space-y-1.5">
+      <div className="w-full space-y-1.5 group">
         {label && (
-          <label className="text-sm font-medium text-[var(--portal-text-secondary)]">
+          <label className="text-sm font-bold text-surface-700 dark:text-surface-300 group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400 transition-colors">
             {label}
           </label>
         )}
-        <input
-          ref={ref}
-          className={cn(
-            "portal-input",
-            error && "border-red-500 focus:ring-red-500",
-            className
+        <div className="relative">
+          {leftIcon && (
+            <div className="absolute start-3 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none transition-colors group-focus-within:text-blue-500">
+              {leftIcon}
+            </div>
           )}
-          {...props}
-        />
+
+          <input
+            ref={ref}
+            disabled={disabled}
+            className={cn(
+              'portal-input w-full transition-all duration-200',
+              'bg-white dark:bg-surface-900',
+              'border border-surface-200 dark:border-surface-800',
+              'text-surface-900 dark:text-white placeholder:text-surface-400',
+              'focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none',
+              'disabled:bg-surface-50 dark:disabled:bg-surface-800 disabled:text-surface-400 disabled:cursor-not-allowed',
+              'rounded-lg h-10 py-2 text-sm font-medium',
+              leftIcon ? 'ps-10' : 'ps-4',
+              rightIcon || error || success ? 'pe-10' : 'pe-4',
+              error &&
+                'border-red-300 dark:border-red-900/50 focus:border-red-500 focus:ring-red-500/20 bg-red-50/10',
+              success &&
+                !error &&
+                'border-emerald-300 dark:border-emerald-900/50 focus:border-emerald-500 focus:ring-emerald-500/20 bg-emerald-50/10',
+              className
+            )}
+            {...props}
+          />
+
+          <div className="absolute end-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
+            {rightIcon}
+            {error && (
+              <AlertCircle
+                size={18}
+                className="text-red-500 animate-in fade-in zoom-in duration-200"
+              />
+            )}
+            {success && !error && (
+              <Check
+                size={18}
+                className="text-emerald-500 animate-in fade-in zoom-in duration-200"
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Error Message */}
         {error && (
-          <p className="text-xs text-red-500 mt-1">{error}</p>
+          <p className="text-xs text-red-600 dark:text-red-400 font-medium animate-in slide-in-from-top-1 duration-200 flex items-center gap-1.5">
+            {/* <AlertCircle size={12} /> */}
+            {error}
+          </p>
         )}
+
+        {/* Hint Text (if no error) */}
+        {!error && hint && <p className="text-xs text-surface-500 dark:text-surface-400">{hint}</p>}
       </div>
     );
   }
 );
 
-PortalInput.displayName = "PortalInput";
-
+PortalInput.displayName = 'PortalInput';

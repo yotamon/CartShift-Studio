@@ -25,9 +25,9 @@ export const PortalButton = ({
   };
 
   const sizes = {
-    sm: 'px-4 py-2 text-[9px]',
-    md: 'px-6 py-3 text-xs',
-    lg: 'px-8 py-4 text-sm',
+    sm: 'px-3 py-1.5 text-[9px]',
+    md: 'px-4 py-2 text-[10px]',
+    lg: 'px-6 py-3 text-xs',
   };
 
   return (
@@ -48,4 +48,3 @@ export const PortalButton = ({
     </button>
   );
 };
-

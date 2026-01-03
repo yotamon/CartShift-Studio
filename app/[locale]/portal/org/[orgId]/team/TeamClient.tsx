@@ -114,7 +114,7 @@ export default function TeamClient() {
 
   if (loading) {
     return (
-      <div className="space-y-8 animate-pulse" role="status" aria-live="polite">
+      <div className="space-y-6 animate-pulse" role="status" aria-live="polite">
         <span className="sr-only">Loading team members...</span>
         <div className="flex justify-between items-center">
           <div className="space-y-2">
@@ -123,7 +123,7 @@ export default function TeamClient() {
           </div>
           <PortalSkeleton className="h-10 w-32 rounded-xl" />
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-4">
             <PortalSkeleton className="h-4 w-32" />
             <div className="space-y-0 border border-surface-200 dark:border-surface-800 rounded-2xl overflow-hidden">
@@ -162,10 +162,10 @@ export default function TeamClient() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-surface-900 dark:text-white font-outfit">
+          <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white font-outfit">
             {t('portal.team.title')}
           </h1>
           <p className="text-surface-500 dark:text-surface-400 mt-1 font-medium">
@@ -181,7 +181,7 @@ export default function TeamClient() {
         </PortalButton>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
           <h3 className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest px-1">
             {t('portal.team.activeMembers')}
@@ -191,7 +191,10 @@ export default function TeamClient() {
             className="border-surface-200 dark:border-surface-800 shadow-sm !overflow-visible bg-white dark:bg-surface-950"
             style={{ overflow: 'visible' }}
           >
-            <div className="divide-y divide-surface-100 dark:divide-surface-800 !overflow-visible" style={{ overflow: 'visible' }}>
+            <div
+              className="divide-y divide-surface-100 dark:divide-surface-800 !overflow-visible"
+              style={{ overflow: 'visible' }}
+            >
               {members.map(member => (
                 <div
                   key={member.id}
@@ -212,7 +215,10 @@ export default function TeamClient() {
                       <p className="text-xs font-bold text-surface-400">{member.email}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-8 !overflow-visible" style={{ overflow: 'visible' }}>
+                  <div
+                    className="flex items-center gap-8 !overflow-visible"
+                    style={{ overflow: 'visible' }}
+                  >
                     <div className="hidden lg:flex flex-col items-end">
                       <span className="text-[10px] font-black text-surface-900 dark:text-white uppercase tracking-widest">
                         {member.role}
@@ -228,31 +234,31 @@ export default function TeamClient() {
                     </PortalBadge>
                     <div className="!overflow-visible relative" style={{ overflow: 'visible' }}>
                       <Dropdown
-                      trigger={
-                        <span className="text-surface-400 hover:text-surface-900 dark:hover:text-white p-2 transition-colors rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 inline-flex">
-                          <MoreHorizontal size={18} />
-                        </span>
-                      }
-                      items={[
-                        {
-                          label: 'Change Role',
-                          onClick: () => console.log('Change role', member.id),
-                          icon: <Settings size={16} />,
-                          disabled: member.role === 'owner',
-                        },
-                        {
-                          label: 'Remove Member',
-                          onClick: () => {
-                            if (confirm(`Remove ${member.name || member.email} from team?`)) {
-                              console.log('Remove member', member.id);
-                            }
+                        trigger={
+                          <span className="text-surface-400 hover:text-surface-900 dark:hover:text-white p-2 transition-colors rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 inline-flex">
+                            <MoreHorizontal size={18} />
+                          </span>
+                        }
+                        items={[
+                          {
+                            label: 'Change Role',
+                            onClick: () => console.log('Change role', member.id),
+                            icon: <Settings size={16} />,
+                            disabled: member.role === 'owner',
                           },
-                          icon: <UserMinus size={16} />,
-                          variant: 'danger',
-                          disabled: member.role === 'owner',
-                        },
-                      ]}
-                    />
+                          {
+                            label: 'Remove Member',
+                            onClick: () => {
+                              if (confirm(`Remove ${member.name || member.email} from team?`)) {
+                                console.log('Remove member', member.id);
+                              }
+                            },
+                            icon: <UserMinus size={16} />,
+                            variant: 'danger',
+                            disabled: member.role === 'owner',
+                          },
+                        ]}
+                      />
                     </div>
                   </div>
                 </div>

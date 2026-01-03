@@ -20,7 +20,10 @@ import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalAvatar } from '@/components/portal/ui/PortalAvatar';
-import { subscribeToOrganization, getOrganizationMembers } from '@/lib/services/portal-organizations';
+import {
+  subscribeToOrganization,
+  getOrganizationMembers,
+} from '@/lib/services/portal-organizations';
 import { subscribeToOrgRequests } from '@/lib/services/portal-requests';
 import { subscribeToOrgActivities } from '@/lib/services/portal-activities';
 import { Organization, Request, ActivityLog, OrganizationMember } from '@/lib/types/portal';
@@ -33,7 +36,11 @@ import { enUS, he } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { ShopifyStoreIntegration } from '@/components/portal/integrations';
 
-export default function AgencyClientDetailClient({ clientId: initialClientId }: { clientId: string }) {
+export default function AgencyClientDetailClient({
+  clientId: initialClientId,
+}: {
+  clientId: string;
+}) {
   const t = useTranslations('portal');
   const locale = useLocale();
   const clientId = useResolvedClientId() || initialClientId;
@@ -87,7 +94,7 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
 
     try {
       // Subscribe to organization data
-      const unsubOrg = subscribeToOrganization(clientId, (org) => {
+      const unsubOrg = subscribeToOrganization(clientId, org => {
         console.log('[AgencyClientDetail] Organization loaded:', org);
         if (org === null) {
           setError('Client not found or you do not have permission to view it');
@@ -98,13 +105,13 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
       });
 
       // Subscribe to requests
-      const unsubRequests = subscribeToOrgRequests(clientId, (reqs) => {
+      const unsubRequests = subscribeToOrgRequests(clientId, reqs => {
         console.log('[AgencyClientDetail] Requests loaded:', reqs.length);
         setRequests(reqs);
       });
 
       // Subscribe to activities
-      const unsubActivities = subscribeToOrgActivities(clientId, (acts) => {
+      const unsubActivities = subscribeToOrgActivities(clientId, acts => {
         console.log('[AgencyClientDetail] Activities loaded:', acts.length);
         setActivities(acts);
       });
@@ -142,25 +149,24 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
   const activeRequests = requests.filter(r =>
     ['NEW', 'QUEUED', 'IN_PROGRESS', 'IN_REVIEW'].includes(r.status)
   ).length;
-  const completedRequests = requests.filter(r =>
-    ['DELIVERED', 'CLOSED'].includes(r.status)
-  ).length;
+  const completedRequests = requests.filter(r => ['DELIVERED', 'CLOSED'].includes(r.status)).length;
 
-  const completedRequestsWithDates = requests.filter(r =>
-    ['DELIVERED', 'CLOSED'].includes(r.status) && r.createdAt && r.updatedAt
+  const completedRequestsWithDates = requests.filter(
+    r => ['DELIVERED', 'CLOSED'].includes(r.status) && r.createdAt && r.updatedAt
   );
 
-  const avgResolution = completedRequestsWithDates.length > 0
-    ? Math.round(
-        completedRequestsWithDates.reduce((sum, r) => {
-          if (r.createdAt?.toDate && r.updatedAt?.toDate) {
-            const diff = r.updatedAt.toDate().getTime() - r.createdAt.toDate().getTime();
-            return sum + diff / (1000 * 60 * 60 * 24); // Convert to days
-          }
-          return sum;
-        }, 0) / completedRequestsWithDates.length
-      )
-    : 0;
+  const avgResolution =
+    completedRequestsWithDates.length > 0
+      ? Math.round(
+          completedRequestsWithDates.reduce((sum, r) => {
+            if (r.createdAt?.toDate && r.updatedAt?.toDate) {
+              const diff = r.updatedAt.toDate().getTime() - r.createdAt.toDate().getTime();
+              return sum + diff / (1000 * 60 * 60 * 24); // Convert to days
+            }
+            return sum;
+          }, 0) / completedRequestsWithDates.length
+        )
+      : 0;
 
   const recentRequests = requests.slice(0, 5);
   const recentActivities = activities.slice(0, 8);
@@ -186,7 +192,8 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
           {error || t('common.error')}
         </h2>
         <p className="text-surface-500 max-w-md mx-auto text-sm">
-          {error || 'Unable to load client information. The client may not exist or you may not have permission to view it.'}
+          {error ||
+            'Unable to load client information. The client may not exist or you may not have permission to view it.'}
         </p>
         <Link href="/portal/agency/clients/">
           <PortalButton variant="outline" className="mt-4">
@@ -199,7 +206,7 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
+    <div className="space-y-6 animate-in fade-in duration-700">
       {/* Header */}
       <div className="flex flex-col gap-6">
         {/* Back button */}
@@ -223,17 +230,22 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-3">
-                    <h1 className="text-3xl font-black tracking-tight text-surface-900 dark:text-white">
+                    <h1 className="text-2xl font-black tracking-tight text-surface-900 dark:text-white">
                       {organization.name}
                     </h1>
                     <PortalBadge
                       variant={
-                        organization.status === 'inactive' ? 'gray' :
-                        organization.status === 'suspended' ? 'red' : 'green'
+                        organization.status === 'inactive'
+                          ? 'gray'
+                          : organization.status === 'suspended'
+                            ? 'red'
+                            : 'green'
                       }
                       className="text-[9px] font-black uppercase tracking-widest"
                     >
-                      {organization.status ? t(`agency.clients.badge.${organization.status}` as any) : t('agency.clients.badge.active')}
+                      {organization.status
+                        ? t(`agency.clients.badge.${organization.status}` as any)
+                        : t('agency.clients.badge.active')}
                     </PortalBadge>
                   </div>
 
@@ -247,7 +259,10 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
                       >
                         <Globe size={14} />
                         <span>{organization.website.replace(/^https?:\/\//, '')}</span>
-                        <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <ExternalLink
+                          size={12}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        />
                       </a>
                     )}
                     {organization.industry && (
@@ -257,11 +272,18 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
                       </div>
                     )}
                     <div className="flex items-center gap-2">
-                      <ShieldCheck size={14} className={cn(
-                        organization.plan === 'enterprise' ? 'text-purple-500' : 'text-emerald-500'
-                      )} />
+                      <ShieldCheck
+                        size={14}
+                        className={cn(
+                          organization.plan === 'enterprise'
+                            ? 'text-purple-500'
+                            : 'text-emerald-500'
+                        )}
+                      />
                       <span className="text-sm font-bold text-surface-600 dark:text-surface-400 uppercase tracking-widest">
-                        {organization.plan ? t(`agency.clients.plans.${organization.plan}` as any) : t('agency.clients.enterprise')}
+                        {organization.plan
+                          ? t(`agency.clients.plans.${organization.plan}` as any)
+                          : t('agency.clients.enterprise')}
                       </span>
                     </div>
                   </div>
@@ -270,12 +292,15 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
                     <div className="flex items-center gap-2 text-xs text-surface-400 font-bold uppercase tracking-widest">
                       <Calendar size={12} />
                       <span>
-                        {t('agency.clients.detail.stats.joinedDate')}: {' '}
-                        {new Date(organization.createdAt.toDate()).toLocaleDateString(locale === 'he' ? 'he-IL' : 'en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric'
-                        })}
+                        {t('agency.clients.detail.stats.joinedDate')}:{' '}
+                        {new Date(organization.createdAt.toDate()).toLocaleDateString(
+                          locale === 'he' ? 'he-IL' : 'en-US',
+                          {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          }
+                        )}
                       </span>
                     </div>
                   )}
@@ -313,7 +338,7 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
               <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-3">
                 {t('agency.clients.detail.stats.totalRequests')}
               </p>
-              <p className="text-3xl font-black text-surface-900 dark:text-white mb-1">
+              <p className="text-2xl font-black text-surface-900 dark:text-white mb-1">
                 {requests.length}
               </p>
               <p className="text-xs text-surface-500 font-bold">
@@ -332,7 +357,7 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
               <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-3">
                 {t('agency.clients.detail.stats.activeRequests')}
               </p>
-              <p className="text-3xl font-black text-surface-900 dark:text-white mb-1">
+              <p className="text-2xl font-black text-surface-900 dark:text-white mb-1">
                 {activeRequests}
               </p>
               <p className="text-xs text-amber-600 dark:text-amber-400 font-bold">
@@ -351,7 +376,7 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
               <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-3">
                 {t('agency.clients.detail.stats.completedRequests')}
               </p>
-              <p className="text-3xl font-black text-surface-900 dark:text-white mb-1">
+              <p className="text-2xl font-black text-surface-900 dark:text-white mb-1">
                 {completedRequests}
               </p>
               <p className="text-xs text-emerald-600 dark:text-emerald-400 font-bold">
@@ -370,7 +395,7 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
               <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-3">
                 {t('agency.clients.detail.stats.avgResolution')}
               </p>
-              <p className="text-3xl font-black text-surface-900 dark:text-white mb-1">
+              <p className="text-2xl font-black text-surface-900 dark:text-white mb-1">
                 {avgResolution > 0 ? avgResolution : '—'}
               </p>
               <p className="text-xs text-surface-500 font-bold">
@@ -385,9 +410,9 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Recent Requests & Activity */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 space-y-6">
           {/* Recent Requests */}
           <div>
             <div className="flex items-center justify-between mb-6 px-2">
@@ -399,14 +424,20 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
                 className="text-xs font-black text-blue-600 hover:text-blue-700 dark:text-blue-400 uppercase tracking-widest flex items-center gap-2 group"
               >
                 <span>{t('agency.clients.detail.requests.viewAll')}</span>
-                <ExternalLink size={12} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                <ExternalLink
+                  size={12}
+                  className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
+                />
               </Link>
             </div>
 
-            <PortalCard noPadding className="border-surface-200 dark:border-surface-800 shadow-sm overflow-hidden">
+            <PortalCard
+              noPadding
+              className="border-surface-200 dark:border-surface-800 shadow-sm overflow-hidden"
+            >
               {recentRequests.length > 0 ? (
                 <div className="divide-y divide-surface-50 dark:divide-surface-800">
-                  {recentRequests.map((request) => (
+                  {recentRequests.map(request => (
                     <Link
                       key={request.id}
                       href={`/portal/org/${clientId}/requests/${request.id}/`}
@@ -417,9 +448,14 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
                           <div className="flex items-center gap-3 mb-2">
                             <PortalBadge
                               variant={
-                                request.status === 'DELIVERED' || request.status === 'CLOSED' ? 'green' :
-                                request.status === 'IN_PROGRESS' || request.status === 'IN_REVIEW' ? 'blue' :
-                                request.status === 'QUEUED' ? 'yellow' : 'gray'
+                                request.status === 'DELIVERED' || request.status === 'CLOSED'
+                                  ? 'green'
+                                  : request.status === 'IN_PROGRESS' ||
+                                      request.status === 'IN_REVIEW'
+                                    ? 'blue'
+                                    : request.status === 'QUEUED'
+                                      ? 'yellow'
+                                      : 'gray'
                               }
                               className="text-[9px] px-2 h-5 font-black uppercase tracking-tighter"
                             >
@@ -440,10 +476,12 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
                           <div className="flex items-center gap-1.5 text-surface-400">
                             <Clock size={12} />
                             <span className="text-[10px] font-bold uppercase tracking-tighter">
-                              {isMounted ? formatDistanceToNow(request.createdAt.toDate(), {
-                                addSuffix: true,
-                                locale: locale === 'he' ? he : enUS,
-                              }) : '—'}
+                              {isMounted
+                                ? formatDistanceToNow(request.createdAt.toDate(), {
+                                    addSuffix: true,
+                                    locale: locale === 'he' ? he : enUS,
+                                  })
+                                : '—'}
                             </span>
                           </div>
                         )}
@@ -473,11 +511,17 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
               </h2>
             </div>
 
-            <PortalCard noPadding className="border-surface-200 dark:border-surface-800 shadow-sm overflow-hidden">
+            <PortalCard
+              noPadding
+              className="border-surface-200 dark:border-surface-800 shadow-sm overflow-hidden"
+            >
               {recentActivities.length > 0 ? (
                 <div className="divide-y divide-surface-50 dark:divide-surface-800">
                   {recentActivities.map((activity, index) => (
-                    <div key={index} className="p-5 flex items-start gap-4 group hover:bg-surface-50/30 dark:hover:bg-surface-900/30 transition-colors">
+                    <div
+                      key={index}
+                      className="p-5 flex items-start gap-4 group hover:bg-surface-50/30 dark:hover:bg-surface-900/30 transition-colors"
+                    >
                       <div className="w-10 h-10 bg-blue-50 dark:bg-blue-950/30 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                         <Activity size={18} className="text-blue-600" />
                       </div>
@@ -496,10 +540,12 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
                         <div className="flex items-center gap-1.5 text-surface-400 flex-shrink-0">
                           <Clock size={12} />
                           <span className="text-[10px] font-bold uppercase tracking-tighter">
-                            {isMounted ? formatDistanceToNow(activity.createdAt.toDate(), {
-                              addSuffix: true,
-                              locale: locale === 'he' ? he : enUS,
-                            }) : '—'}
+                            {isMounted
+                              ? formatDistanceToNow(activity.createdAt.toDate(), {
+                                  addSuffix: true,
+                                  locale: locale === 'he' ? he : enUS,
+                                })
+                              : '—'}
                           </span>
                         </div>
                       )}
@@ -522,7 +568,7 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
         </div>
 
         {/* Right Column - Client Info & Team */}
-        <div className="space-y-8">
+        <div className="space-y-6">
           {/* Client Information */}
           <div>
             <div className="flex items-center justify-between mb-6 px-2">
@@ -545,8 +591,13 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
                       className="text-sm font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 flex items-center gap-2 group"
                     >
                       <Globe size={14} />
-                      <span className="truncate">{organization.website.replace(/^https?:\/\//, '')}</span>
-                      <ExternalLink size={12} className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <span className="truncate">
+                        {organization.website.replace(/^https?:\/\//, '')}
+                      </span>
+                      <ExternalLink
+                        size={12}
+                        className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                      />
                     </a>
                   </div>
                 )}
@@ -567,11 +618,16 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
                     {t('agency.clients.detail.info.plan')}
                   </p>
                   <div className="flex items-center gap-2">
-                    <ShieldCheck size={14} className={cn(
-                      organization.plan === 'enterprise' ? 'text-purple-500' : 'text-emerald-500'
-                    )} />
+                    <ShieldCheck
+                      size={14}
+                      className={cn(
+                        organization.plan === 'enterprise' ? 'text-purple-500' : 'text-emerald-500'
+                      )}
+                    />
                     <span className="text-sm font-bold text-surface-900 dark:text-white uppercase tracking-widest">
-                      {organization.plan ? t(`agency.clients.plans.${organization.plan}` as any) : t('agency.clients.enterprise')}
+                      {organization.plan
+                        ? t(`agency.clients.plans.${organization.plan}` as any)
+                        : t('agency.clients.enterprise')}
                     </span>
                   </div>
                 </div>
@@ -582,12 +638,17 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
                   </p>
                   <PortalBadge
                     variant={
-                      organization.status === 'inactive' ? 'gray' :
-                      organization.status === 'suspended' ? 'red' : 'green'
+                      organization.status === 'inactive'
+                        ? 'gray'
+                        : organization.status === 'suspended'
+                          ? 'red'
+                          : 'green'
                     }
                     className="text-[9px] font-black uppercase tracking-widest"
                   >
-                    {organization.status ? t(`agency.clients.badge.${organization.status}` as any) : t('agency.clients.badge.active')}
+                    {organization.status
+                      ? t(`agency.clients.badge.${organization.status}` as any)
+                      : t('agency.clients.badge.active')}
                   </PortalBadge>
                 </div>
               </div>
@@ -641,9 +702,7 @@ export default function AgencyClientDetailClient({ clientId: initialClientId }: 
                         <p className="text-sm font-bold text-surface-900 dark:text-white truncate">
                           {member.name || 'Anonymous'}
                         </p>
-                        <p className="text-xs text-surface-500 truncate">
-                          {member.email}
-                        </p>
+                        <p className="text-xs text-surface-500 truncate">{member.email}</p>
                       </div>
                       <PortalBadge
                         variant="blue"

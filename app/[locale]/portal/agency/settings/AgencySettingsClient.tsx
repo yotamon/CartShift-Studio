@@ -1,10 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalInput } from '@/components/portal/ui/PortalInput';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
-import { Shield, CreditCard, Save, Settings2, Building2, Loader2, Camera, User as UserIcon } from 'lucide-react';
+import {
+  Shield,
+  CreditCard,
+  Save,
+  Settings2,
+  Building2,
+  Loader2,
+  Camera,
+  User as UserIcon,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
@@ -14,10 +24,7 @@ import { updatePortalUser } from '@/lib/services/portal-users';
 import { getFirebaseStorage, waitForAuth } from '@/lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { PortalUser, Invite } from '@/lib/types/portal';
-import {
-  subscribeToAgencyInvites,
-  cancelInvite,
-} from '@/lib/services/portal-organizations';
+import { subscribeToAgencyInvites, cancelInvite } from '@/lib/services/portal-organizations';
 import { useTranslations } from 'next-intl';
 import { PortalAvatar } from '@/components/portal/ui/PortalAvatar';
 import { InviteTeamMemberForm } from '@/components/portal/forms/InviteTeamMemberForm';
@@ -48,7 +55,11 @@ interface AgencyProfile {
 export default function AgencySettingsClient() {
   const t = useTranslations('portal');
   const { user } = usePortalAuth();
-  const [activeTab, setActiveTab] = useState('profile');
+  const searchParams = useSearchParams();
+  const tabFromUrl = searchParams.get('tab');
+  const validTabs = ['profile', 'team', 'services', 'integrations', 'billing'];
+  const initialTab = tabFromUrl && validTabs.includes(tabFromUrl) ? tabFromUrl : 'profile';
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [profile, setProfile] = useState<AgencyProfile>({
@@ -74,6 +85,14 @@ export default function AgencySettingsClient() {
   });
   const [profileSaving, setProfileSaving] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+
+  // Sync activeTab with URL parameter when it changes
+  useEffect(() => {
+    const tabFromUrl = searchParams.get('tab');
+    if (tabFromUrl && validTabs.includes(tabFromUrl) && tabFromUrl !== activeTab) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     async function fetchAgencyProfile() {
@@ -126,7 +145,7 @@ export default function AgencySettingsClient() {
       fetchTeam();
 
       // Also subscribe to agency invites
-      const unsubscribeInvites = subscribeToAgencyInvites((data) => {
+      const unsubscribeInvites = subscribeToAgencyInvites(data => {
         setInvites(data);
       });
 
@@ -137,7 +156,7 @@ export default function AgencySettingsClient() {
 
     if (activeTab === 'services') {
       setLoadingServices(true);
-      const unsubscribeServices = subscribeToServices((data) => {
+      const unsubscribeServices = subscribeToServices(data => {
         setServices(data);
         setLoadingServices(false);
       });
@@ -330,9 +349,9 @@ export default function AgencySettingsClient() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-6 animate-in fade-in duration-500">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-surface-900 dark:text-white font-outfit">
+        <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white font-outfit">
           {t('agency.settings.title')}
         </h1>
         <p className="text-surface-500 dark:text-surface-400 mt-1">
@@ -340,7 +359,7 @@ export default function AgencySettingsClient() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <aside className="lg:col-span-1">
           <nav className="space-y-1">
             {tabs.map(tab => (
@@ -378,9 +397,9 @@ export default function AgencySettingsClient() {
                 </div>
               </div>
 
-              <div className="space-y-8">
+              <div className="space-y-6">
                 {/* Avatar Section */}
-                <div className="flex flex-col md:flex-row items-center gap-8 p-6 rounded-3xl bg-surface-50/50 dark:bg-surface-900/30 border border-surface-100 dark:border-surface-800/50">
+                <div className="flex flex-col md:flex-row items-center gap-6 p-6 rounded-3xl bg-surface-50/50 dark:bg-surface-900/30 border border-surface-100 dark:border-surface-800/50">
                   <div className="relative group">
                     <PortalAvatar
                       src={profileFormData.photoUrl}
@@ -395,7 +414,13 @@ export default function AgencySettingsClient() {
                     )}
                     <label className="absolute -bottom-1 -end-1 p-2 bg-blue-600 text-white rounded-xl shadow-lg cursor-pointer hover:bg-blue-700 transition-all hover:scale-110 active:scale-95">
                       <Camera size={16} />
-                      <input type="file" className="hidden" accept="image/*" onChange={handleAvatarUpload} disabled={uploadingAvatar} />
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleAvatarUpload}
+                        disabled={uploadingAvatar}
+                      />
                     </label>
                   </div>
 
@@ -411,9 +436,13 @@ export default function AgencySettingsClient() {
                         variant="outline"
                         size="sm"
                         className="h-9 px-4 text-xs font-bold border-surface-200 dark:border-surface-800"
-                        onClick={() => document.querySelector<HTMLInputElement>('input[type="file"]')?.click()}
+                        onClick={() =>
+                          document.querySelector<HTMLInputElement>('input[type="file"]')?.click()
+                        }
                       >
-                        {profileFormData.photoUrl ? t('settings.profile.avatar.change') : t('settings.profile.avatar.upload')}
+                        {profileFormData.photoUrl
+                          ? t('settings.profile.avatar.change')
+                          : t('settings.profile.avatar.upload')}
                       </PortalButton>
                       {profileFormData.photoUrl && (
                         <button
@@ -432,7 +461,9 @@ export default function AgencySettingsClient() {
                     <PortalInput
                       label={t('settings.profile.name')}
                       value={profileFormData.name}
-                      onChange={e => setProfileFormData({ ...profileFormData, name: e.target.value })}
+                      onChange={e =>
+                        setProfileFormData({ ...profileFormData, name: e.target.value })
+                      }
                       placeholder={t('settings.profile.namePlaceholder')}
                     />
                     <div className="opacity-60 grayscale pointer-events-none">
@@ -454,9 +485,7 @@ export default function AgencySettingsClient() {
                   className="flex items-center gap-2 shadow-xl shadow-blue-500/20 font-outfit px-8"
                 >
                   <Save size={18} />
-                  {profileSaving
-                    ? t('settings.general.saving')
-                    : t('settings.profile.save')}
+                  {profileSaving ? t('settings.general.saving') : t('settings.profile.save')}
                 </PortalButton>
               </div>
             </PortalCard>
@@ -563,10 +592,10 @@ export default function AgencySettingsClient() {
                     <div
                       key={service.id}
                       className={cn(
-                        "p-5 rounded-2xl border transition-all hover:shadow-md group",
+                        'p-5 rounded-2xl border transition-all hover:shadow-md group',
                         service.isActive
-                          ? "bg-white dark:bg-surface-950 border-surface-200 dark:border-surface-800"
-                          : "bg-surface-50/50 dark:bg-surface-900/30 border-surface-100 dark:border-surface-800/50 opacity-60"
+                          ? 'bg-white dark:bg-surface-950 border-surface-200 dark:border-surface-800'
+                          : 'bg-surface-50/50 dark:bg-surface-900/30 border-surface-100 dark:border-surface-800/50 opacity-60'
                       )}
                     >
                       <div className="flex items-start justify-between mb-4">
@@ -608,7 +637,9 @@ export default function AgencySettingsClient() {
 
                       <div className="mt-6 pt-4 border-t border-surface-100 dark:border-surface-800 flex items-center justify-between">
                         <div className="flex flex-col">
-                          <span className="text-[9px] font-black text-surface-400 uppercase tracking-widest">Base Price</span>
+                          <span className="text-[9px] font-black text-surface-400 uppercase tracking-widest">
+                            Base Price
+                          </span>
                           <span className="text-sm font-black text-surface-900 dark:text-white font-outfit">
                             {formatCurrency(service.basePrice, service.currency)}
                           </span>
@@ -625,9 +656,12 @@ export default function AgencySettingsClient() {
               ) : (
                 <div className="py-20 text-center bg-surface-50/50 dark:bg-surface-900/30 rounded-3xl border-2 border-dashed border-surface-200 dark:border-surface-800">
                   <Tag className="w-12 h-12 text-surface-300 dark:text-surface-700 mx-auto mb-4 opacity-20" />
-                  <h4 className="text-lg font-bold text-surface-900 dark:text-white font-outfit mb-1">Your Catalog is Empty</h4>
+                  <h4 className="text-lg font-bold text-surface-900 dark:text-white font-outfit mb-1">
+                    Your Catalog is Empty
+                  </h4>
                   <p className="text-sm text-surface-500 dark:text-surface-400 max-w-sm mx-auto mb-8">
-                    Add services to your catalog to quickly create pricing offers for client requests.
+                    Add services to your catalog to quickly create pricing offers for client
+                    requests.
                   </p>
                   <PortalButton
                     variant="outline"
@@ -660,7 +694,7 @@ export default function AgencySettingsClient() {
                   className="h-10 font-outfit"
                   onClick={() => setIsInviteModalOpen(true)}
                 >
-                   {t('agency.settings.team.invite')}
+                  {t('agency.settings.team.invite')}
                 </PortalButton>
               </div>
 
@@ -676,41 +710,58 @@ export default function AgencySettingsClient() {
                         <th className="px-6 py-4">{t('agency.settings.team.table.member')}</th>
                         <th className="px-6 py-4">{t('agency.settings.team.table.status')}</th>
                         <th className="px-6 py-4">{t('agency.settings.team.table.joined')}</th>
-                        <th className="px-6 py-4 text-end">{t('agency.settings.team.table.action')}</th>
+                        <th className="px-6 py-4 text-end">
+                          {t('agency.settings.team.table.action')}
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
                       {team.map((member: PortalUser) => (
-                        <tr key={member.id} className="hover:bg-surface-50/50 dark:hover:bg-surface-800/20 transition-all group">
+                        <tr
+                          key={member.id}
+                          className="hover:bg-surface-50/50 dark:hover:bg-surface-800/20 transition-all group"
+                        >
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
-                              <PortalAvatar name={member.name || 'User'} size="sm" className="ring-2 ring-white dark:ring-surface-900 shadow-sm" />
+                              <PortalAvatar
+                                name={member.name || 'User'}
+                                size="sm"
+                                className="ring-2 ring-white dark:ring-surface-900 shadow-sm"
+                              />
                               <div>
-                                <p className="text-sm font-bold text-surface-900 dark:text-white font-outfit">{member.name || 'Unnamed User'}</p>
-                                <p className="text-[10px] font-bold text-surface-400 uppercase tracking-tight">{member.email}</p>
+                                <p className="text-sm font-bold text-surface-900 dark:text-white font-outfit">
+                                  {member.name || 'Unnamed User'}
+                                </p>
+                                <p className="text-[10px] font-bold text-surface-400 uppercase tracking-tight">
+                                  {member.email}
+                                </p>
                               </div>
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            <span className={cn(
-                              "inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border",
-                              member.status === 'inactive'
-                                ? "bg-slate-50 dark:bg-slate-900/20 text-slate-600 dark:text-slate-400 border-slate-100 dark:border-slate-800"
-                                : member.status === 'suspended'
-                                  ? "bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-900/30"
-                                  : "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/30"
-                            )}>
+                            <span
+                              className={cn(
+                                'inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border',
+                                member.status === 'inactive'
+                                  ? 'bg-slate-50 dark:bg-slate-900/20 text-slate-600 dark:text-slate-400 border-slate-100 dark:border-slate-800'
+                                  : member.status === 'suspended'
+                                    ? 'bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-900/30'
+                                    : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/30'
+                              )}
+                            >
                               {t(`agency.settings.team.${member.status || 'active'}` as never)}
                             </span>
                           </td>
                           <td className="px-6 py-4">
                             <span className="text-[10px] font-bold text-surface-500 uppercase tracking-tighter">
-                              {member.createdAt?.toDate ? member.createdAt.toDate().toLocaleDateString() : 'N/A'}
+                              {member.createdAt?.toDate
+                                ? member.createdAt.toDate().toLocaleDateString()
+                                : 'N/A'}
                             </span>
                           </td>
                           <td className="px-6 py-4 text-end">
                             <button className="text-xs font-bold text-surface-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors uppercase tracking-widest">
-                               {t('agency.settings.team.edit')}
+                              {t('agency.settings.team.edit')}
                             </button>
                           </td>
                         </tr>
@@ -721,7 +772,9 @@ export default function AgencySettingsClient() {
               ) : (
                 <div className="py-12 text-center opacity-30">
                   <UserIcon className="w-12 h-12 text-surface-300 dark:text-surface-700 mx-auto mb-3" />
-                  <p className="text-[10px] font-black uppercase tracking-widest">{t('agency.settings.team.noMembers')}</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest">
+                    {t('agency.settings.team.noMembers')}
+                  </p>
                 </div>
               )}
 
@@ -737,21 +790,32 @@ export default function AgencySettingsClient() {
                 {invites.length > 0 ? (
                   <div className="space-y-3">
                     {invites.map(invite => (
-                      <div key={invite.id} className="p-4 rounded-xl bg-surface-50 dark:bg-surface-900 border border-surface-100 dark:border-surface-800 flex items-center justify-between">
+                      <div
+                        key={invite.id}
+                        className="p-4 rounded-xl bg-surface-50 dark:bg-surface-900 border border-surface-100 dark:border-surface-800 flex items-center justify-between"
+                      >
                         <div>
-                          <p className="text-sm font-bold text-surface-900 dark:text-white font-outfit">{invite.email}</p>
-                          <p className="text-[10px] font-bold text-surface-400 uppercase tracking-tight">{invite.role}</p>
+                          <p className="text-sm font-bold text-surface-900 dark:text-white font-outfit">
+                            {invite.email}
+                          </p>
+                          <p className="text-[10px] font-bold text-surface-400 uppercase tracking-tight">
+                            {invite.role}
+                          </p>
                         </div>
                         <div className="flex items-center gap-4">
                           <span className="text-[10px] font-bold text-surface-400 uppercase tracking-tighter">
-                            {invite.createdAt?.toDate ? invite.createdAt.toDate().toLocaleDateString() : 'Sent recently'}
+                            {invite.createdAt?.toDate
+                              ? invite.createdAt.toDate().toLocaleDateString()
+                              : 'Sent recently'}
                           </span>
                           <button
                             onClick={() => handleCancelInvite(invite.id)}
                             disabled={cancellingInvite === invite.id}
                             className="text-[10px] font-black text-rose-500 uppercase tracking-widest hover:text-rose-600 disabled:opacity-50"
                           >
-                            {cancellingInvite === invite.id ? '...' : (t('agency.settings.team.cancelInvite') || 'Cancel')}
+                            {cancellingInvite === invite.id
+                              ? '...'
+                              : t('agency.settings.team.cancelInvite') || 'Cancel'}
                           </button>
                         </div>
                       </div>
@@ -759,7 +823,9 @@ export default function AgencySettingsClient() {
                   </div>
                 ) : (
                   <div className="py-8 text-center bg-surface-50/50 dark:bg-surface-900/30 rounded-xl border border-dashed border-surface-200 dark:border-surface-800">
-                    <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest">No pending invitations</p>
+                    <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest">
+                      No pending invitations
+                    </p>
                   </div>
                 )}
               </div>
@@ -789,7 +855,9 @@ export default function AgencySettingsClient() {
                     connection={calendarConnection}
                     onConnect={async () => {
                       if (!isGoogleCalendarConfigured()) {
-                        alert('Google Calendar integration requires configuration. Please add NEXT_PUBLIC_GOOGLE_CLIENT_ID to your environment variables.');
+                        alert(
+                          'Google Calendar integration requires configuration. Please add NEXT_PUBLIC_GOOGLE_CLIENT_ID to your environment variables.'
+                        );
                         return;
                       }
                       initiateGoogleOAuth();
@@ -808,7 +876,10 @@ export default function AgencySettingsClient() {
                   {/* Coming Soon - Slack */}
                   <IntegrationCard
                     title={t('agency.settings.integrations.slack.title') || 'Slack'}
-                    description={t('agency.settings.integrations.slack.description') || 'Get notifications in your Slack workspace'}
+                    description={
+                      t('agency.settings.integrations.slack.description') ||
+                      'Get notifications in your Slack workspace'
+                    }
                     icon={MessageSquare}
                     iconGradient="from-purple-500 to-pink-500"
                     comingSoon
@@ -817,7 +888,10 @@ export default function AgencySettingsClient() {
                   {/* Coming Soon - Stripe */}
                   <IntegrationCard
                     title={t('agency.settings.integrations.stripe.title') || 'Stripe'}
-                    description={t('agency.settings.integrations.stripe.description') || 'Accept payments on your pricing offers'}
+                    description={
+                      t('agency.settings.integrations.stripe.description') ||
+                      'Accept payments on your pricing offers'
+                    }
                     icon={CreditCard}
                     iconGradient="from-indigo-500 to-purple-600"
                     comingSoon
@@ -837,7 +911,9 @@ export default function AgencySettingsClient() {
               </p>
               <div className="py-12 text-center opacity-40">
                 <CreditCard className="w-12 h-12 text-surface-300 dark:text-surface-700 mx-auto mb-3" />
-                <p className="text-[10px] font-black uppercase tracking-widest text-surface-500 dark:text-surface-400">Billing configuration coming soon</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-surface-500 dark:text-surface-400">
+                  Billing configuration coming soon
+                </p>
               </div>
             </PortalCard>
           )}

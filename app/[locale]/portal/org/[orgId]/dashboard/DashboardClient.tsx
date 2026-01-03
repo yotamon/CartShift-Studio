@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Clock, Plus, Loader2, AlertCircle } from 'lucide-react';
+import { Clock, Loader2, AlertCircle } from 'lucide-react';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { subscribeToOrgRequests } from '@/lib/services/portal-requests';
@@ -11,9 +11,37 @@ import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
 import { useTranslations, NextIntlClientProvider } from 'next-intl';
 import { getMemberByUserId, ensureMembership } from '@/lib/services/portal-organizations';
-import { Link } from '@/i18n/navigation';
-import { ClientAnalytics } from '@/components/portal/ClientAnalytics';
-import { ActivityTimeline } from '@/components/portal/ActivityTimeline';
+import dynamic from 'next/dynamic';
+
+const ClientAnalytics = dynamic(
+  () => import('@/components/portal/ClientAnalytics').then(mod => mod.ClientAnalytics),
+  {
+    loading: () => (
+      <div className="h-48 rounded-2xl bg-surface-50 dark:bg-surface-900 animate-pulse" />
+    ),
+    ssr: false,
+  }
+);
+
+const QuickActions = dynamic(
+  () => import('@/components/portal/QuickActions').then(mod => mod.QuickActions),
+  {
+    loading: () => (
+      <div className="h-24 rounded-2xl bg-surface-50 dark:bg-surface-900 animate-pulse" />
+    ),
+    ssr: false,
+  }
+);
+
+const ActivityTimeline = dynamic(
+  () => import('@/components/portal/ActivityTimeline').then(mod => mod.ActivityTimeline),
+  {
+    loading: () => (
+      <div className="h-96 rounded-2xl bg-surface-50 dark:bg-surface-900 animate-pulse" />
+    ),
+    ssr: false,
+  }
+);
 
 function DashboardClientContent() {
   const orgId = useResolvedOrgId();
@@ -140,32 +168,26 @@ function DashboardClientContent() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-6 animate-in fade-in duration-500">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
             {t('portal.dashboard.title')}
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">
             {t('portal.dashboard.subtitle')}
           </p>
         </div>
-        <div className="flex gap-3">
-          <Link href={`/portal/org/${orgId}/requests/new/`}>
-            <PortalButton className="flex items-center gap-2 font-outfit shadow-lg shadow-blue-500/20">
-              <Plus size={18} />
-              {t('portal.dashboard.actions.newRequest')}
-            </PortalButton>
-          </Link>
-        </div>
       </div>
+
+      <QuickActions />
 
       {/* Analytics Grid */}
       <ClientAnalytics requests={requests} />
 
       {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Activity */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between px-2">
@@ -245,7 +267,7 @@ export default function DashboardClient({
   }
 
   return (
-    <NextIntlClientProvider messages={messages} locale={locale}>
+    <NextIntlClientProvider messages={messages} locale={locale as any}>
       <DashboardClientContent />
     </NextIntlClientProvider>
   );

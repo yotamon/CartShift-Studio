@@ -40,6 +40,24 @@ export function usePortalAuth() {
     let unsubscribeAuth: (() => void) | undefined;
     let unsubscribeUserData: (() => void) | undefined;
 
+    // Load cached data
+    try {
+      const cached = localStorage.getItem('portal_user_data');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        // Only use cache if it's less than 1 hour old to avoid very stale data
+        const cacheTime = parsed._cacheTime;
+        if (cacheTime && Date.now() - cacheTime < 1000 * 60 * 60) {
+          setUserData(parsed);
+          // Set loading to false temporarily to show cached data
+          // Real data will update this shortly
+          setLoading(false);
+        }
+      }
+    } catch (e) {
+      console.error('Error reading auth cache:', e);
+    }
+
     try {
       const auth = getAuthInstance();
 
@@ -75,7 +93,7 @@ export function usePortalAuth() {
             if (snapshot.exists()) {
               const data = snapshot.data() as Partial<PortalUser>;
               const accountType = deriveAccountType(data);
-              setUserData({
+              const newUserData: UserData = {
                 id: currentUser.uid,
                 email: currentUser.email || data.email || '',
                 name: data.name || currentUser.displayName || undefined,
@@ -85,10 +103,18 @@ export function usePortalAuth() {
                 organizations: data.organizations || [],
                 notificationPreferences: data.notificationPreferences,
                 onboardingComplete: data.onboardingComplete ?? false,
-              });
+              };
+
+              setUserData(newUserData);
+
+              // Update cache
+              localStorage.setItem('portal_user_data', JSON.stringify({
+                ...newUserData,
+                _cacheTime: Date.now()
+              }));
             } else {
               // Fallback to auth user data if no Firestore doc
-              setUserData({
+              const fallbackData = {
                 id: currentUser.uid,
                 email: currentUser.email || '',
                 name: currentUser.displayName || undefined,
@@ -96,27 +122,23 @@ export function usePortalAuth() {
                 accountType: ACCOUNT_TYPE.CLIENT,
                 isAgency: false,
                 organizations: [],
-              });
+              };
+              setUserData(fallbackData);
+              // Clear cache if user exists in Auth but not Firestore (rare edge case or new user)
+              localStorage.removeItem('portal_user_data');
             }
             setLoading(false);
           }, (err) => {
             if (!isMountedRef.current) return;
             console.error('Error fetching user data:', err);
             setError(getPortalError(err));
-
-            setUserData({
-              id: currentUser.uid,
-              email: currentUser.email || '',
-              name: currentUser.displayName || undefined,
-              photoUrl: currentUser.photoURL || undefined,
-              accountType: ACCOUNT_TYPE.CLIENT,
-              isAgency: false,
-            });
+            // Keep existing userData if available (from cache), otherwise set basic
             setLoading(false);
           });
         } else {
           if (!isMountedRef.current) return;
           setUserData(null);
+          localStorage.removeItem('portal_user_data');
           setLoading(false);
         }
       });
@@ -143,7 +165,7 @@ export function usePortalAuth() {
     user,
     userData,
     loading,
-    isAuthenticated: !!user,
+    isAuthenticated: !!user || !!userData,
     isAgency: userData?.accountType === ACCOUNT_TYPE.AGENCY,
     accountType: userData?.accountType || ACCOUNT_TYPE.CLIENT,
     error,

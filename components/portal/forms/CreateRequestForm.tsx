@@ -108,7 +108,7 @@ export const CreateRequestForm = ({ orgId }: CreateRequestFormProps) => {
       if (selectedFiles.length > 0) {
         setUploadProgress(10); // Start progress
         const uploadedFiles = await uploadMultipleFiles(orgId, user.uid, userName, selectedFiles, {
-          requestId: request.id
+          requestId: request.id,
         });
 
         const fileIds = uploadedFiles.map(f => f.id);
@@ -180,7 +180,7 @@ export const CreateRequestForm = ({ orgId }: CreateRequestFormProps) => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-6">
         <PortalInput
           label={t('portal.requests.form.titleLabel')}
@@ -292,7 +292,10 @@ export const CreateRequestForm = ({ orgId }: CreateRequestFormProps) => {
             <div className="space-y-2 max-h-[160px] overflow-y-auto portal-scrollbar pe-2">
               {selectedFiles.length > 0 ? (
                 selectedFiles.map((file, idx) => (
-                  <div key={`${file.name}-${idx}`} className="flex items-center justify-between p-3 bg-surface-50 dark:bg-surface-900/50 rounded-xl border border-surface-100 dark:border-surface-800 animate-in slide-in-from-end-2 duration-300">
+                  <div
+                    key={`${file.name}-${idx}`}
+                    className="flex items-center justify-between p-3 bg-surface-50 dark:bg-surface-900/50 rounded-xl border border-surface-100 dark:border-surface-800 animate-in slide-in-from-end-2 duration-300"
+                  >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="p-2 rounded-lg bg-white dark:bg-surface-800 text-surface-400 shadow-sm">
                         <File size={16} />
@@ -308,9 +311,9 @@ export const CreateRequestForm = ({ orgId }: CreateRequestFormProps) => {
                     </div>
                     <button
                       type="button"
-                      onClick={(e) => {
-                         e.stopPropagation();
-                         removeFile(idx);
+                      onClick={e => {
+                        e.stopPropagation();
+                        removeFile(idx);
                       }}
                       className="p-1.5 text-surface-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg transition-all"
                     >
@@ -321,7 +324,9 @@ export const CreateRequestForm = ({ orgId }: CreateRequestFormProps) => {
               ) : (
                 <div className="h-full flex flex-col items-center justify-center opacity-30 text-center grayscale py-8">
                   <File size={24} className="mb-2" />
-                  <p className="text-[10px] font-black uppercase tracking-widest">{t('portal.requests.detail.noAssets' as never) || 'No files selected'}</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest">
+                    {t('portal.requests.detail.noAssets' as never) || 'No files selected'}
+                  </p>
                 </div>
               )}
             </div>
@@ -329,16 +334,16 @@ export const CreateRequestForm = ({ orgId }: CreateRequestFormProps) => {
 
           {loading && uploadProgress > 0 && (
             <div className="space-y-1.5 animate-in fade-in duration-300">
-               <div className="flex justify-between text-[10px] font-black text-blue-600 uppercase tracking-widest">
-                  <span>{t('portal.files.uploadForm.uploading')}</span>
-                  <span>{uploadProgress}%</span>
-               </div>
-               <div className="h-1 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-blue-500 transition-all duration-500"
-                    style={{ width: `${uploadProgress}%` }}
-                  />
-               </div>
+              <div className="flex justify-between text-[10px] font-black text-blue-600 uppercase tracking-widest">
+                <span>{t('portal.files.uploadForm.uploading')}</span>
+                <span>{uploadProgress}%</span>
+              </div>
+              <div className="h-1 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-blue-500 transition-all duration-500"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
             </div>
           )}
         </div>

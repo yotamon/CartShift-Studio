@@ -14,6 +14,7 @@ import { loginWithEmail } from '@/lib/services/auth';
 import { Suspense, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
+import { Mail, Lock } from 'lucide-react';
 
 type LoginData = z.infer<ReturnType<typeof getLoginSchema>>;
 
@@ -38,9 +39,10 @@ function LoginForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, touchedFields },
   } = useForm<LoginData>({
     resolver: zodResolver(loginSchema),
+    mode: 'onBlur',
   });
 
   const onSubmit = async (data: LoginData) => {
@@ -70,7 +72,7 @@ function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-[400px] space-y-8">
+    <div className="w-full max-w-[400px] space-y-6">
       {/* Logo */}
       <div className="flex flex-col items-center justify-center space-y-4">
         <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-blue-500/20">
@@ -94,6 +96,8 @@ function LoginForm() {
               type="email"
               placeholder="yours@example.com"
               error={errors.email?.message}
+              success={touchedFields.email && !errors.email}
+              leftIcon={<Mail size={18} />}
               {...register('email')}
             />
 
@@ -103,8 +107,8 @@ function LoginForm() {
                   {t('portal.auth.login.password')}
                 </label>
                 <Link
-                  href="/portal/forgot-password/"
-                  className="text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                  href="/portal/forgot-password"
+                  className="text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
                 >
                   {t('portal.auth.login.forgotPassword')}
                 </Link>
@@ -114,14 +118,20 @@ function LoginForm() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   error={errors.password?.message}
+                  success={touchedFields.password && !errors.password}
+                  leftIcon={<Lock size={18} />}
                   className="pe-10"
                   {...register('password')}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute end-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors"
-                  aria-label={showPassword ? t('portal.auth.hidePassword' as any) : t('portal.auth.showPassword' as any)}
+                  className="absolute end-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors z-10"
+                  aria-label={
+                    showPassword
+                      ? t('portal.auth.hidePassword' as any)
+                      : t('portal.auth.showPassword' as any)
+                  }
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>

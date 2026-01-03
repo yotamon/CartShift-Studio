@@ -8,11 +8,11 @@ import { useRouter, useSearchParams } from '@/i18n/navigation';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalInput } from '@/components/portal/ui/PortalInput';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
-import { ArrowRight, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 import { signUpWithEmail } from '@/lib/services/auth';
 import { Suspense, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
+import { User, Mail, Lock, ArrowRight, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 
 type SignupData = z.infer<ReturnType<typeof getSignupSchema>>;
 
@@ -24,7 +24,7 @@ const getSignupSchema = (t: (path: string) => string) =>
       password: z
         .string()
         .min(6, t('portal.auth.errors.passwordTooShort'))
-        .refine((password) => /[a-zA-Z]/.test(password) && /[0-9]/.test(password), {
+        .refine(password => /[a-zA-Z]/.test(password) && /[0-9]/.test(password), {
           message: t('portal.auth.errors.passwordRequirements'),
         }),
       confirmPassword: z.string(),
@@ -50,9 +50,10 @@ function SignupForm() {
     register,
     handleSubmit,
     watch,
-    formState: { errors },
+    formState: { errors, touchedFields },
   } = useForm<SignupData>({
     resolver: zodResolver(signupSchema),
+    mode: 'onBlur',
   });
 
   // Watch password for strength calculation
@@ -70,7 +71,13 @@ function SignupForm() {
   };
 
   const strength = calculateStrength(passwordValue || '');
-  const strengthColors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-lime-500', 'bg-green-500'];
+  const strengthColors = [
+    'bg-red-500',
+    'bg-orange-500',
+    'bg-yellow-500',
+    'bg-lime-500',
+    'bg-green-500',
+  ];
   const strengthLabels = [
     t('portal.auth.passwordStrength.veryWeak' as any),
     t('portal.auth.passwordStrength.weak' as any),
@@ -103,7 +110,7 @@ function SignupForm() {
   };
 
   return (
-    <div className="w-full max-w-[400px] space-y-8">
+    <div className="w-full max-w-[400px] space-y-6">
       {/* Logo */}
       <div className="flex flex-col items-center justify-center space-y-4">
         <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-blue-500/20">
@@ -127,6 +134,8 @@ function SignupForm() {
               type="text"
               placeholder="John Doe"
               error={errors.name?.message}
+              success={touchedFields.name && !errors.name}
+              leftIcon={<User size={18} />}
               {...register('name')}
             />
 
@@ -135,6 +144,8 @@ function SignupForm() {
               type="email"
               placeholder="yours@example.com"
               error={errors.email?.message}
+              success={touchedFields.email && !errors.email}
+              leftIcon={<Mail size={18} />}
               {...register('email')}
             />
 
@@ -147,14 +158,20 @@ function SignupForm() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   error={errors.password?.message}
+                  success={touchedFields.password && !errors.password}
+                  leftIcon={<Lock size={18} />}
                   className="pe-10"
                   {...register('password')}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute end-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors"
-                  aria-label={showPassword ? t('portal.auth.hidePassword' as any) : t('portal.auth.showPassword' as any)}
+                  className="absolute end-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors z-10"
+                  aria-label={
+                    showPassword
+                      ? t('portal.auth.hidePassword' as any)
+                      : t('portal.auth.showPassword' as any)
+                  }
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -163,17 +180,20 @@ function SignupForm() {
               {passwordValue && (
                 <div className="space-y-1">
                   <div className="flex gap-1">
-                    {[0, 1, 2, 3, 4].map((index) => (
+                    {[0, 1, 2, 3, 4].map(index => (
                       <div
                         key={index}
                         className={`h-1 flex-1 rounded-full transition-colors ${
-                          index < strength ? strengthColors[strength - 1] : 'bg-surface-200 dark:bg-surface-700'
+                          index < strength
+                            ? strengthColors[strength - 1]
+                            : 'bg-surface-200 dark:bg-surface-700'
                         }`}
                       />
                     ))}
                   </div>
                   <p className="text-xs text-surface-500 dark:text-surface-400">
-                    {strengthLabels[strength - 1] || t('portal.auth.passwordStrength.veryWeak' as any)}
+                    {strengthLabels[strength - 1] ||
+                      t('portal.auth.passwordStrength.veryWeak' as any)}
                   </p>
                 </div>
               )}
@@ -188,14 +208,20 @@ function SignupForm() {
                   type={showConfirmPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   error={errors.confirmPassword?.message}
+                  success={touchedFields.confirmPassword && !errors.confirmPassword}
+                  leftIcon={<Lock size={18} />}
                   className="pe-10"
                   {...register('confirmPassword')}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute end-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors"
-                  aria-label={showConfirmPassword ? t('portal.auth.hidePassword' as any) : t('portal.auth.showPassword' as any)}
+                  className="absolute end-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors z-10"
+                  aria-label={
+                    showConfirmPassword
+                      ? t('portal.auth.hidePassword' as any)
+                      : t('portal.auth.showPassword' as any)
+                  }
                 >
                   {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>

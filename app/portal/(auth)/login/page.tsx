@@ -75,7 +75,7 @@ function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-[400px] space-y-8">
+    <div className="w-full max-w-[400px] space-y-6">
       {/* Logo */}
       <div className="flex flex-col items-center justify-center space-y-4">
         <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-blue-500/20">

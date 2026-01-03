@@ -25,7 +25,7 @@ export default function NewRequestClient() {
           <ArrowLeft size={20} className="text-slate-500" />
         </Link>
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
             {t('portal.requests.new.title')}
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">
@@ -34,7 +34,7 @@ export default function NewRequestClient() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <PortalCard className="border-slate-200 dark:border-slate-800 shadow-sm">
             <CreateRequestForm orgId={orgId} />

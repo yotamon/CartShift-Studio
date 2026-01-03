@@ -44,6 +44,8 @@ import { formatDistanceToNow } from 'date-fns';
 import { enUS, he } from 'date-fns/locale';
 import { OnboardingTour } from './OnboardingTour';
 import { OfflineIndicator } from './ui/OfflineIndicator';
+import { Breadcrumbs } from './ui/Breadcrumbs';
+import { MobileSearch, MobileSearchButton } from './ui/MobileSearch';
 
 interface PortalShellProps {
   children: React.ReactNode;
@@ -64,9 +66,10 @@ export const PortalShell = ({
   const [unreadCount, setUnreadCount] = useState(0);
   const [notificationPosition, setNotificationPosition] = useState<{
     top: number;
-    right: number;
-    left: number;
+    right?: number;
+    left?: number;
   }>({ top: 0, right: 0, left: 0 });
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const pathname = usePathname();
@@ -208,7 +211,10 @@ export const PortalShell = ({
 
           if (right !== undefined) {
             const calculatedRight = right;
-            const actualWidth = Math.min(maxDropdownWidth, viewportWidth - calculatedRight - padding);
+            const actualWidth = Math.min(
+              maxDropdownWidth,
+              viewportWidth - calculatedRight - padding
+            );
             if (calculatedRight + actualWidth > viewportWidth - padding) {
               right = padding;
             }
@@ -233,7 +239,10 @@ export const PortalShell = ({
 
           if (right !== undefined) {
             const calculatedRight = right;
-            const actualWidth = Math.min(maxDropdownWidth, viewportWidth - calculatedRight - padding);
+            const actualWidth = Math.min(
+              maxDropdownWidth,
+              viewportWidth - calculatedRight - padding
+            );
             if (calculatedRight + actualWidth > viewportWidth - padding) {
               right = padding;
             }
@@ -271,6 +280,7 @@ export const PortalShell = ({
         window.removeEventListener('resize', updatePosition);
       };
     }
+    return undefined;
   }, [isNotificationOpen]);
 
   useEffect(() => {
@@ -357,75 +367,104 @@ export const PortalShell = ({
     }
   };
 
-  const navItems =
+  const navGroups =
     isAgencyPage || userData?.isAgency
       ? [
           {
-            label: t('portal.sidebar.nav.inbox'),
-            icon: Inbox,
-            href: '/portal/agency/inbox/',
+            items: [
+              {
+                label: t('portal.sidebar.nav.inbox'),
+                icon: Inbox,
+                href: '/portal/agency/inbox/',
+              },
+              {
+                label: t('portal.sidebar.nav.workboard'),
+                icon: Kanban,
+                href: '/portal/agency/workboard/',
+              },
+            ],
           },
           {
-            label: t('portal.sidebar.nav.pricing' as any),
-            icon: DollarSign,
-            href: '/portal/agency/pricing/',
+            items: [
+              {
+                label: t('portal.sidebar.nav.clients'),
+                icon: Users,
+                href: '/portal/agency/clients/',
+              },
+              {
+                label: t('portal.sidebar.nav.requests'),
+                icon: ClipboardList,
+                href: '/portal/org/template/requests/', // Fallback or specific agency view
+              },
+              {
+                label: t('portal.sidebar.nav.consultations' as any),
+                icon: Calendar,
+                href: '/portal/agency/consultations/',
+              },
+            ],
           },
           {
-            label: t('portal.sidebar.nav.workboard'),
-            icon: Kanban,
-            href: '/portal/agency/workboard/',
-          },
-          {
-            label: t('portal.sidebar.nav.consultations' as any),
-            icon: Calendar,
-            href: '/portal/agency/consultations/',
-          },
-          {
-            label: t('portal.sidebar.nav.clients'),
-            icon: Users,
-            href: '/portal/agency/clients/',
-          },
-          {
-            label: t('portal.sidebar.nav.settings'),
-            icon: Settings,
-            href: '/portal/agency/settings/',
+            items: [
+              {
+                label: t('portal.sidebar.nav.pricing' as any),
+                icon: DollarSign,
+                href: '/portal/agency/pricing/',
+              },
+              {
+                label: t('portal.sidebar.nav.settings'),
+                icon: Settings,
+                href: '/portal/agency/settings/',
+              },
+            ],
           },
         ]
       : [
           {
-            label: t('portal.sidebar.nav.dashboard'),
-            icon: LayoutDashboard,
-            href: `/portal/org/${effectiveOrgId}/dashboard/`,
+            items: [
+              {
+                label: t('portal.sidebar.nav.dashboard'),
+                icon: LayoutDashboard,
+                href: `/portal/org/${effectiveOrgId}/dashboard/`,
+              },
+              {
+                label: t('portal.sidebar.nav.requests'),
+                icon: ClipboardList,
+                href: `/portal/org/${effectiveOrgId}/requests/`,
+              },
+            ],
           },
           {
-            label: t('portal.sidebar.nav.requests'),
-            icon: ClipboardList,
-            href: `/portal/org/${effectiveOrgId}/requests/`,
+            items: [
+              {
+                label: t('portal.sidebar.nav.team'),
+                icon: Users,
+                href: `/portal/org/${effectiveOrgId}/team/`,
+              },
+              {
+                label: t('portal.sidebar.nav.files'),
+                icon: FolderOpen,
+                href: `/portal/org/${effectiveOrgId}/files/`,
+              },
+              {
+                label: t('portal.sidebar.nav.consultations' as any),
+                icon: Calendar,
+                href: `/portal/org/${effectiveOrgId}/consultations/`,
+              },
+            ],
           },
           {
-            label: t('portal.sidebar.nav.pricing' as any),
-            icon: DollarSign,
-            href: `/portal/org/${effectiveOrgId}/pricing/`,
-          },
-          {
-            label: t('portal.sidebar.nav.team'),
-            icon: Users,
-            href: `/portal/org/${effectiveOrgId}/team/`,
-          },
-          {
-            label: t('portal.sidebar.nav.consultations' as any),
-            icon: Calendar,
-            href: `/portal/org/${effectiveOrgId}/consultations/`,
-          },
-          {
-            label: t('portal.sidebar.nav.files'),
-            icon: FolderOpen,
-            href: `/portal/org/${effectiveOrgId}/files/`,
-          },
-          {
-            label: t('portal.sidebar.nav.settings'),
-            icon: Settings,
-            href: `/portal/org/${effectiveOrgId}/settings/`,
+            items: [
+              {
+                label: t('portal.sidebar.nav.pricing' as any),
+                icon: DollarSign,
+                href: `/portal/org/${effectiveOrgId}/pricing/`,
+              },
+              {
+                label: t('portal.sidebar.nav.settings'),
+                icon: Settings,
+                href: `/portal/org/${effectiveOrgId}/settings/`,
+              },
+            ],
           },
         ];
 
@@ -446,12 +485,12 @@ export const PortalShell = ({
   if (isAuthorized === false) {
     return (
       <div className="min-h-screen bg-white dark:bg-surface-950 flex flex-col items-center justify-center p-4">
-        <div className="max-w-md w-full text-center space-y-8 animate-in fade-in zoom-in duration-500">
+        <div className="max-w-md w-full text-center space-y-6 animate-in fade-in zoom-in duration-500">
           <div className="w-24 h-24 bg-rose-50 dark:bg-rose-900/20 rounded-[2.5rem] flex items-center justify-center mx-auto border border-rose-100 dark:border-rose-900/30 shadow-xl shadow-rose-500/10">
             <AlertCircle size={44} className="text-rose-600 dark:text-rose-400" />
           </div>
           <div className="space-y-3">
-            <h1 className="text-3xl font-bold text-surface-900 dark:text-white font-outfit tracking-tight">
+            <h1 className="text-2xl font-bold text-surface-900 dark:text-white font-outfit tracking-tight">
               {t('portal.access.restrictedTitle')}
             </h1>
             <p className="text-surface-500 dark:text-surface-400 font-medium leading-relaxed">
@@ -488,7 +527,7 @@ export const PortalShell = ({
               initial={{ opacity: 0, y: 10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
-              className="fixed max-w-96 w-[calc(100vw-2rem)] bg-white/90 dark:bg-surface-900/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-surface-200/60 dark:border-surface-800/50 overflow-hidden z-[100]"
+              className="fixed max-w-80 w-[calc(100vw-2rem)] bg-white/90 dark:bg-surface-900/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-surface-200/60 dark:border-surface-800/50 overflow-hidden z-[100]"
               style={{
                 top: `${notificationPosition.top}px`,
                 right:
@@ -499,7 +538,7 @@ export const PortalShell = ({
                   notificationPosition.left !== undefined
                     ? `${notificationPosition.left}px`
                     : undefined,
-                maxWidth: 'min(384px, calc(100vw - 2rem))',
+                maxWidth: 'min(320px, calc(100vw - 2rem))',
               }}
             >
               <div className="p-6 border-b border-surface-200/50 dark:border-surface-800/30 flex items-center justify-between bg-white/50 dark:bg-surface-900/50">
@@ -637,13 +676,13 @@ export const PortalShell = ({
         aria-label="Navigation"
       >
         {/* Sidebar Header / Brand */}
-        <div className="h-20 flex items-center px-6 border-b border-surface-200/50 dark:border-surface-800/30 flex-shrink-0">
+        <div className="h-20 flex items-center px-4 border-b border-surface-200/50 dark:border-surface-800/30 flex-shrink-0">
           <Link
             href={`/${locale}/portal/org/${orgId}/dashboard`}
-            className="flex items-center gap-4 group w-full min-w-0"
+            className="flex items-center gap-3 group w-full min-w-0"
           >
-            <div className="w-10 h-10 flex-shrink-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-black shadow-lg shadow-blue-500/25 group-hover:scale-110 transition-transform duration-300">
-              <Zap size={20} fill="currentColor" />
+            <div className="w-9 h-9 flex-shrink-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-blue-500/25 group-hover:scale-110 transition-transform duration-300">
+              <Zap size={18} fill="currentColor" />
             </div>
             {isSidebarOpen && (
               <motion.div
@@ -651,10 +690,10 @@ export const PortalShell = ({
                 animate={{ opacity: 1, x: 0 }}
                 className="flex flex-col leading-none"
               >
-                <span className="font-black text-lg tracking-tight text-surface-900 dark:text-white truncate">
+                <span className="font-bold text-base tracking-tight text-surface-900 dark:text-white truncate">
                   {t('portal.sidebar.title')}
                 </span>
-                <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest mt-1 opacity-80">
+                <span className="text-[9px] font-bold text-blue-500 uppercase tracking-wider mt-0.5 opacity-80">
                   {t('portal.sidebar.subtitle')}
                 </span>
               </motion.div>
@@ -663,54 +702,61 @@ export const PortalShell = ({
         </div>
 
         {/* Sidebar Nav */}
-        <nav className="flex-1 overflow-y-auto portal-scrollbar p-4 space-y-1">
-          {navItems.map(item => {
-            const isActive = pathname?.startsWith(item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => isMobile && setIsMobileMenuOpen(false)}
-                className={cn(
-                  'portal-nav-item group relative',
-                  isActive
-                    ? 'portal-nav-item-active'
-                    : 'hover:bg-surface-100/60 dark:hover:bg-surface-800/40',
-                  !isSidebarOpen && 'md:justify-center md:px-0'
-                )}
-                title={!isSidebarOpen ? item.label : undefined}
-              >
-                <item.icon
-                  size={20}
-                  className={cn(
-                    'transition-all duration-300 flex-shrink-0',
-                    isActive
-                      ? 'text-blue-600 dark:text-blue-400'
-                      : 'opacity-60 group-hover:opacity-100 group-hover:scale-110'
-                  )}
-                />
-                {isSidebarOpen && (
-                  <motion.span
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-sm font-bold truncate flex-1"
+        <nav className="flex-1 overflow-y-auto portal-scrollbar p-3 space-y-0.5">
+          {navGroups.map((group, groupIndex) => (
+            <div key={groupIndex}>
+              {groupIndex > 0 && (
+                <div className="mx-4 my-2 border-t border-surface-200/50 dark:border-surface-800/30" />
+              )}
+              {group.items.map(item => {
+                const isActive = pathname?.startsWith(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => isMobile && setIsMobileMenuOpen(false)}
+                    className={cn(
+                      'portal-nav-item group relative',
+                      isActive
+                        ? 'portal-nav-item-active'
+                        : 'hover:bg-surface-100/60 dark:hover:bg-surface-800/40',
+                      !isSidebarOpen && 'md:justify-center md:px-0'
+                    )}
+                    title={!isSidebarOpen ? item.label : undefined}
                   >
-                    {item.label}
-                  </motion.span>
-                )}
-                {isActive && isSidebarOpen && (
-                  <motion.div
-                    layoutId="nav-active-indicator"
-                    className="absolute w-1 h-6 bg-blue-600 rounded-full start-0"
-                  />
-                )}
-              </Link>
-            );
-          })}
+                    <item.icon
+                      size={18}
+                      className={cn(
+                        'transition-all duration-300 flex-shrink-0',
+                        isActive
+                          ? 'text-blue-600 dark:text-blue-400'
+                          : 'opacity-60 group-hover:opacity-100 group-hover:scale-110'
+                      )}
+                    />
+                    {isSidebarOpen && (
+                      <motion.span
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-sm font-bold truncate flex-1"
+                      >
+                        {item.label}
+                      </motion.span>
+                    )}
+                    {isActive && isSidebarOpen && (
+                      <motion.div
+                        layoutId="nav-active-indicator"
+                        className="absolute w-1 h-6 bg-blue-600 rounded-full start-0"
+                      />
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </nav>
 
         {/* Sidebar Footer */}
-        <div className="p-4 border-t border-surface-200/50 dark:border-surface-800/30 space-y-2">
+        <div className="p-3 border-t border-surface-200/50 dark:border-surface-800/30 space-y-1">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             className={cn(
@@ -730,7 +776,7 @@ export const PortalShell = ({
           <button
             onClick={handleSignOut}
             className={cn(
-              'flex items-center gap-3 w-full px-4 py-3 rounded-2xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all font-bold',
+              'flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all font-semibold text-sm',
               !isSidebarOpen && 'justify-center px-0'
             )}
           >
@@ -754,7 +800,7 @@ export const PortalShell = ({
         )}
       >
         {/* Header */}
-        <header className="portal-header h-20 flex items-center justify-between px-6 md:px-10 bg-white/50 dark:bg-surface-950/50 backdrop-blur-md border-b border-surface-200/50 dark:border-surface-800/30 sticky top-0 z-50">
+        <header className="portal-header flex items-center justify-between px-4 md:px-6 bg-white/50 dark:bg-surface-950/50 backdrop-blur-md border-b border-surface-200/50 dark:border-surface-800/30 sticky top-0 z-50">
           <div className="flex items-center gap-6">
             <button
               onClick={() => setIsMobileMenuOpen(true)}
@@ -763,6 +809,7 @@ export const PortalShell = ({
             >
               <Menu size={24} />
             </button>
+            <MobileSearchButton onClick={() => setIsMobileSearchOpen(true)} />
             <div className="relative hidden lg:block group">
               <Search
                 className="absolute start-4 top-1/2 -translate-y-1/2 text-surface-400 group-focus-within:text-blue-500 transition-colors"
@@ -770,13 +817,14 @@ export const PortalShell = ({
               />
               <input
                 type="text"
-                placeholder={t('portal.header.searchPlaceholder')}
-                className="portal-input ps-12 w-64 focus:w-80"
+                placeholder={t('portal.header.search' as any) || 'Search...'}
+                className="w-full h-10 ps-12 pe-4 bg-surface-50/50 dark:bg-surface-900/50 border border-surface-200/50 dark:border-surface-800/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm font-medium transition-all group-hover:bg-surface-100/50 dark:group-hover:bg-surface-800/50"
+                aria-label="Search"
               />
             </div>
           </div>
 
-          <div className="flex items-center gap-4 md:gap-8">
+          <div className="flex items-center gap-3 md:gap-6">
             <div className="flex items-center gap-2">
               <LanguageSwitcher />
 
@@ -786,11 +834,12 @@ export const PortalShell = ({
                   ref={notificationButtonRef}
                   onClick={() => setIsNotificationOpen(!isNotificationOpen)}
                   className={cn(
-                    'p-3 rounded-2xl transition-all relative group',
+                    'relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300',
                     isNotificationOpen
-                      ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600'
-                      : 'text-surface-400 hover:bg-surface-50 dark:hover:bg-surface-900'
+                      ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rotate-12'
+                      : 'text-surface-500 hover:text-surface-900 dark:hover:text-white hover:bg-surface-100/80 dark:hover:bg-surface-800/50'
                   )}
+                  aria-label="Notifications"
                 >
                   <Bell size={20} className="group-hover:scale-110 transition-transform" />
                   {unreadCount > 0 && (
@@ -801,7 +850,7 @@ export const PortalShell = ({
             </div>
 
             {/* User Profile */}
-            <div className="flex items-center gap-4 border-s dark:border-surface-800 ps-4 md:ps-8">
+            <div className="flex items-center gap-3 border-s dark:border-surface-800 ps-3 md:ps-6">
               <div className="hidden sm:flex flex-col items-end leading-none gap-1.5">
                 <span className="text-sm font-black text-surface-900 dark:text-white">
                   {userData?.name || t('portal.header.authorizedMember' as never)}
@@ -836,6 +885,10 @@ export const PortalShell = ({
 
         {/* Page Content Container */}
         <main id="main-content" className="portal-content">
+          {/* Breadcrumbs */}
+          <div>
+            <Breadcrumbs />
+          </div>
           <div className="portal-reveal">{children}</div>
         </main>
       </div>
@@ -850,6 +903,9 @@ export const PortalShell = ({
           onSkip={() => setShowOnboarding(false)}
         />
       )}
+
+      {/* Mobile Search */}
+      <MobileSearch isOpen={isMobileSearchOpen} onClose={() => setIsMobileSearchOpen(false)} />
     </div>
   );
 };

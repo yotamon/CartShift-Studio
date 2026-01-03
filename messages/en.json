@@ -27,6 +27,13 @@
     "refresh": "Refresh page"
   },
   "portal": {
+    "quickActions": {
+      "title": "Quick Actions",
+      "subtitle": "Common tasks for you",
+      "newRequest": "New Request",
+      "schedule": "Schedule Call",
+      "upload": "Upload File"
+    },
     "loading": {
       "init": "Initializing Studio Environment",
       "workspace": "Accessing Secure Workspace",
@@ -39,16 +46,40 @@
     "onboarding": {
       "welcome": {
         "title": "Welcome!",
-        "subtitle": "Let's set up your workspace"
+        "subtitle": "Let's set up your workspace",
+        "description": "We're excited to have you here. In just a few steps, we'll create your dedicated workspace where you can manage requests, team members, and more.",
+        "cta": "Get Started"
+      },
+      "info": {
+        "title": "Organization Details",
+        "subtitle": "Tell us a bit about your company"
+      },
+      "completion": {
+        "title": "You're all set!",
+        "subtitle": "Your workspace has been created successfully.",
+        "description": "We've set up your dashboard. You can now start managing your projects, invite team members, and explore the platform.",
+        "cta": "Go to Dashboard"
       },
       "form": {
         "orgNameLabel": "Organization Name",
         "orgNamePlaceholder": "e.g., My Company Inc.",
-        "orgNameHint": "This is your organization's display name. You can change it later.",
+        "orgNameHint": "This is your internal display name.",
+        "industryLabel": "Industry",
+        "sizeLabel": "Company Size",
         "creating": "Creating...",
-        "createButton": "Create Organization"
+        "createButton": "Create Workspace"
       },
+      "back": "Back",
+      "error": "Failed to create organization. Please try again.",
       "help": "You'll be able to invite team members and manage your workspace after creation."
+    },
+    "industries": {
+      "ecommerce": "E-commerce",
+      "saas": "SaaS",
+      "agency": "Agency",
+      "education": "Education",
+      "healthcare": "Healthcare",
+      "other": "Other"
     },
     "auth": {
       "login": {
@@ -378,6 +409,7 @@
       }
     },
     "header": {
+      "search": "Search...",
       "searchPlaceholder": "Search global resources...",
       "authorizedMember": "Authorized Member",
       "agencyPartner": "Agency Partner",
@@ -400,7 +432,8 @@
       "closeMenu": "Close menu",
       "helpCenter": "Help center",
       "notifications": "View notifications",
-      "userProfile": "User profile"
+      "userProfile": "User profile",
+      "search": "Search"
     },
     "common": {
       "loading": "Loading...",
@@ -428,6 +461,73 @@
       "recently": "Recently",
       "general": "General",
       "total": "Total"
+    },
+    "breadcrumbs": {
+      "home": "Home",
+      "portal": "Portal",
+      "organization": "Organization",
+      "dashboard": "Dashboard",
+      "requests": "Requests",
+      "settings": "Settings",
+      "team": "Team",
+      "files": "Files",
+      "pricing": "Pricing",
+      "consultations": "Consultations",
+      "agency": "Agency",
+      "inbox": "Inbox",
+      "workboard": "Workboard",
+      "clients": "Clients",
+      "new": "New"
+    },
+    "toast": {
+      "dismiss": "Dismiss",
+      "undo": "Undo"
+    },
+    "errorState": {
+      "title": "Something went wrong",
+      "message": "We encountered an error while processing your request. Please try again.",
+      "retry": "Try Again",
+      "goBack": "Go Back",
+      "home": "Go Home",
+      "contactSupport": "Contact Support"
+    },
+    "emptyState": {
+      "requests": {
+        "title": "No requests yet",
+        "description": "Create your first request to get started with our services."
+      },
+      "team": {
+        "title": "No team members",
+        "description": "Invite your team members to collaborate on this workspace."
+      },
+      "files": {
+        "title": "No files uploaded",
+        "description": "Upload files to share with your team and agency."
+      },
+      "notifications": {
+        "title": "All caught up!",
+        "description": "You have no new notifications at this time."
+      },
+      "inbox": {
+        "title": "Inbox is empty",
+        "description": "New messages and updates will appear here."
+      },
+      "calendar": {
+        "title": "No consultations scheduled",
+        "description": "Schedule a consultation to discuss your project."
+      },
+      "pricing": {
+        "title": "No pricing offers",
+        "description": "Pricing proposals will appear here once created."
+      },
+      "messages": {
+        "title": "No messages yet",
+        "description": "Start a conversation or wait for updates."
+      },
+      "generic": {
+        "title": "Nothing here yet",
+        "description": "This section is empty. Check back later!"
+      }
     },
     "dashboard": {
       "title": "Dashboard",
@@ -794,12 +894,15 @@
         "roadmap": "Q4 Roadmap",
         "assign": "Assign Item",
         "emptyColumn": "No Active Tasks",
+        "moved": "Card moved",
+        "moveError": "Move failed",
         "columns": {
           "backlog": "New & Backlog",
           "inProgress": "In Progress",
           "review": "Feedback & Review",
           "delivered": "Delivered"
-        }
+        },
+        "viewRequest": "View request"
       },
       "clients": {
         "title": "Client Portfolio",

@@ -8,10 +8,7 @@ import { useRouter } from '@/i18n/navigation';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
-import {
-  createPricingRequest,
-  sendPricingRequest,
-} from '@/lib/services/pricing-requests';
+import { createPricingRequest, sendPricingRequest } from '@/lib/services/pricing-requests';
 import { getRequestsByOrg } from '@/lib/services/portal-requests';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
@@ -64,9 +61,7 @@ export default function CreatePricingForm() {
   const t = useTranslations();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    'idle' | 'success' | 'error'
-  >('idle');
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Request selection state
@@ -82,9 +77,17 @@ export default function CreatePricingForm() {
       try {
         const requests = await getRequestsByOrg(orgId);
         // Filter to requests that are eligible for pricing (not already paid, not in active offer)
-        const eligibleStatuses: RequestStatus[] = ['NEW', 'NEEDS_INFO', 'QUOTED', 'ACCEPTED', 'IN_PROGRESS', 'IN_REVIEW', 'DELIVERED'];
+        const eligibleStatuses: RequestStatus[] = [
+          'NEW',
+          'NEEDS_INFO',
+          'QUOTED',
+          'ACCEPTED',
+          'IN_PROGRESS',
+          'IN_REVIEW',
+          'DELIVERED',
+        ];
         const eligible = requests.filter(
-          (r) => eligibleStatuses.includes(r.status) && !r.pricingOfferId
+          r => eligibleStatuses.includes(r.status) && !r.pricingOfferId
         );
         setAvailableRequests(eligible);
       } catch (error) {
@@ -98,10 +101,8 @@ export default function CreatePricingForm() {
   }, [orgId]);
 
   const toggleRequestSelection = (requestId: string) => {
-    setSelectedRequestIds((prev) =>
-      prev.includes(requestId)
-        ? prev.filter((id) => id !== requestId)
-        : [...prev, requestId]
+    setSelectedRequestIds(prev =>
+      prev.includes(requestId) ? prev.filter(id => id !== requestId) : [...prev, requestId]
     );
   };
 
@@ -185,29 +186,24 @@ export default function CreatePricingForm() {
 
     try {
       // Convert prices from dollars to cents
-      const lineItems = data.lineItems.map((item) => ({
+      const lineItems = data.lineItems.map(item => ({
         description: item.description,
         quantity: item.quantity,
         unitPrice: Math.round(item.unitPrice * 100),
         notes: item.notes,
       }));
 
-      const request = await createPricingRequest(
-        orgId,
-        userData.id,
-        userData.name || 'Unknown',
-        {
-          title: data.title,
-          description: data.description,
-          lineItems,
-          currency: data.currency,
-          validUntil: data.validUntil ? new Date(data.validUntil) : undefined,
-          clientName: data.clientName,
-          clientEmail: data.clientEmail,
-          agencyNotes: data.agencyNotes,
-          requestIds: selectedRequestIds.length > 0 ? selectedRequestIds : undefined,
-        }
-      );
+      const request = await createPricingRequest(orgId, userData.id, userData.name || 'Unknown', {
+        title: data.title,
+        description: data.description,
+        lineItems,
+        currency: data.currency,
+        validUntil: data.validUntil ? new Date(data.validUntil) : undefined,
+        clientName: data.clientName,
+        clientEmail: data.clientEmail,
+        agencyNotes: data.agencyNotes,
+        requestIds: selectedRequestIds.length > 0 ? selectedRequestIds : undefined,
+      });
 
       // If sending, update status to SENT
       if (shouldSend) {
@@ -253,7 +249,7 @@ export default function CreatePricingForm() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
             {t('portal.pricing.newOffer')}
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">
@@ -316,12 +312,14 @@ export default function CreatePricingForm() {
                   {t('portal.pricing.form.selectRequests' as never) || 'Select Requests'}
                 </h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                  {t('portal.pricing.form.selectRequestsDescription' as never) || 'Choose requests to include in this pricing offer'}
+                  {t('portal.pricing.form.selectRequestsDescription' as never) ||
+                    'Choose requests to include in this pricing offer'}
                 </p>
               </div>
               {selectedRequestIds.length > 0 && (
                 <PortalBadge variant="blue">
-                  {selectedRequestIds.length} {t('portal.pricing.form.selected' as never) || 'selected'}
+                  {selectedRequestIds.length}{' '}
+                  {t('portal.pricing.form.selected' as never) || 'selected'}
                 </PortalBadge>
               )}
             </div>
@@ -337,12 +335,13 @@ export default function CreatePricingForm() {
                   {t('portal.pricing.form.noRequestsAvailable' as never) || 'No requests available'}
                 </p>
                 <p className="text-sm mt-1">
-                  {t('portal.pricing.form.allRequestsInOffers' as never) || 'All requests are already in pricing offers or paid'}
+                  {t('portal.pricing.form.allRequestsInOffers' as never) ||
+                    'All requests are already in pricing offers or paid'}
                 </p>
               </div>
             ) : (
               <div className="space-y-2 max-h-64 overflow-y-auto">
-                {availableRequests.map((request) => {
+                {availableRequests.map(request => {
                   const isSelected = selectedRequestIds.includes(request.id);
                   return (
                     <button
@@ -398,9 +397,7 @@ export default function CreatePricingForm() {
               </h3>
               <button
                 type="button"
-                onClick={() =>
-                  append({ description: '', quantity: 1, unitPrice: 0 })
-                }
+                onClick={() => append({ description: '', quantity: 1, unitPrice: 0 })}
                 className="flex items-center gap-2 px-3 py-1.5 text-sm font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all"
               >
                 <Plus size={16} />
@@ -411,75 +408,70 @@ export default function CreatePricingForm() {
             <div className="space-y-4">
               {/* Header */}
               <div className="grid grid-cols-12 gap-3 px-1 text-xs font-black text-slate-400 uppercase tracking-wider">
-                <div className="col-span-5">
-                  {t('portal.pricing.form.itemDescription')}
-                </div>
-                <div className="col-span-2 text-center">
-                  {t('portal.pricing.form.quantity')}
-                </div>
-                <div className="col-span-3">
-                  {t('portal.pricing.form.unitPrice')}
-                </div>
+                <div className="col-span-5">{t('portal.pricing.form.itemDescription')}</div>
+                <div className="col-span-2 text-center">{t('portal.pricing.form.quantity')}</div>
+                <div className="col-span-3">{t('portal.pricing.form.unitPrice')}</div>
                 <div className="col-span-2"></div>
               </div>
 
-              {fields.map((field: FieldArrayWithId<PricingFormData, 'lineItems', 'id'>, index: number) => (
-                <div
-                  key={field.id}
-                  className="grid grid-cols-12 gap-3 items-start p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl"
-                >
-                  <div className="col-span-5">
-                    <input
-                      {...register(`lineItems.${index}.description`)}
-                      type="text"
-                      placeholder="Service or product..."
-                      className={cn(
-                        'portal-input w-full text-sm',
-                        errors.lineItems?.[index]?.description &&
-                          'border-red-500'
-                      )}
-                    />
-                  </div>
-                  <div className="col-span-2">
-                    <input
-                      {...register(`lineItems.${index}.quantity`, {
-                        valueAsNumber: true,
-                      })}
-                      type="number"
-                      min={1}
-                      className="portal-input w-full text-sm text-center"
-                    />
-                  </div>
-                  <div className="col-span-3">
-                    <div className="relative">
-                      <span className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
-                        {CURRENCY_CONFIG[watchedCurrency]?.symbol || '$'}
-                      </span>
+              {fields.map(
+                (field: FieldArrayWithId<PricingFormData, 'lineItems', 'id'>, index: number) => (
+                  <div
+                    key={field.id}
+                    className="grid grid-cols-12 gap-3 items-start p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl"
+                  >
+                    <div className="col-span-5">
                       <input
-                        {...register(`lineItems.${index}.unitPrice`, {
+                        {...register(`lineItems.${index}.description`)}
+                        type="text"
+                        placeholder="Service or product..."
+                        className={cn(
+                          'portal-input w-full text-sm',
+                          errors.lineItems?.[index]?.description && 'border-red-500'
+                        )}
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <input
+                        {...register(`lineItems.${index}.quantity`, {
                           valueAsNumber: true,
                         })}
                         type="number"
-                        min={0}
-                        step={0.01}
-                        className="portal-input w-full text-sm ps-7"
-                        placeholder="0.00"
+                        min={1}
+                        className="portal-input w-full text-sm text-center"
                       />
                     </div>
+                    <div className="col-span-3">
+                      <div className="relative">
+                        <span className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
+                          {CURRENCY_CONFIG[watchedCurrency]?.symbol || '$'}
+                        </span>
+                        <input
+                          {...register(`lineItems.${index}.unitPrice`, {
+                            valueAsNumber: true,
+                          })}
+                          type="number"
+                          min={0}
+                          step={0.01}
+                          className="portal-input w-full text-sm ps-7"
+                          placeholder="0.00"
+                        />
+                      </div>
+                    </div>
+                    <div className="col-span-2 flex justify-end">
+                      {fields.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => remove(index)}
+                          className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  <div className="col-span-2 flex justify-end">
-                    {fields.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => remove(index)}
-                        className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
+                )
+              )}
 
               {errors.lineItems && (
                 <p className="text-sm text-red-500 flex items-center gap-1">
@@ -608,14 +600,8 @@ export default function CreatePricingForm() {
               disabled={isSubmitting}
               className="w-full h-12 flex items-center justify-center gap-2"
             >
-              {isSending ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : (
-                <Send size={18} />
-              )}
-              {isSending
-                ? t('portal.pricing.form.sending')
-                : t('portal.pricing.form.sendToClient')}
+              {isSending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send size={18} />}
+              {isSending ? t('portal.pricing.form.sending') : t('portal.pricing.form.sendToClient')}
             </PortalButton>
 
             <PortalButton

@@ -85,12 +85,12 @@ export default function AgencyConsultationsClient() {
         uniqueOrgIds.forEach(async orgId => {
           if (!orgNames[orgId]) {
             try {
-                const org = await getOrganization(orgId);
-                if (org) {
-                  setOrgNames(prev => ({ ...prev, [orgId]: org.name }));
-                }
+              const org = await getOrganization(orgId);
+              if (org) {
+                setOrgNames(prev => ({ ...prev, [orgId]: org.name }));
+              }
             } catch (err) {
-                console.warn(`Could not fetch details for org ${orgId}:`, err);
+              console.warn(`Could not fetch details for org ${orgId}:`, err);
             }
           }
         });
@@ -106,12 +106,12 @@ export default function AgencyConsultationsClient() {
     if (!userData?.isAgency) return;
 
     getAllOrganizations()
-        .then(orgs => {
-          setOrganizations(orgs);
-        })
-        .catch(err => {
-            console.error('Failed to fetch organizations:', err);
-        });
+      .then(orgs => {
+        setOrganizations(orgs);
+      })
+      .catch(err => {
+        console.error('Failed to fetch organizations:', err);
+      });
   }, [userData]);
 
   const filteredConsultations = consultations.filter(c => {
@@ -154,7 +154,7 @@ export default function AgencyConsultationsClient() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl md:text-3xl font-black text-surface-900 dark:text-white font-outfit tracking-tight">
+          <h1 className="text-2xl font-black text-surface-900 dark:text-white font-outfit tracking-tight">
             {t('portal.consultations.title' as any) || 'Consultations'}
           </h1>
           <p className="text-surface-500 dark:text-surface-400 mt-1">
@@ -162,7 +162,11 @@ export default function AgencyConsultationsClient() {
               'Manage client meetings and consultations'}
           </p>
         </div>
-        <PortalButton variant="primary" className="gap-2" onClick={() => setShowScheduleModal(true)}>
+        <PortalButton
+          variant="primary"
+          className="gap-2"
+          onClick={() => setShowScheduleModal(true)}
+        >
           <Plus size={18} />
           {t('portal.consultations.schedule' as any) || 'Schedule Consultation'}
         </PortalButton>
@@ -179,7 +183,7 @@ export default function AgencyConsultationsClient() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-                onClick={(e) => e.target === e.currentTarget && setShowScheduleModal(false)}
+                onClick={e => e.target === e.currentTarget && setShowScheduleModal(false)}
               >
                 <motion.div
                   initial={{ scale: 0.95, opacity: 0 }}
@@ -197,13 +201,13 @@ export default function AgencyConsultationsClient() {
                         className="w-full p-3 text-start rounded-xl border border-surface-200 dark:border-surface-700 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all"
                       >
                         <p className="font-bold text-surface-900 dark:text-white">{org.name}</p>
-                        {org.industry && (
-                          <p className="text-sm text-surface-500">{org.industry}</p>
-                        )}
+                        {org.industry && <p className="text-sm text-surface-500">{org.industry}</p>}
                       </button>
                     ))}
                     {organizations.length === 0 && (
-                      <p className="text-center text-surface-500 py-4">No client organizations found</p>
+                      <p className="text-center text-surface-500 py-4">
+                        No client organizations found
+                      </p>
                     )}
                   </div>
                   <button
@@ -304,7 +308,9 @@ export default function AgencyConsultationsClient() {
           />
           <input
             type="text"
-            placeholder={t('portal.consultations.searchPlaceholder' as any) || 'Search consultations...'}
+            placeholder={
+              t('portal.consultations.searchPlaceholder' as any) || 'Search consultations...'
+            }
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="portal-input ps-12 w-full"
@@ -452,9 +458,7 @@ export default function AgencyConsultationsClient() {
                       )}
                       {consultation.meetingNotes && (
                         <div className="mt-3 p-3 bg-surface-50 dark:bg-surface-800/50 rounded-lg">
-                          <p className="text-xs font-bold text-surface-500 mb-1">
-                            Meeting Notes
-                          </p>
+                          <p className="text-xs font-bold text-surface-500 mb-1">Meeting Notes</p>
                           <p className="text-sm text-surface-700 dark:text-surface-300 line-clamp-2">
                             {consultation.meetingNotes}
                           </p>

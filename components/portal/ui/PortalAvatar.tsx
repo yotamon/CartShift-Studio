@@ -17,16 +17,16 @@ export const PortalAvatar: React.FC<PortalAvatarProps> = ({
   className,
 }) => {
   const sizeClasses = {
-    xs: 'w-6 h-6 text-[10px]',
-    sm: 'w-8 h-8 text-xs',
-    md: 'w-10 h-10 text-sm',
-    lg: 'w-12 h-12 text-base',
+    xs: 'w-5 h-5 text-[9px]',
+    sm: 'w-7 h-7 text-[10px]',
+    md: 'w-9 h-9 text-xs',
+    lg: 'w-11 h-11 text-sm',
   };
 
   const initials = name
     ? name
         .split(' ')
-        .map((n) => n[0])
+        .map(n => n[0])
         .join('')
         .slice(0, 2)
         .toUpperCase()
@@ -37,11 +37,7 @@ export const PortalAvatar: React.FC<PortalAvatarProps> = ({
       <img
         src={src}
         alt={name || 'Avatar'}
-        className={cn(
-          'rounded-full object-cover',
-          sizeClasses[size],
-          className
-        )}
+        className={cn('rounded-full object-cover', sizeClasses[size], className)}
       />
     );
   }
@@ -85,7 +81,3 @@ export const PortalAvatarGroup: React.FC<PortalAvatarGroupProps> = ({
     </div>
   );
 };
-
-
-
-

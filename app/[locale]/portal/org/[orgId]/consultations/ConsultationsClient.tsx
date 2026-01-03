@@ -27,7 +27,10 @@ import {
   ConsultationType,
   CONSULTATION_STATUS,
 } from '@/lib/types/portal';
-import { subscribeToOrgConsultations, cancelConsultation } from '@/lib/services/portal-consultations';
+import {
+  subscribeToOrgConsultations,
+  cancelConsultation,
+} from '@/lib/services/portal-consultations';
 import { deleteCalendarEvent } from '@/lib/services/portal-google-calendar';
 import { getScheduleUrl } from '@/lib/schedule';
 import { trackBookCallClick } from '@/lib/analytics';
@@ -71,9 +74,7 @@ export default function ConsultationsClient({ orgId }: ConsultationsClientProps)
   const upcomingConsultations = consultations.filter(
     c => c.status === CONSULTATION_STATUS.SCHEDULED
   );
-  const pastConsultations = consultations.filter(
-    c => c.status !== CONSULTATION_STATUS.SCHEDULED
-  );
+  const pastConsultations = consultations.filter(c => c.status !== CONSULTATION_STATUS.SCHEDULED);
 
   const handleScheduleClick = () => {
     trackBookCallClick('portal_consultations');
@@ -81,7 +82,12 @@ export default function ConsultationsClient({ orgId }: ConsultationsClientProps)
   };
 
   const handleCancel = async (consultation: Consultation) => {
-    if (!confirm(t('portal.consultations.cancelConfirm' as any) || 'Are you sure you want to cancel this consultation?')) {
+    if (
+      !confirm(
+        t('portal.consultations.cancelConfirm' as any) ||
+          'Are you sure you want to cancel this consultation?'
+      )
+    ) {
       return;
     }
 
@@ -112,7 +118,7 @@ export default function ConsultationsClient({ orgId }: ConsultationsClientProps)
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl md:text-3xl font-black text-surface-900 dark:text-white font-outfit tracking-tight">
+          <h1 className="text-2xl font-black text-surface-900 dark:text-white font-outfit tracking-tight">
             {t('portal.consultations.title' as any) || 'Consultations'}
           </h1>
           <p className="text-surface-500 dark:text-surface-400 mt-1">
@@ -227,29 +233,29 @@ export default function ConsultationsClient({ orgId }: ConsultationsClientProps)
                       )}
                     </div>
                     <div className="flex flex-col gap-2">
-                        {consultation.externalCalendarLink && (
+                      {consultation.externalCalendarLink && (
                         <a
-                            href={consultation.externalCalendarLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-colors justify-center"
+                          href={consultation.externalCalendarLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-colors justify-center"
                         >
-                            <Video size={16} />
-                            Join
+                          <Video size={16} />
+                          Join
                         </a>
+                      )}
+                      <button
+                        onClick={() => handleCancel(consultation)}
+                        disabled={cancelingId === consultation.id}
+                        className="flex items-center gap-2 px-4 py-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl font-medium text-sm transition-colors justify-center disabled:opacity-50"
+                      >
+                        {cancelingId === consultation.id ? (
+                          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <XCircle size={16} />
                         )}
-                        <button
-                            onClick={() => handleCancel(consultation)}
-                            disabled={cancelingId === consultation.id}
-                            className="flex items-center gap-2 px-4 py-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl font-medium text-sm transition-colors justify-center disabled:opacity-50"
-                        >
-                            {cancelingId === consultation.id ? (
-                                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                            ) : (
-                                <XCircle size={16} />
-                            )}
-                            Cancel
-                        </button>
+                        Cancel
+                      </button>
                     </div>
                   </div>
                 </motion.div>

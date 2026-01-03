@@ -21,10 +21,7 @@ import {
   PRICING_STATUS,
   formatCurrency,
 } from '@/lib/types/pricing';
-import {
-  subscribeToAllPricingRequests,
-  sendPricingRequest,
-} from '@/lib/services/pricing-requests';
+import { subscribeToAllPricingRequests, sendPricingRequest } from '@/lib/services/pricing-requests';
 import { getAllOrganizations } from '@/lib/services/portal-organizations';
 import { Organization } from '@/lib/types/portal';
 import { format } from 'date-fns';
@@ -165,11 +162,12 @@ export default function AgencyPricingClient() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
             {t('portal.pricing.title')}
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">
-            {t('portal.agency.pricing.subtitle' as never) || 'Manage pricing offers across all clients'}
+            {t('portal.agency.pricing.subtitle' as never) ||
+              'Manage pricing offers across all clients'}
           </p>
         </div>
       </div>
@@ -185,7 +183,9 @@ export default function AgencyPricingClient() {
               <p className="text-[10px] font-black text-blue-600/70 uppercase tracking-widest">
                 {t('portal.common.total' as never)}
               </p>
-              <p className="text-2xl font-black text-blue-700 dark:text-blue-400">{statsData.total}</p>
+              <p className="text-2xl font-black text-blue-700 dark:text-blue-400">
+                {statsData.total}
+              </p>
             </div>
           </div>
         </PortalCard>
@@ -199,7 +199,9 @@ export default function AgencyPricingClient() {
               <p className="text-[10px] font-black text-amber-600/70 uppercase tracking-widest">
                 {t('portal.pricing.status.sent')}
               </p>
-              <p className="text-2xl font-black text-amber-700 dark:text-amber-400">{statsData.sent}</p>
+              <p className="text-2xl font-black text-amber-700 dark:text-amber-400">
+                {statsData.sent}
+              </p>
             </div>
           </div>
         </PortalCard>
@@ -213,7 +215,9 @@ export default function AgencyPricingClient() {
               <p className="text-[10px] font-black text-purple-600/70 uppercase tracking-widest">
                 {t('portal.pricing.status.accepted')}
               </p>
-              <p className="text-2xl font-black text-purple-700 dark:text-purple-400">{statsData.accepted}</p>
+              <p className="text-2xl font-black text-purple-700 dark:text-purple-400">
+                {statsData.accepted}
+              </p>
             </div>
           </div>
         </PortalCard>
@@ -243,7 +247,10 @@ export default function AgencyPricingClient() {
         {/* Toolbar */}
         <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col lg:flex-row lg:items-center gap-4 bg-slate-50/50 dark:bg-slate-900/50">
           <div className="relative w-full lg:w-96">
-            <Search className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <Search
+              className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400"
+              size={16}
+            />
             <input
               type="text"
               placeholder={t('portal.header.searchPlaceholder')}

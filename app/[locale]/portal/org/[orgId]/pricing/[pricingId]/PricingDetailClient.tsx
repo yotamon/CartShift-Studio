@@ -127,7 +127,7 @@ export default function PricingDetailClient() {
         <PortalCard className="p-6">
           <div className="flex items-start justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit mb-2">
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit mb-2">
                 {pricingRequest.title}
               </h1>
               {pricingRequest.description && (

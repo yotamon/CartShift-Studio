@@ -141,7 +141,7 @@ export default function FilesClient() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
             {t('portal.files.title')}
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">
@@ -163,7 +163,10 @@ export default function FilesClient() {
       >
         <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/30 dark:bg-slate-900/30">
           <div className="relative w-full md:w-96">
-            <Search size={18} className="absolute start-4 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search
+              size={18}
+              className="absolute start-4 top-1/2 -translate-y-1/2 text-slate-400"
+            />
             <input
               type="text"
               placeholder={t('portal.files.searchPlaceholder')}
