@@ -1,30 +1,47 @@
 'use client';
 
-import React, { useMemo, useEffect, useState } from 'react';
-import { motion, useSpring, useTransform, useMotionValueEvent } from "@/lib/motion";
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
+import React, { useMemo } from 'react';
+import { motion } from "@/lib/motion";
 import { analyticsCard, staggerContainer } from "@/lib/animation-variants";
 import { AnimatedNumber } from "@/components/portal/ui/AnimatedNumber";
 import { useLocale, useTranslations } from 'next-intl';
-import { FileText, Clock, CheckCircle2, DollarSign, TrendingUp, Activity } from 'lucide-react';
+import { FileText, Clock, CheckCircle2, DollarSign, TrendingUp, Activity, LucideIcon } from 'lucide-react';
 import { isRTLLocale } from '@/lib/locale-config';
-import { cn } from '@/lib/utils';
 import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
 import { Request, REQUEST_STATUS, RequestStatus } from '@/lib/types/portal';
 import { Timestamp } from 'firebase/firestore';
+
+const analyticCardVariants = cva(
+  "relative p-5 rounded-2xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 overflow-hidden group hover:shadow-lg transition-shadow hover-lift",
+  {
+    variants: {
+      intent: {
+        blue: "text-blue-600 dark:text-blue-400 [--icon-bg:from-blue-500_to-indigo-600] [--bg-hover:blue-500/5]",
+        amber: "text-amber-600 dark:text-amber-400 [--icon-bg:from-amber-500_to-orange-600] [--bg-hover:amber-500/5]",
+        green: "text-green-600 dark:text-green-400 [--icon-bg:from-green-500_to-emerald-600] [--bg-hover:green-500/5]",
+        purple: "text-purple-600 dark:text-purple-400 [--icon-bg:from-purple-500_to-pink-600] [--bg-hover:purple-500/5]",
+        emerald: "text-emerald-600 dark:text-emerald-400 [--icon-bg:from-emerald-500_to-teal-600] [--bg-hover:emerald-500/5]",
+      },
+    },
+    defaultVariants: {
+      intent: "blue",
+    },
+  }
+);
 
 interface ClientAnalyticsProps {
   requests: Request[];
   className?: string;
 }
 
-interface AnalyticCard {
+interface AnalyticCard extends VariantProps<typeof analyticCardVariants> {
   title: string;
   value: string | number;
   subtitle?: string;
-  icon: React.ComponentType<{ className?: string; size?: number }>;
+  icon: LucideIcon;
   trend?: { value: number; positive: boolean };
-  color: string;
-  bgGradient: string;
 }
 
 // Calculate days between two timestamps
@@ -158,32 +175,28 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({ requests, clas
         analytics.trend !== 0
           ? { value: Math.abs(analytics.trend), positive: analytics.trend > 0 }
           : undefined,
-      color: 'text-blue-600 dark:text-blue-400',
-      bgGradient: 'from-blue-500 to-indigo-600',
+      intent: 'blue',
     },
     {
       title: t('portal.analytics.activeRequests'),
       value: analytics.active,
       subtitle: t('portal.analytics.activeRequestsSubtitle'),
       icon: Activity,
-      color: 'text-amber-600 dark:text-amber-400',
-      bgGradient: 'from-amber-500 to-orange-600',
+      intent: 'amber',
     },
     {
       title: t('portal.analytics.completed'),
       value: analytics.completed,
       subtitle: t('portal.analytics.completedSubtitle'),
       icon: CheckCircle2,
-      color: 'text-green-600 dark:text-green-400',
-      bgGradient: 'from-green-500 to-emerald-600',
+      intent: 'green',
     },
     {
       title: t('portal.analytics.avgResolution'),
       value: analytics.avgResolution > 0 ? `${analytics.avgResolution}` : '-',
       subtitle: t('portal.analytics.days'),
       icon: Clock,
-      color: 'text-purple-600 dark:text-purple-400',
-      bgGradient: 'from-purple-500 to-pink-600',
+      intent: 'purple',
     },
   ];
 
@@ -194,8 +207,7 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({ requests, clas
       value: formatCurrency(analytics.totalSpend),
       subtitle: t('portal.analytics.totalSpendSubtitle'),
       icon: DollarSign,
-      color: 'text-emerald-600 dark:text-emerald-400',
-      bgGradient: 'from-emerald-500 to-teal-600',
+      intent: 'emerald',
     });
   }
 
@@ -228,18 +240,17 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({ requests, clas
             <motion.div
               key={card.title}
               variants={analyticsCard}
-              className="relative p-5 rounded-2xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 overflow-hidden group hover:shadow-lg transition-shadow hover-lift"
+              className={cn(analyticCardVariants({ intent: card.intent }))}
             >
-              {/* Background gradient on hover */}
+              {/* Background gradient overlay on hover using CSS Variable from CVA */}
               <div
-                className={`absolute inset-0 bg-gradient-to-br ${card.bgGradient} opacity-0 group-hover:opacity-5 transition-opacity`}
+                className="absolute inset-0 opacity-0 group-hover:opacity-1 transition-opacity"
+                style={{ backgroundColor: 'var(--bg-hover)' } as any}
               />
 
               <div className="relative z-10">
                 <div className="flex items-start justify-between mb-3">
-                  <div
-                    className={`w-10 h-10 rounded-xl bg-gradient-to-br ${card.bgGradient} flex items-center justify-center`}
-                  >
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br var(--icon-bg) flex items-center justify-center" style={{ backgroundImage: 'linear-gradient(to bottom right, var(--icon-bg))' } as any}>
                     <CardIcon size={20} className="text-white" />
                   </div>
                   {card.trend && (
@@ -278,7 +289,7 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({ requests, clas
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.4 }}
-          className="p-6 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white"
+          className="p-6 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-xl shadow-emerald-500/20"
         >
           <div className="flex items-center justify-between">
             <div>
@@ -301,9 +312,7 @@ export const ClientAnalyticsCompact: React.FC<{
   requests: Request[];
   className?: string;
 }> = ({ requests, className }) => {
-  const locale = useLocale();
   const t = useTranslations();
-  const isHe = isRTLLocale(locale);
 
   const analytics = useMemo(() => {
     return {

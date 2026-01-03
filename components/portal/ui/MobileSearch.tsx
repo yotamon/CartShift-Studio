@@ -1,12 +1,43 @@
 'use client';
 
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from "@/lib/motion";
 import { Search, X, Clock, ArrowRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { isRTLLocale } from '@/lib/locale-config';
+
+const mobileSearchItemVariants = cva(
+  "w-full flex items-center gap-3 p-3 rounded-xl transition-colors text-start group",
+  {
+    variants: {
+      variant: {
+        default: "hover:bg-surface-50 dark:hover:bg-surface-800",
+        active: "bg-surface-50 dark:bg-surface-800",
+      }
+    },
+    defaultVariants: {
+      variant: "default",
+    }
+  }
+);
+
+const searchInputVariants = cva(
+  "flex-1 bg-transparent text-surface-900 dark:text-white placeholder-surface-400 outline-none text-base",
+  {
+    variants: {
+      hasQuery: {
+        true: "font-medium",
+        false: "",
+      }
+    },
+    defaultVariants: {
+      hasQuery: false,
+    }
+  }
+);
 
 interface MobileSearchProps {
   isOpen: boolean;
@@ -119,7 +150,7 @@ export function MobileSearch({ isOpen, onClose, className }: MobileSearchProps) 
                     }
                   }}
                   placeholder={t('portal.header.searchPlaceholder')}
-                  className="flex-1 bg-transparent text-surface-900 dark:text-white placeholder-surface-400 outline-none text-base"
+                  className={cn(searchInputVariants({ hasQuery: query.length > 0 }))}
                   aria-label="Search"
                 />
                 {query && (
@@ -147,7 +178,7 @@ export function MobileSearch({ isOpen, onClose, className }: MobileSearchProps) 
                   <div className="p-4">
                     <button
                       onClick={() => handleSearch(query)}
-                      className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors group"
+                      className={cn(mobileSearchItemVariants({ variant: 'default' }), "justify-between")}
                     >
                       <div className="flex items-center gap-3">
                         <Search size={16} className="text-surface-400" />
@@ -179,7 +210,7 @@ export function MobileSearch({ isOpen, onClose, className }: MobileSearchProps) 
                               router.push(link.href);
                               onClose();
                             }}
-                            className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors text-start"
+                            className={cn(mobileSearchItemVariants({ variant: 'default' }))}
                           >
                             <span className="text-lg">{link.icon}</span>
                             <span className="text-sm font-medium text-surface-700 dark:text-surface-300">
@@ -202,7 +233,7 @@ export function MobileSearch({ isOpen, onClose, className }: MobileSearchProps) 
                             <button
                               key={idx}
                               onClick={() => handleSearch(search)}
-                              className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors text-start group"
+                              className={cn(mobileSearchItemVariants({ variant: 'default' }))}
                             >
                               <span className="text-sm text-surface-600 dark:text-surface-400">
                                 {search}

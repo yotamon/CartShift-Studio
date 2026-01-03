@@ -1,32 +1,52 @@
 'use client';
 
 import React from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
-interface CardProps {
+const cardVariants = cva(
+  "liquid-glass liquid-glass-intense liquid-glass-highlight rounded-2xl md:rounded-3xl p-6 md:p-8 relative overflow-hidden transition-all duration-300",
+  {
+    variants: {
+      glow: {
+        glow: "liquid-glass-glow",
+        none: "",
+        subtle: "",
+        lift: "",
+      },
+      accent: {
+        true: "border-accent-500/30",
+        false: "",
+      },
+      hover: {
+        true: "hover:scale-[1.02] hover:-translate-y-1",
+        false: "",
+      },
+    },
+    defaultVariants: {
+      glow: "none",
+      accent: false,
+      hover: false,
+    },
+  }
+);
+
+interface CardProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof cardVariants> {
   children: React.ReactNode;
-  className?: string;
-  hover?: boolean;
-  glow?: 'glow' | 'none' | 'subtle' | 'lift';
-  accent?: boolean;
 }
 
 export const Card: React.FC<CardProps> = ({
   children,
   className,
-  hover = false,
+  hover,
   glow,
-  accent = false,
+  accent,
+  ...props
 }) => {
   return (
     <div
-      className={cn(
-        'liquid-glass liquid-glass-intense liquid-glass-highlight rounded-2xl md:rounded-3xl p-6 md:p-8 relative overflow-hidden transition-all duration-300',
-        glow === 'glow' && 'liquid-glass-glow',
-        accent && 'border-accent-500/30',
-        hover && 'hover:scale-[1.02] hover:-translate-y-1',
-        className
-      )}
+      className={cn(cardVariants({ glow, accent, hover, className }))}
+      {...props}
     >
       {glow === 'glow' && (
         <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary-500 via-accent-500 to-primary-500 rounded-t-3xl opacity-60 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>

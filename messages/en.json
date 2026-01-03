@@ -26,6 +26,245 @@
     "tryAgain": "Try again",
     "refresh": "Refresh page"
   },
+  "common": {
+    "learnMore": "Learn More",
+    "contactUs": "Contact Us",
+    "getStarted": "Get Started",
+    "viewWork": "View Our Work",
+    "exitIntent": {
+      "title": "Before you go...",
+      "subtitle": "Get a free consultation for your project",
+      "description": "We'd love to hear about what you're building and see how we can help.",
+      "cta": "Book a Free Call",
+      "dismiss": "Not now"
+    }
+  },
+  "navigation": {
+    "home": "Home",
+    "solutions": "Solutions",
+    "wordpress": "WordPress Solutions",
+    "shopify": "Shopify Solutions",
+    "clientPortal": "Client Portal",
+    "about": "About",
+    "contact": "Contact",
+    "blog": "Blog",
+    "blogPost": "Blog Post"
+  },
+  "faq": {
+    "collapseAll": "Collapse All",
+    "expandAll": "Expand All"
+  },
+  "seo": {
+    "clientPortalH1": "Client Portal for Project Management | Fast & Transparent"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "The page you're looking for doesn't exist or may have been moved.",
+    "goBack": "Go Back",
+    "goHome": "Go Home",
+    "portalLogin": "Portal Login",
+    "needHelp": "Need help?",
+    "contactTeam": "Contact our team"
+  },
+  "stickyCta": {
+    "text": "Book a Call",
+    "textHe": "קבעו שיחה"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "subtitle": "Your privacy is important to us. Learn how we collect, use, and protect your information.",
+    "lastUpdated": "Last updated",
+    "toc": "Table of Contents",
+    "sections": {
+      "collect": {
+        "title": "Information We Collect",
+        "intro": "When you use our website or services, we may collect:",
+        "items": {
+          "contact": {
+            "title": "Contact Information",
+            "desc": "Name, email address, phone number, and company name when you fill out our contact forms."
+          },
+          "project": {
+            "title": "Project Information",
+            "desc": "Details about your project needs that you share with us."
+          },
+          "usage": {
+            "title": "Usage Data",
+            "desc": "Information about how you interact with our website, including pages visited and time spent."
+          },
+          "device": {
+            "title": "Device Information",
+            "desc": "Browser type, operating system, and device type."
+          }
+        }
+      },
+      "use": {
+        "title": "How We Use Your Information",
+        "intro": "We use the information we collect to:",
+        "items": [
+          "Respond to your inquiries and provide customer support",
+          "Send you information about our services",
+          "Improve our website and services",
+          "Comply with legal obligations"
+        ]
+      },
+      "sharing": {
+        "title": "Information Sharing",
+        "intro": "We do not sell your personal information. We may share your information with:",
+        "items": {
+          "providers": {
+            "title": "Service Providers",
+            "desc": "Third-party services that help us operate our business (e.g., email services, analytics)."
+          },
+          "legal": {
+            "title": "Legal Requirements",
+            "desc": "When required by law or to protect our rights."
+          }
+        }
+      },
+      "cookies": {
+        "title": "Cookies and Tracking",
+        "intro": "We use cookies and similar technologies to:",
+        "items": [
+          "Remember your preferences (like language selection)",
+          "Understand how you use our website",
+          "Improve our services"
+        ],
+        "control": "You can control cookies through your browser settings.",
+        "consent": {
+          "message": "We use cookies to improve your browsing experience and analyze site usage.",
+          "accept": "Accept",
+          "decline": "Decline",
+          "learnMore": "Learn more"
+        }
+      },
+      "security": {
+        "title": "Data Security",
+        "content": "We implement appropriate security measures to protect your personal information. However, no method of transmission over the internet is 100% secure."
+      },
+      "rights": {
+        "title": "Your Rights",
+        "intro": "You have the right to:",
+        "items": [
+          "Access the personal information we hold about you",
+          "Request correction of inaccurate information",
+          "Request deletion of your information",
+          "Opt out of marketing communications"
+        ]
+      },
+      "thirdParty": {
+        "title": "Third-Party Services",
+        "intro": "Our website may use third-party services including:",
+        "items": [
+          "Google Analytics for website analytics",
+          "Firebase for hosting and authentication"
+        ],
+        "note": "These services have their own privacy policies."
+      },
+      "contact": {
+        "title": "Contact Us",
+        "intro": "If you have questions about this privacy policy or your personal information, please contact us at:",
+        "email": "Email"
+      },
+      "changes": {
+        "title": "Changes to This Policy",
+        "content": "We may update this privacy policy from time to time. We will notify you of any changes by posting the new policy on this page."
+      }
+    }
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "subtitle": "Please read these terms carefully before using our services.",
+    "lastUpdated": "Last updated",
+    "toc": "Table of Contents",
+    "sections": {
+      "agreement": {
+        "title": "Agreement to Terms",
+        "content": "By accessing or using the CartShift Studio website and services, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services."
+      },
+      "services": {
+        "title": "Services",
+        "intro": "CartShift Studio provides web development and e-commerce services, including but not limited to:",
+        "items": [
+          "Shopify store development and customization",
+          "WordPress website development",
+          "Website maintenance and support",
+          "E-commerce consulting"
+        ]
+      },
+      "projectAgreements": {
+        "title": "Project Agreements",
+        "intro": "All project work is subject to a separate project agreement that outlines:",
+        "items": [
+          "Scope of work",
+          "Timeline and milestones",
+          "Pricing and payment terms",
+          "Deliverables"
+        ]
+      },
+      "payment": {
+        "title": "Payment Terms",
+        "intro": "Payment terms are specified in individual project agreements. Generally:",
+        "items": [
+          "Deposits are required before work begins",
+          "Milestone payments may be required for larger projects",
+          "Final payment is due upon project completion"
+        ]
+      },
+      "ip": {
+        "title": "Intellectual Property",
+        "intro": "Upon full payment, clients receive ownership of custom code and designs created specifically for their project. CartShift Studio retains the right to:",
+        "items": [
+          "Use work in our portfolio (with client permission)",
+          "Reuse general techniques and non-proprietary code"
+        ]
+      },
+      "clientResponsibilities": {
+        "title": "Client Responsibilities",
+        "intro": "Clients are responsible for:",
+        "items": [
+          "Providing necessary content, assets, and information",
+          "Timely feedback and approvals",
+          "Ensuring they have rights to provided content",
+          "Maintaining their own backups"
+        ]
+      },
+      "liability": {
+        "title": "Limitation of Liability",
+        "content": "CartShift Studio is not liable for indirect, incidental, or consequential damages. Our total liability is limited to the amount paid for the specific service in question."
+      },
+      "warranties": {
+        "title": "Warranties",
+        "content": "We warrant that our services will be performed professionally and in accordance with industry standards. We do not guarantee specific business results such as sales or traffic increases."
+      },
+      "termination": {
+        "title": "Termination",
+        "intro": "Either party may terminate a project agreement with written notice. In case of termination:",
+        "items": [
+          "Client pays for work completed to date",
+          "Client receives deliverables for paid work",
+          "Deposits may be non-refundable depending on work completed"
+        ]
+      },
+      "confidentiality": {
+        "title": "Confidentiality",
+        "content": "Both parties agree to keep confidential information private and not share it with third parties without permission."
+      },
+      "governingLaw": {
+        "title": "Governing Law",
+        "content": "These terms are governed by the laws of Israel. Any disputes will be resolved in the courts of Israel."
+      },
+      "changes": {
+        "title": "Changes to Terms",
+        "content": "We may update these terms from time to time. Continued use of our services after changes constitutes acceptance of the new terms."
+      },
+      "contact": {
+        "title": "Contact",
+        "intro": "For questions about these terms, contact us at:",
+        "email": "Email"
+      }
+    }
+  },
   "portal": {
     "quickActions": {
       "title": "Quick Actions",
@@ -36,19 +275,21 @@
     },
     "activity": {
       "title": "Recent Activity",
-      "noActivity": "No Activity",
-      "noActivityDescription": "Activity log will update when new actions occur",
       "actions": {
-        "created_request": "Created Request",
-        "assigned_request": "Assigned Request",
-        "added_pricing": "Added Pricing",
-        "accepted_quote": "Accepted Quote",
-        "declined_quote": "Declined Quote",
-        "started_work": "Started Work",
-        "paid_request": "Paid Request",
-        "added_comment": "Added Comment",
-        "completed_consultation": "Completed Consultation",
-        "canceled_consultation": "Canceled Consultation"
+        "created_request": "New project request filed",
+        "assigned_request": "Specialist assigned to project",
+        "added_pricing": "Quote issued for review",
+        "accepted_quote": "Project scope & quote approved",
+        "declined_quote": "Revision requested on quote",
+        "requested_revision": "Revision requested",
+        "started_work": "Project moved to production",
+        "paid_request": "Payment verified & secured",
+        "added_comment": "New message in discussion",
+        "added_attachment": "Attachment added",
+        "scheduled_consultation": "Consultation scheduled",
+        "completed_consultation": "Consultation completed",
+        "canceled_consultation": "Consultation canceled",
+        "marked_no_show": "Marked as no-show"
       }
     },
     "milestones": {
@@ -89,514 +330,6 @@
       "generatingInvoice": "Generating Invoice...",
       "downloadInvoice": "Download Invoice",
       "loadingPdf": "Loading PDF..."
-    },
-    "common": {
-      "error": "An error occurred"
-    },
-    "access": {
-      "restrictedMessage": "Access restricted"
-    },
-    "dashboard": {
-      "loading": "Loading dashboard...",
-      "title": "Dashboard",
-      "subtitle": "Overview of your projects and activities",
-      "error": {
-        "title": "Failed to load dashboard",
-        "retry": "Try Again"
-      },
-      "actions": {
-        "newRequest": "New Request"
-      },
-      "serviceStatus": {
-        "title": "Service Status",
-        "design": "Design",
-        "active": "Active",
-        "dev": "Development",
-        "peak": "Peak Hours",
-        "etaLabel": "ETA",
-        "days": "days",
-        "avgResponse": "Avg Response",
-        "responseTime": "< 2hrs"
-      }
-    },
-    "analytics": {
-      "totalRequests": "Total Requests",
-      "activeRequests": "Active Requests",
-      "activeRequestsSubtitle": "Currently in progress",
-      "completed": "Completed",
-      "completedSubtitle": "Successfully delivered",
-      "totalSpend": "Total Spend",
-      "totalSpendSubtitle": "Payments completed",
-      "noDataYet": "No Data Yet",
-      "noDataDescription": "Create your first request to see analytics",
-      "inLast30Days": "in last 30 days",
-      "total": "Total",
-      "active": "Active",
-      "done": "Done",
-      "avgResolution": "Avg. Resolution",
-      "days": "days"
-    },
-    "requests": {
-      "invalidRequestId": "Invalid request ID"
-    },
-    "loading": {
-      "init": "Initializing Studio Environment",
-      "workspace": "Accessing Secure Workspace",
-      "auth": {
-        "login": "Loading sign in...",
-        "signup": "Loading signup...",
-        "invite": "Loading invitation..."
-      }
-    },
-    "onboarding": {
-      "welcome": {
-        "title": "Welcome!",
-        "subtitle": "Let's set up your workspace",
-        "description": "We're excited to have you here. In just a few steps, we'll create your dedicated workspace where you can manage requests, team members, and more.",
-        "cta": "Get Started"
-      },
-      "info": {
-        "title": "Organization Details",
-        "subtitle": "Tell us a bit about your company"
-      },
-      "completion": {
-        "title": "You're all set!",
-        "subtitle": "Your workspace has been created successfully.",
-        "description": "We've set up your dashboard. You can now start managing your projects, invite team members, and explore the platform.",
-        "cta": "Go to Dashboard"
-      },
-      "form": {
-        "orgNameLabel": "Organization Name",
-        "orgNamePlaceholder": "e.g., My Company Inc.",
-        "orgNameHint": "This is your internal display name.",
-        "industryLabel": "Industry",
-        "industrySelectPlaceholder": "Select industry...",
-        "sizeLabel": "Company Size",
-        "sizeSelectPlaceholder": "Select size...",
-        "employeesLabel": "employees",
-        "creating": "Creating...",
-        "createButton": "Create Workspace"
-      },
-      "back": "Back",
-      "error": "Failed to create organization. Please try again.",
-      "help": "You'll be able to invite team members and manage your workspace after creation."
-    },
-    "industries": {
-      "ecommerce": "E-commerce",
-      "saas": "SaaS",
-      "agency": "Agency",
-      "education": "Education",
-      "healthcare": "Healthcare",
-      "other": "Other"
-    },
-    "auth": {
-      "login": {
-        "title": "Welcome back",
-        "subtitle": "Sign in to your CartShift portal",
-        "email": "Email",
-        "password": "Password",
-        "forgotPassword": "Forgot password?",
-        "rememberMe": "Keep me signed in",
-        "signIn": "Sign in",
-        "sso": "Or continue with",
-        "google": "Google SSO",
-        "noAccount": "Don't have an account yet?",
-        "createOne": "Create one here",
-        "secure": "Secure Enterprise Access"
-      },
-      "signup": {
-        "title": "Create your account",
-        "subtitle": "Get started with the CartShift portal",
-        "fullName": "Full Name",
-        "email": "Email Address",
-        "password": "Password",
-        "confirmPassword": "Confirm Password",
-        "createAccount": "Create Account",
-        "alreadyHaveAccount": "Already have an account?",
-        "signIn": "Sign in",
-        "secure": "Secure Enterprise Access"
-      },
-      "errors": {
-        "userNotFound": "No account found with this email address.",
-        "wrongPassword": "Invalid email or password.",
-        "invalidEmail": "Please enter a valid email address.",
-        "tooManyRequests": "Too many failed attempts. Please try again later.",
-        "generic": "An unexpected error occurred. Please try again.",
-        "emailInUse": "An account with this email already exists.",
-        "weakPassword": "Password is too weak. Please choose a stronger password.",
-        "passwordTooShort": "Password must be at least 6 characters",
-        "passwordRequirements": "Password must contain both letters and numbers",
-        "matchPassword": "Passwords don't match",
-        "invalidCode": "Invalid invite code",
-        "inviteNotFound": "Invite not found",
-        "alreadyAccepted": "This invite has already been accepted",
-        "expired": "This invite has expired",
-        "mismatch": "This invite was sent to a different email address",
-        "genericInvite": "Failed to load invite"
-      },
-      "showPassword": "Show password",
-      "hidePassword": "Hide password",
-      "passwordStrength": {
-        "veryWeak": "Very weak - add more characters",
-        "weak": "Weak - try adding numbers",
-        "fair": "Fair - try adding special characters",
-        "strong": "Strong password",
-        "veryStrong": "Very strong password"
-      }
-    },
-    "invite": {
-      "title": "You're Invited!",
-      "subtitle": "You've been invited to join an organization",
-      "error": "Invite Error",
-      "notFound": "Invite not found",
-      "expired": "Invite Expired",
-      "expiredDesc": "This invite has expired.",
-      "alreadyAccepted": "Already Accepted",
-      "alreadyAcceptedDesc": "This invite has already been accepted.",
-      "success": "Invite Accepted!",
-      "redirecting": "Redirecting you to the organization...",
-      "invitedEmail": "Invited email:",
-      "role": "Role:",
-      "invitedBy": "Invited by:",
-      "expires": "Expires:",
-      "guestIntro": "To accept this invite, you need an account",
-      "createAccount": "Create Account",
-      "signIn": "Sign In",
-      "alreadyHasAccount": "Already have an account? Click \"Sign In\" above",
-      "accept": "Accept Invite",
-      "accepting": "Accepting...",
-      "emailMismatch": "This invite was sent to {email}, but you're signed in as {userEmail}. Please sign in with the correct email address."
-    },
-    "access": {
-      "restrictedTitle": "Access Restricted",
-      "restrictedMessage": "Your account current profile doesn't have the necessary permissions to access this specific organization workspace.",
-      "switchWorkspace": "Switch Workspaces",
-      "contactSupport": "Contact Support"
-    },
-    "files": {
-      "title": "Files & Assets",
-      "subtitle": "Unified storage for all your project documents and resources.",
-      "upload": "Upload Asset",
-      "searchPlaceholder": "Search by filename...",
-      "totalFiles": "Total Files",
-      "recentlyAdded": "Recently Added",
-      "table": {
-        "identity": "Asset Identity",
-        "metadata": "Metadata",
-        "format": "Format",
-        "transmission": "Transmission",
-        "actions": "Actions",
-        "addedBy": "Added by",
-        "system": "System"
-      },
-      "actions": {
-        "download": "Download",
-        "share": "Share",
-        "delete": "Delete",
-        "deleteConfirm": "Are you sure you want to delete this file?",
-        "deleted": "File deleted successfully",
-        "deleteFailed": "Failed to delete file"
-      },
-      "empty": {
-        "title": "No assets syncronized",
-        "search": "We couldn't find any files matching your search.",
-        "noFiles": "This organization workspace is currently empty.",
-        "uploadFirst": "Upload First Asset",
-        "syncing": "Syncing your assets..."
-      },
-      "error": {
-        "title": "Asset Sync Error",
-        "retry": "Retry Sync"
-      },
-      "uploadForm": {
-        "title": "Upload File",
-        "browse": "Click to browse files",
-        "maxSize": "Maximum file size: 10MB",
-        "uploading": "Uploading...",
-        "errorSize": "File size must be less than 10MB",
-        "errorGeneric": "Failed to upload file. Please try again.",
-        "cancel": "Cancel",
-        "submit": "Upload File"
-      }
-    },
-    "organization": {
-      "createForm": {
-        "title": "Create New Organization",
-        "nameLabel": "Organization Name *",
-        "namePlaceholder": "e.g. Acme Corporation",
-        "websiteLabel": "Website",
-        "websitePlaceholder": "https://example.com",
-        "industryLabel": "Industry",
-        "industryPlaceholder": "e.g. E-commerce, SaaS, Marketing",
-        "note": "Note:",
-        "noteText": "You will be set as the owner of this organization and can invite team members later.",
-        "cancel": "Cancel",
-        "submit": "Create Organization",
-        "submitting": "Creating...",
-        "errors": {
-          "name": "Organization name must be at least 3 characters",
-          "nameLong": "Name is too long",
-          "website": "Please enter a valid URL",
-          "industry": "Industry must be at least 2 characters",
-          "auth": "You must be logged in to create an organization",
-          "generic": "Failed to create organization. Please try again."
-        }
-      }
-    },
-    "settings": {
-      "title": "Settings",
-      "subtitle": "Manage organization preferences and workspace.",
-      "tabs": {
-        "general": "General",
-        "profile": "My Profile",
-        "notifications": "Notifications",
-        "security": "Security",
-        "billing": "Billing"
-      },
-      "profile": {
-        "title": "Personal Profile",
-        "subtitle": "Manage your individual identity and appearance",
-        "name": "Full Name",
-        "namePlaceholder": "Your Name",
-        "email": "Email Address",
-        "avatar": {
-          "title": "Profile Photo",
-          "desc": "Upload a professional thumbnail to represent you across the portal.",
-          "upload": "Upload Photo",
-          "change": "Change Photo",
-          "removing": "Removing...",
-          "remove": "Remove",
-          "sizeError": "Image size must be less than 2MB",
-          "uploadSuccess": "Profile photo updated",
-          "uploadError": "Failed to upload photo",
-          "removeSuccess": "Profile photo removed",
-          "removeError": "Failed to remove photo"
-        },
-        "save": "Update Profile",
-        "success": "Your profile has been updated!",
-        "error": "Failed to update profile"
-      },
-      "general": {
-        "title": "Organization Profile",
-        "subtitle": "Basic information and appearance",
-        "logoLabel": "Organization Logo",
-        "logoUpload": "Upload Logo",
-        "logoChange": "Change Logo",
-        "logoRemove": "Remove Logo",
-        "logoHint": "PNG, JPG up to 2MB. Square images work best.",
-        "logo": {
-          "sizeError": "Logo size must be less than 2MB",
-          "uploadSuccess": "Organization logo updated",
-          "uploadError": "Failed to upload logo",
-          "removeSuccess": "Organization logo removed",
-          "removeError": "Failed to remove logo"
-        },
-        "orgName": "Organization Name",
-        "orgNamePlaceholder": "e.g. Acme Corp",
-        "industry": "Industry / Niche",
-        "industryPlaceholder": "e.g. Tech, SaaS",
-        "website": "Business Website",
-        "websitePlaceholder": "https://acme.com",
-        "bio": "Business Overview",
-        "bioPlaceholder": "Give us brief context on what you do...",
-        "save": "Save Profile",
-        "saving": "Processing...",
-        "success": "Profile updated successfully!",
-        "error": "Failed to save settings",
-        "permissionDenied": "You do not have permission to access this organization",
-        "orgNotFound": "Organization not found",
-        "newWorkspace": {
-          "title": "New Workspace",
-          "description": "Need another workspace? Create a separate organization for a different team.",
-          "button": "Create Organization"
-        },
-        "dangerZone": {
-          "title": "Danger Zone",
-          "description": "Permanently delete this organization and all of its data. This action is not reversible.",
-          "button": "Delete Workspace"
-        },
-        "onboarding": {
-          "title": "Restart Tour",
-          "description": "Re-experience the portal walkthrough to discover new features.",
-          "button": "Start Tour",
-          "success": "Onboarding will start on next page load",
-          "error": "Failed to reset onboarding status"
-        },
-        "storeIntegrations": "Store Integrations",
-        "integrations": {
-          "shopify": {
-            "title": "Shopify Store Access",
-            "description": "Enable fast, secure collaborator access to your Shopify store.",
-            "storeUrl": "Store URL",
-            "collaboratorCode": "Collaborator Code",
-            "status": {
-              "pending": "Pending",
-              "requested": "Access Requested",
-              "connected": "Connected",
-              "revoked": "Revoked"
-            },
-            "statusMessages": {
-              "pending": "Waiting for your agency to request access to your store.",
-              "requested": "Access has been requested. Please approve in your Shopify admin.",
-              "connected": "Your agency has full collaborator access to your store."
-            },
-            "features": {
-              "feature1": "Enable fast theme customizations and updates",
-              "feature2": "Allow your agency to manage apps and integrations",
-              "feature3": "Secure collaborator access with no staff seat used"
-            },
-            "form": {
-              "storeUrl": "Your Shopify Store URL",
-              "storeUrlHint": "Enter your store's .myshopify.com URL (e.g., yourstore.myshopify.com)",
-              "collaboratorCode": "Collaborator Request Code",
-              "collaboratorCodeHint": "Found in Shopify Admin > Settings > Users > Security. Leave empty if not enabled.",
-              "optional": "optional",
-              "infoTitle": "Where to find the collaborator code?",
-              "infoDesc": "In your Shopify admin, go to Settings > Users and permissions > Security. If enabled, you'll see a 4-digit code.",
-              "save": "Save Store Details",
-              "saving": "Saving...",
-              "cancel": "Cancel"
-            },
-            "actions": {
-              "connect": "Connect Store",
-              "edit": "Edit Store Details"
-            },
-            "errors": {
-              "invalidDomain": "Please enter a valid .myshopify.com domain",
-              "invalidCode": "Collaborator code must be 4 digits",
-              "saveFailed": "Failed to save. Please try again."
-            },
-            "agency": {
-              "notConnected": "Shopify Store Not Connected",
-              "notConnectedDesc": "The client hasn't connected their Shopify store yet.",
-              "requestAccess": "Request Collaborator Access",
-              "markRequested": "Mark as Requested",
-              "markConnected": "Mark as Connected",
-              "openPartnerDashboard": "Open Partner Dashboard",
-              "openAdmin": "Open Store Admin"
-            }
-          }
-        }
-      },
-      "notifications": {
-        "title": "Channels & Alerts",
-        "subtitle": "Email Delivery Settings",
-        "requestUpdate": {
-          "label": "Request Milestone Updates",
-          "desc": "Notifications for every movement in your project lifecycle."
-        },
-        "commentAlerts": {
-          "label": "Real-time Comment Alerts",
-          "desc": "Stay in the loop when specialists or team members reply."
-        },
-        "statusChange": {
-          "label": "Direct Delivery Status",
-          "desc": "High-priority alerts for 'Delivered' and 'In Review' statuses."
-        },
-        "marketing": {
-          "label": "Product & Design News",
-          "desc": "Occasional insights from our studio on scaling your business."
-        },
-        "syncing": "Syncing changes...",
-        "saved": "Settings Active",
-        "pushBeta": "Looking for browser alerts?",
-        "pushBetaSub": "Beta testing starts Early 2026"
-      },
-      "security": {
-        "title": "Security Layer",
-        "subtitle": "Control your access",
-        "changePassword": {
-          "title": "Change Password",
-          "desc": "Reset your password via a secure verification link sent to your email.",
-          "button": "Request Reset Link",
-          "sent": "Link Sent",
-          "success": "Link Sent",
-          "error": "Failed to send reset link."
-        },
-        "mfa": {
-          "title": "Two-Factor Auth (MFA)",
-          "desc": "Add a mobile authenticator app for maximum account protection.",
-          "badge": "Pipeline 2026"
-        },
-        "session": {
-          "title": "Active Session Details",
-          "email": "Email ID",
-          "provider": "Identity Provider",
-          "mailService": "Mail Service"
-        }
-      },
-      "billing": {
-        "title": "Investment & Plans",
-        "nextPayment": "Pro Partner Status",
-        "priority": "Partner Priority",
-        "proStatus": "Active Partner",
-        "investment": "Monthly Investment",
-        "workflowLimit": "Active Workflows",
-        "teamAvailability": "Team Availability",
-        "perMonth": "/month",
-        "unlimited": "Unlimited",
-        "seats": "10 Active Seats",
-        "stripeDashboard": "Stripe Portal",
-        "invoicingHistory": "Billing History",
-        "activeSubscription": "Active Subscription",
-        "enterpriseStatus": "Contact for details",
-        "plans": {
-          "free": "Free Tier",
-          "pro": "Studio Pro",
-          "enterprise": "Enterprise"
-        },
-        "encrypted": {
-          "title": "Bank-Grade Encryption",
-          "desc": "All transaction data is handled securely via Stripe, protected by AES-256 encryption. We never store your full payment details."
-        }
-      }
-    },
-    "sidebar": {
-      "title": "CartShift",
-      "subtitle": "Studio Portal",
-      "collapse": "Collapse",
-      "close": "Close",
-      "signOut": "Sign Out",
-      "nav": {
-        "inbox": "Inbox",
-        "workboard": "Workboard",
-        "clients": "Clients",
-        "settings": "Settings",
-        "dashboard": "Dashboard",
-        "requests": "Requests",
-        "pricing": "Pricing Offers",
-        "team": "Team",
-        "files": "Files",
-        "consultations": "Consultations"
-      }
-    },
-    "header": {
-      "search": "Search...",
-      "searchPlaceholder": "Search global resources...",
-      "authorizedMember": "Authorized Member",
-      "agencyPartner": "Agency Partner",
-      "enterprise": "Enterprise",
-      "level": "Level 2",
-      "notifications": "Notifications",
-      "noNotifications": "No notifications"
-    },
-    "accountType": {
-      "client": "Client",
-      "agency": "Agency",
-      "badge": {
-        "client": "Client Account",
-        "agency": "Agency Partner"
-      }
-    },
-    "accessibility": {
-      "skipToContent": "Skip to main content",
-      "openMenu": "Open menu",
-      "closeMenu": "Close menu",
-      "helpCenter": "Help center",
-      "notifications": "View notifications",
-      "userProfile": "User profile",
-      "search": "Search",
-      "searchPlaceholder": "Search..."
     },
     "common": {
       "loading": "Loading...",
@@ -650,85 +383,18 @@
       "agencyAdmin": "Agency Admin",
       "agencyFallback": "Agency",
       "unknown": "Unknown",
-      "loading": "Loading...",
       "noDescription": "No description provided.",
       "rollback": "Rolling back changes.",
-      "actionFailed": "Action Failed",
-      "changesReverted": "Your changes could not be saved and were reverted.",
-      "operationFailed": "Operation failed",
-      "errorReverted": "Changes reverted due to an error.",
       "normal": "NORMAL",
-      "edit": "Edit",
       "archive": "Archive",
       "free": "FREE",
       "defaultInitial": "S"
     },
-    "breadcrumbs": {
-      "home": "Home",
-      "portal": "Portal",
-      "organization": "Organization",
-      "dashboard": "Dashboard",
-      "requests": "Requests",
-      "settings": "Settings",
-      "team": "Team",
-      "files": "Files",
-      "pricing": "Pricing",
-      "consultations": "Consultations",
-      "agency": "Agency",
-      "inbox": "Inbox",
-      "workboard": "Workboard",
-      "clients": "Clients",
-      "new": "New"
-    },
-    "toast": {
-      "dismiss": "Dismiss",
-      "undo": "Undo"
-    },
-    "errorState": {
-      "title": "Something went wrong",
-      "message": "We encountered an error while processing your request. Please try again.",
-      "retry": "Try Again",
-      "goBack": "Go Back",
-      "home": "Go Home",
+    "access": {
+      "restrictedTitle": "Access Restricted",
+      "restrictedMessage": "Your account current profile doesn't have the necessary permissions to access this specific organization workspace.",
+      "switchWorkspace": "Switch Workspaces",
       "contactSupport": "Contact Support"
-    },
-    "emptyState": {
-      "requests": {
-        "title": "No requests yet",
-        "description": "Create your first request to get started with our services."
-      },
-      "team": {
-        "title": "No team members",
-        "description": "Invite your team members to collaborate on this workspace."
-      },
-      "files": {
-        "title": "No files uploaded",
-        "description": "Upload files to share with your team and agency."
-      },
-      "notifications": {
-        "title": "All caught up!",
-        "description": "You have no new notifications at this time."
-      },
-      "inbox": {
-        "title": "Inbox is empty",
-        "description": "New messages and updates will appear here."
-      },
-      "calendar": {
-        "title": "No consultations scheduled",
-        "description": "Schedule a consultation to discuss your project."
-      },
-      "pricing": {
-        "title": "No pricing offers",
-        "description": "Pricing proposals will appear here once created."
-      },
-      "messages": {
-        "title": "No messages yet",
-        "description": "Start a conversation or wait for updates."
-      },
-      "generic": {
-        "title": "Nothing here yet",
-        "description": "This section is empty. Check back later!"
-      }
     },
     "dashboard": {
       "title": "Dashboard",
@@ -813,81 +479,22 @@
         "emptyDescription": "No requests match your current filters. Try adjusting your search or filter criteria."
       }
     },
-    "activity": {
-      "title": "Recent Activity",
-      "actions": {
-        "created_request": "New project request filed",
-        "assigned_request": "Specialist assigned to project",
-        "added_pricing": "Quote issued for review",
-        "accepted_quote": "Project scope & quote approved",
-        "declined_quote": "Revision requested on quote",
-        "requested_revision": "Revision requested",
-        "started_work": "Project moved to production",
-        "paid_request": "Payment verified & secured",
-        "added_comment": "New message in discussion",
-        "added_attachment": "Attachment added",
-        "scheduled_consultation": "Consultation scheduled",
-        "completed_consultation": "Consultation completed",
-        "canceled_consultation": "Consultation canceled",
-        "marked_no_show": "Marked as no-show"
-      }
-    },
-    "consultations": {
-      "title": "Consultations",
-      "subtitle": "Manage client meetings and consultations",
-      "clientSubtitle": "View your scheduled meetings and consultation history",
-      "schedule": "Schedule Consultation",
-      "scheduleCall": "Schedule a Call",
-      "scheduleNow": "Schedule Now",
-      "searchPlaceholder": "Search consultations...",
-      "upcoming": "Upcoming",
-      "past": "Past Consultations",
-      "notes": "Meeting Notes",
-      "actionItems": "Action Items",
-      "stats": {
-        "upcoming": "Upcoming",
-        "completed": "Completed",
-        "canceled": "Canceled",
-        "total": "Total"
-      },
-      "empty": {
-        "title": "No consultations found",
-        "description": "Schedule your first consultation to get started",
-        "noClientOrganizations": "No client organizations found"
-      },
-      "noUpcoming": "No upcoming consultations",
-      "noUpcomingDesc": "Ready to discuss your project? Schedule a call with our team.",
-      "agenda": "Agenda",
-      "join": "Join",
-      "cancel": "Cancel",
-      "minutes": "min",
-      "userFallback": "User",
-      "types": {
-        "onboarding": "Onboarding Call",
-        "strategy": "Strategy Session",
-        "project_review": "Project Review",
-        "support": "Support Call"
-      },
-      "status": {
-        "scheduled": "Scheduled",
-        "completed": "Completed",
-        "canceled": "Canceled",
-        "no_show": "No Show"
-      },
-      "form": {
-        "type": "Type",
-        "title": "Meeting Title",
-        "titlePlaceholder": "e.g., Strategy Discussion",
-        "date": "Date",
-        "time": "Time",
-        "duration": "Duration",
-        "notes": "Agenda / Notes",
-        "notesPlaceholder": "What will you discuss?",
-        "failedToCancel": "Failed to cancel consultation",
-        "notFound": "Consultation not found",
-        "calendarConflict": "There is a calendar conflict. Do you want to proceed anyway?",
-        "cancelConfirm": "Are you sure you want to cancel this consultation?"
-      }
+    "analytics": {
+      "totalRequests": "Total Requests",
+      "activeRequests": "Active Requests",
+      "activeRequestsSubtitle": "Currently in progress",
+      "completed": "Completed",
+      "completedSubtitle": "Successfully delivered",
+      "totalSpend": "Total Spend",
+      "totalSpendSubtitle": "Payments completed",
+      "noDataYet": "No Data Yet",
+      "noDataDescription": "Create your first request to see analytics",
+      "inLast30Days": "in last 30 days",
+      "total": "Total",
+      "active": "Active",
+      "done": "Done",
+      "avgResolution": "Avg. Resolution",
+      "days": "days"
     },
     "requests": {
       "title": "Project Requests",
@@ -1082,6 +689,819 @@
         }
       }
     },
+    "loading": {
+      "init": "Initializing Studio Environment",
+      "workspace": "Accessing Secure Workspace",
+      "auth": {
+        "login": "Loading sign in...",
+        "signup": "Loading signup...",
+        "invite": "Loading invitation..."
+      }
+    },
+    "onboarding": {
+      "skip": "Skip tour",
+      "step": "Step",
+      "prev": "Back",
+      "next": "Next",
+      "start": "Let's Go!",
+      "goToStep": "Go to step",
+      "keyboardHint": "Use arrow keys to navigate, Enter to continue, Esc to skip",
+      "steps": {
+        "welcome": {
+          "title": "Welcome to CartShift Portal!",
+          "description": "We're thrilled to have you here. Let's take a quick tour to help you get started with your new workspace."
+        },
+        "dashboard": {
+          "title": "Your Dashboard",
+          "description": "This is your command center. See an overview of your projects, track progress, and quickly access recent activity."
+        },
+        "requests": {
+          "title": "Submit Requests",
+          "description": "Need something done? Create requests for new features, bug fixes, optimizations, or any other work. Our team will review and get started."
+        },
+        "pricing": {
+          "title": "Pricing & Quotes",
+          "description": "Review pricing proposals from our team, accept quotes, and manage payments — all in one place."
+        },
+        "team": {
+          "title": "Team Collaboration",
+          "description": "Invite colleagues to your workspace. Everyone on your team can submit requests and track progress together."
+        },
+        "notifications": {
+          "title": "Stay Updated",
+          "description": "Never miss an update. We'll notify you when there's activity on your requests or important status changes."
+        },
+        "complete": {
+          "title": "You're All Set!",
+          "description": "Your workspace is ready. Start by creating your first request or explore the dashboard to see what's possible."
+        }
+      }
+    },
+    "industries": {
+      "ecommerce": "E-commerce",
+      "saas": "SaaS",
+      "agency": "Agency",
+      "education": "Education",
+      "healthcare": "Healthcare",
+      "other": "Other"
+    },
+    "auth": {
+      "login": {
+        "title": "Welcome back",
+        "subtitle": "Sign in to your CartShift portal",
+        "email": "Email",
+        "password": "Password",
+        "forgotPassword": "Forgot password?",
+        "rememberMe": "Keep me signed in",
+        "signIn": "Sign in",
+        "sso": "Or continue with",
+        "google": "Google SSO",
+        "noAccount": "Don't have an account yet?",
+        "createOne": "Create one here",
+        "secure": "Secure Enterprise Access"
+      },
+      "signup": {
+        "title": "Create your account",
+        "subtitle": "Get started with the CartShift portal",
+        "fullName": "Full Name",
+        "email": "Email Address",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "createAccount": "Create Account",
+        "alreadyHaveAccount": "Already have an account?",
+        "signIn": "Sign in",
+        "secure": "Secure Enterprise Access"
+      },
+      "errors": {
+        "userNotFound": "No account found with this email address.",
+        "wrongPassword": "Invalid email or password.",
+        "invalidEmail": "Please enter a valid email address.",
+        "tooManyRequests": "Too many failed attempts. Please try again later.",
+        "generic": "An unexpected error occurred. Please try again.",
+        "emailInUse": "An account with this email already exists.",
+        "weakPassword": "Password is too weak. Please choose a stronger password.",
+        "passwordTooShort": "Password must be at least 6 characters",
+        "passwordRequirements": "Password must contain both letters and numbers",
+        "matchPassword": "Passwords don't match",
+        "invalidCode": "Invalid invite code",
+        "inviteNotFound": "Invite not found",
+        "alreadyAccepted": "This invite has already been accepted",
+        "expired": "This invite has expired",
+        "mismatch": "This invite was sent to a different email address",
+        "genericInvite": "Failed to load invite"
+      },
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "passwordStrength": {
+        "veryWeak": "Very weak - add more characters",
+        "weak": "Weak - try adding numbers",
+        "fair": "Fair - try adding special characters",
+        "strong": "Strong password",
+        "veryStrong": "Very strong password"
+      }
+    },
+    "invite": {
+      "title": "You're Invited!",
+      "subtitle": "You've been invited to join an organization",
+      "error": "Invite Error",
+      "notFound": "Invite not found",
+      "expired": "Invite Expired",
+      "expiredDesc": "This invite has expired.",
+      "alreadyAccepted": "Already Accepted",
+      "alreadyAcceptedDesc": "This invite has already been accepted.",
+      "success": "Invite Accepted!",
+      "redirecting": "Redirecting you to the organization...",
+      "invitedEmail": "Invited email:",
+      "role": "Role:",
+      "invitedBy": "Invited by:",
+      "expires": "Expires:",
+      "guestIntro": "To accept this invite, you need an account",
+      "createAccount": "Create Account",
+      "signIn": "Sign In",
+      "alreadyHasAccount": "Already have an account? Click \"Sign In\" above",
+      "accept": "Accept Invite",
+      "accepting": "Accepting...",
+      "emailMismatch": "This invite was sent to {email}, but you're signed in as {userEmail}. Please sign in with the correct email address."
+    },
+    "files": {
+      "title": "Files & Assets",
+      "subtitle": "Unified storage for all your project documents and resources.",
+      "upload": "Upload Asset",
+      "searchPlaceholder": "Search by filename...",
+      "totalFiles": "Total Files",
+      "recentlyAdded": "Recently Added",
+      "table": {
+        "identity": "Asset Identity",
+        "metadata": "Metadata",
+        "format": "Format",
+        "transmission": "Transmission",
+        "actions": "Actions",
+        "addedBy": "Added by",
+        "system": "System"
+      },
+      "actions": {
+        "download": "Download",
+        "share": "Share",
+        "delete": "Delete",
+        "deleteConfirm": "Are you sure you want to delete this file?",
+        "deleted": "File deleted successfully",
+        "deleteFailed": "Failed to delete file"
+      },
+      "empty": {
+        "title": "No assets syncronized",
+        "search": "We couldn't find any files matching your search.",
+        "noFiles": "This organization workspace is currently empty.",
+        "uploadFirst": "Upload First Asset",
+        "syncing": "Syncing your assets..."
+      },
+      "error": {
+        "title": "Asset Sync Error",
+        "retry": "Retry Sync"
+      },
+      "uploadForm": {
+        "title": "Upload File",
+        "browse": "Click to browse files",
+        "maxSize": "Maximum file size: 10MB",
+        "uploading": "Uploading...",
+        "errorSize": "File size must be less than 10MB",
+        "errorGeneric": "Failed to upload file. Please try again.",
+        "cancel": "Cancel",
+        "submit": "Upload File"
+      }
+    },
+    "organization": {
+      "createForm": {
+        "title": "Create New Organization",
+        "nameLabel": "Organization Name *",
+        "namePlaceholder": "e.g. Acme Corporation",
+        "websiteLabel": "Website",
+        "websitePlaceholder": "https://example.com",
+        "industryLabel": "Industry",
+        "industryPlaceholder": "e.g. E-commerce, SaaS, Marketing",
+        "note": "Note:",
+        "noteText": "You will be set as the owner of this organization and can invite team members later.",
+        "cancel": "Cancel",
+        "submit": "Create Organization",
+        "submitting": "Creating...",
+        "errors": {
+          "name": "Organization name must be at least 3 characters",
+          "nameLong": "Name is too long",
+          "website": "Please enter a valid URL",
+          "industry": "Industry must be at least 2 characters",
+          "auth": "You must be logged in to create an organization",
+          "generic": "Failed to create organization. Please try again."
+        }
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Manage organization preferences and workspace.",
+      "tabs": {
+        "general": "General",
+        "profile": "My Profile",
+        "notifications": "Notifications",
+        "security": "Security",
+        "billing": "Billing"
+      },
+      "profile": {
+        "title": "Personal Profile",
+        "subtitle": "Manage your individual identity and appearance",
+        "name": "Full Name",
+        "namePlaceholder": "Your Name",
+        "email": "Email Address",
+        "avatar": {
+          "title": "Profile Photo",
+          "desc": "Upload a professional thumbnail to represent you across the portal.",
+          "upload": "Upload Photo",
+          "change": "Change Photo",
+          "removing": "Removing...",
+          "remove": "Remove",
+          "sizeError": "Image size must be less than 2MB",
+          "uploadSuccess": "Profile photo updated",
+          "uploadError": "Failed to upload photo",
+          "removeSuccess": "Profile photo removed",
+          "removeError": "Failed to remove photo"
+        },
+        "save": "Update Profile",
+        "success": "Your profile has been updated!",
+        "error": "Failed to update profile"
+      },
+      "general": {
+        "title": "Organization Profile",
+        "subtitle": "Basic information and appearance",
+        "logoLabel": "Organization Logo",
+        "logoUpload": "Upload Logo",
+        "logoChange": "Change Logo",
+        "logoRemove": "Remove Logo",
+        "logoHint": "PNG, JPG up to 2MB. Square images work best.",
+        "logo": {
+          "sizeError": "Logo size must be less than 2MB",
+          "uploadSuccess": "Organization logo updated",
+          "uploadError": "Failed to upload logo",
+          "removeSuccess": "Organization logo removed",
+          "removeError": "Failed to remove logo"
+        },
+        "orgName": "Organization Name",
+        "orgNamePlaceholder": "e.g. Acme Corp",
+        "industry": "Industry / Niche",
+        "industryPlaceholder": "e.g. Tech, SaaS",
+        "website": "Business Website",
+        "websitePlaceholder": "https://acme.com",
+        "bio": "Business Overview",
+        "bioPlaceholder": "Give us brief context on what you do...",
+        "save": "Save Profile",
+        "saving": "Processing...",
+        "success": "Profile updated successfully!",
+        "error": "Failed to save settings",
+        "permissionDenied": "You do not have permission to access this organization",
+        "orgNotFound": "Organization not found",
+        "newWorkspace": {
+          "title": "New Workspace",
+          "description": "Need another workspace? Create a separate organization for a different team.",
+          "button": "Create Organization"
+        },
+        "dangerZone": {
+          "title": "Danger Zone",
+          "description": "Permanently delete this organization and all of its data. This action is not reversible.",
+          "button": "Delete Workspace"
+        },
+        "onboarding": {
+          "title": "Restart Tour",
+          "description": "Re-experience the portal walkthrough to discover new features.",
+          "button": "Start Tour",
+          "success": "Onboarding will start on next page load",
+          "error": "Failed to reset onboarding status"
+        },
+        "storeIntegrations": "Store Integrations"
+      },
+      "notifications": {
+        "title": "Channels & Alerts",
+        "subtitle": "Email Delivery Settings",
+        "requestUpdate": {
+          "label": "Request Milestone Updates",
+          "desc": "Notifications for every movement in your project lifecycle."
+        },
+        "commentAlerts": {
+          "label": "Real-time Comment Alerts",
+          "desc": "Stay in the loop when specialists or team members reply."
+        },
+        "statusChange": {
+          "label": "Direct Delivery Status",
+          "desc": "High-priority alerts for 'Delivered' and 'In Review' statuses."
+        },
+        "marketing": {
+          "label": "Product & Design News",
+          "desc": "Occasional insights from our studio on scaling your business."
+        },
+        "syncing": "Syncing changes...",
+        "saved": "Settings Active",
+        "pushBeta": "Looking for browser alerts?",
+        "pushBetaSub": "Beta testing starts Early 2026"
+      },
+      "security": {
+        "title": "Security Layer",
+        "subtitle": "Control your access",
+        "changePassword": {
+          "title": "Change Password",
+          "desc": "Reset your password via a secure verification link sent to your email.",
+          "button": "Request Reset Link",
+          "sent": "Link Sent",
+          "success": "Link Sent",
+          "error": "Failed to send reset link."
+        },
+        "mfa": {
+          "title": "Two-Factor Auth (MFA)",
+          "desc": "Add a mobile authenticator app for maximum account protection.",
+          "badge": "Pipeline 2026"
+        },
+        "session": {
+          "title": "Active Session Details",
+          "email": "Email ID",
+          "provider": "Identity Provider",
+          "mailService": "Mail Service"
+        }
+      },
+      "billing": {
+        "title": "Investment & Plans",
+        "nextPayment": "Pro Partner Status",
+        "priority": "Partner Priority",
+        "proStatus": "Active Partner",
+        "investment": "Monthly Investment",
+        "workflowLimit": "Active Workflows",
+        "teamAvailability": "Team Availability",
+        "perMonth": "/month",
+        "unlimited": "Unlimited",
+        "seats": "10 Active Seats",
+        "stripeDashboard": "Stripe Portal",
+        "invoicingHistory": "Billing History",
+        "activeSubscription": "Active Subscription",
+        "enterpriseStatus": "Contact for details",
+        "plans": {
+          "free": "Free Tier",
+          "pro": "Studio Pro",
+          "enterprise": "Enterprise"
+        },
+        "encrypted": {
+          "title": "Bank-Grade Encryption",
+          "desc": "All transaction data is handled securely via Stripe, protected by AES-256 encryption. We never store your full payment details."
+        }
+      }
+    },
+    "sidebar": {
+      "title": "CartShift",
+      "subtitle": "Studio Portal",
+      "collapse": "Collapse",
+      "close": "Close",
+      "signOut": "Sign Out",
+      "nav": {
+        "inbox": "Inbox",
+        "workboard": "Workboard",
+        "clients": "Clients",
+        "settings": "Settings",
+        "dashboard": "Dashboard",
+        "requests": "Requests",
+        "pricing": "Pricing Offers",
+        "team": "Team",
+        "files": "Files",
+        "consultations": "Consultations"
+      }
+    },
+    "header": {
+      "search": "Search...",
+      "searchPlaceholder": "Search global resources...",
+      "authorizedMember": "Authorized Member",
+      "agencyPartner": "Agency Partner",
+      "enterprise": "Enterprise",
+      "level": "Level 2",
+      "notifications": "Notifications",
+      "noNotifications": "No notifications"
+    },
+    "accountType": {
+      "client": "Client",
+      "agency": "Agency",
+      "badge": {
+        "client": "Client Account",
+        "agency": "Agency Partner"
+      }
+    },
+    "accessibility": {
+      "skipToContent": "Skip to main content",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "helpCenter": "Help center",
+      "notifications": "View notifications",
+      "userProfile": "User profile",
+      "search": "Search",
+      "searchPlaceholder": "Search..."
+    },
+    "breadcrumbs": {
+      "home": "Home",
+      "portal": "Portal",
+      "organization": "Organization",
+      "dashboard": "Dashboard",
+      "requests": "Requests",
+      "settings": "Settings",
+      "team": "Team",
+      "files": "Files",
+      "pricing": "Pricing",
+      "consultations": "Consultations",
+      "agency": "Agency",
+      "inbox": "Inbox",
+      "workboard": "Workboard",
+      "clients": "Clients",
+      "new": "New"
+    },
+    "toast": {
+      "dismiss": "Dismiss",
+      "undo": "Undo"
+    },
+    "errorState": {
+      "title": "Something went wrong",
+      "message": "We encountered an error while processing your request. Please try again.",
+      "retry": "Try Again",
+      "goBack": "Go Back",
+      "home": "Go Home",
+      "contactSupport": "Contact Support"
+    },
+    "emptyState": {
+      "requests": {
+        "title": "No requests yet",
+        "description": "Create your first request to get started with our services."
+      },
+      "team": {
+        "title": "No team members",
+        "description": "Invite your team members to collaborate on this workspace."
+      },
+      "files": {
+        "title": "No files uploaded",
+        "description": "Upload files to share with your team and agency."
+      },
+      "notifications": {
+        "title": "All caught up!",
+        "description": "You have no new notifications at this time."
+      },
+      "inbox": {
+        "title": "Inbox is empty",
+        "description": "New messages and updates will appear here."
+      },
+      "calendar": {
+        "title": "No consultations scheduled",
+        "description": "Schedule a consultation to discuss your project."
+      },
+      "pricing": {
+        "title": "No pricing offers",
+        "description": "Pricing proposals will appear here once created."
+      },
+      "messages": {
+        "title": "No messages yet",
+        "description": "Start a conversation or wait for updates."
+      },
+      "generic": {
+        "title": "Nothing here yet",
+        "description": "This section is empty. Check back later!"
+      }
+    },
+    "consultations": {
+      "title": "Consultations",
+      "subtitle": "Manage client meetings and consultations",
+      "clientSubtitle": "View your scheduled meetings and consultation history",
+      "schedule": "Schedule Consultation",
+      "scheduleCall": "Schedule a Call",
+      "scheduleNow": "Schedule Now",
+      "searchPlaceholder": "Search consultations...",
+      "upcoming": "Upcoming",
+      "past": "Past Consultations",
+      "notes": "Meeting Notes",
+      "actionItems": "Action Items",
+      "stats": {
+        "upcoming": "Upcoming",
+        "completed": "Completed",
+        "canceled": "Canceled",
+        "total": "Total"
+      },
+      "empty": {
+        "title": "No consultations found",
+        "description": "Schedule your first consultation to get started",
+        "noClientOrganizations": "No client organizations found"
+      },
+      "noUpcoming": "No upcoming consultations",
+      "noUpcomingDesc": "Ready to discuss your project? Schedule a call with our team.",
+      "agenda": "Agenda",
+      "join": "Join",
+      "cancel": "Cancel",
+      "minutes": "min",
+      "userFallback": "User",
+      "types": {
+        "onboarding": "Onboarding Call",
+        "strategy": "Strategy Session",
+        "project_review": "Project Review",
+        "support": "Support Call"
+      },
+      "status": {
+        "scheduled": "Scheduled",
+        "completed": "Completed",
+        "canceled": "Canceled",
+        "no_show": "No Show"
+      },
+      "form": {
+        "type": "Type",
+        "title": "Meeting Title",
+        "titlePlaceholder": "e.g., Strategy Discussion",
+        "date": "Date",
+        "time": "Time",
+        "duration": "Duration",
+        "notes": "Agenda / Notes",
+        "notesPlaceholder": "What will you discuss?",
+        "failedToCancel": "Failed to cancel consultation",
+        "notFound": "Consultation not found",
+        "calendarConflict": "There is a calendar conflict. Do you want to proceed anyway?",
+        "cancelConfirm": "Are you sure you want to cancel this consultation?"
+      }
+    },
+    "agency": {
+      "inbox": {
+        "title": "Agency Inbox",
+        "subtitle": "Global view of all client requests and communications.",
+        "searchPlaceholder": "Search requests...",
+        "activeItems": "Active Items",
+        "loading": "Loading agency inbox...",
+        "emptyTitle": "Your inbox is clear",
+        "emptyDesc": "All client requests have been processed or sorted.",
+        "clientOrg": "Client Org",
+        "accessRequired": "Agency Access Required",
+        "accessDenied": "Your account ({email}) does not have permissions to access the Agency Inbox.",
+        "accessDeniedTitle": "Access Denied",
+        "notRegisteredAsAdmin": "Your account ({email}) is not registered as an Agency Administrator.",
+        "repairPermissions": "Repair Permissions",
+        "repairFailed": "Permission repair failed. Check console for details.",
+        "errors": {
+          "sameOrgRequired": "Please select requests from the same client organization."
+        }
+      },
+      "pricing": {
+        "subtitle": "Manage pricing offers across all client organizations.",
+        "revenue": "Revenue"
+      },
+      "workboard": {
+        "title": "Project Workboard",
+        "subtitle": "Real-time status of all active client projects across the agency.",
+        "loading": "Synchronizing Kanban Board...",
+        "roadmap": "Q4 Roadmap",
+        "assign": "Assign Item",
+        "emptyColumn": "No Active Tasks",
+        "moved": "Card moved",
+        "moveError": "Move failed",
+        "columns": {
+          "backlog": "New & Backlog",
+          "inProgress": "In Progress",
+          "review": "Feedback & Review",
+          "delivered": "Delivered"
+        },
+        "viewRequest": "View request"
+      },
+      "clients": {
+        "title": "Client Portfolio",
+        "subtitle": "Direct access and management for all partner organizations.",
+        "onboard": "Onboard New Client",
+        "searchPlaceholder": "Search by company name...",
+        "activeAccounts": "Active Accounts",
+        "export": "Performance Export",
+        "loading": "Retrieving Client Portfolio...",
+        "tickets": "Open Tickets",
+        "members": "Members",
+        "dashboard": "Enter Dashboard",
+        "emptyTitle": "No clients found",
+        "emptyDesc": "Either you have no active clients or they don't match your search criteria.",
+        "badge": {
+          "active": "ACTIVE",
+          "inactive": "INACTIVE",
+          "suspended": "SUSPENDED"
+        },
+        "plans": {
+          "free": "Free Starter",
+          "pro": "Pro Partner",
+          "enterprise": "Enterprise Partner"
+        },
+        "enterprise": "Enterprise Partner",
+        "noClientId": "No client ID provided",
+        "unexpectedError": "An unexpected error occurred",
+        "detail": {
+          "loading": "Loading client details...",
+          "backToClients": "Back to Clients",
+          "overview": "Client Overview",
+          "viewDashboard": "View Client Dashboard",
+          "editClient": "Edit Client",
+          "stats": {
+            "totalRequests": "Total Requests",
+            "activeRequests": "Active Requests",
+            "completedRequests": "Completed",
+            "teamMembers": "Team Members",
+            "avgResolution": "Avg. Resolution",
+            "totalRevenue": "Total Revenue",
+            "days": "days",
+            "lastActive": "Last Active",
+            "joinedDate": "Client Since"
+          },
+          "sections": {
+            "information": "Client Information",
+            "recentActivity": "Recent Activity",
+            "requests": "Recent Requests",
+            "team": "Team Members"
+          },
+          "info": {
+            "website": "Website",
+            "industry": "Industry",
+            "plan": "Plan",
+            "status": "Status",
+            "email": "Contact Email",
+            "phone": "Phone"
+          },
+          "actions": {
+            "createRequest": "Create Request for Client",
+            "viewAllRequests": "View All Requests",
+            "managePlan": "Manage Plan",
+            "sendEmail": "Send Email",
+            "exportData": "Export Client Data"
+          },
+          "requests": {
+            "viewAll": "View All",
+            "emptyTitle": "No requests yet",
+            "emptyDesc": "This client hasn't created any requests."
+          },
+          "team": {
+            "viewAll": "View All Members",
+            "owner": "Owner",
+            "admin": "Admin",
+            "member": "Member",
+            "emptyTitle": "No team members",
+            "emptyDesc": "This client hasn't invited any team members yet."
+          },
+          "activity": {
+            "emptyTitle": "No recent activity",
+            "emptyDesc": "No activity recorded for this client yet."
+          }
+        }
+      },
+      "settings": {
+        "title": "Agency Settings",
+        "subtitle": "Manage global agency configurations and team defaults.",
+        "tabs": {
+          "profile": "Agency Profile",
+          "services": "Service Packages",
+          "team": "Internal Team",
+          "integrations": "Integrations",
+          "billing": "Payouts"
+        },
+        "profile": {
+          "title": "Agency Profile",
+          "nameLabel": "Agency Name",
+          "namePlaceholder": "Your Agency Name",
+          "emailLabel": "Support Email",
+          "emailPlaceholder": "support@agency.com",
+          "websiteLabel": "Agency Website",
+          "websitePlaceholder": "https://agency.com",
+          "phoneLabel": "Phone Number",
+          "phonePlaceholder": "+1 (555) 123-4567",
+          "descLabel": "Agency Description",
+          "descPlaceholder": "Brief description of your agency and services...",
+          "save": "Save Changes",
+          "saving": "Saving...",
+          "success": "Settings saved successfully!",
+          "failedToUpload": "Failed to upload photo"
+        },
+        "team": {
+          "title": "Internal Team",
+          "subtitle": "Manage your agency team members and permissions.",
+          "invite": "Invite Member",
+          "table": {
+            "member": "Member",
+            "status": "Status",
+            "joined": "Joined",
+            "action": "Action"
+          },
+          "active": "Active",
+          "inactive": "Inactive",
+          "suspended": "Suspended",
+          "edit": "Edit",
+          "noMembers": "No team members found",
+          "pendingInvites": "Pending Invitations",
+          "cancelInvite": "Cancel"
+        },
+        "services": {
+          "title": "Service Catalog",
+          "subtitle": "Define and manage the services your agency offers.",
+          "add": "Add Service",
+          "empty": "No services defined yet",
+          "emptyDesc": "Create your first service to start offering it to clients.",
+          "form": {
+            "addTitle": "Add New Service",
+            "addSubtitle": "Create a new service offering for your clients.",
+            "editTitle": "Edit Service",
+            "editSubtitle": "Update service details for your catalog.",
+            "fields": {
+              "name": "Service Name",
+              "namePlaceholder": "e.g. Website Maintenance",
+              "basePrice": "Base Price",
+              "currency": "Currency",
+              "category": "Category",
+              "categoryPlaceholder": "e.g. Development, Design, SEO",
+              "description": "Description",
+              "descriptionPlaceholder": "Briefly describe what this service includes...",
+              "active": "Active & Visible to Clients"
+            },
+            "actions": {
+              "create": "Create Service",
+              "update": "Update Service",
+              "cancel": "Cancel"
+            },
+            "errors": {
+              "required": "Name and price are required",
+              "failed": "Failed to save service"
+            }
+          }
+        },
+        "integrations": {
+          "subtitle": "Connect your favorite tools",
+          "connected": "Connected",
+          "googleCalendar": {
+            "title": "Google Calendar",
+            "description": "Sync consultations with your Google Calendar and get automatic Meet links.",
+            "connect": "Connect Google Calendar",
+            "connecting": "Connecting...",
+            "disconnect": "Disconnect",
+            "disconnectConfirm": "Are you sure you want to disconnect Google Calendar?",
+            "syncNow": "Sync Now",
+            "syncing": "Syncing...",
+            "account": "Account",
+            "lastSync": "Last synced",
+            "calendars": "Calendars",
+            "feature1": "Auto-create calendar events for consultations",
+            "feature2": "Get Google Meet links automatically",
+            "feature3": "View your availability in the portal"
+          },
+          "slack": {
+            "title": "Slack",
+            "description": "Get notifications in your Slack workspace"
+          },
+          "stripe": {
+            "title": "Stripe",
+            "description": "Accept payments on your pricing offers"
+          },
+          "shopify": {
+            "title": "Shopify Store Access",
+            "description": "Enable fast, secure collaborator access to your Shopify store.",
+            "storeUrl": "Store URL",
+            "collaboratorCode": "Collaborator Code",
+            "status": {
+              "pending": "Pending",
+              "requested": "Access Requested",
+              "connected": "Connected",
+              "revoked": "Revoked"
+            },
+            "statusMessages": {
+              "pending": "Waiting for your agency to request access to your store.",
+              "requested": "Access has been requested. Please approve in your Shopify admin.",
+              "connected": "Your agency has full collaborator access to your store."
+            },
+            "features": {
+              "feature1": "Enable fast theme customizations and updates",
+              "feature2": "Allow your agency to manage apps and integrations",
+              "feature3": "Secure collaborator access with no staff seat used"
+            },
+            "form": {
+              "storeUrl": "Your Shopify Store URL",
+              "storeUrlHint": "Enter your store's .myshopify.com URL (e.g., yourstore.myshopify.com)",
+              "collaboratorCode": "Collaborator Request Code",
+              "collaboratorCodeHint": "Found in Shopify Admin > Settings > Users > Security. Leave empty if not enabled.",
+              "optional": "optional",
+              "infoTitle": "Where to find the collaborator code?",
+              "infoDesc": "In your Shopify admin, go to Settings > Users and permissions > Security. If enabled, you'll see a 4-digit code.",
+              "save": "Save Store Details",
+              "saving": "Saving...",
+              "cancel": "Cancel"
+            },
+            "actions": {
+              "connect": "Connect Store",
+              "edit": "Edit Store Details"
+            },
+            "errors": {
+              "invalidDomain": "Please enter a valid .myshopify.com domain",
+              "invalidCode": "Collaborator code must be 4 digits",
+              "saveFailed": "Failed to save. Please try again."
+            },
+            "agency": {
+              "notConnected": "Shopify Store Not Connected",
+              "notConnectedDesc": "The client hasn't connected their Shopify store yet.",
+              "requestAccess": "Request Collaborator Access",
+              "markRequested": "Mark as Requested",
+              "markConnected": "Mark as Connected",
+              "openPartnerDashboard": "Open Partner Dashboard",
+              "openAdmin": "Open Store Admin"
+            }
+          }
+        }
+      }
+    },
     "team": {
       "title": "Team Members",
       "subtitle": "Manage collaborators and permissions for this organization.",
@@ -1224,356 +1644,23 @@
         "accepted": "Ready to Pay",
         "paid": "Completed"
       }
-    },
-    "onboarding": {
-      "skip": "Skip tour",
-      "step": "Step",
-      "prev": "Back",
-      "next": "Next",
-      "start": "Let's Go!",
-      "goToStep": "Go to step",
-      "keyboardHint": "Use arrow keys to navigate, Enter to continue, Esc to skip",
-      "steps": {
-        "welcome": {
-          "title": "Welcome to CartShift Portal!",
-          "description": "We're thrilled to have you here. Let's take a quick tour to help you get started with your new workspace."
-        },
-        "dashboard": {
-          "title": "Your Dashboard",
-          "description": "This is your command center. See an overview of your projects, track progress, and quickly access recent activity."
-        },
-        "requests": {
-          "title": "Submit Requests",
-          "description": "Need something done? Create requests for new features, bug fixes, optimizations, or any other work. Our team will review and get started."
-        },
-        "pricing": {
-          "title": "Pricing & Quotes",
-          "description": "Review pricing proposals from our team, accept quotes, and manage payments — all in one place."
-        },
-        "team": {
-          "title": "Team Collaboration",
-          "description": "Invite colleagues to your workspace. Everyone on your team can submit requests and track progress together."
-        },
-        "notifications": {
-          "title": "Stay Updated",
-          "description": "Never miss an update. We'll notify you when there's activity on your requests or important status changes."
-        },
-        "complete": {
-          "title": "You're All Set!",
-          "description": "Your workspace is ready. Start by creating your first request or explore the dashboard to see what's possible."
-        }
-      }
-    },
-    "agency": {
-      "inbox": {
-        "title": "Agency Inbox",
-        "subtitle": "Global view of all client requests and communications.",
-        "searchPlaceholder": "Search requests...",
-        "activeItem": "Active Item",
-        "activeItems": "Active Items",
-        "loading": "Loading agency inbox...",
-        "emptyTitle": "Your inbox is clear",
-        "emptyDesc": "All client requests have been processed or sorted.",
-        "clientOrg": "Client Org",
-        "accessRequired": "Agency Access Required",
-        "accessDenied": "Your account ({email}) does not have permissions to access the Agency Inbox.",
-        "accessDeniedTitle": "Access Denied",
-        "notRegisteredAsAdmin": "Your account ({email}) is not registered as an Agency Administrator.",
-        "repairPermissions": "Repair Permissions",
-        "repairFailed": "Permission repair failed. Check console for details.",
-        "errors": {
-          "sameOrgRequired": "Please select requests from the same client organization."
-        }
-      },
-    "pricing": {
-      "subtitle": "Manage pricing offers across all client organizations.",
-      "revenue": "Revenue"
-    },
-    "workboard": {
-      "title": "Project Workboard",
-      "subtitle": "Real-time status of all active client projects across the agency.",
-      "loading": "Synchronizing Kanban Board...",
-      "roadmap": "Q4 Roadmap",
-      "assign": "Assign Item",
-      "emptyColumn": "No Active Tasks",
-      "moved": "Card moved",
-      "moveError": "Move failed",
-      "columns": {
-        "backlog": "New & Backlog",
-        "inProgress": "In Progress",
-        "review": "Feedback & Review",
-        "delivered": "Delivered"
-      },
-      "viewRequest": "View request"
-    },
-    "clients": {
-      "title": "Client Portfolio",
-      "subtitle": "Direct access and management for all partner organizations.",
-      "onboard": "Onboard New Client",
-      "searchPlaceholder": "Search by company name...",
-      "activeAccounts": "Active Accounts",
-      "export": "Performance Export",
-      "loading": "Retrieving Client Portfolio...",
-      "tickets": "Open Tickets",
-      "members": "Members",
-      "dashboard": "Enter Dashboard",
-      "emptyTitle": "No clients found",
-      "emptyDesc": "Either you have no active clients or they don't match your search criteria.",
-      "badge": {
-        "active": "ACTIVE",
-        "inactive": "INACTIVE",
-        "suspended": "SUSPENDED"
-      },
-      "plans": {
-        "free": "Free Starter",
-        "pro": "Pro Partner",
-        "enterprise": "Enterprise Partner"
-      },
-      "enterprise": "Enterprise Partner",
-      "noClientId": "No client ID provided",
-      "unexpectedError": "An unexpected error occurred",
-      "detail": {
-        "loading": "Loading client details...",
-        "backToClients": "Back to Clients",
-        "overview": "Client Overview",
-        "viewDashboard": "View Client Dashboard",
-        "editClient": "Edit Client",
-        "stats": {
-          "totalRequests": "Total Requests",
-          "activeRequests": "Active Requests",
-          "completedRequests": "Completed",
-          "teamMembers": "Team Members",
-          "avgResolution": "Avg. Resolution",
-          "totalRevenue": "Total Revenue",
-          "days": "days",
-          "lastActive": "Last Active",
-          "joinedDate": "Client Since"
-        },
-        "sections": {
-          "information": "Client Information",
-          "recentActivity": "Recent Activity",
-          "requests": "Recent Requests",
-          "team": "Team Members"
-        },
-        "info": {
-          "website": "Website",
-          "industry": "Industry",
-          "plan": "Plan",
-          "status": "Status",
-          "email": "Contact Email",
-          "phone": "Phone"
-        },
-        "actions": {
-          "createRequest": "Create Request for Client",
-          "viewAllRequests": "View All Requests",
-          "managePlan": "Manage Plan",
-          "sendEmail": "Send Email",
-          "exportData": "Export Client Data"
-        },
-        "requests": {
-          "viewAll": "View All",
-          "emptyTitle": "No requests yet",
-          "emptyDesc": "This client hasn't created any requests."
-        },
-        "team": {
-          "viewAll": "View All Members",
-          "owner": "Owner",
-          "admin": "Admin",
-          "member": "Member",
-          "emptyTitle": "No team members",
-          "emptyDesc": "This client hasn't invited any team members yet."
-        },
-        "activity": {
-          "emptyTitle": "No recent activity",
-          "emptyDesc": "No activity recorded for this client yet."
-        }
-      },
-      "settings": {
-        "title": "Agency Settings",
-        "subtitle": "Manage global agency configurations and team defaults.",
-        "tabs": {
-        "profile": "Agency Profile",
-        "services": "Service Packages",
-        "team": "Internal Team",
-        "integrations": "Integrations",
-        "billing": "Payouts"
-      },
-      "profile": {
-        "title": "Agency Profile",
-        "nameLabel": "Agency Name",
-        "namePlaceholder": "Your Agency Name",
-        "emailLabel": "Support Email",
-        "emailPlaceholder": "support@agency.com",
-        "websiteLabel": "Agency Website",
-        "websitePlaceholder": "https://agency.com",
-        "phoneLabel": "Phone Number",
-        "phonePlaceholder": "+1 (555) 123-4567",
-        "descLabel": "Agency Description",
-        "descPlaceholder": "Brief description of your agency and services...",
-        "save": "Save Changes",
-        "saving": "Saving...",
-        "success": "Settings saved successfully!",
-        "failedToUpload": "Failed to upload photo"
-      },
-      "team": {
-        "title": "Internal Team",
-        "subtitle": "Manage your agency team members and permissions.",
-        "invite": "Invite Member",
-        "table": {
-          "member": "Member",
-          "status": "Status",
-          "joined": "Joined",
-          "action": "Action"
-        },
-        "active": "Active",
-        "inactive": "Inactive",
-        "suspended": "Suspended",
-        "edit": "Edit",
-        "noMembers": "No team members found",
-        "pendingInvites": "Pending Invitations",
-        "cancelInvite": "Cancel"
-      },
-      "services": {
-        "title": "Service Catalog",
-        "subtitle": "Define and manage the services your agency offers.",
-        "add": "Add Service",
-        "empty": "No services defined yet",
-        "emptyDesc": "Create your first service to start offering it to clients.",
-        "form": {
-          "addTitle": "Add New Service",
-          "addSubtitle": "Create a new service offering for your clients.",
-          "editTitle": "Edit Service",
-          "editSubtitle": "Update service details for your catalog.",
-          "fields": {
-            "name": "Service Name",
-            "namePlaceholder": "e.g. Website Maintenance",
-            "basePrice": "Base Price",
-            "currency": "Currency",
-            "category": "Category",
-            "categoryPlaceholder": "e.g. Development, Design, SEO",
-            "description": "Description",
-            "descriptionPlaceholder": "Briefly describe what this service includes...",
-            "active": "Active & Visible to Clients"
-          },
-          "actions": {
-            "create": "Create Service",
-            "update": "Update Service",
-            "cancel": "Cancel"
-          },
-          "errors": {
-            "required": "Name and price are required",
-            "failed": "Failed to save service"
-          }
-        }
-      },
-      "integrations": {
-        "subtitle": "Connect your favorite tools",
-        "connected": "Connected",
-        "googleCalendar": {
-          "title": "Google Calendar",
-          "description": "Sync consultations with your Google Calendar and get automatic Meet links.",
-          "connect": "Connect Google Calendar",
-          "connecting": "Connecting...",
-          "disconnect": "Disconnect",
-          "disconnectConfirm": "Are you sure you want to disconnect Google Calendar?",
-          "syncNow": "Sync Now",
-          "syncing": "Syncing...",
-          "account": "Account",
-          "lastSync": "Last synced",
-          "calendars": "Calendars",
-          "feature1": "Auto-create calendar events for consultations",
-          "feature2": "Get Google Meet links automatically",
-          "feature3": "View your availability in the portal"
-        },
-        "slack": {
-          "title": "Slack",
-          "description": "Get notifications in your Slack workspace"
-        },
-        "stripe": {
-          "title": "Stripe",
-          "description": "Accept payments on your pricing offers"
-        },
-        "shopify": {
-          "title": "Shopify Store Access",
-          "description": "Enable fast, secure collaborator access to your Shopify store.",
-          "storeUrl": "Store URL",
-          "collaboratorCode": "Collaborator Code",
-          "status": {
-            "pending": "Pending",
-            "requested": "Access Requested",
-            "connected": "Connected",
-            "revoked": "Revoked"
-          },
-          "statusMessages": {
-            "pending": "Waiting for your agency to request access to your store.",
-            "requested": "Access has been requested. Please approve in your Shopify admin.",
-            "connected": "Your agency has full collaborator access to your store."
-          },
-          "features": {
-            "feature1": "Enable fast theme customizations and updates",
-            "feature2": "Allow your agency to manage apps and integrations",
-            "feature3": "Secure collaborator access with no staff seat used"
-          },
-          "form": {
-            "storeUrl": "Your Shopify Store URL",
-            "storeUrlHint": "Enter your store's .myshopify.com URL (e.g., yourstore.myshopify.com)",
-            "collaboratorCode": "Collaborator Request Code",
-            "collaboratorCodeHint": "Found in Shopify Admin > Settings > Users > Security. Leave empty if not enabled.",
-            "optional": "optional",
-            "infoTitle": "Where to find the collaborator code?",
-            "infoDesc": "In your Shopify admin, go to Settings > Users and permissions > Security. If enabled, you'll see a 4-digit code.",
-            "save": "Save Store Details",
-            "saving": "Saving...",
-            "cancel": "Cancel"
-          },
-          "actions": {
-            "connect": "Connect Store",
-            "edit": "Edit Store Details"
-          },
-          "errors": {
-            "invalidDomain": "Please enter a valid .myshopify.com domain",
-            "invalidCode": "Collaborator code must be 4 digits",
-            "saveFailed": "Failed to save. Please try again."
-          },
-          "agency": {
-            "notConnected": "Shopify Store Not Connected",
-            "notConnectedDesc": "The client hasn't connected their Shopify store yet.",
-            "requestAccess": "Request Collaborator Access",
-            "markRequested": "Mark as Requested",
-            "markConnected": "Mark as Connected",
-            "openPartnerDashboard": "Open Partner Dashboard",
-            "openAdmin": "Open Store Admin"
-          }
-        }
-      }
-    }
     }
   },
-  "heroForm": {
-    "title": "Get a Free Consultation",
-    "subtitle": "Share a few details about your project and we'll get back to you within 24 hours.",
-    "successTitle": "Thanks!",
-    "successText": "We'll be in touch within 24 hours.",
-    "fields": {
-      "name": "Name",
-      "namePlaceholder": "Your name",
-      "nameRequired": "Name is required",
-      "email": "Email",
-      "emailPlaceholder": "your@email.com",
-      "emailRequired": "Email is required",
-      "emailInvalid": "Invalid email address",
-      "interest": "What are you looking to build?",
-      "interestRequired": "Please select an option",
-      "selectOption": "Select an option",
-      "options": {
-        "shopify": "Shopify Store (new or growth)",
-        "wordpress": "WordPress Website (content sites, news, custom)",
-        "consultation": "Not sure yet, need advice"
-      }
-    },
-    "submit": "Request a Free Consult",
-    "submitting": "Sending...",
-    "error": "Something went wrong. Please try again or contact us directly."
+  "googleCalendar": {
+    "title": "Google Calendar",
+    "description": "Sync consultations with your Google Calendar and get automatic Meet links.",
+    "connect": "Connect Google Calendar",
+    "connecting": "Connecting...",
+    "disconnect": "Disconnect",
+    "disconnectConfirm": "Are you sure you want to disconnect Google Calendar?",
+    "syncNow": "Sync Now",
+    "syncing": "Syncing...",
+    "account": "Account",
+    "lastSync": "Last synced",
+    "calendars": "Calendars",
+    "feature1": "Auto-create calendar events for consultations",
+    "feature2": "Get Google Meet links automatically",
+    "feature3": "View your availability in the portal"
   },
   "hero": {
     "tag": "Shopify & WordPress experts, built to convert",
@@ -1605,108 +1692,31 @@
       "label": "We Build On"
     }
   },
-  "blog": {
-    "hero": {
-      "title": "Our Blog",
-      "subtitle": "Practical insights to help you grow your online business",
-      "badge": "Fresh Posts"
-    },
-    "content": {
-      "featuredPosts": "Featured Posts",
-      "searchPlaceholder": "Search articles...",
-      "allCategories": "All",
-      "articles": "articles",
-      "sort": {
-        "newest": "Newest First",
-        "oldest": "Oldest First",
-        "popular": "Most Popular"
-      },
-      "noPostsFound": "No posts found",
-      "readingTime": "min",
-      "pagination": {
-        "previous": "Previous",
-        "next": "Next"
-      },
-      "newsletter": {
-        "title": "Subscribe to Newsletter",
-        "description": "Get weekly tips and updates",
-        "placeholder": "Your email",
-        "subscribe": "Subscribe",
-        "categories": "Categories"
+  "heroForm": {
+    "title": "Get a Free Consultation",
+    "subtitle": "Share a few details about your project and we'll get back to you within 24 hours.",
+    "successTitle": "Thanks!",
+    "successText": "We'll be in touch within 24 hours.",
+    "fields": {
+      "name": "Name",
+      "namePlaceholder": "Your name",
+      "nameRequired": "Name is required",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email address",
+      "interest": "What are you looking to build?",
+      "interestRequired": "Please select an option",
+      "selectOption": "Select an option",
+      "options": {
+        "shopify": "Shopify Store (new or growth)",
+        "wordpress": "WordPress Website (content sites, news, custom)",
+        "consultation": "Not sure yet, need advice"
       }
     },
-    "categories": "Categories:",
-    "noPosts": "No posts yet. Check back soon!",
-    "readMore": "Read more",
-    "relatedPosts": {
-      "title": "Related",
-      "span": "Posts"
-    }
-  },
-  "blogPost": {
-    "cta": {
-      "title": "Need help with your ",
-      "titleSpan": "online store?",
-      "description": "From strategy to build to optimization, we've got you covered. Reach out for a free consultation.",
-      "button": "Get in touch"
-    },
-    "relatedServices": {
-      "title": "Related Services",
-      "description": "Explore our development services for Shopify and WordPress.",
-      "shopifyTitle": "Learn More About Shopify Development Services",
-      "shopifyDescription": "Need help with your Shopify store? Our expert team can assist with development, optimization, and migration.",
-      "shopifyLink": "Shopify Development Services",
-      "wordpressTitle": "Learn More About WordPress Development Services",
-      "wordpressDescription": "Looking for WordPress development? We offer custom solutions for content sites, news platforms, and custom websites.",
-      "wordpressLink": "WordPress Development Services",
-      "shopifyServices": "Shopify Services",
-      "wordpressServices": "WordPress Services"
-    },
-    "content": {
-      "tableOfContents": "Contents",
-      "tableOfContentsFull": "Table of Contents",
-      "shareArticle": "Share Article",
-      "sections": "sections",
-      "minRead": "min read",
-      "share": "Share:",
-      "expertServices": "Expert Services",
-      "keepReading": "Keep Reading"
-    }
-  },
-  "blogTeaser": {
-    "title": "Latest Insights",
-    "subtitle": "Tips, trends, and growth playbooks",
-    "readMore": "Read more",
-    "viewAll": "View all posts",
-    "new": "New",
-    "featured": "Featured",
-    "readTime": "5 min read",
-    "posts": [
-      {
-        "title": "E-commerce Conversion Rate Optimization: 20 Proven Strategies That Work",
-        "excerpt": "Discover 20 proven strategies to increase your e-commerce conversion rate. Learn how to turn more visitors into customers and boost your revenue.",
-        "href": "/blog/ecommerce-conversion-rate-optimization",
-        "date": "2024-12-20"
-      },
-      {
-        "title": "Complete Guide to E-commerce Migration: How to Move Your Store Without Losing Sales",
-        "excerpt": "Learn how to migrate your e-commerce store safely and efficiently. Step-by-step guide to moving between platforms without losing data, SEO rankings, or sales.",
-        "href": "/blog/complete-guide-ecommerce-migration",
-        "date": "2024-12-10"
-      },
-      {
-        "title": "Speed Up Your Shopify Store (Without Breaking Your Theme)",
-        "excerpt": "Slow sites bleed revenue. Here are the practical fixes we use to cut load times and lift conversions.",
-        "href": "/blog/speed-up-shopify-store",
-        "date": "2024-12-01"
-      },
-      {
-        "title": "Shopify vs. WordPress: The Real Tradeoffs",
-        "excerpt": "Two great platforms, different jobs. We'll help you choose based on goals, budget, and how you plan to grow.",
-        "href": "/blog/shopify-vs-woocommerce",
-        "date": "2024-11-15"
-      }
-    ]
+    "submit": "Request a Free Consult",
+    "submitting": "Sending...",
+    "error": "Something went wrong. Please try again or contact us directly."
   },
   "about": {
     "hero": {
@@ -2059,95 +2069,107 @@
       ]
     }
   },
-  "ctaBanner": {
-    "titlePart1": "Ready to take your business to the",
-    "titlePart2": "next level?",
-    "description": "Bring the vision and we'll build the engine. Clear process, clean code, measurable results.",
-    "button": "Start the Conversation"
-  },
-  "testimonials": {
-    "title": "Success Stories",
-    "subtitle": "Real results from real clients",
-    "items": [
-      {
-        "quote": "CartShift Studio rebuilt our store experience end-to-end. Our conversion rate jumped from 1.2% to 3.8% in just two months. The site finally feels premium and matches our brand.",
-        "author": "Sarah Johnson",
-        "company": "StyleCraft Boutique",
-        "role": "Founder & CEO",
-        "industry": "Fashion & Apparel",
-        "rating": 5
-      },
-      {
-        "quote": "They handled our migration from WooCommerce flawlessly. The new Shopify store is 60% faster and our checkout completion rate improved by 38%. Best investment we made this year.",
-        "author": "Michael Chen",
-        "company": "CloudSync Pro",
-        "role": "CTO",
-        "industry": "Tech & SaaS",
-        "rating": 5
-      },
-      {
-        "quote": "They don't just ship a site. They stick around, iterate, and help us grow month after month. Our online reservations doubled within 90 days of the new website launch.",
-        "author": "Emily Rodriguez",
-        "company": "Terra Kitchen Group",
-        "role": "Operations Director",
-        "industry": "Food & Beverage",
-        "rating": 5
-      }
-    ]
-  },
-  "whyChoose": {
-    "title": "Why Work With Us?",
-    "subtitle": "Not just builders. Real partners.",
-    "items": [
-      {
-        "title": "Made for Your Business",
-        "description": "No cookie-cutter templates. We design around your goals, customers, and products.",
-        "icon": "target"
-      },
-      {
-        "title": "Senior-Led Delivery",
-        "description": "You work directly with experienced specialists. Fewer handoffs, faster progress.",
-        "icon": "handshake"
-      },
-      {
-        "title": "Tech Made Simple",
-        "description": "We handle the complexity and explain choices in plain language.",
-        "icon": "bolt"
-      },
-      {
-        "title": "Growth Focused",
-        "description": "We build with the next step in mind: speed, SEO, analytics, and iteration.",
-        "icon": "chart-up"
-      },
-      {
-        "title": "Transparent Process",
-        "description": "Clear timelines, honest updates, and no hidden surprises. You always know where your project stands.",
-        "icon": "eye"
-      }
-    ]
-  },
-  "servicesOverview": {
-    "title": "Our Core Solutions",
-    "subtitle": "E-commerce expertise across Shopify and WordPress",
-    "shopify": {
-      "title": "E-Commerce Growth",
-      "description": "Everything you need to sell online. We handle design, setup, and performance so you can focus on your products.",
-      "features": [
-        "Store Setup & Design",
-        "Custom Features",
-        "Speed Optimization",
-        "Growth Support"
-      ]
+  "blog": {
+    "hero": {
+      "title": "Our Blog",
+      "subtitle": "Practical insights to help you grow your online business",
+      "badge": "Fresh Posts"
     },
-    "wordpress": {
-      "title": "Custom Web Design",
-      "description": "A website as unique as your brand. Flexible, easy to manage, and built to stand out.",
-      "features": [
-        "Custom Design",
-        "Easy to Edit",
-        "Online Store Ready",
-        "SEO Optimized"
-      ]
+    "content": {
+      "featuredPosts": "Featured Posts",
+      "searchPlaceholder": "Search articles...",
+      "allCategories": "All",
+      "articles": "articles",
+      "sort": {
+        "newest": "Newest First",
+        "oldest": "Oldest First",
+        "popular": "Most Popular"
+      },
+      "noPostsFound": "No posts found",
+      "readingTime": "min",
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "newsletter": {
+        "title": "Subscribe to Newsletter",
+        "description": "Get weekly tips and updates",
+        "placeholder": "Your email",
+        "subscribe": "Subscribe",
+        "categories": "Categories"
+      }
+    },
+    "categories": "Categories:",
+    "noPosts": "No posts yet. Check back soon!",
+    "readMore": "Read more",
+    "relatedPosts": {
+      "title": "Related",
+      "span": "Posts"
+    }
+  },
+  "blogTeaser": {
+    "title": "Latest Insights",
+    "subtitle": "Tips, trends, and growth playbooks",
+    "readMore": "Read more",
+    "viewAll": "View all posts",
+    "new": "New",
+    "featured": "Featured",
+    "readTime": "5 min read",
+    "posts": [
+      {
+        "title": "E-commerce Conversion Rate Optimization: 20 Proven Strategies That Work",
+        "excerpt": "Discover 20 proven strategies to increase your e-commerce conversion rate. Learn how to turn more visitors into customers and boost your revenue.",
+        "href": "/blog/ecommerce-conversion-rate-optimization",
+        "date": "2024-12-20"
+      },
+      {
+        "title": "Complete Guide to E-commerce Migration: How to Move Your Store Without Losing Sales",
+        "excerpt": "Learn how to migrate your e-commerce store safely and efficiently. Step-by-step guide to moving between platforms without losing data, SEO rankings, or sales.",
+        "href": "/blog/complete-guide-ecommerce-migration",
+        "date": "2024-12-10"
+      },
+      {
+        "title": "Speed Up Your Shopify Store (Without Breaking Your Theme)",
+        "excerpt": "Slow sites bleed revenue. Here are the practical fixes we use to cut load times and lift conversions.",
+        "href": "/blog/speed-up-shopify-store",
+        "date": "2024-12-01"
+      },
+      {
+        "title": "Shopify vs. WordPress: The Real Tradeoffs",
+        "excerpt": "Two great platforms, different jobs. We'll help you choose based on goals, budget, and how you plan to grow.",
+        "href": "/blog/shopify-vs-woocommerce",
+        "date": "2024-11-15"
+      }
+    ]
+  },
+  "blogPost": {
+    "cta": {
+      "title": "Need help with your ",
+      "titleSpan": "online store?",
+      "description": "From strategy to build to optimization, we've got you covered. Reach out for a free consultation.",
+      "button": "Get in touch"
+    },
+    "relatedServices": {
+      "title": "Related Services",
+      "description": "Explore our development services for Shopify and WordPress.",
+      "shopifyTitle": "Learn More About Shopify Development Services",
+      "shopifyDescription": "Need help with your Shopify store? Our expert team can assist with development, optimization, and migration.",
+      "shopifyLink": "Shopify Development Services",
+      "wordpressTitle": "Learn More About WordPress Development Services",
+      "wordpressDescription": "Looking for WordPress development? We offer custom solutions for content sites, news platforms, and custom websites.",
+      "wordpressLink": "WordPress Development Services",
+      "shopifyServices": "Shopify Services",
+      "wordpressServices": "WordPress Services"
+    },
+    "content": {
+      "tableOfContents": "Contents",
+      "tableOfContentsFull": "Table of Contents",
+      "shareArticle": "Share Article",
+      "sections": "sections",
+      "minRead": "min read",
+      "share": "Share:",
+      "expertServices": "Expert Services",
+      "keepReading": "Keep Reading"
     }
   },
   "contact": {
@@ -2198,231 +2220,6 @@
       "successTitle": "Thank you!",
       "successText": "Got it! We'll reply within 24 hours.",
       "sendAnother": "Send Another Message"
-    }
-  },
-  "faq": {
-    "collapseAll": "Collapse All",
-    "expandAll": "Expand All"
-  },
-  "footer": {
-    "description": "Bold e-commerce builds for artists, makers, and brands. Shopify and WordPress websites that look great, load fast, and sell more.",
-    "solutions": "Solutions",
-    "company": "Company",
-    "rights": "All rights reserved.",
-    "newsletter": {
-      "title": "Stay Updated",
-      "description": "Get e-commerce tips and news delivered to your inbox.",
-      "placeholder": "Your email",
-      "success": "Thanks for subscribing!",
-      "sslSecured": "SSL Secured",
-      "shopifyPartner": "Shopify Partner"
-    },
-    "links": {
-      "shopify": "Shopify Solutions",
-      "wordpress": "WordPress Solutions",
-      "about": "About Us",
-      "blog": "Blog",
-      "contact": "Contact",
-      "privacy": "Privacy Policy",
-      "terms": "Terms of Service"
-    }
-  },
-  "common": {
-    "learnMore": "Learn More",
-    "contactUs": "Contact Us",
-    "getStarted": "Get Started",
-    "viewWork": "View Our Work",
-    "exitIntent": {
-      "title": "Before you go...",
-      "subtitle": "Get a free consultation for your project",
-      "description": "We'd love to hear about what you're building and see how we can help.",
-      "cta": "Book a Free Call",
-      "dismiss": "Not now"
-    }
-  },
-  "navigation": {
-    "home": "Home",
-    "solutions": "Solutions",
-    "wordpress": "WordPress Solutions",
-    "shopify": "Shopify Solutions",
-    "clientPortal": "Client Portal",
-    "about": "About",
-    "contact": "Contact",
-    "blog": "Blog",
-    "blogPost": "Blog Post"
-  },
-  "industries": {
-    "title": "Industries",
-    "whyWorkWithUs": "Why Work With Us?",
-    "benefitsTailored": "Benefits tailored to your industry",
-    "ourServices": "Our Services",
-    "everythingNeeded": "Everything you need to succeed online",
-    "readyToGetStarted": "Ready to Get Started?",
-    "projects": "Projects",
-    "satisfaction": "Satisfaction",
-    "avgGrowth": "Avg Growth",
-    "support": "Support",
-    "getFreeQuote": "Get a Free Quote",
-    "viewOurWork": "View Our Work",
-    "ctaDescription": "Let's discuss your project and see how we can help you grow"
-  },
-  "industriesContent": {
-    "fashion": {
-      "title": "Fashion & Apparel",
-      "subtitle": "E-commerce That Captivates",
-      "description": "Build a stunning fashion store that converts visitors into loyal customers",
-      "badge": "Fashion"
-    },
-    "food": {
-      "title": "Food & Beverage",
-      "subtitle": "From Kitchen to Customer",
-      "description": "Online ordering, digital menus, and smart reservation systems",
-      "badge": "Food"
-    },
-    "health": {
-      "title": "Health & Wellness",
-      "subtitle": "Help Customers Live Better",
-      "description": "Stores for supplements, fitness gear, and spa products",
-      "badge": "Health"
-    },
-    "tech": {
-      "title": "Tech & SaaS",
-      "subtitle": "Landing Pages That Convert",
-      "description": "Websites for startups, tech companies, and SaaS products",
-      "badge": "Tech"
-    },
-    "arts": {
-      "title": "Arts & Crafts",
-      "subtitle": "Showcase Your Creations",
-      "description": "Stores for artists, creators, and craftspeople",
-      "badge": "Arts"
-    },
-    "local": {
-      "title": "Local Businesses",
-      "subtitle": "Bring Your Business Online",
-      "description": "Websites for small and medium businesses ready to grow",
-      "badge": "Local"
-    },
-    "benefits": [
-      {
-        "title": "Increase Sales",
-        "description": "Conversion-focused design and smooth checkout processes"
-      },
-      {
-        "title": "Fast Performance",
-        "description": "Lightning-fast sites that improve Google rankings and customer satisfaction"
-      },
-      {
-        "title": "Trust & Security",
-        "description": "Secure payments and privacy compliance"
-      },
-      {
-        "title": "Target Audience",
-        "description": "Design and copy that speaks directly to your customers"
-      }
-    ],
-    "services": [
-      "Custom website design & development",
-      "Payment system integration",
-      "Search engine optimization (SEO)",
-      "Product & inventory management",
-      "Analytics & tracking setup",
-      "Ongoing support & maintenance"
-    ]
-  },
-  "seo": {
-    "clientPortalH1": "Client Portal for Project Management | Fast & Transparent"
-  },
-  "process": {
-    "title": "How We Work",
-    "subtitle": "A streamlined process designed for success",
-    "steps": {
-      "discovery": {
-        "title": "Discovery",
-        "description": "We learn about your business, goals, and vision to create a tailored strategy."
-      },
-      "design": {
-        "title": "Design",
-        "description": "Our designers craft stunning visuals that capture your brand identity."
-      },
-      "develop": {
-        "title": "Develop",
-        "description": "We build your store with clean code and optimized performance."
-      },
-      "launch": {
-        "title": "Launch",
-        "description": "Your store goes live with full support and ongoing optimization."
-      }
-    }
-  },
-  "stats": {
-    "title": "Our Impact",
-    "subtitle": "Numbers that speak for themselves",
-    "projects": {
-      "label": "Projects Delivered"
-    },
-    "satisfaction": {
-      "label": "Client Satisfaction"
-    },
-    "years": {
-      "label": "Years Experience"
-    },
-    "support": {
-      "label": "Support Available"
-    }
-  },
-  "work": {
-    "hero": {
-      "title": "Our Work",
-      "subtitle": "Real projects. Real results.",
-      "description": "See how we've helped businesses launch, grow, and optimize their online presence.",
-      "badge": "Portfolio"
-    },
-    "filters": {
-      "all": "All Projects",
-      "shopify": "Shopify",
-      "wordpress": "WordPress"
-    },
-    "cta": {
-      "title": "Ready to join our",
-      "titleSpan": "success stories?",
-      "description": "Let's talk about your project and see how we can help.",
-      "button": "Start Your Project"
-    },
-    "viewProject": "View Project",
-    "comingSoon": "Case studies coming soon. We're documenting our recent projects.",
-    "empty": {
-      "title": "No Projects Found",
-      "description": "Try changing the filter to see more projects."
-    },
-    "caseStudy": {
-      "backToWork": "Back to Work",
-      "challenge": "The Challenge",
-      "solution": "The Solution",
-      "results": "The Results",
-      "metric": "Metric",
-      "before": "Before",
-      "after": "After",
-      "change": "Change",
-      "clientSays": "What the Client Says",
-      "readyToStart": "Ready to Start?",
-      "ctaText": "Let's talk about your project",
-      "ctaButton": "Book a Call"
-    },
-    "detail": {
-      "projectDetails": "Project Details",
-      "client": "Client",
-      "industry": "Industry",
-      "platform": "Platform",
-      "duration": "Duration",
-      "services": "Services",
-      "startProject": "Start Your Project",
-      "wantResults": "Want Similar Results?",
-      "wantResultsDesc": "Let's discuss your project and see how we can help you grow.",
-      "getConsultation": "Get a Free Consultation",
-      "viewMore": "View More Projects",
-      "noProjects": "No Projects Found",
-      "noProjectsDesc": "Try changing the filter to see more projects."
     }
   },
   "pricing": {
@@ -2662,213 +2459,289 @@
       "button": "Discuss Custom Plan"
     }
   },
-  "stickyCta": {
-    "text": "Book a Call",
-    "textHe": "קבעו שיחה"
+  "work": {
+    "hero": {
+      "title": "Our Work",
+      "subtitle": "Real projects. Real results.",
+      "description": "See how we've helped businesses launch, grow, and optimize their online presence.",
+      "badge": "Portfolio"
+    },
+    "filters": {
+      "all": "All Projects",
+      "shopify": "Shopify",
+      "wordpress": "WordPress"
+    },
+    "cta": {
+      "title": "Ready to join our",
+      "titleSpan": "success stories?",
+      "description": "Let's talk about your project and see how we can help.",
+      "button": "Start Your Project"
+    },
+    "viewProject": "View Project",
+    "comingSoon": "Case studies coming soon. We're documenting our recent projects.",
+    "empty": {
+      "title": "No Projects Found",
+      "description": "Try changing the filter to see more projects."
+    },
+    "caseStudy": {
+      "backToWork": "Back to Work",
+      "challenge": "The Challenge",
+      "solution": "The Solution",
+      "results": "The Results",
+      "metric": "Metric",
+      "before": "Before",
+      "after": "After",
+      "change": "Change",
+      "clientSays": "What the Client Says",
+      "readyToStart": "Ready to Start?",
+      "ctaText": "Let's talk about your project",
+      "ctaButton": "Book a Call"
+    },
+    "detail": {
+      "projectDetails": "Project Details",
+      "client": "Client",
+      "industry": "Industry",
+      "platform": "Platform",
+      "duration": "Duration",
+      "services": "Services",
+      "startProject": "Start Your Project",
+      "wantResults": "Want Similar Results?",
+      "wantResultsDesc": "Let's discuss your project and see how we can help you grow.",
+      "getConsultation": "Get a Free Consultation",
+      "viewMore": "View More Projects",
+      "noProjects": "No Projects Found",
+      "noProjectsDesc": "Try changing the filter to see more projects."
+    }
   },
-  "notFound": {
-    "title": "Page Not Found",
-    "description": "The page you're looking for doesn't exist or may have been moved.",
-    "goBack": "Go Back",
-    "goHome": "Go Home",
-    "portalLogin": "Portal Login",
-    "needHelp": "Need help?",
-    "contactTeam": "Contact our team"
+  "testimonials": {
+    "title": "Success Stories",
+    "subtitle": "Real results from real clients",
+    "items": [
+      {
+        "quote": "CartShift Studio rebuilt our store experience end-to-end. Our conversion rate jumped from 1.2% to 3.8% in just two months. The site finally feels premium and matches our brand.",
+        "author": "Sarah Johnson",
+        "company": "StyleCraft Boutique",
+        "role": "Founder & CEO",
+        "industry": "Fashion & Apparel",
+        "rating": 5
+      },
+      {
+        "quote": "They handled our migration from WooCommerce flawlessly. The new Shopify store is 60% faster and our checkout completion rate improved by 38%. Best investment we made this year.",
+        "author": "Michael Chen",
+        "company": "CloudSync Pro",
+        "role": "CTO",
+        "industry": "Tech & SaaS",
+        "rating": 5
+      },
+      {
+        "quote": "They don't just ship a site. They stick around, iterate, and help us grow month after month. Our online reservations doubled within 90 days of the new website launch.",
+        "author": "Emily Rodriguez",
+        "company": "Terra Kitchen Group",
+        "role": "Operations Director",
+        "industry": "Food & Beverage",
+        "rating": 5
+      }
+    ]
   },
-  "privacy": {
-    "title": "Privacy Policy",
-    "subtitle": "Your privacy is important to us. Learn how we collect, use, and protect your information.",
-    "lastUpdated": "Last updated",
-    "toc": "Table of Contents",
-    "sections": {
-      "collect": {
-        "title": "Information We Collect",
-        "intro": "When you use our website or services, we may collect:",
-        "items": {
-          "contact": {
-            "title": "Contact Information",
-            "desc": "Name, email address, phone number, and company name when you fill out our contact forms."
-          },
-          "project": {
-            "title": "Project Information",
-            "desc": "Details about your project needs that you share with us."
-          },
-          "usage": {
-            "title": "Usage Data",
-            "desc": "Information about how you interact with our website, including pages visited and time spent."
-          },
-          "device": {
-            "title": "Device Information",
-            "desc": "Browser type, operating system, and device type."
-          }
-        }
+  "whyChoose": {
+    "title": "Why Work With Us?",
+    "subtitle": "Not just builders. Real partners.",
+    "items": [
+      {
+        "title": "Made for Your Business",
+        "description": "No cookie-cutter templates. We design around your goals, customers, and products.",
+        "icon": "target"
       },
-      "use": {
-        "title": "How We Use Your Information",
-        "intro": "We use the information we collect to:",
-        "items": [
-          "Respond to your inquiries and provide customer support",
-          "Send you information about our services",
-          "Improve our website and services",
-          "Comply with legal obligations"
-        ]
+      {
+        "title": "Senior-Led Delivery",
+        "description": "You work directly with experienced specialists. Fewer handoffs, faster progress.",
+        "icon": "handshake"
       },
-      "sharing": {
-        "title": "Information Sharing",
-        "intro": "We do not sell your personal information. We may share your information with:",
-        "items": {
-          "providers": {
-            "title": "Service Providers",
-            "desc": "Third-party services that help us operate our business (e.g., email services, analytics)."
-          },
-          "legal": {
-            "title": "Legal Requirements",
-            "desc": "When required by law or to protect our rights."
-          }
-        }
+      {
+        "title": "Tech Made Simple",
+        "description": "We handle the complexity and explain choices in plain language.",
+        "icon": "bolt"
       },
-      "cookies": {
-        "title": "Cookies and Tracking",
-        "intro": "We use cookies and similar technologies to:",
-        "items": [
-          "Remember your preferences (like language selection)",
-          "Understand how you use our website",
-          "Improve our services"
-        ],
-        "control": "You can control cookies through your browser settings.",
-        "consent": {
-          "message": "We use cookies to improve your browsing experience and analyze site usage.",
-          "accept": "Accept",
-          "decline": "Decline",
-          "learnMore": "Learn more"
-        }
+      {
+        "title": "Growth Focused",
+        "description": "We build with the next step in mind: speed, SEO, analytics, and iteration.",
+        "icon": "chart-up"
       },
-      "security": {
-        "title": "Data Security",
-        "content": "We implement appropriate security measures to protect your personal information. However, no method of transmission over the internet is 100% secure."
+      {
+        "title": "Transparent Process",
+        "description": "Clear timelines, honest updates, and no hidden surprises. You always know where your project stands.",
+        "icon": "eye"
+      }
+    ]
+  },
+  "servicesOverview": {
+    "title": "Our Core Solutions",
+    "subtitle": "E-commerce expertise across Shopify and WordPress",
+    "shopify": {
+      "title": "E-Commerce Growth",
+      "description": "Everything you need to sell online. We handle design, setup, and performance so you can focus on your products.",
+      "features": [
+        "Store Setup & Design",
+        "Custom Features",
+        "Speed Optimization",
+        "Growth Support"
+      ]
+    },
+    "wordpress": {
+      "title": "Custom Web Design",
+      "description": "A website as unique as your brand. Flexible, easy to manage, and built to stand out.",
+      "features": [
+        "Custom Design",
+        "Easy to Edit",
+        "Online Store Ready",
+        "SEO Optimized"
+      ]
+    }
+  },
+  "ctaBanner": {
+    "titlePart1": "Ready to take your business to the",
+    "titlePart2": "next level?",
+    "description": "Bring the vision and we'll build the engine. Clear process, clean code, measurable results.",
+    "button": "Start the Conversation"
+  },
+  "footer": {
+    "description": "Bold e-commerce builds for artists, makers, and brands. Shopify and WordPress websites that look great, load fast, and sell more.",
+    "solutions": "Solutions",
+    "company": "Company",
+    "rights": "All rights reserved.",
+    "newsletter": {
+      "title": "Stay Updated",
+      "description": "Get e-commerce tips and news delivered to your inbox.",
+      "placeholder": "Your email",
+      "success": "Thanks for subscribing!",
+      "sslSecured": "SSL Secured",
+      "shopifyPartner": "Shopify Partner"
+    },
+    "links": {
+      "shopify": "Shopify Solutions",
+      "wordpress": "WordPress Solutions",
+      "about": "About Us",
+      "blog": "Blog",
+      "contact": "Contact",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    }
+  },
+  "process": {
+    "title": "How We Work",
+    "subtitle": "A streamlined process designed for success",
+    "steps": {
+      "discovery": {
+        "title": "Discovery",
+        "description": "We learn about your business, goals, and vision to create a tailored strategy."
       },
-      "rights": {
-        "title": "Your Rights",
-        "intro": "You have the right to:",
-        "items": [
-          "Access the personal information we hold about you",
-          "Request correction of inaccurate information",
-          "Request deletion of your information",
-          "Opt out of marketing communications"
-        ]
+      "design": {
+        "title": "Design",
+        "description": "Our designers craft stunning visuals that capture your brand identity."
       },
-      "thirdParty": {
-        "title": "Third-Party Services",
-        "intro": "Our website may use third-party services including:",
-        "items": [
-          "Google Analytics for website analytics",
-          "Firebase for hosting and authentication"
-        ],
-        "note": "These services have their own privacy policies."
+      "develop": {
+        "title": "Develop",
+        "description": "We build your store with clean code and optimized performance."
       },
-      "contact": {
-        "title": "Contact Us",
-        "intro": "If you have questions about this privacy policy or your personal information, please contact us at:",
-        "email": "Email"
-      },
-      "changes": {
-        "title": "Changes to This Policy",
-        "content": "We may update this privacy policy from time to time. We will notify you of any changes by posting the new policy on this page."
+      "launch": {
+        "title": "Launch",
+        "description": "Your store goes live with full support and ongoing optimization."
       }
     }
   },
-  "terms": {
-    "title": "Terms of Service",
-    "subtitle": "Please read these terms carefully before using our services.",
-    "lastUpdated": "Last updated",
-    "toc": "Table of Contents",
-    "sections": {
-      "agreement": {
-        "title": "Agreement to Terms",
-        "content": "By accessing or using the CartShift Studio website and services, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services."
-      },
-      "services": {
-        "title": "Services",
-        "intro": "CartShift Studio provides web development and e-commerce services, including but not limited to:",
-        "items": [
-          "Shopify store development and customization",
-          "WordPress website development",
-          "Website maintenance and support",
-          "E-commerce consulting"
-        ]
-      },
-      "projectAgreements": {
-        "title": "Project Agreements",
-        "intro": "All project work is subject to a separate project agreement that outlines:",
-        "items": [
-          "Scope of work",
-          "Timeline and milestones",
-          "Pricing and payment terms",
-          "Deliverables"
-        ]
-      },
-      "payment": {
-        "title": "Payment Terms",
-        "intro": "Payment terms are specified in individual project agreements. Generally:",
-        "items": [
-          "Deposits are required before work begins",
-          "Milestone payments may be required for larger projects",
-          "Final payment is due upon project completion"
-        ]
-      },
-      "ip": {
-        "title": "Intellectual Property",
-        "intro": "Upon full payment, clients receive ownership of custom code and designs created specifically for their project. CartShift Studio retains the right to:",
-        "items": [
-          "Use work in our portfolio (with client permission)",
-          "Reuse general techniques and non-proprietary code"
-        ]
-      },
-      "clientResponsibilities": {
-        "title": "Client Responsibilities",
-        "intro": "Clients are responsible for:",
-        "items": [
-          "Providing necessary content, assets, and information",
-          "Timely feedback and approvals",
-          "Ensuring they have rights to provided content",
-          "Maintaining their own backups"
-        ]
-      },
-      "liability": {
-        "title": "Limitation of Liability",
-        "content": "CartShift Studio is not liable for indirect, incidental, or consequential damages. Our total liability is limited to the amount paid for the specific service in question."
-      },
-      "warranties": {
-        "title": "Warranties",
-        "content": "We warrant that our services will be performed professionally and in accordance with industry standards. We do not guarantee specific business results such as sales or traffic increases."
-      },
-      "termination": {
-        "title": "Termination",
-        "intro": "Either party may terminate a project agreement with written notice. In case of termination:",
-        "items": [
-          "Client pays for work completed to date",
-          "Client receives deliverables for paid work",
-          "Deposits may be non-refundable depending on work completed"
-        ]
-      },
-      "confidentiality": {
-        "title": "Confidentiality",
-        "content": "Both parties agree to keep confidential information private and not share it with third parties without permission."
-      },
-      "governingLaw": {
-        "title": "Governing Law",
-        "content": "These terms are governed by the laws of Israel. Any disputes will be resolved in the courts of Israel."
-      },
-      "changes": {
-        "title": "Changes to Terms",
-        "content": "We may update these terms from time to time. Continued use of our services after changes constitutes acceptance of the new terms."
-      },
-      "contact": {
-        "title": "Contact",
-        "intro": "For questions about these terms, contact us at:",
-        "email": "Email"
-      }
+  "stats": {
+    "title": "Our Impact",
+    "subtitle": "Numbers that speak for themselves",
+    "projects": {
+      "label": "Projects Delivered"
+    },
+    "satisfaction": {
+      "label": "Client Satisfaction"
+    },
+    "years": {
+      "label": "Years Experience"
+    },
+    "support": {
+      "label": "Support Available"
     }
+  },
+  "industries": {
+    "title": "Industries",
+    "whyWorkWithUs": "Why Work With Us?",
+    "benefitsTailored": "Benefits tailored to your industry",
+    "ourServices": "Our Services",
+    "everythingNeeded": "Everything you need to succeed online",
+    "readyToGetStarted": "Ready to Get Started?",
+    "projects": "Projects",
+    "satisfaction": "Satisfaction",
+    "avgGrowth": "Avg Growth",
+    "support": "Support",
+    "getFreeQuote": "Get a Free Quote",
+    "viewOurWork": "View Our Work",
+    "ctaDescription": "Let's discuss your project and see how we can help you grow"
+  },
+  "industriesContent": {
+    "fashion": {
+      "title": "Fashion & Apparel",
+      "subtitle": "E-commerce That Captivates",
+      "description": "Build a stunning fashion store that converts visitors into loyal customers",
+      "badge": "Fashion"
+    },
+    "food": {
+      "title": "Food & Beverage",
+      "subtitle": "From Kitchen to Customer",
+      "description": "Online ordering, digital menus, and smart reservation systems",
+      "badge": "Food"
+    },
+    "health": {
+      "title": "Health & Wellness",
+      "subtitle": "Help Customers Live Better",
+      "description": "Stores for supplements, fitness gear, and spa products",
+      "badge": "Health"
+    },
+    "tech": {
+      "title": "Tech & SaaS",
+      "subtitle": "Landing Pages That Convert",
+      "description": "Websites for startups, tech companies, and SaaS products",
+      "badge": "Tech"
+    },
+    "arts": {
+      "title": "Arts & Crafts",
+      "subtitle": "Showcase Your Creations",
+      "description": "Stores for artists, creators, and craftspeople",
+      "badge": "Arts"
+    },
+    "local": {
+      "title": "Local Businesses",
+      "subtitle": "Bring Your Business Online",
+      "description": "Websites for small and medium businesses ready to grow",
+      "badge": "Local"
+    },
+    "benefits": [
+      {
+        "title": "Increase Sales",
+        "description": "Conversion-focused design and smooth checkout processes"
+      },
+      {
+        "title": "Fast Performance",
+        "description": "Lightning-fast sites that improve Google rankings and customer satisfaction"
+      },
+      {
+        "title": "Trust & Security",
+        "description": "Secure payments and privacy compliance"
+      },
+      {
+        "title": "Target Audience",
+        "description": "Design and copy that speaks directly to your customers"
+      }
+    ],
+    "services": [
+      "Custom website design & development",
+      "Payment system integration",
+      "Search engine optimization (SEO)",
+      "Product & inventory management",
+      "Analytics & tracking setup",
+      "Ongoing support & maintenance"
+    ]
   }
-}
 }

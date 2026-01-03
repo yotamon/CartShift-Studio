@@ -1,15 +1,61 @@
 'use client';
 
+import { cva } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
-import { Search, X, Loader2, FileText, ChevronRight } from 'lucide-react';
+import { FileText, ChevronRight, Search } from 'lucide-react';
 import { motion, AnimatePresence } from '@/lib/motion';
-import { cn } from '@/lib/utils';
 import { Request } from '@/lib/types/portal';
 import { subscribeToOrgRequests, subscribeToAllRequests } from '@/lib/services/portal-requests';
 import { PortalBadge } from './PortalBadge';
 import { getStatusBadgeVariant } from '@/lib/utils/portal-helpers';
+
+const searchInputVariants = cva(
+  "w-full h-10 ps-12 pe-12 bg-surface-50/50 dark:bg-surface-900/50 border border-surface-200/50 dark:border-surface-800/30 rounded-xl focus:outline-none focus:ring-2 transition-all group-hover:bg-surface-100/50 dark:group-hover:bg-surface-800/50 text-sm font-medium",
+  {
+    variants: {
+      isFocused: {
+        true: "focus:ring-blue-500/20 focus:border-blue-500",
+        false: "",
+      }
+    },
+    defaultVariants: {
+      isFocused: false,
+    }
+  }
+);
+
+const searchItemVariants = cva(
+  "w-full text-start flex items-center gap-3 p-2.5 rounded-lg transition-colors group/item relative",
+  {
+    variants: {
+      isActive: {
+        true: "bg-blue-50 dark:bg-blue-900/20",
+        false: "hover:bg-surface-50 dark:hover:bg-surface-800",
+      }
+    },
+    defaultVariants: {
+      isActive: false,
+    }
+  }
+);
+
+const itemIconVariants = cva(
+  "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors",
+  {
+    variants: {
+      isActive: {
+        true: "bg-blue-100 dark:bg-blue-900/40 text-blue-600",
+        false: "bg-surface-100 dark:bg-surface-800 text-surface-500",
+      }
+    },
+    defaultVariants: {
+      isActive: false,
+    }
+  }
+);
 
 interface GlobalSearchProps {
   orgId?: string;
@@ -26,6 +72,7 @@ export function GlobalSearch({ orgId, isAgency = false, className }: GlobalSearc
   const [requests, setRequests] = useState<Request[]>([]);
   const [filteredResults, setFilteredResults] = useState<Request[]>([]);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -127,7 +174,10 @@ export function GlobalSearch({ orgId, isAgency = false, className }: GlobalSearc
   return (
     <div ref={containerRef} className={cn("relative group", className)}>
       <Search
-        className="absolute start-4 top-1/2 -translate-y-1/2 text-surface-400 group-focus-within:text-blue-500 transition-colors pointer-events-none"
+        className={cn(
+          "absolute start-4 top-1/2 -translate-y-1/2 transition-colors pointer-events-none",
+          isFocused ? "text-blue-500" : "text-surface-400"
+        )}
         size={18}
       />
       <div className="relative">
@@ -137,11 +187,13 @@ export function GlobalSearch({ orgId, isAgency = false, className }: GlobalSearc
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => {
-              if (query.trim()) setIsOpen(true);
+            setIsFocused(true);
+            if (query.trim()) setIsOpen(true);
           }}
+          onBlur={() => setIsFocused(false)}
           onKeyDown={handleKeyDown}
           placeholder={t('portal.header.search')}
-          className="w-full h-10 ps-12 pe-12 bg-surface-50/50 dark:bg-surface-900/50 border border-surface-200/50 dark:border-surface-800/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm font-medium transition-all group-hover:bg-surface-100/50 dark:group-hover:bg-surface-800/50"
+          className={cn(searchInputVariants({ isFocused }))}
           aria-label="Search"
         />
         <div className="absolute end-3 top-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none">
@@ -165,59 +217,54 @@ export function GlobalSearch({ orgId, isAgency = false, className }: GlobalSearc
                   <span>Requests</span>
                   <span className="text-[9px] opacity-60">Use ↑↓ to navigate</span>
                 </div>
-                {filteredResults.map((req, index) => (
-                  <button
-                    key={req.id}
-                    onClick={() => handleSelect(req)}
-                    onMouseEnter={() => setActiveIndex(index)}
-                    className={cn(
-                      "w-full text-start flex items-center gap-3 p-2.5 rounded-lg transition-colors group/item relative",
-                      activeIndex === index
-                        ? "bg-blue-50 dark:bg-blue-900/20"
-                        : "hover:bg-surface-50 dark:hover:bg-surface-800"
-                    )}
-                  >
-                    {activeIndex === index && (
-                        <motion.div
-                            layoutId="active-search-item"
-                            className="absolute start-0 top-2 bottom-2 w-0.5 bg-blue-500 rounded-full"
-                        />
-                    )}
-                    <div className={cn(
-                        "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors",
-                         activeIndex === index ? "bg-blue-100 dark:bg-blue-900/40 text-blue-600" : "bg-surface-100 dark:bg-surface-800 text-surface-500"
-                    )}>
-                      <FileText size={16} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className={cn(
-                            "font-bold text-sm truncate",
-                            activeIndex === index ? "text-blue-700 dark:text-blue-300" : "text-surface-900 dark:text-white"
-                        )}>
-                          {req.title}
-                        </span>
-                        <PortalBadge variant={getStatusBadgeVariant(req.status)} className="text-[9px] h-4 px-1.5">
-                            {req.status}
-                        </PortalBadge>
+                {filteredResults.map((req, index) => {
+                  const isActive = activeIndex === index;
+                  return (
+                    <button
+                      key={req.id}
+                      onClick={() => handleSelect(req)}
+                      onMouseEnter={() => setActiveIndex(index)}
+                      className={cn(searchItemVariants({ isActive }))}
+                    >
+                      {isActive && (
+                          <motion.div
+                              layoutId="active-search-item"
+                              className="absolute start-0 top-2 bottom-2 w-0.5 bg-blue-500 rounded-full"
+                          />
+                      )}
+                      <div className={cn(itemIconVariants({ isActive }))}>
+                        <FileText size={16} />
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-surface-500">
-                        <span className="font-mono bg-surface-100 dark:bg-surface-800 px-1 rounded text-[10px]">
-                            {req.id.slice(0, 8)}
-                        </span>
-                        {isAgency && (
-                            <span className="truncate max-w-[100px] opacity-75">
-                                • {req.orgId}
-                            </span>
-                        )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className={cn(
+                              "font-bold text-sm truncate",
+                              isActive ? "text-blue-700 dark:text-blue-300" : "text-surface-900 dark:text-white"
+                          )}>
+                            {req.title}
+                          </span>
+                          <PortalBadge variant={getStatusBadgeVariant(req.status)} className="text-[9px] h-4 px-1.5">
+                              {req.status}
+                          </PortalBadge>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-surface-500">
+                          <span className="font-mono bg-surface-100 dark:bg-surface-800 px-1 rounded text-[10px]">
+                              {req.id.slice(0, 8)}
+                          </span>
+                          {isAgency && (
+                              <span className="truncate max-w-[100px] opacity-75">
+                                  • {req.orgId}
+                              </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <ChevronRight size={14} className={cn(
-                        "transition-opacity",
-                        activeIndex === index ? "text-blue-400 opacity-100" : "text-surface-300 opacity-0 group-hover/item:opacity-100"
-                    )} />
-                  </button>
-                ))}
+                      <ChevronRight size={14} className={cn(
+                          "transition-opacity",
+                          isActive ? "text-blue-400 opacity-100" : "text-surface-300 opacity-0 group-hover/item:opacity-100"
+                      )} />
+                    </button>
+                  );
+                })}
               </>
             ) : (
                 <div className="p-8 text-center text-surface-500">

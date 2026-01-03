@@ -5,39 +5,49 @@ import { toast } from 'sonner';
 
 export function useConsultationMutations() {
   const queryClient = useQueryClient();
-  const t = useTranslations();
+  const t = useTranslations('portal');
 
   const cancelMutation = useMutation({
-    mutationFn: cancelConsultation,
+    mutationFn: (vars: { consultationId: string; orgId: string; userId: string; userName: string; reason?: string }) =>
+      cancelConsultation(vars.consultationId, vars.orgId, vars.userId, vars.userName, vars.reason),
     onSuccess: () => {
-      toast.success(t('portal.consultations.cancelSuccess'));
+      toast.success(t('consultations.form.cancelSuccess'));
       queryClient.invalidateQueries({ queryKey: ['org-consultations'] });
       queryClient.invalidateQueries({ queryKey: ['all-consultations'] });
     },
     onError: (error) => {
       console.error('Failed to cancel consultation:', error);
-      toast.error(t('portal.consultations.failedToCancel'));
+      toast.error(t('consultations.form.failedToCancel'));
     },
   });
 
   const completeMutation = useMutation({
-    mutationFn: completeConsultation,
+    mutationFn: (vars: {
+      consultationId: string;
+      orgId: string;
+      userId: string;
+      userName: string;
+      meetingNotes?: string;
+      actionItems?: string[]
+    }) => completeConsultation(vars.consultationId, vars.orgId, vars.userId, vars.userName, vars.meetingNotes, vars.actionItems),
     onSuccess: () => {
-      toast.success(t('portal.consultations.completeSuccess'));
+      toast.success(t('consultations.form.completeSuccess'));
       queryClient.invalidateQueries({ queryKey: ['org-consultations'] });
       queryClient.invalidateQueries({ queryKey: ['all-consultations'] });
     },
     onError: (error) => {
       console.error('Failed to complete consultation:', error);
-      toast.error(t('portal.consultations.failedToComplete'));
+      toast.error(t('consultations.form.failedToComplete'));
     },
   });
 
   return {
+    cancelMutation,
     cancelConsultation: cancelMutation.mutate,
     cancelConsultationAsync: cancelMutation.mutateAsync,
     isCanceling: cancelMutation.isPending,
 
+    completeMutation,
     completeConsultation: completeMutation.mutate,
     completeConsultationAsync: completeMutation.mutateAsync,
     isCompleting: completeMutation.isPending,

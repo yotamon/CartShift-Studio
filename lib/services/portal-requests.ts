@@ -112,6 +112,19 @@ export async function getRequestsByOrg(
   }
 ): Promise<Request[]> {
   await waitForAuth();
+  const auth = getFirebaseAuth();
+  const currentUser = auth.currentUser;
+  
+  if (!currentUser) {
+    throw new Error('User must be authenticated to access requests');
+  }
+
+  try {
+    await currentUser.getIdToken(true);
+  } catch (error) {
+    console.warn('[getRequestsByOrg] Error refreshing token:', error);
+  }
+
   const db = getFirestoreDb();
   let q = query(
     collection(db, REQUESTS_COLLECTION),
@@ -137,6 +150,11 @@ export async function getRequestsByOrg(
   } catch (error: unknown) {
     const firestoreError = error as { code?: string; message?: string };
     if (firestoreError.code === 'permission-denied') {
+      console.error('[getRequestsByOrg] Permission denied:', {
+        orgId,
+        userId: currentUser.uid,
+        error: firestoreError.message,
+      });
       throw new Error(
         `Permission denied accessing requests for organization ${orgId}. You may not be a member of this organization.`
       );

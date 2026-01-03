@@ -1,0 +1,73 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "blog": "Blog",
+    "contact": "Contact",
+    "work": "Work",
+    "pricing": "Pricing",
+    "maintenance": "Maintenance",
+    "industries": "Industries",
+    "company": "Company",
+    "login": "Login",
+    "portal": "Portal"
+  },
+  "floatingActions": {
+    "bookCall": "Book a Call",
+    "whatsapp": "WhatsApp",
+    "whatsappMessage": "Hello! I'd like to get in touch.",
+    "openContact": "Open contact options"
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "description": "We encountered an unexpected error. Please try refreshing the page.",
+    "details": "Error details",
+    "tryAgain": "Try again",
+    "refresh": "Refresh page"
+  },
+  "common": {
+    "learnMore": "Learn More",
+    "contactUs": "Contact Us",
+    "getStarted": "Get Started",
+    "viewWork": "View Our Work",
+    "exitIntent": {
+      "title": "Before you go...",
+      "subtitle": "Get a free consultation for your project",
+      "description": "We'd love to hear about what you're building and see how we can help.",
+      "cta": "Book a Free Call",
+      "dismiss": "Not now"
+    }
+  },
+  "navigation": {
+    "home": "Home",
+    "solutions": "Solutions",
+    "wordpress": "WordPress Solutions",
+    "shopify": "Shopify Solutions",
+    "clientPortal": "Client Portal",
+    "about": "About",
+    "contact": "Contact",
+    "blog": "Blog",
+    "blogPost": "Blog Post"
+  },
+  "faq": {
+    "collapseAll": "Collapse All",
+    "expandAll": "Expand All"
+  },
+  "seo": {
+    "clientPortalH1": "Client Portal for Project Management | Fast & Transparent"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "The page you're looking for doesn't exist or may have been moved.",
+    "goBack": "Go Back",
+    "goHome": "Go Home",
+    "portalLogin": "Portal Login",
+    "needHelp": "Need help?",
+    "contactTeam": "Contact our team"
+  },
+  "stickyCta": {
+    "text": "Book a Call",
+    "textHe": "קבעו שיחה"
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "privacy": {
+    "title": "Privacy Policy",
+    "subtitle": "Your privacy is important to us. Learn how we collect, use, and protect your information.",
+    "lastUpdated": "Last updated",
+    "toc": "Table of Contents",
+    "sections": {
+      "collect": {
+        "title": "Information We Collect",
+        "intro": "When you use our website or services, we may collect:",
+        "items": {
+          "contact": {
+            "title": "Contact Information",
+            "desc": "Name, email address, phone number, and company name when you fill out our contact forms."
+          },
+          "project": {
+            "title": "Project Information",
+            "desc": "Details about your project needs that you share with us."
+          },
+          "usage": {
+            "title": "Usage Data",
+            "desc": "Information about how you interact with our website, including pages visited and time spent."
+          },
+          "device": {
+            "title": "Device Information",
+            "desc": "Browser type, operating system, and device type."
+          }
+        }
+      },
+      "use": {
+        "title": "How We Use Your Information",
+        "intro": "We use the information we collect to:",
+        "items": [
+          "Respond to your inquiries and provide customer support",
+          "Send you information about our services",
+          "Improve our website and services",
+          "Comply with legal obligations"
+        ]
+      },
+      "sharing": {
+        "title": "Information Sharing",
+        "intro": "We do not sell your personal information. We may share your information with:",
+        "items": {
+          "providers": {
+            "title": "Service Providers",
+            "desc": "Third-party services that help us operate our business (e.g., email services, analytics)."
+          },
+          "legal": {
+            "title": "Legal Requirements",
+            "desc": "When required by law or to protect our rights."
+          }
+        }
+      },
+      "cookies": {
+        "title": "Cookies and Tracking",
+        "intro": "We use cookies and similar technologies to:",
+        "items": [
+          "Remember your preferences (like language selection)",
+          "Understand how you use our website",
+          "Improve our services"
+        ],
+        "control": "You can control cookies through your browser settings.",
+        "consent": {
+          "message": "We use cookies to improve your browsing experience and analyze site usage.",
+          "accept": "Accept",
+          "decline": "Decline",
+          "learnMore": "Learn more"
+        }
+      },
+      "security": {
+        "title": "Data Security",
+        "content": "We implement appropriate security measures to protect your personal information. However, no method of transmission over the internet is 100% secure."
+      },
+      "rights": {
+        "title": "Your Rights",
+        "intro": "You have the right to:",
+        "items": [
+          "Access the personal information we hold about you",
+          "Request correction of inaccurate information",
+          "Request deletion of your information",
+          "Opt out of marketing communications"
+        ]
+      },
+      "thirdParty": {
+        "title": "Third-Party Services",
+        "intro": "Our website may use third-party services including:",
+        "items": [
+          "Google Analytics for website analytics",
+          "Firebase for hosting and authentication"
+        ],
+        "note": "These services have their own privacy policies."
+      },
+      "contact": {
+        "title": "Contact Us",
+        "intro": "If you have questions about this privacy policy or your personal information, please contact us at:",
+        "email": "Email"
+      },
+      "changes": {
+        "title": "Changes to This Policy",
+        "content": "We may update this privacy policy from time to time. We will notify you of any changes by posting the new policy on this page."
+      }
+    }
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "subtitle": "Please read these terms carefully before using our services.",
+    "lastUpdated": "Last updated",
+    "toc": "Table of Contents",
+    "sections": {
+      "agreement": {
+        "title": "Agreement to Terms",
+        "content": "By accessing or using the CartShift Studio website and services, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services."
+      },
+      "services": {
+        "title": "Services",
+        "intro": "CartShift Studio provides web development and e-commerce services, including but not limited to:",
+        "items": [
+          "Shopify store development and customization",
+          "WordPress website development",
+          "Website maintenance and support",
+          "E-commerce consulting"
+        ]
+      },
+      "projectAgreements": {
+        "title": "Project Agreements",
+        "intro": "All project work is subject to a separate project agreement that outlines:",
+        "items": [
+          "Scope of work",
+          "Timeline and milestones",
+          "Pricing and payment terms",
+          "Deliverables"
+        ]
+      },
+      "payment": {
+        "title": "Payment Terms",
+        "intro": "Payment terms are specified in individual project agreements. Generally:",
+        "items": [
+          "Deposits are required before work begins",
+          "Milestone payments may be required for larger projects",
+          "Final payment is due upon project completion"
+        ]
+      },
+      "ip": {
+        "title": "Intellectual Property",
+        "intro": "Upon full payment, clients receive ownership of custom code and designs created specifically for their project. CartShift Studio retains the right to:",
+        "items": [
+          "Use work in our portfolio (with client permission)",
+          "Reuse general techniques and non-proprietary code"
+        ]
+      },
+      "clientResponsibilities": {
+        "title": "Client Responsibilities",
+        "intro": "Clients are responsible for:",
+        "items": [
+          "Providing necessary content, assets, and information",
+          "Timely feedback and approvals",
+          "Ensuring they have rights to provided content",
+          "Maintaining their own backups"
+        ]
+      },
+      "liability": {
+        "title": "Limitation of Liability",
+        "content": "CartShift Studio is not liable for indirect, incidental, or consequential damages. Our total liability is limited to the amount paid for the specific service in question."
+      },
+      "warranties": {
+        "title": "Warranties",
+        "content": "We warrant that our services will be performed professionally and in accordance with industry standards. We do not guarantee specific business results such as sales or traffic increases."
+      },
+      "termination": {
+        "title": "Termination",
+        "intro": "Either party may terminate a project agreement with written notice. In case of termination:",
+        "items": [
+          "Client pays for work completed to date",
+          "Client receives deliverables for paid work",
+          "Deposits may be non-refundable depending on work completed"
+        ]
+      },
+      "confidentiality": {
+        "title": "Confidentiality",
+        "content": "Both parties agree to keep confidential information private and not share it with third parties without permission."
+      },
+      "governingLaw": {
+        "title": "Governing Law",
+        "content": "These terms are governed by the laws of Israel. Any disputes will be resolved in the courts of Israel."
+      },
+      "changes": {
+        "title": "Changes to Terms",
+        "content": "We may update these terms from time to time. Continued use of our services after changes constitutes acceptance of the new terms."
+      },
+      "contact": {
+        "title": "Contact",
+        "intro": "For questions about these terms, contact us at:",
+        "email": "Email"
+      }
+    }
+  }
+}

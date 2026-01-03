@@ -87,6 +87,8 @@ export default function AgencyClientDetailClient({
       return undefined;
     }
 
+    let mounted = true;
+
     setLoading(true);
     setError(null);
 
@@ -95,6 +97,7 @@ export default function AgencyClientDetailClient({
     try {
       // Subscribe to organization data
       const unsubOrg = subscribeToOrganization(clientId, org => {
+        if (!mounted) return;
         console.log('[AgencyClientDetail] Organization loaded:', org);
         if (org === null) {
           setError('Client not found or you do not have permission to view it');
@@ -106,12 +109,14 @@ export default function AgencyClientDetailClient({
 
       // Subscribe to requests
       const unsubRequests = subscribeToOrgRequests(clientId, reqs => {
+        if (!mounted) return;
         console.log('[AgencyClientDetail] Requests loaded:', reqs.length);
         setRequests(reqs);
       });
 
       // Subscribe to activities
       const unsubActivities = subscribeToOrgActivities(clientId, acts => {
+        if (!mounted) return;
         console.log('[AgencyClientDetail] Activities loaded:', acts.length);
         setActivities(acts);
       });
@@ -119,8 +124,10 @@ export default function AgencyClientDetailClient({
       // Fetch members
       getOrganizationMembers(clientId)
         .then(membersList => {
-          console.log('[AgencyClientDetail] Members loaded:', membersList.length);
-          setMembers(membersList);
+          if (mounted) {
+            console.log('[AgencyClientDetail] Members loaded:', membersList.length);
+            setMembers(membersList);
+          }
         })
         .catch(err => {
           console.error('[AgencyClientDetail] Error loading members:', err);
@@ -128,17 +135,22 @@ export default function AgencyClientDetailClient({
         });
 
       return () => {
+        mounted = false;
         unsubOrg();
         unsubRequests();
         unsubActivities();
       };
     } catch (err) {
       console.error('[AgencyClientDetail] Critical error in useEffect:', err);
-      setError(err instanceof Error ? err.message : t('clients.unexpectedError'));
-      setLoading(false);
-      return undefined;
+      if (mounted) {
+        setError(err instanceof Error ? err.message : t('clients.unexpectedError'));
+        setLoading(false);
+      }
+      return () => {
+        mounted = false;
+      };
     }
-  }, [clientId, authLoading, userData]);
+  }, [clientId, authLoading, userData, t]);
 
   // Prevent hydration mismatch for time-sensitive content
   useEffect(() => {

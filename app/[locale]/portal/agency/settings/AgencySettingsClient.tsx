@@ -129,51 +129,63 @@ export default function AgencySettingsClient() {
   }, [user]);
 
   useEffect(() => {
+    let mounted = true;
+    let unsubscribeInvites: (() => void) | undefined;
+    let unsubscribeServices: (() => void) | undefined;
+
     if (activeTab === 'team') {
       const fetchTeam = async () => {
-        setLoadingTeam(true);
+        if (mounted) {
+          setLoadingTeam(true);
+        }
         try {
           const members = await getAgencyTeam();
-          setTeam(members);
+          if (mounted) {
+            setTeam(members);
+          }
         } catch (error) {
           console.error('Error fetching agency team:', error);
         } finally {
-          setLoadingTeam(false);
+          if (mounted) {
+            setLoadingTeam(false);
+          }
         }
       };
 
       fetchTeam();
 
-      // Also subscribe to agency invites
-      const unsubscribeInvites = subscribeToAgencyInvites(data => {
-        setInvites(data);
+      unsubscribeInvites = subscribeToAgencyInvites(data => {
+        if (mounted) {
+          setInvites(data);
+        }
       });
-
-      return () => {
-        unsubscribeInvites();
-      };
     }
 
     if (activeTab === 'services') {
-      setLoadingServices(true);
-      const unsubscribeServices = subscribeToServices(data => {
-        setServices(data);
-        setLoadingServices(false);
+      if (mounted) {
+        setLoadingServices(true);
+      }
+      unsubscribeServices = subscribeToServices(data => {
+        if (mounted) {
+          setServices(data);
+          setLoadingServices(false);
+        }
       });
-
-      return () => {
-        unsubscribeServices();
-      };
     }
 
     if (activeTab === 'integrations') {
-      // Load Google Calendar connection status
       getCalendarConnection().then(connection => {
-        setCalendarConnection(connection);
+        if (mounted) {
+          setCalendarConnection(connection);
+        }
       });
     }
 
-    return undefined;
+    return () => {
+      mounted = false;
+      if (unsubscribeInvites) unsubscribeInvites();
+      if (unsubscribeServices) unsubscribeServices();
+    };
   }, [activeTab]);
 
   const handleCancelInvite = async (inviteId: string) => {

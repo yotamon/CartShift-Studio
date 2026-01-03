@@ -9,7 +9,7 @@ import {
   serverTimestamp,
   getDocs,
 } from 'firebase/firestore';
-import { getFirestoreDb, waitForAuth } from '@/lib/firebase';
+import { getFirestoreDb, waitForAuth, getFirebaseAuth } from '@/lib/firebase';
 import { ActivityLog } from '@/lib/types/portal';
 
 const ACTIVITIES_COLLECTION = 'portal_activities';
@@ -58,6 +58,19 @@ export async function getOrgActivities(
   maxItems: number = 20
 ): Promise<ActivityLog[]> {
   await waitForAuth();
+  const auth = getFirebaseAuth();
+  const currentUser = auth.currentUser;
+  
+  if (!currentUser) {
+    throw new Error('User must be authenticated to access activities');
+  }
+
+  try {
+    await currentUser.getIdToken(true);
+  } catch (error) {
+    console.warn('[getOrgActivities] Error refreshing token:', error);
+  }
+
   const db = getFirestoreDb();
   const q = query(
     collection(db, ACTIVITIES_COLLECTION),
@@ -66,11 +79,26 @@ export async function getOrgActivities(
     limit(maxItems)
   );
 
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as ActivityLog[];
+  try {
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as ActivityLog[];
+  } catch (error: unknown) {
+    const firestoreError = error as { code?: string; message?: string };
+    if (firestoreError.code === 'permission-denied') {
+      console.error('[getOrgActivities] Permission denied:', {
+        orgId,
+        userId: currentUser.uid,
+        error: firestoreError.message,
+      });
+      throw new Error(
+        `Permission denied accessing activities for organization ${orgId}. You may not be a member of this organization.`
+      );
+    }
+    throw error;
+  }
 }
 
 export function subscribeToOrgActivities(

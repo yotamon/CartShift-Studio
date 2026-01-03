@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
+import { useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,7 +12,36 @@ import { X } from 'lucide-react';
 import { inviteTeamMember, inviteAgencyMember } from '@/lib/services/portal-organizations';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
+
+const modalContainerVariants = cva(
+  "fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity",
+  {
+    variants: {
+      isOpen: {
+        true: "bg-black/50 backdrop-blur-sm opacity-100",
+        false: "bg-black/0 backdrop-blur-none opacity-0 pointer-events-none",
+      }
+    },
+    defaultVariants: {
+      isOpen: true,
+    }
+  }
+);
+
+const modalContentVariants = cva(
+  "bg-white dark:bg-surface-900 rounded-2xl shadow-2xl max-w-md w-full border border-surface-200 dark:border-surface-800 transition-all",
+  {
+    variants: {
+      isOpen: {
+        true: "scale-100 opacity-100",
+        false: "scale-95 opacity-0",
+      }
+    },
+    defaultVariants: {
+      isOpen: true,
+    }
+  }
+);
 
 type InviteFormData = {
   email: string;
@@ -97,8 +128,8 @@ export const InviteTeamMemberForm = ({
   ];
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-2xl max-w-md w-full border border-surface-200 dark:border-surface-800">
+    <div className={cn(modalContainerVariants({ isOpen: true }))}>
+      <div className={cn(modalContentVariants({ isOpen: true }))}>
         <div className="flex items-center justify-between p-6 border-b border-surface-200 dark:border-surface-800">
           <h3 className="text-xl font-bold text-surface-900 dark:text-white">
             {t('portal.team.inviteForm.title')}

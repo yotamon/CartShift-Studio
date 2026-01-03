@@ -1,6 +1,23 @@
 'use client';
 
-import { Skeleton, SkeletonCard, SkeletonText } from '@/components/portal/ui/Skeleton';
+import { cva } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/portal/ui/Skeleton';
+
+const skeletonCardVariants = cva(
+  "p-6 rounded-2xl border border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-950",
+  {
+    variants: {
+      variant: {
+        default: "",
+        ghost: "bg-transparent border-dashed",
+      }
+    },
+    defaultVariants: {
+      variant: "default",
+    }
+  }
+);
 
 export function DashboardSkeleton() {
   return (
@@ -19,7 +36,7 @@ export function DashboardSkeleton() {
         {[1, 2, 3, 4].map(i => (
           <div
             key={i}
-            className="p-6 rounded-2xl border border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-950"
+            className={cn(skeletonCardVariants())}
           >
             <div className="flex items-center justify-between mb-4">
               <Skeleton variant="circular" className="w-10 h-10" />
@@ -36,7 +53,7 @@ export function DashboardSkeleton() {
         {/* Activity Timeline */}
         <div className="lg:col-span-2 space-y-4">
           <Skeleton className="h-7 w-40" />
-          <div className="p-6 rounded-2xl border border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-950 space-y-6">
+          <div className={cn(skeletonCardVariants(), "space-y-6")}>
             {[1, 2, 3, 4].map(i => (
               <div key={i} className="flex items-start gap-4">
                 <Skeleton variant="circular" className="w-8 h-8 flex-shrink-0" />
@@ -52,7 +69,7 @@ export function DashboardSkeleton() {
 
         {/* Sidebar */}
         <div className="space-y-6">
-          <div className="p-6 rounded-2xl border border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-950">
+          <div className={cn(skeletonCardVariants())}>
             <div className="flex items-center gap-2 mb-6">
               <Skeleton variant="circular" className="w-4 h-4" />
               <Skeleton className="h-3 w-24" />

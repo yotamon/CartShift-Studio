@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "prebuild": "node scripts/merge-translations.js",
+    "predev": "node scripts/merge-translations.js",
     "dev": "next dev --turbo",
     "build": "next build",
     "export": "next build",
@@ -18,7 +20,9 @@
     "normalize-db": "tsx scripts/normalize-db.ts",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "i18n:split": "node scripts/split-translations.js",
+    "i18n:merge": "node scripts/merge-translations.js"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -77,6 +81,7 @@
     "eslint-config-next": "^16.0.10",
     "firebase-admin": "^13.6.0",
     "jsdom": "^27.4.0",
+    "jsonlint": "^1.6.3",
     "mini-css-extract-plugin": "^2.9.4",
     "postcss": "^8.4.39",
     "prettier": "^3.2.5",

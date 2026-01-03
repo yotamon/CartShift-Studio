@@ -96,13 +96,28 @@ export function getFirestoreDb(): Firestore {
 export async function waitForAuth(): Promise<void> {
   const auth = getFirebaseAuth();
   if (auth.currentUser) {
-    return;
+    try {
+      await auth.currentUser.getIdToken();
+      return;
+    } catch (error) {
+      console.error('Error getting auth token:', error);
+    }
   }
 
-  return new Promise((resolve) => {
-    const unsubscribe = onAuthStateChanged(auth, (_user) => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       unsubscribe();
-      resolve();
+      if (user) {
+        try {
+          await user.getIdToken();
+          resolve();
+        } catch (error) {
+          console.error('Error getting auth token after state change:', error);
+          reject(error);
+        }
+      } else {
+        resolve();
+      }
     });
   });
 }

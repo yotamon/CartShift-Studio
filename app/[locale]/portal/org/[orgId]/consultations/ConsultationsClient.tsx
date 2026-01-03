@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from '@/lib/motion';
 import { useTranslations, useLocale } from 'next-intl';
 import { format } from 'date-fns';
@@ -27,14 +27,12 @@ import {
   ConsultationType,
   CONSULTATION_STATUS,
 } from '@/lib/types/portal';
-import {
-  cancelConsultation,
-} from '@/lib/services/portal-consultations';
 import { deleteCalendarEvent } from '@/lib/services/portal-google-calendar';
 import { getScheduleUrl } from '@/lib/schedule';
 import { trackBookCallClick } from '@/lib/analytics';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { useConsultations } from '@/lib/hooks/useConsultations';
+import { useConsultationMutations } from '@/lib/hooks/useConsultationMutations';
 
 const typeIcons: Record<ConsultationType, React.ElementType> = {
   onboarding: UserPlus,
@@ -54,16 +52,20 @@ export default function ConsultationsClient() {
     loading: consultationsLoading,
   } = useConsultations();
 
-  const [cancelingId, setCancelingId] = useState<string | null>(null);
+  const { cancelMutation, isCanceling } = useConsultationMutations();
   const dateLocale = getDateLocale(locale);
 
-  const loading = consultationsLoading;
-
-
+  const now = new Date();
   const upcomingConsultations = consultations.filter(
-    c => c.status === CONSULTATION_STATUS.SCHEDULED
+    c => c.status === CONSULTATION_STATUS.SCHEDULED &&
+    (c.scheduledAt?.toDate ? c.scheduledAt.toDate() > now : true)
   );
-  const pastConsultations = consultations.filter(c => c.status !== CONSULTATION_STATUS.SCHEDULED);
+  const pastConsultations = consultations.filter(
+    c => c.status !== CONSULTATION_STATUS.SCHEDULED ||
+    (c.scheduledAt?.toDate ? c.scheduledAt.toDate() <= now : false)
+  );
+
+  const loading = consultationsLoading;
 
   const handleScheduleClick = () => {
     trackBookCallClick('portal_consultations');
@@ -73,31 +75,27 @@ export default function ConsultationsClient() {
   const handleCancel = async (consultation: Consultation) => {
     if (
       !confirm(
-        t('portal.consultations.cancelConfirm')
+        t('consultations.form.cancelConfirm')
       )
     ) {
       return;
     }
 
-    setCancelingId(consultation.id);
     try {
-      await cancelConsultation(
-        consultation.id,
-        consultation.orgId,
-        userData?.id || 'unknown',
-        userData?.name || t('portal.consultations.userFallback')
-      );
+      await cancelMutation.mutateAsync({
+        consultationId: consultation.id,
+        orgId: consultation.orgId,
+        userId: userData?.id || 'unknown',
+        userName: userData?.name || t('consultations.userFallback')
+      });
 
       if (consultation.externalEventId) {
         // Attempt to delete from Google Calendar
-        // We don't block on this, and failures are logged in the service
         deleteCalendarEvent(consultation.externalEventId).catch(console.error);
       }
     } catch (error) {
+      // Error handled by mutation toast
       console.error('Failed to cancel consultation:', error);
-      alert(t('portal.consultations.failedToCancel'));
-    } finally {
-      setCancelingId(null);
     }
   };
 
@@ -107,15 +105,15 @@ export default function ConsultationsClient() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-black text-surface-900 dark:text-white font-outfit tracking-tight">
-            {t('portal.consultations.title')}
+            {t('consultations.title')}
           </h1>
           <p className="text-surface-500 dark:text-surface-400 mt-1">
-            {t('portal.consultations.clientSubtitle')}
+            {t('consultations.clientSubtitle')}
           </p>
         </div>
         <PortalButton variant="primary" className="gap-2" onClick={handleScheduleClick}>
           <Calendar size={18} />
-          {t('portal.consultations.scheduleCall')}
+          {t('consultations.scheduleCall')}
           <ExternalLink size={14} className="opacity-60" />
         </PortalButton>
       </div>
@@ -124,7 +122,7 @@ export default function ConsultationsClient() {
       <section className="mb-10">
         <h2 className="text-lg font-bold text-surface-900 dark:text-white mb-4 flex items-center gap-2">
           <Calendar className="w-5 h-5 text-blue-600" />
-          {t('portal.consultations.upcoming')}
+          {t('consultations.upcoming')}
           {upcomingConsultations.length > 0 && (
             <span className="ms-2 px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold rounded-lg">
               {upcomingConsultations.length}
@@ -142,14 +140,14 @@ export default function ConsultationsClient() {
               <Calendar className="w-7 h-7 text-surface-400" />
             </div>
             <h3 className="text-base font-bold text-surface-700 dark:text-surface-300 mb-2">
-              {t('portal.consultations.noUpcoming')}
+              {t('consultations.noUpcoming')}
             </h3>
             <p className="text-surface-500 text-sm mb-4">
-              {t('portal.consultations.noUpcomingDesc')}
+              {t('consultations.noUpcomingDesc')}
             </p>
             <PortalButton variant="outline" onClick={handleScheduleClick} className="gap-2">
               <Calendar size={16} />
-              {t('portal.consultations.scheduleNow')}
+              {t('consultations.scheduleNow')}
             </PortalButton>
           </div>
         ) : (
@@ -193,7 +191,7 @@ export default function ConsultationsClient() {
                         </span>
                         <span className="flex items-center gap-1">
                           <Clock size={14} />
-                          {consultation.duration} {t('portal.consultations.minutes')}
+                          {consultation.duration} {t('consultations.minutes')}
                         </span>
                       </div>
                       {consultation.description && (
@@ -203,7 +201,7 @@ export default function ConsultationsClient() {
                       )}
                       {consultation.agendaItems && consultation.agendaItems.length > 0 && (
                         <div className="mt-3">
-                          <p className="text-xs font-bold text-surface-500 mb-2">{t('portal.consultations.agenda')}</p>
+                          <p className="text-xs font-bold text-surface-500 mb-2">{t('consultations.agenda')}</p>
                           <ul className="space-y-1">
                             {consultation.agendaItems.map((item, i) => (
                               <li
@@ -227,21 +225,23 @@ export default function ConsultationsClient() {
                           className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-colors justify-center"
                         >
                           <Video size={16} />
-                          {t('portal.consultations.join')}
+                          {t('consultations.join')}
                         </a>
                       )}
                       <button
-                        onClick={() => handleCancel(consultation)}
-                        disabled={cancelingId === consultation.id}
-                        className="flex items-center gap-2 px-4 py-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl font-medium text-sm transition-colors justify-center disabled:opacity-50"
-                      >
-                        {cancelingId === consultation.id ? (
-                          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                        ) : (
-                          <XCircle size={16} />
-                        )}
-                        {t('portal.consultations.cancel')}
-                      </button>
+                            disabled={isCanceling && cancelMutation.variables?.consultationId === consultation.id}
+                            onClick={() => handleCancel(consultation)}
+                            className="text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 px-3 py-2 rounded-xl transition-colors flex items-center gap-2 font-bold disabled:opacity-50"
+                          >
+                            {isCanceling && cancelMutation.variables?.consultationId === consultation.id ? (
+                              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                              <XCircle size={16} />
+                            )}
+                            {isCanceling && cancelMutation.variables?.consultationId === consultation.id
+                              ? t('portal.common.loading')
+                              : t('consultations.cancel')}
+                          </button>
                     </div>
                   </div>
                 </motion.div>
@@ -256,7 +256,7 @@ export default function ConsultationsClient() {
         <section>
           <h2 className="text-lg font-bold text-surface-900 dark:text-white mb-4 flex items-center gap-2">
             <Clock className="w-5 h-5 text-surface-500" />
-            {t('portal.consultations.past')}
+            {t('consultations.past')}
           </h2>
 
           <div className="space-y-3">
@@ -300,14 +300,14 @@ export default function ConsultationsClient() {
                         statusConfig.color
                       )}
                     >
-                      {t(`portal.consultations.status.${consultation.status}`)}
+                      {t(`consultations.status.${consultation.status}`)}
                     </span>
                   </div>
                   {consultation.meetingNotes && (
                     <div className="mt-3 p-3 bg-surface-50 dark:bg-surface-800/50 rounded-lg">
                       <p className="text-xs font-bold text-surface-500 mb-1 flex items-center gap-1">
                         <MessageSquare size={12} />
-                        {t('portal.consultations.notes')}
+                        {t('consultations.notes')}
                       </p>
                       <p className="text-sm text-surface-600 dark:text-surface-400">
                         {consultation.meetingNotes}
@@ -317,7 +317,7 @@ export default function ConsultationsClient() {
                   {consultation.actionItems && consultation.actionItems.length > 0 && (
                     <div className="mt-3">
                       <p className="text-xs font-bold text-surface-500 mb-2">
-                        {t('portal.consultations.actionItems')}
+                        {t('consultations.actionItems')}
                       </p>
                       <ul className="space-y-1">
                         {consultation.actionItems.map((item, i) => (

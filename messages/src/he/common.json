@@ -1,0 +1,73 @@
+{
+  "nav": {
+    "home": "ראשי",
+    "about": "אודות",
+    "services": "שירותים",
+    "blog": "בלוג",
+    "contact": "צור קשר",
+    "work": "עבודות",
+    "pricing": "מחירים",
+    "maintenance": "תחזוקה",
+    "industries": "תעשיות",
+    "company": "חברה",
+    "login": "התחברות",
+    "portal": "פורטל"
+  },
+  "floatingActions": {
+    "bookCall": "קבעו פגישה",
+    "whatsapp": "וואטסאפ",
+    "whatsappMessage": "שלום! אשמח לשמוע פרטים נוספים.",
+    "openContact": "פתח אפשרויות יצירת קשר"
+  },
+  "errorBoundary": {
+    "title": "משהו השתבש",
+    "description": "נתקלנו בשגיאה לא צפויה. נא לנסות לרענן את העמוד.",
+    "details": "פרטי שגיאה",
+    "tryAgain": "נסה שוב",
+    "refresh": "רענן עמוד"
+  },
+  "common": {
+    "learnMore": "לפרטים נוספים",
+    "contactUs": "דברו איתנו",
+    "getStarted": "בואו נתחיל",
+    "viewWork": "לתיק העבודות",
+    "exitIntent": {
+      "title": "רגע לפני שהולכים...",
+      "subtitle": "קבלו ייעוץ חינם לפרויקט שלכם",
+      "description": "נשמח לשמוע על מה שאתם בונים ולראות איך נוכל לעזור.",
+      "cta": "קבעו שיחה חינם",
+      "dismiss": "לא עכשיו"
+    }
+  },
+  "navigation": {
+    "home": "ראשי",
+    "solutions": "פתרונות",
+    "wordpress": "פתרונות וורדפרס",
+    "shopify": "פתרונות שופיפיי",
+    "clientPortal": "פורטל לקוחות",
+    "about": "אודות",
+    "contact": "צור קשר",
+    "blog": "בלוג",
+    "blogPost": "פוסט בבלוג"
+  },
+  "faq": {
+    "collapseAll": "כווץ הכל",
+    "expandAll": "הרחב הכל"
+  },
+  "seo": {
+    "clientPortalH1": "פורטל לקוחות לניהול פרויקטים | שקיפות ומהירות"
+  },
+  "notFound": {
+    "title": "דף לא נמצא",
+    "description": "הדף שאתה מחפש לא קיים או אולי הועבר.",
+    "goBack": "חזור אחורה",
+    "goHome": "עבור לעמוד הבית",
+    "portalLogin": "התחברות לפורטל",
+    "needHelp": "צריך עזרה?",
+    "contactTeam": "צור קשר עם הצוות"
+  },
+  "stickyCta": {
+    "text": "Book a Call",
+    "textHe": "קבעו שיחה"
+  }
+}

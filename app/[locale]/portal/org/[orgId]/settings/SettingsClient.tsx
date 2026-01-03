@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalInput } from '@/components/portal/ui/PortalInput';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
@@ -81,8 +81,30 @@ export default function SettingsClient() {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingOrgLogo, setUploadingOrgLogo] = useState(false);
 
+  const successTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const errorTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const showFeedback = useCallback((type: 'success' | 'error', message: string) => {
+    if (type === 'success') {
+      if (successTimeoutRef.current) {
+        clearTimeout(successTimeoutRef.current);
+      }
+      setSuccessMessage(message);
+      successTimeoutRef.current = setTimeout(() => setSuccessMessage(null), 5000);
+    } else {
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
+      setErrorMessage(message);
+      errorTimeoutRef.current = setTimeout(() => setErrorMessage(null), 5000);
+    }
+  }, []);
+
   useEffect(() => {
-    async function fetchOrganization() {
+    let redirectTimeout: NodeJS.Timeout | undefined;
+    let mounted = true;
+
+    async function fetchOrganization(): Promise<void> {
       if (!orgId || typeof orgId !== 'string') return;
 
       setLoading(true);
@@ -96,6 +118,8 @@ export default function SettingsClient() {
 
       try {
         const org = await getOrganization(orgId);
+        if (!mounted) return;
+
         if (org) {
           if (org.logoUrl) {
             try {
@@ -136,6 +160,8 @@ export default function SettingsClient() {
           );
         }
       } catch (error: unknown) {
+        if (!mounted) return;
+
         const firestoreError = error as { code?: string; message?: string };
         if (firestoreError.code === 'permission-denied') {
           const errorMsg = t('portal.settings.general.permissionDenied');
@@ -144,7 +170,7 @@ export default function SettingsClient() {
               ? errorMsg
               : 'You do not have permission to access this organization';
           showFeedback('error', message);
-          setTimeout(() => {
+          redirectTimeout = setTimeout(() => {
             router.push('/portal/');
           }, 2000);
         } else {
@@ -157,7 +183,9 @@ export default function SettingsClient() {
           showFeedback('error', message);
         }
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     }
 
@@ -169,17 +197,19 @@ export default function SettingsClient() {
         photoUrl: userData.photoUrl || '',
       });
     }
-  }, [orgId, userData]);
 
-  const showFeedback = (type: 'success' | 'error', message: string) => {
-    if (type === 'success') {
-      setSuccessMessage(message);
-      setTimeout(() => setSuccessMessage(null), 5000);
-    } else {
-      setErrorMessage(message);
-      setTimeout(() => setErrorMessage(null), 5000);
-    }
-  };
+    return () => {
+      mounted = false;
+      if (redirectTimeout) clearTimeout(redirectTimeout);
+    };
+  }, [orgId, userData, t, router, showFeedback]);
+
+  useEffect(() => {
+    return () => {
+      if (successTimeoutRef.current) clearTimeout(successTimeoutRef.current);
+      if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current);
+    };
+  }, []);
 
   const handleSave = async () => {
     if (!orgId || typeof orgId !== 'string') return;

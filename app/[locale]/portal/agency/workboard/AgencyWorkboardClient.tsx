@@ -104,28 +104,40 @@ export default function AgencyWorkboardClient() {
   };
 
   useEffect(() => {
+    let mounted = true;
+
     async function fetchData() {
       if (!userData?.isAgency) {
-        if (!authLoading && isAuthenticated) {
+        if (!authLoading && isAuthenticated && mounted) {
           setLoading(false);
         }
         return;
       }
 
-      setLoading(true);
+      if (mounted) {
+        setLoading(true);
+      }
       try {
         const data = await getAllRequests();
-        setRequests(data);
+        if (mounted) {
+          setRequests(data);
+        }
       } catch (error) {
         console.error('Error fetching workboard data:', error);
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     }
 
     if (!authLoading) {
       fetchData();
     }
+
+    return () => {
+      mounted = false;
+    };
   }, [userData, authLoading, isAuthenticated]);
 
   useEffect(() => {

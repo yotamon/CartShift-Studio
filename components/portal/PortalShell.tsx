@@ -1,10 +1,8 @@
 'use client';
 
+import { cva } from 'class-variance-authority';
 import React, { useState, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
-import { usePathname, useRouter } from '@/i18n/navigation';
-import { Link } from '@/i18n/navigation';
-import { motion, AnimatePresence } from "@/lib/motion";
+import { usePathname, useRouter, Link } from '@/i18n/navigation';
 import {
   LayoutDashboard,
   ClipboardList,
@@ -16,7 +14,6 @@ import {
   LogOut,
   ChevronLeft,
   Bell,
-  Search,
   Loader2,
   AlertCircle,
   Zap,
@@ -26,6 +23,8 @@ import {
   Calendar,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from '@/lib/motion';
+import { createPortal } from 'react-dom';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { logout } from '@/lib/services/auth';
 import { PortalButton } from './ui/PortalButton';
@@ -48,6 +47,41 @@ import { Breadcrumbs } from './ui/Breadcrumbs';
 import { MobileSearch, MobileSearchButton } from './ui/MobileSearch';
 import { GlobalSearch } from './ui/GlobalSearch';
 
+const navItemVariants = cva(
+  "portal-nav-item group relative transition-all duration-200",
+  {
+    variants: {
+      isActive: {
+        true: "portal-nav-item-active text-blue-600 dark:text-blue-400 font-bold bg-blue-50/50 dark:bg-blue-500/10",
+        false: "text-surface-600 dark:text-surface-400 hover:bg-surface-100/60 dark:hover:bg-surface-800/40 hover:text-surface-900 dark:hover:text-white",
+      },
+      isCollapsed: {
+        true: "md:justify-center md:px-0",
+        false: "",
+      }
+    },
+    defaultVariants: {
+      isActive: false,
+      isCollapsed: false,
+    }
+  }
+);
+
+const notificationButtonVariants = cva(
+  "relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300",
+  {
+    variants: {
+      isOpen: {
+        true: "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rotate-12",
+        false: "text-surface-500 hover:text-surface-900 dark:hover:text-white hover:bg-surface-100/80 dark:hover:bg-surface-800/50",
+      }
+    },
+    defaultVariants: {
+      isOpen: false,
+    }
+  }
+);
+
 interface PortalShellProps {
   children: React.ReactNode;
   orgId?: string;
@@ -59,7 +93,7 @@ export const PortalShell = ({
   orgId,
   isAgency: isAgencyPage = false,
 }: PortalShellProps) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -73,6 +107,9 @@ export const PortalShell = ({
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+
+  // When mobile menu is open, always show expanded sidebar; on desktop, use isSidebarOpen state
+  const isExpanded = isMobileMenuOpen || isSidebarOpen;
   const pathname = usePathname();
   const router = useRouter();
   const { userData, loading, isAuthenticated, accountType } = usePortalAuth();
@@ -85,20 +122,25 @@ export const PortalShell = ({
 
   const userId = userData?.id ?? null;
 
-  // Resolve real orgId if we are in the template route
+  // Resolve real orgId if we are in the template route or if orgId is undefined
   const effectiveOrgId = React.useMemo(() => {
-    if (orgId === 'template' && pathname) {
+    if (orgId && orgId !== 'template') {
+      return orgId;
+    }
+    
+    if (pathname) {
       // Path format: /:locale/portal/org/:orgId/... or /portal/org/:orgId/...
       // Example: /en/portal/org/123/dashboard
       const parts = pathname.split('/');
       const orgIndex = parts.indexOf('org');
       if (orgIndex !== -1 && parts.length > orgIndex + 1) {
         const realId = parts[orgIndex + 1];
-        if (realId !== 'template') {
+        if (realId && realId !== 'template') {
           return realId;
         }
       }
     }
+    
     return orgId;
   }, [orgId, pathname]);
 
@@ -662,7 +704,7 @@ export const PortalShell = ({
           'portal-sidebar fixed top-0 bottom-0 z-[70] flex flex-col transition-transform duration-300',
           'bg-white dark:bg-surface-950/80 backdrop-blur-xl',
           'border-e border-surface-200/50 dark:border-surface-800/30 shadow-2xl shadow-surface-950/20',
-          'w-[85vw] max-w-sm',
+          'w-[85vw] max-w-sm h-screen overflow-hidden',
           isRTLLocale(locale) ? 'right-0' : 'left-0',
           isMobileMenuOpen
             ? 'translate-x-0'
@@ -679,13 +721,13 @@ export const PortalShell = ({
         {/* Sidebar Header / Brand */}
         <div className="h-20 flex items-center px-4 border-b border-surface-200/50 dark:border-surface-800/30 flex-shrink-0">
           <Link
-            href={`/${locale}/portal/org/${orgId}/dashboard`}
+            href={effectiveOrgId ? `/${locale}/portal/org/${effectiveOrgId}/dashboard` : `/${locale}/portal/org`}
             className="flex items-center gap-3 group w-full min-w-0"
           >
             <div className="w-9 h-9 flex-shrink-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-blue-500/25 group-hover:scale-110 transition-transform duration-300">
               <Zap size={18} fill="currentColor" />
             </div>
-            {isSidebarOpen && (
+            {isExpanded && (
               <motion.div
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -703,7 +745,7 @@ export const PortalShell = ({
         </div>
 
         {/* Sidebar Nav */}
-        <nav className="flex-1 overflow-y-auto portal-scrollbar p-3 space-y-0.5">
+        <nav className="flex-1 overflow-y-auto overflow-x-hidden portal-scrollbar p-3 space-y-0.5 min-h-0">
           {navGroups.map((group, groupIndex) => (
             <div key={groupIndex}>
               {groupIndex > 0 && (
@@ -716,25 +758,19 @@ export const PortalShell = ({
                     key={item.href}
                     href={item.href}
                     onClick={() => isMobile && setIsMobileMenuOpen(false)}
-                    className={cn(
-                      'portal-nav-item group relative',
-                      isActive
-                        ? 'portal-nav-item-active'
-                        : 'hover:bg-surface-100/60 dark:hover:bg-surface-800/40',
-                      !isSidebarOpen && 'md:justify-center md:px-0'
-                    )}
-                    title={!isSidebarOpen ? item.label : undefined}
+                    className={cn(navItemVariants({ isActive, isCollapsed: !isExpanded }))}
+                    title={!isExpanded ? item.label : undefined}
                   >
                     <item.icon
                       size={18}
                       className={cn(
                         'transition-all duration-300 flex-shrink-0',
                         isActive
-                          ? 'text-blue-600 dark:text-blue-400'
+                          ? 'text-current'
                           : 'opacity-60 group-hover:opacity-100 group-hover:scale-110'
                       )}
                     />
-                    {isSidebarOpen && (
+                    {isExpanded && (
                       <motion.span
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -743,7 +779,7 @@ export const PortalShell = ({
                         {item.label}
                       </motion.span>
                     )}
-                    {isActive && isSidebarOpen && (
+                    {isActive && isExpanded && (
                       <motion.div
                         layoutId="nav-active-indicator"
                         className="absolute w-1 h-6 bg-blue-600 rounded-full start-0"
@@ -757,19 +793,19 @@ export const PortalShell = ({
         </nav>
 
         {/* Sidebar Footer */}
-        <div className="p-3 border-t border-surface-200/50 dark:border-surface-800/30 space-y-1">
+        <div className="flex-shrink-0 p-3 border-t border-surface-200/50 dark:border-surface-800/30 space-y-1">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             className={cn(
               'hidden md:flex items-center gap-3 portal-nav-item w-full',
-              !isSidebarOpen && 'justify-center px-0'
+              !isExpanded && 'justify-center px-0'
             )}
             aria-label={isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
           >
             <div className="transition-transform duration-500">
               <ChevronLeft size={20} className="rtl:rotate-180" />
             </div>
-            {isSidebarOpen && (
+            {isExpanded && (
               <span className="text-sm font-bold">{t('portal.sidebar.collapse')}</span>
             )}
           </button>
@@ -778,14 +814,14 @@ export const PortalShell = ({
             onClick={handleSignOut}
             className={cn(
               'flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all font-semibold text-sm',
-              !isSidebarOpen && 'justify-center px-0'
+              !isExpanded && 'justify-center px-0'
             )}
           >
             <LogOut
               size={20}
               className="flex-shrink-0 group-hover:ltr:translate-x-1 group-hover:rtl:-translate-x-1 transition-transform"
             />
-            {isSidebarOpen && <span className="text-sm">{t('portal.sidebar.signOut')}</span>}
+            {isExpanded && <span className="text-sm">{t('portal.sidebar.signOut')}</span>}
           </button>
         </div>
       </aside>
@@ -827,12 +863,7 @@ export const PortalShell = ({
                 <button
                   ref={notificationButtonRef}
                   onClick={() => setIsNotificationOpen(!isNotificationOpen)}
-                  className={cn(
-                    'relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300',
-                    isNotificationOpen
-                      ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rotate-12'
-                      : 'text-surface-500 hover:text-surface-900 dark:hover:text-white hover:bg-surface-100/80 dark:hover:bg-surface-800/50'
-                  )}
+                  className={cn(notificationButtonVariants({ isOpen: isNotificationOpen }))}
                   aria-label="Notifications"
                 >
                   <Bell size={20} className="group-hover:scale-110 transition-transform" />
@@ -862,7 +893,7 @@ export const PortalShell = ({
               </div>
               <Link
                 href={
-                  userData?.isAgency ? '/portal/agency/settings/' : `/portal/org/${orgId}/settings/`
+                  userData?.isAgency ? '/portal/agency/settings/' : `/portal/org/${effectiveOrgId}/settings/`
                 }
                 className="portal-avatar group cursor-pointer hover:border-blue-500/50 transition-all active:scale-95 shadow-lg shadow-blue-500/10"
               >

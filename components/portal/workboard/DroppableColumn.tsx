@@ -1,17 +1,49 @@
 'use client';
 
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { cn } from '@/lib/utils';
 import { PlusCircle, MoreHorizontal } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-interface DroppableColumnProps {
+const columnIndicatorVariants = cva(
+  "w-2 h-2 rounded-full",
+  {
+    variants: {
+      color: {
+        slate: "bg-slate-500",
+        blue: "bg-blue-500",
+        amber: "bg-amber-500",
+        emerald: "bg-emerald-500",
+      }
+    },
+    defaultVariants: {
+      color: "slate",
+    }
+  }
+);
+
+const droppableAreaVariants = cva(
+  "space-y-3 max-h-[calc(100vh-280px)] overflow-y-auto portal-scrollbar min-h-[200px] rounded-2xl p-2 transition-colors duration-200",
+  {
+    variants: {
+      isOver: {
+        true: "bg-blue-50/50 dark:bg-blue-500/5 ring-2 ring-blue-500/30 ring-inset",
+        false: "",
+      }
+    },
+    defaultVariants: {
+      isOver: false,
+    }
+  }
+);
+
+interface DroppableColumnProps extends VariantProps<typeof columnIndicatorVariants> {
   id: string;
   title: string;
   itemIds: string[];
   itemCount: number;
-  color?: 'slate' | 'blue' | 'amber' | 'emerald';
   children: React.ReactNode;
   onAddClick?: () => void;
   onMoreClick?: () => void;
@@ -23,7 +55,7 @@ export function DroppableColumn({
   title,
   itemIds,
   itemCount,
-  color = 'slate',
+  color,
   children,
   onAddClick,
   onMoreClick,
@@ -33,19 +65,12 @@ export function DroppableColumn({
   const { setNodeRef, isOver } = useDroppable({ id });
   const displayEmptyMessage = emptyMessage || t('portal.common.noItems');
 
-  const colorStyles = {
-    slate: 'bg-slate-500',
-    blue: 'bg-blue-500',
-    amber: 'bg-amber-500',
-    emerald: 'bg-emerald-500',
-  };
-
   return (
     <div className="space-y-4">
       {/* Column Header */}
       <div className="flex items-center justify-between px-2 mb-2">
         <div className="flex items-center gap-2">
-          <div className={cn('w-2 h-2 rounded-full', colorStyles[color])} />
+          <div className={cn(columnIndicatorVariants({ color }))} />
           <h3 className="text-xs font-black text-surface-900 dark:text-white uppercase tracking-widest">
             {title}
           </h3>
@@ -68,11 +93,7 @@ export function DroppableColumn({
       <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
         <div
           ref={setNodeRef}
-          className={cn(
-            'space-y-3 max-h-[calc(100vh-280px)] overflow-y-auto portal-scrollbar',
-            'min-h-[200px] rounded-2xl p-2 transition-colors duration-200',
-            isOver && 'bg-blue-50/50 dark:bg-blue-500/5 ring-2 ring-blue-500/30 ring-inset'
-          )}
+          className={cn(droppableAreaVariants({ isOver }))}
         >
           {itemCount === 0 ? (
             <div className="py-12 border-2 border-dashed border-surface-200 dark:border-surface-800 rounded-2xl flex flex-col items-center justify-center text-center opacity-50">

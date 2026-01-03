@@ -1,61 +1,80 @@
-# CartShift Studio Website
+# CartShift Studio
 
-A modern, conversion-optimized website for CartShift Studio built with Next.js, React, and TypeScript, deployed on Firebase.
+A modern, high-performance, and conversion-optimized ecosystem for CartShift Studio. This project includes a public website and a comprehensive agency/client portal built with Next.js 16+, Firebase, and TanStack Query.
+
+## Project Vision
+CartShift Studio provides a seamless experience for both agency administrators and clients, managing consultations, service requests, workboards, and billing through a unified, avant-garde interface.
 
 ## Getting Started
 
 ### Prerequisites
 - Node.js 20+
-- npm or yarn
+- pnpm (recommended) or npm
 - Firebase CLI (`npm install -g firebase-tools`)
 
 ### Installation
 
 1. Install dependencies:
 ```bash
-npm install
+pnpm install
 ```
 
 2. Install Firebase Functions dependencies:
 ```bash
 cd functions
-npm install
+pnpm install
 cd ..
 ```
 
 3. Set up environment variables:
    - Copy `.env.example` to `.env.local`
-   - Fill in your values
+   - Fill in your Firebase and API configuration values.
 
 4. Run development server:
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Project Structure
+## Project Architecture
 
-- `app/` - Next.js App Router pages and layouts
-- `components/` - Reusable React components
-- `lib/` - Utility functions and helpers
-- `content/` - Markdown blog posts and static content
-- `public/` - Static assets (images, fonts)
-- `functions/` - Firebase Cloud Functions
+- `app/[locale]/` - Next.js App Router with i18n support.
+  - `(website)` - Public pages (Hero, Services, Blog, Portfolio).
+  - `portal/` - The core application.
+    - `agency/` - Management interface for agency staff (Workboards, Client management, Consultations).
+    - `org/[orgId]/` - Client-specific dashboards and request management.
+- `components/` - Organized for scale:
+  - `portal/` - Application-specific UI components, forms, and providers.
+  - `sections/` - Content sections for the public website.
+  - `ui/` - Shared design system primitives (CVA-powered).
+- `lib/` - Shared logic:
+  - `services/` - Firebase/Firestore service layer.
+  - `hooks/` - Custom React hooks (TanStack Query integrations).
+  - `utils/` - Formatting, validation, and styling helpers.
+- `functions/` - Firebase Cloud Functions (Backend logic, Emails, Integrations).
+- `messages/` - Localization files for `next-intl`.
 
 ## Tech Stack
 
-- **Framework**: Next.js 16+ (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Animations**: Framer Motion
-- **Forms**: React Hook Form
-- **Content**: Markdown (gray-matter, remark)
-- **Validation**: Zod
-- **Sanitization**: DOMPurify
-- **Deployment**: Firebase Hosting + Cloud Functions
-- **Email**: Gmail API via Cloud Functions
-- **Analytics**: Google Analytics 4
+- **Framework**: [Next.js 16+](https://nextjs.org/) (App Router, Server Components)
+- **Language**: [TypeScript](https://www.typescriptlang.org/) (Strict mode)
+- **Data Fetching**: [@tanstack/react-query](https://tanstack.com/query/latest) (Server state management)
+- **Backend/Auth**: [Firebase](https://firebase.google.com/) (Auth, Firestore, Storage, Hosting, Functions)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) + [class-variance-authority (CVA)](https://cva.style/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/) (Layout transitions, micro-interactions)
+- **Forms**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
+- **Internationalization**: [next-intl](https://next-intl-docs.vercel.app/)
+- **UI Components**: [Sonner](https://sonner.stevenlyui.com/) (Toasts), [Lucide React](https://lucide.dev/) (Icons)
+
+## Key Features & Coding Standards
+
+- **Atomic Design System**: Components are built using CVA for consistent variants and themes.
+- **RTL Support**: All layout and spacing use logical CSS properties (`ms-*`, `pe-*`, `ps-*`, `start-*`, `end-*`) to support both LTR and RTL directions.
+- **Server State Hook Pattern**: Data operations are encapsulated in custom TanStack Query hooks (e.g., `useRequestMutation`, `useAgencyClients`) for caching and optimistic updates.
+- **Shared Element Transitions**: Morphing effects between views using Framer Motion's `layoutId`.
+- **Comprehensive Error Handling**: Centralized Error Boundaries and Toast-based notifications for all async actions.
+- **SEO & Performance**: Optimized metadata, fast LCP through Next.js Image/Font optimization, and bundle analysis.
 
 ## Deployment
 
@@ -66,64 +85,14 @@ Quick deploy:
 npm run deploy
 ```
 
-## Environment Variables
-
-**Note**: All environment variables are validated at startup. Missing required variables will cause the application to fail with a clear error message.
-
-### Local Development (.env.local)
-```env
-NEXT_PUBLIC_SITE_URL=https://yourdomain.com
-NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
-NEXT_PUBLIC_FIREBASE_FUNCTION_URL=https://us-central1-your-project.cloudfunctions.net/contactForm
-```
-
-**Required Variables**:
-- `NEXT_PUBLIC_SITE_URL` - Your production domain URL
-- `NEXT_PUBLIC_FIREBASE_FUNCTION_URL` - Your Firebase Cloud Function URL for contact form submissions
-
-**Optional Variables**:
-- `NEXT_PUBLIC_GA_ID` - Google Analytics tracking ID
-
-### Firebase Functions Secrets
-```bash
-firebase functions:secrets:set GMAIL_USER="your-email@gmail.com"
-firebase functions:secrets:set GMAIL_APP_PASSWORD="your-app-password"
-firebase functions:secrets:set CONTACT_EMAIL="hello@yourdomain.com"
-```
-
-## Key Features
-
-- **Error Handling**: Comprehensive error boundaries and centralized error logging
-- **Input Validation**: Zod schemas for all form inputs with sanitization
-- **Security**: Rate limiting, input sanitization, and XSS protection
-- **Performance**: Blog post caching, optimized font loading, and code splitting
-- **Accessibility**: ARIA labels, keyboard navigation, and skip links
-- **SEO**: Structured data, language alternates, and optimized metadata
-- **Type Safety**: Strict TypeScript configuration with improved type definitions
-
-## Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run analyze` - Analyze bundle size with @next/bundle-analyzer
-
 ## Documentation
-
-All documentation is located in the `/docs` folder:
 
 - [DEPLOYMENT.md](./docs/DEPLOYMENT.md) - Firebase deployment guide
 - [TESTING.md](./docs/TESTING.md) - Testing checklist
 - [PROJECT_SUMMARY.md](./docs/PROJECT_SUMMARY.md) - Implementation summary
-- [CODE_REVIEW.md](./docs/CODE_REVIEW.md) - Comprehensive code review and fixes
-- [INCONSISTENCIES_ANALYSIS.md](./docs/INCONSISTENCIES_ANALYSIS.md) - Code inconsistencies analysis
-- [SEO_DOCS_README.md](./docs/SEO_DOCS_README.md) - SEO documentation overview
-- [SEO_STRATEGY.md](./docs/SEO_STRATEGY.md) - Comprehensive SEO strategy
-- [SEO_QUICK_START.md](./docs/SEO_QUICK_START.md) - SEO quick start guide
-- [KEYWORD_STRATEGY.md](./docs/KEYWORD_STRATEGY.md) - Keyword research strategy
-- [LINK_BUILDING_GUIDE.md](./docs/LINK_BUILDING_GUIDE.md) - Link building playbook
+- [CODE_REVIEW.md](./docs/CODE_REVIEW.md) - Documentation of project refinements
+- [INCONSISTENCIES_ANALYSIS.md](./docs/INCONSISTENCIES_ANALYSIS.md) - Design system alignment
 
 ## License
 
-Private project - CartShift Studio
+Private project - CartShift Studio © 2026

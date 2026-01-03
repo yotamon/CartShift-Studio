@@ -1,9 +1,26 @@
 "use client";
 
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
 import React, { useState, useEffect } from "react";
 import { motion } from "@/lib/motion";
 import { useTheme } from "next-themes";
 import { Sun, Moon } from "lucide-react";
+
+const themeToggleVariants = cva(
+  "relative p-2.5 rounded-xl transition-all duration-300 shadow-premium border",
+  {
+    variants: {
+      isDark: {
+        true: "bg-white/5 border-white/10 hover:bg-white/10",
+        false: "bg-white/5 border-white/10 hover:bg-white/10",
+      }
+    },
+    defaultVariants: {
+      isDark: false,
+    }
+  }
+);
 
 export const ThemeToggle: React.FC = () => {
   const { theme, setTheme, resolvedTheme } = useTheme();
@@ -16,7 +33,7 @@ export const ThemeToggle: React.FC = () => {
   if (!mounted) {
     return (
       <button
-        className="relative p-2.5 rounded-xl bg-white/5 dark:bg-white/5 border border-white/10 dark:border-white/10 transition-all duration-300 shadow-premium"
+        className={cn(themeToggleVariants({ isDark: false }))}
         aria-label="Toggle theme"
       >
         <div className="relative w-6 h-6" />
@@ -30,7 +47,7 @@ export const ThemeToggle: React.FC = () => {
   return (
     <button
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="relative p-2.5 rounded-xl bg-white/5 dark:bg-white/5 border border-white/10 dark:border-white/10 hover:bg-white/10 dark:hover:bg-white/10 transition-all duration-300 shadow-premium"
+      className={cn(themeToggleVariants({ isDark }))}
       aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
     >
       <div className="relative w-6 h-6">
@@ -63,4 +80,3 @@ export const ThemeToggle: React.FC = () => {
     </button>
   );
 };
-

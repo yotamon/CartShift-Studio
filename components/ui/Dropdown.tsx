@@ -1,21 +1,56 @@
 'use client';
 
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from "@/lib/motion";
 
-export interface DropdownItem {
+const dropdownMenuVariants = cva(
+  "fixed z-[9999] min-w-[200px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden",
+  {
+    variants: {
+      align: {
+        left: "",
+        right: "",
+      }
+    },
+    defaultVariants: {
+      align: "right",
+    }
+  }
+);
+
+const dropdownItemVariants = cva(
+  "w-full px-4 py-2.5 text-sm font-medium text-start flex items-center gap-3 transition-colors duration-150",
+  {
+    variants: {
+      variant: {
+        default: "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800",
+        danger: "text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20",
+      },
+      isDisabled: {
+        true: "opacity-50 cursor-not-allowed",
+        false: "",
+      }
+    },
+    defaultVariants: {
+      variant: "default",
+      isDisabled: false,
+    }
+  }
+);
+
+export interface DropdownItem extends VariantProps<typeof dropdownItemVariants> {
   label: string;
   onClick: () => void;
   icon?: React.ReactNode;
-  variant?: 'default' | 'danger';
   disabled?: boolean;
 }
 
-interface DropdownProps {
+interface DropdownProps extends VariantProps<typeof dropdownMenuVariants> {
   trigger: React.ReactNode;
   items: DropdownItem[];
-  align?: 'left' | 'right';
   className?: string;
 }
 
@@ -56,13 +91,12 @@ export function Dropdown({ trigger, items, align = 'right', className = '' }: Dr
       let initialTransformOrigin = align === 'right' ? 'top right' : 'top left';
 
       if (align === 'right') {
-        const rightEdge = initialLeft;
         const leftEdge = initialLeft - 200;
         if (leftEdge < edgePadding) {
           initialLeft = rect.left;
           initialTransform = 'none';
           initialTransformOrigin = 'top left';
-        } else if (rightEdge > viewportWidth - edgePadding) {
+        } else if (initialLeft > viewportWidth - edgePadding) {
           initialLeft = viewportWidth - edgePadding;
           initialTransform = 'translateX(-100%)';
           initialTransformOrigin = 'top right';
@@ -117,7 +151,6 @@ export function Dropdown({ trigger, items, align = 'right', className = '' }: Dr
 
           if (align === 'right') {
             calculatedLeft = coords.left + coords.width;
-            const rightEdge = calculatedLeft;
             const leftEdgeWithTransform = calculatedLeft - actualDropdownWidth;
 
             if (leftEdgeWithTransform >= edgePadding) {
@@ -130,7 +163,6 @@ export function Dropdown({ trigger, items, align = 'right', className = '' }: Dr
             }
           } else {
             calculatedLeft = coords.left;
-            const leftEdge = calculatedLeft;
             const rightEdge = calculatedLeft + actualDropdownWidth;
 
             if (rightEdge <= viewportWidth - edgePadding) {
@@ -330,7 +362,7 @@ export function Dropdown({ trigger, items, align = 'right', className = '' }: Dr
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -10 }}
           transition={{ duration: 0.15 }}
-          className={`fixed z-[9999] min-w-[200px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden`}
+          className={cn(dropdownMenuVariants({ align }))}
           style={{
             position: 'fixed',
             top: `${position.top}px`,
@@ -359,18 +391,7 @@ export function Dropdown({ trigger, items, align = 'right', className = '' }: Dr
                   }
                 }}
                 disabled={item.disabled}
-                className={`
-                  w-full px-4 py-2.5 text-sm font-medium text-start
-                  flex items-center gap-3
-                  transition-colors duration-150
-                  ${
-                    item.disabled
-                      ? 'opacity-50 cursor-not-allowed'
-                      : item.variant === 'danger'
-                        ? 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20'
-                        : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-                  }
-                `}
+                className={cn(dropdownItemVariants({ variant: item.variant, isDisabled: item.disabled }))}
               >
                 {item.icon && <span className="flex-shrink-0">{item.icon}</span>}
                 <span>{item.label}</span>
@@ -388,10 +409,11 @@ export function Dropdown({ trigger, items, align = 'right', className = '' }: Dr
     ? React.cloneElement(trigger as React.ReactElement<any>, {
         ref: (node: HTMLButtonElement | null) => {
           triggerRef.current = node;
-          if (typeof (trigger as any).ref === 'function') {
-            (trigger as any).ref(node);
-          } else if ((trigger as any).ref) {
-            (trigger as any).ref.current = node;
+          const originalRef = (trigger as any).ref;
+          if (typeof originalRef === 'function') {
+            originalRef(node);
+          } else if (originalRef) {
+            originalRef.current = node;
           }
         },
         onClick: (e: React.MouseEvent) => {
@@ -421,7 +443,7 @@ export function Dropdown({ trigger, items, align = 'right', className = '' }: Dr
       );
 
   return (
-    <div className={`relative inline-block ${className}`} style={{ overflow: 'visible' }}>
+    <div className={cn("relative inline-block", className)} style={{ overflow: 'visible' }}>
       {triggerElement}
 
       {mounted && typeof document !== 'undefined' && document.body

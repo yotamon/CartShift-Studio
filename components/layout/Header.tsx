@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { motion, AnimatePresence } from "@/lib/motion";
+import { motion, AnimatePresence } from '@/lib/motion';
 import { Logo } from '@/components/ui/Logo';
 import { Button } from '@/components/ui/Button';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
@@ -16,6 +16,8 @@ export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [solutionsOpen, setSolutionsOpen] = useState(false);
   const [companyOpen, setCompanyOpen] = useState(false);
+  const [mobileSolutionsOpen, setMobileSolutionsOpen] = useState(false);
+  const [mobileCompanyOpen, setMobileCompanyOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [isAtTop, setIsAtTop] = useState(true);
   const t = useTranslations();
@@ -111,6 +113,13 @@ export const Header: React.FC = () => {
       document.removeEventListener('keydown', handleEscape);
     };
   }, [solutionsOpen, companyOpen]);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) {
+      setMobileSolutionsOpen(false);
+      setMobileCompanyOpen(false);
+    }
+  }, [mobileMenuOpen]);
 
   const navigation = [
     { name: t('nav.home'), href: '/' },
@@ -316,30 +325,63 @@ export const Header: React.FC = () => {
               aria-hidden="true"
             />
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-white/5 py-4 relative z-50 backdrop-blur-lg w-full"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="md:hidden fixed top-[4.5rem] md:top-20 inset-x-0 bottom-0 z-50 backdrop-blur-lg border-t border-white/5 flex flex-col overflow-hidden"
             >
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div className="space-y-2">
                   {navigation.map(item => {
                     if (item.submenu) {
+                      const isCompany = item.name === t('nav.company');
+                      const isSolutions = item.name === t('nav.services');
+                      const isExpanded = isCompany
+                        ? mobileCompanyOpen
+                        : isSolutions
+                          ? mobileSolutionsOpen
+                          : false;
+                      const setIsExpanded = isCompany
+                        ? setMobileCompanyOpen
+                        : isSolutions
+                          ? setMobileSolutionsOpen
+                          : () => {};
+
                       return (
                         <div key={item.name} className="space-y-1">
-                          <div className="px-4 py-2 text-surface-800 dark:text-surface-200 font-medium">
-                            {item.name}
-                          </div>
-                          {item.submenu.map(subItem => (
-                            <Link
-                              key={subItem.name}
-                              href={subItem.href}
-                              className="block px-8 py-2.5 text-sm text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-accent-500/10 hover:text-accent-600 dark:hover:text-accent-400 transition-colors font-normal text-start"
-                              onClick={() => setMobileMenuOpen(false)}
-                            >
-                              {subItem.name}
-                            </Link>
-                          ))}
+                          <button
+                            onClick={() => setIsExpanded(!isExpanded)}
+                            className="w-full flex items-center justify-between px-4 py-2 text-surface-800 dark:text-surface-200 font-medium hover:bg-surface-100 dark:hover:bg-accent-500/10 transition-colors text-start"
+                          >
+                            <span>{item.name}</span>
+                            <Icon
+                              name={isExpanded ? 'chevron-up' : 'chevron-down'}
+                              size={20}
+                              className="text-surface-500 dark:text-surface-400"
+                            />
+                          </button>
+                          <AnimatePresence>
+                            {isExpanded && (
+                              <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="overflow-hidden"
+                              >
+                                {item.submenu.map(subItem => (
+                                  <Link
+                                    key={subItem.name}
+                                    href={subItem.href}
+                                    className="block px-8 py-2.5 text-sm text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-accent-500/10 hover:text-accent-600 dark:hover:text-accent-400 transition-colors font-normal text-start"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                  >
+                                    {subItem.name}
+                                  </Link>
+                                ))}
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </div>
                       );
                     }
@@ -354,29 +396,31 @@ export const Header: React.FC = () => {
                       </Link>
                     );
                   })}
-                  <div className="px-4 pt-4 flex flex-col gap-4">
-                    <Link
-                      href={isLoggedIn ? '/portal/org' : '/portal/login'}
-                      className="block px-4 py-2.5 text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-accent-500/10 hover:text-accent-600 dark:hover:text-accent-400 transition-colors font-medium text-start"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      {isLoggedIn ? t('nav.portal') : t('nav.login')}
-                    </Link>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-surface-600 dark:text-surface-400">
-                        {t('nav.settings')}
-                      </span>
-                      <div className="flex items-center gap-3">
-                        <LanguageSwitcher />
-                        <ThemeToggle />
-                      </div>
+                </div>
+              </div>
+              <div className="flex-shrink-0 px-4 sm:px-6 lg:px-8 py-4 border-t border-white/10 dark:border-surface-800/50 bg-white/50 dark:bg-surface-950/50 backdrop-blur-md">
+                <div className="flex flex-col gap-4">
+                  <Link
+                    href={isLoggedIn ? '/portal/org' : '/portal/login'}
+                    className="block px-4 py-2.5 text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-accent-500/10 hover:text-accent-600 dark:hover:text-accent-400 transition-colors font-medium text-start"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {isLoggedIn ? t('nav.portal') : t('nav.login')}
+                  </Link>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-surface-600 dark:text-surface-400">
+                      {t('nav.settings')}
+                    </span>
+                    <div className="flex items-center gap-3">
+                      <LanguageSwitcher />
+                      <ThemeToggle />
                     </div>
-                    <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>
-                      <Button size="sm" className="w-full">
-                        {t('common.getStarted')}
-                      </Button>
-                    </Link>
                   </div>
+                  <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>
+                    <Button size="sm" className="w-full">
+                      {t('common.getStarted')}
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </motion.div>
@@ -386,4 +430,3 @@ export const Header: React.FC = () => {
     </motion.header>
   );
 };
-

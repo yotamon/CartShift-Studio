@@ -43,6 +43,7 @@ export function useDashboardData() {
 
         if (mounted) {
           if (member) {
+            await new Promise(resolve => setTimeout(resolve, 200));
             setMembershipChecked(true);
             setMembershipError(null);
           } else {
@@ -75,6 +76,12 @@ export function useDashboardData() {
     queryFn: () => getRequestsByOrg(orgId as string),
     enabled: Boolean(shouldFetchData),
     refetchInterval: 30000, // Refresh every 30s
+    retry: (failureCount, error) => {
+      if (error instanceof Error && error.message.includes('Permission denied')) {
+        return false;
+      }
+      return failureCount < 2;
+    },
   });
 
   // 2. Activities Query
@@ -87,6 +94,12 @@ export function useDashboardData() {
     queryFn: () => getOrgActivities(orgId as string),
     enabled: Boolean(shouldFetchData),
     refetchInterval: 30000, // Refresh every 30s
+    retry: (failureCount, error) => {
+      if (error instanceof Error && error.message.includes('Permission denied')) {
+        return false;
+      }
+      return failureCount < 2;
+    },
   });
 
   const loading = authLoading || (shouldFetchData && (requestsLoading || activitiesLoading)) || (!isAgency && !membershipChecked && !membershipError);

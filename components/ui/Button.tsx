@@ -1,63 +1,62 @@
 'use client';
 
 import React from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { motion, AnimatePresence } from '@/lib/motion';
 import { cn } from '@/lib/utils';
 import { Check, X } from 'lucide-react';
 
-type ButtonState = 'idle' | 'loading' | 'success' | 'error';
+const buttonVariants = cva(
+  "font-semibold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-surface-950 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden touch-manipulation",
+  {
+    variants: {
+      variant: {
+        primary: "fashion-gradient text-white hover:shadow-glow-primary focus:ring-primary-500 shadow-lg hover:scale-[1.02] active:scale-[0.98] shine-sweep text-center",
+        secondary: "bg-accent-600 text-white hover:bg-accent-500 focus:ring-accent-500 shadow-glow hover:shadow-glow active:scale-[0.98] shine-sweep text-center",
+        outline: "border-2 border-accent-600 dark:border-accent-500/50 text-accent-600 dark:text-accent-400 hover:border-accent-700 dark:hover:border-accent-500 hover:bg-accent-50 dark:hover:bg-accent-500/10 backdrop-blur-sm focus:ring-accent-500 active:scale-[0.98] text-center",
+      },
+      size: {
+        sm: "px-5 py-2.5 text-sm",
+        md: "px-7 py-3.5 text-base",
+        lg: "px-9 py-4 text-lg",
+      },
+      btnState: {
+        idle: "",
+        loading: "",
+        success: "bg-success text-white hover:bg-success focus:ring-success shadow-lg",
+        error: "bg-error text-white hover:bg-error focus:ring-error shadow-lg",
+      },
+    },
+    defaultVariants: {
+      variant: "primary",
+      size: "md",
+      btnState: "idle",
+    },
+  }
+);
 
 interface ButtonProps extends Omit<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
   'onDrag' | 'onDragEnd' | 'onDragStart' | 'onAnimationStart' | 'onAnimationEnd'
-> {
-  variant?: 'primary' | 'secondary' | 'outline';
-  size?: 'sm' | 'md' | 'lg';
-  children: React.ReactNode;
+>, VariantProps<typeof buttonVariants> {
   loading?: boolean;
-  state?: ButtonState;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
-      variant = 'primary',
-      size = 'md',
+      variant,
+      size,
+      btnState,
       className,
       children,
       loading = false,
-      state = 'idle',
       disabled,
       ...props
     },
     ref
   ) => {
-    const currentState: ButtonState = loading ? 'loading' : state;
-
-    const baseStyles =
-      'font-semibold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-surface-950 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden';
-
-    const variants = {
-      primary:
-        'fashion-gradient text-white hover:shadow-glow-primary focus:ring-primary-500 shadow-lg hover:scale-[1.02] active:scale-[0.98] shine-sweep',
-      secondary:
-        'bg-accent-600 text-white hover:bg-accent-500 focus:ring-accent-500 shadow-glow hover:shadow-glow active:scale-[0.98] shine-sweep',
-      outline:
-        'border-2 border-accent-600 dark:border-accent-500/50 text-accent-600 dark:text-accent-400 hover:border-accent-700 dark:hover:border-accent-500 hover:bg-accent-50 dark:hover:bg-accent-500/10 backdrop-blur-sm focus:ring-accent-500 active:scale-[0.98]',
-    };
-
-    const stateVariants = {
-      idle: variants[variant],
-      loading: variants[variant],
-      success: 'bg-success text-white hover:bg-success focus:ring-success shadow-lg',
-      error: 'bg-error text-white hover:bg-error focus:ring-error shadow-lg',
-    };
-
-    const sizes = {
-      sm: 'px-5 py-2.5 text-sm',
-      md: 'px-7 py-3.5 text-base',
-      lg: 'px-9 py-4 text-lg',
-    };
+    const currentState = loading ? 'loading' : (btnState || 'idle');
 
     const isDisabled =
       disabled ||
@@ -72,11 +71,12 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         whileHover={currentState === 'idle' ? { y: -2 } : undefined}
         whileTap={currentState === 'idle' ? { scale: 0.98 } : undefined}
         className={cn(
-          baseStyles,
-          stateVariants[currentState],
-          sizes[size],
-          'touch-manipulation',
-          className
+          buttonVariants({
+            variant,
+            size,
+            btnState: currentState as any,
+            className
+          })
         )}
         disabled={isDisabled}
       >

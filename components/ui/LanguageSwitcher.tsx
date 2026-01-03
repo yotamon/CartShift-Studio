@@ -1,5 +1,7 @@
 'use client';
 
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from "@/lib/motion";
@@ -67,6 +69,36 @@ const ILFlag = () => (
       <path fill="none" stroke="#0038b8" strokeWidth="35" d="m320 443 95-165H225z" />
     </g>
   </svg>
+);
+
+const triggerVariants = cva(
+  "flex items-center gap-2 px-3 py-2 rounded-full transition-colors border",
+  {
+    variants: {
+      isOpen: {
+        true: "bg-surface-200 dark:bg-white/15 border-surface-300 dark:border-white/30",
+        false: "bg-surface-100 dark:bg-white/10 border-surface-200 dark:border-white/20 hover:border-surface-300 dark:hover:border-white/30",
+      }
+    },
+    defaultVariants: {
+      isOpen: false,
+    }
+  }
+);
+
+const langItemVariants = cva(
+  "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+  {
+    variants: {
+      active: {
+        true: "bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400",
+        false: "text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-white/5",
+      }
+    },
+    defaultVariants: {
+      active: false,
+    }
+  }
 );
 
 export const LanguageSwitcher = () => {
@@ -157,22 +189,14 @@ export const LanguageSwitcher = () => {
           <div className="p-1">
             <button
               onClick={() => handleLanguageChange('en')}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                currentLanguage === 'en'
-                  ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
-                  : 'text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-white/5'
-              }`}
+              className={cn(langItemVariants({ active: currentLanguage === 'en' }))}
             >
               <USFlag />
               English
             </button>
             <button
               onClick={() => handleLanguageChange('he')}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                currentLanguage === 'he'
-                  ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
-                  : 'text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-white/5'
-              }`}
+              className={cn(langItemVariants({ active: currentLanguage === 'he' }))}
             >
               <ILFlag />
               עברית
@@ -188,7 +212,7 @@ export const LanguageSwitcher = () => {
       <button
         ref={buttonRef}
         onClick={toggleDropdown}
-        className="flex items-center gap-2 px-3 py-2 rounded-full bg-surface-100 dark:bg-white/10 border border-surface-200 dark:border-white/20 hover:border-surface-300 dark:hover:border-white/30 transition-colors"
+        className={cn(triggerVariants({ isOpen }))}
         aria-label="Select Language"
       >
         {currentLanguage === 'en' ? <USFlag /> : <ILFlag />}
@@ -196,11 +220,10 @@ export const LanguageSwitcher = () => {
           {currentLanguage === 'en' ? 'EN' : 'עב'}
         </span>
         <ChevronDown
-          className={`w-3 h-3 text-surface-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          className={cn("w-3 h-3 text-surface-500 transition-transform duration-200", isOpen && "rotate-180")}
         />
       </button>
       {mounted && createPortal(dropdownContent, document.body)}
     </>
   );
 };
-

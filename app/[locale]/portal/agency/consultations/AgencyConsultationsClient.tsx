@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from '@/lib/motion';
 import { useTranslations, useLocale } from 'next-intl';
 import { format } from 'date-fns';
@@ -29,16 +29,13 @@ import {
   ConsultationType,
   ConsultationStatus,
   CONSULTATION_STATUS,
+  Organization,
 } from '@/lib/types/portal';
-import {
-  completeConsultation,
-  cancelConsultation,
-} from '@/lib/services/portal-consultations';
-import { getAllOrganizations } from '@/lib/services/portal-organizations';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
-import ScheduleConsultationForm from '@/components/portal/ScheduleConsultationForm';
 import { useConsultations } from '@/lib/hooks/useConsultations';
-import { Organization } from '@/lib/types/portal';
+import { useAgencyClients } from '@/lib/hooks/useAgencyClients';
+import { useConsultationMutations } from '@/lib/hooks/useConsultationMutations';
+import ScheduleConsultationForm from '@/components/portal/ScheduleConsultationForm';
 
 const typeIcons: Record<ConsultationType, React.ElementType> = {
   onboarding: UserPlus,
@@ -50,36 +47,20 @@ const typeIcons: Record<ConsultationType, React.ElementType> = {
 
 
 export default function AgencyConsultationsClient() {
-  const t = useTranslations();
+  const t = useTranslations('portal');
   const locale = useLocale();
   const { userData } = usePortalAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<ConsultationStatus | 'all'>('all');
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
 
+  const { organizations, loading: clientsLoading } = useAgencyClients();
+  const { consultations, loading: consultationsLoading } = useConsultations({ status: statusFilter });
+  const { cancelMutation, completeMutation, isCanceling, isCompleting } = useConsultationMutations();
+
+  const loading = consultationsLoading || clientsLoading;
   const dateLocale = getDateLocale(locale);
-
-  const {
-    consultations,
-    loading: consultationsLoading,
-  } = useConsultations({ status: statusFilter });
-
-  const loading = consultationsLoading;
-
-  // Fetch organizations for the schedule picker and org names
-  useEffect(() => {
-    if (!userData?.isAgency) return;
-
-    getAllOrganizations()
-      .then(orgs => {
-        setOrganizations(orgs);
-      })
-      .catch(err => {
-        console.error('Failed to fetch organizations:', err);
-      });
-  }, [userData]);
 
   const orgNames = organizations.reduce((acc, org) => {
     acc[org.id] = org.name;
@@ -101,26 +82,38 @@ export default function AgencyConsultationsClient() {
 
   const handleComplete = async (consultation: Consultation) => {
     if (!userData) return;
-    await completeConsultation(
-      consultation.id,
-      consultation.orgId,
-      userData.id,
-      userData.name || t('portal.common.agencyFallback')
-    );
+    try {
+      await completeMutation.mutateAsync({
+        consultationId: consultation.id,
+        orgId: consultation.orgId,
+        userId: userData.id,
+        userName: userData.name || t('common.agencyFallback')
+      });
+    } catch (error) {
+      console.error('Failed to complete:', error);
+    }
   };
 
   const handleCancel = async (consultation: Consultation) => {
     if (!userData) return;
-    await cancelConsultation(
-      consultation.id,
-      consultation.orgId,
-      userData.id,
-      userData.name || t('portal.common.agencyFallback')
-    );
+    if (!confirm(t('consultations.form.cancelConfirm'))) return;
+
+    try {
+      await cancelMutation.mutateAsync({
+        consultationId: consultation.id,
+        orgId: consultation.orgId,
+        userId: userData.id,
+        userName: userData.name || t('common.agencyFallback')
+      });
+    } catch (error) {
+      console.error('Failed to cancel:', error);
+    }
   };
 
+  const now = new Date();
   const upcomingCount = consultations.filter(
-    c => c.status === CONSULTATION_STATUS.SCHEDULED
+    c => c.status === CONSULTATION_STATUS.SCHEDULED &&
+    (c.scheduledAt?.toDate ? c.scheduledAt.toDate() > now : true)
   ).length;
 
   return (
@@ -129,11 +122,10 @@ export default function AgencyConsultationsClient() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-black text-surface-900 dark:text-white font-outfit tracking-tight">
-            {t('portal.consultations.title')}
+            {t('consultations.title')}
           </h1>
           <p className="text-surface-500 dark:text-surface-400 mt-1">
-            {t('portal.consultations.subtitle' as any) ||
-              t('portal.consultations.subtitle')}
+            {t('consultations.subtitle')}
           </p>
         </div>
         <PortalButton
@@ -142,7 +134,7 @@ export default function AgencyConsultationsClient() {
           onClick={() => setShowScheduleModal(true)}
         >
           <Plus size={18} />
-          {t('portal.consultations.schedule')}
+          {t('consultations.schedule')}
         </PortalButton>
       </div>
 
@@ -180,7 +172,7 @@ export default function AgencyConsultationsClient() {
                     ))}
                     {organizations.length === 0 && (
                       <p className="text-center text-surface-500 py-4">
-                        {t('portal.consultations.empty.noClientOrganizations')}
+                        {t('consultations.empty.noClientOrganizations')}
                       </p>
                     )}
                   </div>
@@ -188,7 +180,7 @@ export default function AgencyConsultationsClient() {
                     onClick={() => setShowScheduleModal(false)}
                     className="mt-4 w-full py-2 text-surface-500 hover:text-surface-700 text-sm font-medium"
                   >
-                    {t('portal.consultations.cancel')}
+                    {t('consultations.cancel')}
                   </button>
                 </motion.div>
               </motion.div>
@@ -221,7 +213,7 @@ export default function AgencyConsultationsClient() {
                 {upcomingCount}
               </p>
               <p className="text-xs text-surface-500 font-medium">
-                {t('portal.consultations.stats.upcoming')}
+                {t('consultations.stats.upcoming')}
               </p>
             </div>
           </div>
@@ -236,7 +228,7 @@ export default function AgencyConsultationsClient() {
                 {consultations.filter(c => c.status === CONSULTATION_STATUS.COMPLETED).length}
               </p>
               <p className="text-xs text-surface-500 font-medium">
-                {t('portal.consultations.stats.completed')}
+                {t('consultations.stats.completed')}
               </p>
             </div>
           </div>
@@ -251,7 +243,7 @@ export default function AgencyConsultationsClient() {
                 {consultations.filter(c => c.status === CONSULTATION_STATUS.CANCELED).length}
               </p>
               <p className="text-xs text-surface-500 font-medium">
-                {t('portal.consultations.stats.canceled')}
+                {t('consultations.stats.canceled')}
               </p>
             </div>
           </div>
@@ -266,7 +258,7 @@ export default function AgencyConsultationsClient() {
                 {consultations.length}
               </p>
               <p className="text-xs text-surface-500 font-medium">
-                {t('portal.consultations.stats.total')}
+                {t('consultations.stats.total')}
               </p>
             </div>
           </div>
@@ -283,7 +275,7 @@ export default function AgencyConsultationsClient() {
           <input
             type="text"
             placeholder={
-              t('portal.consultations.searchPlaceholder')
+              t('consultations.searchPlaceholder')
             }
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
@@ -303,8 +295,8 @@ export default function AgencyConsultationsClient() {
               )}
             >
               {status === 'all'
-                ? t('portal.common.all')
-                : t(`portal.consultations.status.${status}`)}
+                ? t('common.all')
+                : t(`consultations.status.${status}`)}
             </button>
           ))}
         </div>
@@ -321,10 +313,10 @@ export default function AgencyConsultationsClient() {
             <Calendar className="w-8 h-8 text-surface-400" />
           </div>
           <h3 className="text-lg font-bold text-surface-700 dark:text-surface-300 mb-2">
-            {t('portal.consultations.empty.title')}
+            {t('consultations.empty.title')}
           </h3>
           <p className="text-surface-500 text-sm">
-            {t('portal.consultations.empty.description' as any) ||
+            {t('consultations.empty.description') ||
               'Schedule your first consultation to get started'}
           </p>
         </div>
@@ -367,7 +359,7 @@ export default function AgencyConsultationsClient() {
                           <div className="flex items-center gap-3 mt-1 text-sm text-surface-500">
                             <span className="flex items-center gap-1">
                               <Building2 size={14} />
-                              {orgNames[consultation.orgId] || t('portal.common.loading')}
+                               {orgNames[consultation.orgId] || t('common.loading')}
                             </span>
                             <span className="flex items-center gap-1">
                               <Calendar size={14} />
@@ -379,7 +371,7 @@ export default function AgencyConsultationsClient() {
                             </span>
                             <span className="flex items-center gap-1">
                               <Users size={14} />
-                              {consultation.duration} {t('portal.consultations.minutes')}
+                              {consultation.duration} {t('consultations.minutes')}
                             </span>
                           </div>
                         </div>
@@ -391,7 +383,7 @@ export default function AgencyConsultationsClient() {
                               statusConfig.color
                             )}
                           >
-                            {t(`portal.consultations.status.${consultation.status}`)}
+                            {t(`consultations.status.${consultation.status}`)}
                           </span>
                           {consultation.externalCalendarLink && (
                             <a
@@ -403,21 +395,31 @@ export default function AgencyConsultationsClient() {
                               <Video size={16} className="text-blue-600" />
                             </a>
                           )}
-                          {consultation.status === CONSULTATION_STATUS.SCHEDULED && (
+                              {consultation.status === CONSULTATION_STATUS.SCHEDULED && (
                             <div className="flex gap-1">
                               <button
                                 onClick={() => handleComplete(consultation)}
-                                className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
+                                disabled={isCompleting && completeMutation.variables?.consultationId === consultation.id}
+                                className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors disabled:opacity-50"
                                 title="Mark as completed"
                               >
-                                <CheckCircle2 size={16} className="text-green-600" />
+                                {isCompleting && completeMutation.variables?.consultationId === consultation.id ? (
+                                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                                ) : (
+                                  <CheckCircle2 size={16} className="text-green-600" />
+                                )}
                               </button>
                               <button
                                 onClick={() => handleCancel(consultation)}
-                                className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
-                                title={t('portal.consultations.cancel')}
+                                disabled={isCanceling && cancelMutation.variables?.consultationId === consultation.id}
+                                className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors disabled:opacity-50"
+                                title={t('consultations.cancel')}
                               >
-                                <XCircle size={16} className="text-red-600" />
+                                {isCanceling && cancelMutation.variables?.consultationId === consultation.id ? (
+                                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                                ) : (
+                                  <XCircle size={16} className="text-red-600" />
+                                )}
                               </button>
                             </div>
                           )}

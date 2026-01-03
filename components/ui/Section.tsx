@@ -1,40 +1,46 @@
 'use client';
 
 import React from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { motion } from "@/lib/motion";
 import { Parallax } from '@/components/ui/Parallax';
 
-interface SectionProps {
+const sectionVariants = cva(
+  "py-section-y md:py-section-y-md lg:py-section-y-lg px-4 sm:px-6 lg:px-8 relative overflow-hidden",
+  {
+    variants: {
+      background: {
+        default: "bg-[#f0f4f8] dark:bg-surface-900",
+        light: "bg-white/80 dark:bg-surface-800",
+        white: "bg-[#e2e8f0] dark:bg-surface-850",
+        glass: "bg-gradient-to-br from-surface-50 to-surface-100 dark:bg-surface-800",
+      },
+    },
+    defaultVariants: {
+      background: "default",
+    },
+  }
+);
+
+interface SectionProps extends React.HTMLAttributes<HTMLElement>, VariantProps<typeof sectionVariants> {
   children: React.ReactNode;
-  className?: string;
-  id?: string;
-  background?: 'default' | 'light' | 'white' | 'glass';
 }
 
 export const Section: React.FC<SectionProps> = ({
   children,
   className,
   id,
-  background = 'default',
+  background,
+  ...props
 }) => {
-  const backgrounds = {
-    default: 'bg-[#f0f4f8] dark:bg-surface-900',
-    light: 'bg-white/80 dark:bg-surface-800',
-    white: 'bg-[#e2e8f0] dark:bg-surface-850',
-    glass: 'bg-gradient-to-br from-surface-50 to-surface-100 dark:bg-surface-800',
-  };
-
   const isGlass = background === 'glass';
 
   return (
     <section
       id={id}
-      className={cn(
-        'py-section-y md:py-section-y-md lg:py-section-y-lg px-4 sm:px-6 lg:px-8 relative overflow-hidden',
-        backgrounds[background],
-        className
-      )}
+      className={cn(sectionVariants({ background, className }))}
+      {...props}
     >
       {/* Vibrant gradient background for glass effect visibility */}
       {isGlass && (
@@ -150,26 +156,37 @@ export const Section: React.FC<SectionProps> = ({
   );
 };
 
-interface SectionHeaderProps {
+const sectionHeaderVariants = cva(
+  "mb-10 md:mb-12 lg:mb-16",
+  {
+    variants: {
+      align: {
+        left: "text-start",
+        center: "text-center",
+      }
+    },
+    defaultVariants: {
+      align: "center"
+    }
+  }
+);
+
+interface SectionHeaderProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof sectionHeaderVariants> {
   title: string;
   subtitle?: string;
-  className?: string;
-  align?: 'left' | 'center';
 }
 
 export const SectionHeader: React.FC<SectionHeaderProps> = ({
   title,
   subtitle,
   className,
-  align = 'center',
+  align,
+  ...props
 }) => {
   return (
     <div
-      className={cn(
-        'mb-10 md:mb-12 lg:mb-16',
-        align === 'center' ? 'text-center' : 'text-start',
-        className
-      )}
+      className={cn(sectionHeaderVariants({ align, className }))}
+      {...props}
     >
       <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold text-surface-900 dark:text-white mb-6 md:mb-8 leading-tight tracking-tight">
         {title}
