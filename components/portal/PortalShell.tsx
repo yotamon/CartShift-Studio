@@ -46,6 +46,7 @@ import { OnboardingTour } from './OnboardingTour';
 import { OfflineIndicator } from './ui/OfflineIndicator';
 import { Breadcrumbs } from './ui/Breadcrumbs';
 import { MobileSearch, MobileSearchButton } from './ui/MobileSearch';
+import { GlobalSearch } from './ui/GlobalSearch';
 
 interface PortalShellProps {
   children: React.ReactNode;
@@ -810,18 +811,11 @@ export const PortalShell = ({
               <Menu size={24} />
             </button>
             <MobileSearchButton onClick={() => setIsMobileSearchOpen(true)} />
-            <div className="relative hidden lg:block group">
-              <Search
-                className="absolute start-4 top-1/2 -translate-y-1/2 text-surface-400 group-focus-within:text-blue-500 transition-colors"
-                size={18}
-              />
-              <input
-                type="text"
-                placeholder={t('portal.header.search')}
-                className="w-full h-10 ps-12 pe-4 bg-surface-50/50 dark:bg-surface-900/50 border border-surface-200/50 dark:border-surface-800/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm font-medium transition-all group-hover:bg-surface-100/50 dark:group-hover:bg-surface-800/50"
-                aria-label="Search"
-              />
-            </div>
+            <GlobalSearch
+              orgId={effectiveOrgId}
+              isAgency={accountType === ACCOUNT_TYPE.AGENCY}
+              className="hidden lg:block w-72 xl:w-96"
+            />
           </div>
 
           <div className="flex items-center gap-3 md:gap-6">

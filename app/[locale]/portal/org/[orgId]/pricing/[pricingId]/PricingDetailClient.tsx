@@ -21,16 +21,13 @@ import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
 import { useResolvedPricingId } from '@/lib/hooks/useResolvedPricingId';
 import { PayPalProvider } from '@/components/providers/PayPalProvider';
 import { PayPalCheckoutButton } from '@/components/portal/PayPalCheckoutButton';
+// Centralized utilities
+import {
+  getPricingStatusBadgeVariant,
+  getStatusBadgeVariant,
+} from '@/lib/utils/portal-helpers';
 
-const mapStatusColor = (color: string): 'blue' | 'green' | 'yellow' | 'red' | 'gray' => {
-  if (color === 'purple') return 'blue';
-  if (color === 'emerald' || color === 'green') return 'green';
-  if (color === 'orange') return 'yellow';
-  if (['blue', 'yellow', 'red', 'gray'].includes(color)) {
-    return color as 'blue' | 'green' | 'yellow' | 'red' | 'gray';
-  }
-  return 'gray';
-};
+// mapStatusColor moved to lib/utils/portal-helpers.ts
 
 export default function PricingDetailClient() {
   const orgId = useResolvedOrgId();
@@ -100,7 +97,7 @@ export default function PricingDetailClient() {
   }
 
   const statusConfig = PRICING_STATUS_CONFIG[pricingRequest.status];
-  const statusColor = mapStatusColor(statusConfig.color);
+  const statusColor = getPricingStatusBadgeVariant(statusConfig.color);
 
   return (
     <PayPalProvider>
@@ -200,7 +197,6 @@ export default function PricingDetailClient() {
               </h3>
               <div className="space-y-2">
                 {linkedRequests.map(request => {
-                  const statusConfig = STATUS_CONFIG[request.status];
                   return (
                     <Link
                       key={request.id}
@@ -216,21 +212,10 @@ export default function PricingDetailClient() {
                             {request.type}
                           </PortalBadge>
                           <PortalBadge
-                            variant={
-                              statusConfig.color === 'purple'
-                                ? 'blue'
-                                : statusConfig.color === 'emerald'
-                                  ? 'green'
-                                  : (statusConfig.color as
-                                      | 'blue'
-                                      | 'green'
-                                      | 'yellow'
-                                      | 'red'
-                                      | 'gray')
-                            }
+                            variant={getStatusBadgeVariant(request.status)}
                             className="text-xs"
                           >
-                            {statusConfig.label}
+                            {STATUS_CONFIG[request.status]?.label || request.status}
                           </PortalBadge>
                         </div>
                         {request.description && (

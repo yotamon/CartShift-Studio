@@ -29,16 +29,10 @@ import { getDateLocale } from '@/lib/locale-config';
 import { cn } from '@/lib/utils';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
+// Centralized utilities
+import { getPricingStatusBadgeVariant } from '@/lib/utils/portal-helpers';
 
-const mapStatusColor = (color: string): 'blue' | 'green' | 'yellow' | 'red' | 'gray' => {
-  if (color === 'purple') return 'blue';
-  if (color === 'emerald' || color === 'green') return 'green';
-  if (color === 'orange') return 'yellow';
-  if (['blue', 'yellow', 'red', 'gray'].includes(color)) {
-    return color as 'blue' | 'green' | 'yellow' | 'red' | 'gray';
-  }
-  return 'gray';
-};
+// mapStatusColor moved to lib/utils/portal-helpers.ts
 
 export default function AgencyPricingClient() {
   const [requests, setRequests] = useState<PricingRequest[]>([]);
@@ -355,7 +349,7 @@ export default function AgencyPricingClient() {
                     <td className="px-6 py-4">
                       <div className="flex justify-center">
                         <PortalBadge
-                          variant={mapStatusColor(
+                          variant={getPricingStatusBadgeVariant(
                             PRICING_STATUS_CONFIG[req.status]?.color || 'gray'
                           )}
                         >

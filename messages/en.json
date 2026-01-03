@@ -653,6 +653,10 @@
       "loading": "Loading...",
       "noDescription": "No description provided.",
       "rollback": "Rolling back changes.",
+      "actionFailed": "Action Failed",
+      "changesReverted": "Your changes could not be saved and were reverted.",
+      "operationFailed": "Operation failed",
+      "errorReverted": "Changes reverted due to an error.",
       "normal": "NORMAL",
       "edit": "Edit",
       "archive": "Archive",
@@ -1259,28 +1263,56 @@
           "description": "Your workspace is ready. Start by creating your first request or explore the dashboard to see what's possible."
         }
       }
-    }
-  },
-  "agency": {
-    "inbox": {
-      "title": "Agency Inbox",
-      "subtitle": "Global view of all client requests and communications.",
-      "searchPlaceholder": "Search requests...",
-      "activeItems": "Active Items",
-      "loading": "Loading agency inbox...",
-      "emptyTitle": "Your inbox is clear",
-      "emptyDesc": "All client requests have been processed or sorted.",
-      "clientOrg": "Client Org",
-      "accessRequired": "Agency Access Required",
-      "accessDenied": "Your account ({email}) does not have permissions to access the Agency Inbox.",
-      "accessDeniedTitle": "Access Denied",
-      "notRegisteredAsAdmin": "Your account ({email}) is not registered as an Agency Administrator.",
-      "repairPermissions": "Repair Permissions",
-      "repairFailed": "Permission repair failed. Check console for details.",
-      "errors": {
-        "sameOrgRequired": "Please select requests from the same client organization."
+    },
+    "agency": {
+      "clients": {
+        "title": "Clients",
+        "subtitle": "Direct access and management for all partner organizations.",
+        "onboard": "Onboard New Client",
+        "searchPlaceholder": "Search by company name...",
+        "activeAccounts": "Active Accounts",
+        "export": "Performance Export",
+        "loading": "Retrieving Client Portfolio...",
+        "tickets": "Open Tickets",
+        "members": "Members",
+        "enterprise": "Enterprise Partner",
+        "emptyTitle": "No clients found",
+        "emptyDesc": "Either you have no active clients or they don't match your search criteria.",
+        "badge": {
+          "active": "ACTIVE",
+          "inactive": "INACTIVE",
+          "suspended": "SUSPENDED"
+        },
+        "plans": {
+          "free": "Free Starter",
+          "pro": "Pro Partner",
+          "enterprise": "Enterprise Partner"
+        },
+        "detail": {
+          "overview": "Client Overview"
+        }
       }
     },
+    "agency": {
+      "inbox": {
+        "title": "Agency Inbox",
+        "subtitle": "Global view of all client requests and communications.",
+        "searchPlaceholder": "Search requests...",
+        "activeItems": "Active Items",
+        "loading": "Loading agency inbox...",
+        "emptyTitle": "Your inbox is clear",
+        "emptyDesc": "All client requests have been processed or sorted.",
+        "clientOrg": "Client Org",
+        "accessRequired": "Agency Access Required",
+        "accessDenied": "Your account ({email}) does not have permissions to access the Agency Inbox.",
+        "accessDeniedTitle": "Access Denied",
+        "notRegisteredAsAdmin": "Your account ({email}) is not registered as an Agency Administrator.",
+        "repairPermissions": "Repair Permissions",
+        "repairFailed": "Permission repair failed. Check console for details.",
+        "errors": {
+          "sameOrgRequired": "Please select requests from the same client organization."
+        }
+      },
     "pricing": {
       "subtitle": "Manage pricing offers across all client organizations.",
       "revenue": "Revenue"
@@ -1543,6 +1575,7 @@
           }
         }
       }
+    }
     }
   },
   "heroForm": {

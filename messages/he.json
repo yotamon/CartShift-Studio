@@ -44,11 +44,15 @@
         "added_pricing": "הוסיף הצעת מחיר",
         "accepted_quote": "אישר הצעת מחיר",
         "declined_quote": "דחה הצעת מחיר",
+        "requested_revision": "נדרשה תיקון",
         "started_work": "התחיל עבודה",
         "paid_request": "שילם על בקשה",
         "added_comment": "הוסיף תגובה",
+        "added_attachment": "קובץ מצורף נוסף",
+        "scheduled_consultation": "פגישת ייעוץ נקבעה",
         "completed_consultation": "סיים ייעוץ",
-        "canceled_consultation": "ביטל ייעוץ"
+        "canceled_consultation": "ביטל ייעוץ",
+        "marked_no_show": "סומן כלא הגיע"
       }
     },
     "milestones": {
@@ -690,6 +694,10 @@
       "loading": "טוען...",
       "noDescription": "לא סופק תיאור.",
       "rollback": "מחזיר שינויים.",
+      "actionFailed": "הפעולה נכשלה",
+      "changesReverted": "השינויים שלך לא נשמרו והוחזרו.",
+      "operationFailed": "הפעולה נכשלה",
+      "errorReverted": "השינויים הוחזרו עקב שגיאה.",
       "normal": "רגיל",
       "edit": "ערוך",
       "archive": "ארכיון",
@@ -850,25 +858,6 @@
       "ecommerceSubtitle": "עקבו אחר מפת הדרכים להמרה, מדדי ביצועים ומחזורי חיים של פרויקטים פעילים.",
       "pipeline": {
         "emptyDescription": "אין בקשות התואמות לסינון הנוכחי שלך. נסה לשנות את החיפוש או קריטריוני הסינון."
-      }
-    },
-    "activity": {
-      "title": "פעילות אחרונה",
-      "actions": {
-        "created_request": "בקשת פרויקט חדשה הוגשה",
-        "assigned_request": "מומחה הוקצה לפרויקט",
-        "added_pricing": "הצעת מחיר הופקה לבדיקה",
-        "accepted_quote": "היקף הפרויקט והצעת המחיר אושרו",
-        "declined_quote": "התבקש שינוי בהצעת המחיר",
-        "requested_revision": "נדרשה תיקון",
-        "started_work": "הפרויקט עבר לשלב הביצוע",
-        "paid_request": "התשלום אומת ואובטח",
-        "added_comment": "הודעה חדשה בדיון",
-        "added_attachment": "קובץ מצורף נוסף",
-        "scheduled_consultation": "פגישת ייעוץ נקבעה",
-        "completed_consultation": "פגישת ייעוץ הושלמה",
-        "canceled_consultation": "פגישת ייעוץ בוטלה",
-        "marked_no_show": "סומן כלא הגיע"
       }
     },
     "consultations": {
@@ -1309,10 +1298,38 @@
           "description": "סביבת העבודה שלכם מוכנה. התחילו ביצירת הבקשה הראשונה או חקרו את לוח הבקרה לראות מה אפשר."
         }
       }
-    }
-  },
-  "agency": {
-    "inbox": {
+    },
+    "agency": {
+      "clients": {
+        "title": "לקוחות",
+        "subtitle": "גישה ישירה וניהול לכל הארגונים השותפים.",
+        "onboard": "צרף לקוח חדש",
+        "searchPlaceholder": "חפש לפי שם חברה...",
+        "activeAccounts": "חשבונות פעילים",
+        "export": "ייצוא ביצועים",
+        "loading": "מאחזר תיק לקוחות...",
+        "tickets": "כרטיסים פתוחים",
+        "members": "חברים",
+        "enterprise": "שותף ארגוני",
+        "emptyTitle": "לא נמצאו לקוחות",
+        "emptyDesc": "או שאין לך לקוחות פעילים או שהם לא תואמים לקריטריוני החיפוש שלך.",
+        "badge": {
+          "active": "פעיל",
+          "inactive": "לא פעיל",
+          "suspended": "מושעה"
+        },
+        "plans": {
+          "free": "מסלול חופשי",
+          "pro": "שותף פרו",
+          "enterprise": "שותף ארגוני"
+        },
+        "detail": {
+          "overview": "סקירת לקוח"
+        }
+      }
+    },
+    "agency": {
+      "inbox": {
       "title": "תיבת דואר סוכנות",
       "subtitle": "מבט גלובלי על כל בקשות הלקוחות והתקשורת.",
       "searchPlaceholder": "חיפוש בקשות...",
@@ -1592,6 +1609,7 @@
           }
         }
       }
+    }
     }
   },
   "heroForm": {

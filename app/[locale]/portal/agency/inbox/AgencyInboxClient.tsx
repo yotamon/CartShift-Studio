@@ -24,13 +24,9 @@ import { createPricingRequest, sendPricingRequest } from '@/lib/services/pricing
 import {
   Request,
   Organization,
-  STATUS_CONFIG,
-  PricingLineItem,
   Currency,
   CURRENCY_CONFIG,
   formatCurrency,
-  generateLineItemId,
-  calculateTotalAmount,
 } from '@/lib/types/portal';
 import { formatDistanceToNow } from 'date-fns';
 import { getDateLocale } from '@/lib/locale-config';
@@ -38,7 +34,10 @@ import { Link } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { PortalAvatar } from '@/components/portal/ui/PortalAvatar';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
+import { usePricingForm } from '@/lib/hooks/usePricingForm';
 import { cn } from '@/lib/utils';
+// Centralized utilities
+import { getStatusBadgeVariant } from '@/lib/utils/portal-helpers';
 
 export default function AgencyInboxClient() {
   const t = useTranslations();
@@ -56,11 +55,20 @@ export default function AgencyInboxClient() {
   const [selectedRequestIds, setSelectedRequestIds] = useState<string[]>([]);
   const [showPricingModal, setShowPricingModal] = useState(false);
   const [pricingTitle, setPricingTitle] = useState('');
-  const [pricingLineItems, setPricingLineItems] = useState<PricingLineItem[]>([
-    { id: generateLineItemId(), description: '', quantity: 1, unitPrice: 0 },
-  ]);
-  const [pricingCurrency, setPricingCurrency] = useState<Currency>('USD');
   const [isCreatingPricing, setIsCreatingPricing] = useState(false);
+
+  // Use centralized pricing form hook
+  const {
+    lineItems: pricingLineItems,
+    currency: pricingCurrency,
+    setCurrency: setPricingCurrency,
+    addLineItem,
+    removeLineItem,
+    updateLineItem,
+    resetForm: resetPricingForm,
+    totalAmount,
+    validItems,
+  } = usePricingForm('USD');
 
   useEffect(() => {
     async function fetchData() {
@@ -176,27 +184,7 @@ export default function AgencyInboxClient() {
     setSelectedRequestIds([]);
     setShowPricingModal(false);
     setPricingTitle('');
-    setPricingLineItems([{ id: generateLineItemId(), description: '', quantity: 1, unitPrice: 0 }]);
-  };
-
-  // Line item helpers
-  const addLineItem = () => {
-    setPricingLineItems([
-      ...pricingLineItems,
-      { id: generateLineItemId(), description: '', quantity: 1, unitPrice: 0 },
-    ]);
-  };
-
-  const removeLineItem = (id: string) => {
-    if (pricingLineItems.length > 1) {
-      setPricingLineItems(pricingLineItems.filter(item => item.id !== id));
-    }
-  };
-
-  const updateLineItem = (id: string, field: keyof PricingLineItem, value: string | number) => {
-    setPricingLineItems(
-      pricingLineItems.map(item => (item.id === id ? { ...item, [field]: value } : item))
-    );
+    resetPricingForm();
   };
 
   // Create pricing offer handler
@@ -204,9 +192,6 @@ export default function AgencyInboxClient() {
     if (!userData || selectedRequestIds.length === 0) return;
     if (!pricingTitle.trim()) return;
 
-    const validItems = pricingLineItems.filter(
-      item => item.description.trim() && item.quantity > 0 && item.unitPrice > 0
-    );
     if (validItems.length === 0) return;
 
     const selectedReqs = requests.filter(r => selectedRequestIds.includes(r.id));
@@ -252,7 +237,6 @@ export default function AgencyInboxClient() {
   };
 
   const selectedRequests = requests.filter(r => selectedRequestIds.includes(r.id));
-  const totalAmount = calculateTotalAmount(pricingLineItems);
 
   const filteredRequests = requests.filter(
     req =>
@@ -449,7 +433,7 @@ export default function AgencyInboxClient() {
                               {req.title}
                             </p>
                             <PortalBadge
-                              variant={(STATUS_CONFIG[req.status]?.color as any) || 'gray'}
+                              variant={getStatusBadgeVariant(req.status)}
                               className="text-[9px] h-4"
                             >
                               {req.status}

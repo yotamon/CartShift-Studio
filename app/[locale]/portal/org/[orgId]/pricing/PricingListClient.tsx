@@ -36,16 +36,10 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
+// Centralized utilities
+import { getPricingStatusBadgeVariant } from '@/lib/utils/portal-helpers';
 
-const mapStatusColor = (color: string): 'blue' | 'green' | 'yellow' | 'red' | 'gray' => {
-  if (color === 'purple') return 'blue';
-  if (color === 'emerald' || color === 'green') return 'green';
-  if (color === 'orange') return 'yellow';
-  if (['blue', 'yellow', 'red', 'gray'].includes(color)) {
-    return color as 'blue' | 'green' | 'yellow' | 'red' | 'gray';
-  }
-  return 'gray';
-};
+// mapStatusColor moved to lib/utils/portal-helpers.ts
 
 export default function PricingListClient() {
   const orgId = useResolvedOrgId();
@@ -274,7 +268,7 @@ export default function PricingListClient() {
                     <td className="px-6 py-4">
                       <div className="flex justify-center">
                         <PortalBadge
-                          variant={mapStatusColor(
+                          variant={getPricingStatusBadgeVariant(
                             PRICING_STATUS_CONFIG[req.status]?.color || 'gray'
                           )}
                         >

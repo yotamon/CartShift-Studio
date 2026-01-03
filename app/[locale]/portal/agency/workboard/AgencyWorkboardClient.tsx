@@ -206,7 +206,7 @@ export default function AgencyWorkboardClient() {
       onRollback: (_error, { requestId, oldStatus }) => {
         setRequests(prev => prev.map(r => (r.id === requestId ? { ...r, status: oldStatus } : r)));
 
-        showError(t('agency.workboard.moveError'), t('portal.common.rollback'));
+        showError(t('agency.workboard.moveError'), t('common.rollback'));
       },
     }
   );
@@ -295,7 +295,7 @@ export default function AgencyWorkboardClient() {
           <div className="flex items-center gap-3">
             <PortalAvatarGroup max={3} className="me-2">
               <PortalAvatar name="CartShift Studio" size="sm" />
-              <PortalAvatar name={t('portal.common.namePlaceholder')} size="sm" />
+              <PortalAvatar name={t('common.namePlaceholder')} size="sm" />
             </PortalAvatarGroup>
             <PortalButton
               size="sm"
@@ -377,6 +377,7 @@ function RequestCard({
   locale: string;
   isMounted: boolean;
 }) {
+  const t = useTranslations('portal');
   return (
     <PortalCard className="p-3 md:p-4 border-surface-200 dark:border-surface-800 shadow-sm hover:shadow-md hover:border-blue-200 dark:hover:border-blue-900 transition-all group">
       <div className="flex items-start justify-between gap-3 mb-3">
@@ -390,7 +391,7 @@ function RequestCard({
           }
           className="text-[9px] px-1.5 h-4 font-black uppercase tracking-tighter"
         >
-          {req.priority || t('portal.common.normal')}
+          {req.priority || 'NORMAL'}
         </PortalBadge>
         <div className="text-[10px] font-bold text-surface-400 font-mono tracking-tighter">
           #ID-{req.id.slice(0, 4).toUpperCase()}

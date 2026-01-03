@@ -24,19 +24,14 @@ import { PortalBadge } from '@/components/portal/ui/PortalBadge';
 import { SkeletonTable } from '@/components/portal/ui/PortalSkeleton';
 import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
 import { Dropdown } from '@/components/ui/Dropdown';
-import { subscribeToOrgRequests } from '@/lib/services/portal-requests';
+import { subscribeToOrgRequests, subscribeToAllRequests } from '@/lib/services/portal-requests';
 import { createPricingRequest, sendPricingRequest } from '@/lib/services/pricing-requests';
 import {
   Request,
-  STATUS_CONFIG,
-  PricingLineItem,
   Currency,
   CURRENCY_CONFIG,
   formatCurrency,
-  generateLineItemId,
-  calculateTotalAmount,
   CLIENT_STATUS_MAP,
-  CLIENT_STATUS_CONFIG,
   ClientStatus,
 } from '@/lib/types/portal';
 import { format } from 'date-fns';
@@ -44,17 +39,14 @@ import { getDateLocale } from '@/lib/locale-config';
 import { cn } from '@/lib/utils';
 import { useTranslations, useLocale } from 'next-intl';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
+import { usePricingForm } from '@/lib/hooks/usePricingForm';
 import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
 import { Link, useRouter } from '@/i18n/navigation';
-
-const mapStatusColor = (color: string): 'blue' | 'green' | 'yellow' | 'red' | 'gray' => {
-  if (color === 'purple') return 'blue';
-  if (color === 'emerald') return 'green';
-  if (['blue', 'green', 'yellow', 'red', 'gray'].includes(color)) {
-    return color as 'blue' | 'green' | 'yellow' | 'red' | 'gray';
-  }
-  return 'gray';
-};
+// Centralized utilities - no more duplicate mapStatusColor!
+import {
+  getStatusBadgeVariant,
+  getClientStatusBadgeVariant,
+} from '@/lib/utils/portal-helpers';
 
 export default function RequestsClient() {
   const orgId = useResolvedOrgId();
@@ -83,11 +75,20 @@ export default function RequestsClient() {
   const [selectedRequestIds, setSelectedRequestIds] = useState<string[]>([]);
   const [showPricingModal, setShowPricingModal] = useState(false);
   const [pricingTitle, setPricingTitle] = useState('');
-  const [pricingLineItems, setPricingLineItems] = useState<PricingLineItem[]>([
-    { id: generateLineItemId(), description: '', quantity: 1, unitPrice: 0 },
-  ]);
-  const [pricingCurrency, setPricingCurrency] = useState<Currency>('USD');
   const [isCreatingPricing, setIsCreatingPricing] = useState(false);
+
+  // Use centralized pricing form hook
+  const {
+    lineItems: pricingLineItems,
+    currency: pricingCurrency,
+    setCurrency: setPricingCurrency,
+    addLineItem,
+    removeLineItem,
+    updateLineItem,
+    resetForm: resetPricingForm,
+    totalAmount,
+    validItems,
+  } = usePricingForm('USD');
 
   const clientFilters: ClientStatus[] = ['SUBMITTED', 'IN_PROGRESS', 'IN_REVIEW', 'COMPLETED'];
   const filters = isAgency
@@ -95,7 +96,7 @@ export default function RequestsClient() {
     : ['All', ...clientFilters];
 
   useEffect(() => {
-    if (!orgId || typeof orgId !== 'string' || authLoading) return undefined;
+    if (authLoading) return undefined;
 
     if (!isAuthenticated || !userData) {
       setLoading(false);
@@ -106,10 +107,17 @@ export default function RequestsClient() {
     setError(null);
 
     try {
-      const unsubscribe = subscribeToOrgRequests(orgId, data => {
-        setRequests(data);
-        setLoading(false);
-      });
+      const unsubscribe = isAgency
+        ? subscribeToAllRequests(data => {
+            setRequests(data);
+            setLoading(false);
+          })
+        : orgId && typeof orgId === 'string'
+          ? subscribeToOrgRequests(orgId, data => {
+              setRequests(data);
+              setLoading(false);
+            })
+          : () => {};
 
       return () => unsubscribe();
     } catch (err) {
@@ -118,7 +126,7 @@ export default function RequestsClient() {
       setLoading(false);
       return undefined;
     }
-  }, [orgId, authLoading, isAuthenticated, userData, t]);
+  }, [orgId, authLoading, isAuthenticated, userData, isAgency, t]);
 
   // Reset to page 1 when filter or search changes
   useEffect(() => {
@@ -135,9 +143,13 @@ export default function RequestsClient() {
       }
     }
 
-    const matchesSearch =
-      (req.title?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
-      (req.id?.toLowerCase() || '').includes(searchQuery.toLowerCase());
+    const query = searchQuery.trim().toLowerCase();
+    const matchesSearch = !query ||
+      (req.title?.toLowerCase() || '').includes(query) ||
+      (req.id?.toLowerCase() || '').includes(query) ||
+      (req.description?.toLowerCase() || '').includes(query) ||
+      (req.type?.toLowerCase() || '').includes(query) ||
+      (req.createdByName?.toLowerCase() || '').includes(query);
     return matchesFilter && matchesSearch;
   });
 
@@ -161,27 +173,7 @@ export default function RequestsClient() {
     setSelectedRequestIds([]);
     setShowPricingModal(false);
     setPricingTitle('');
-    setPricingLineItems([{ id: generateLineItemId(), description: '', quantity: 1, unitPrice: 0 }]);
-  };
-
-  // Line item helpers
-  const addLineItem = () => {
-    setPricingLineItems([
-      ...pricingLineItems,
-      { id: generateLineItemId(), description: '', quantity: 1, unitPrice: 0 },
-    ]);
-  };
-
-  const removeLineItem = (id: string) => {
-    if (pricingLineItems.length > 1) {
-      setPricingLineItems(pricingLineItems.filter(item => item.id !== id));
-    }
-  };
-
-  const updateLineItem = (id: string, field: keyof PricingLineItem, value: string | number) => {
-    setPricingLineItems(
-      pricingLineItems.map(item => (item.id === id ? { ...item, [field]: value } : item))
-    );
+    resetPricingForm();
   };
 
   // Create pricing offer handler
@@ -190,9 +182,6 @@ export default function RequestsClient() {
     if (selectedRequestIds.length === 0) return;
     if (!pricingTitle.trim()) return;
 
-    const validItems = pricingLineItems.filter(
-      item => item.description.trim() && item.quantity > 0 && item.unitPrice > 0
-    );
     if (validItems.length === 0) return;
 
     setIsCreatingPricing(true);
@@ -221,7 +210,6 @@ export default function RequestsClient() {
   };
 
   const selectedRequests = requests.filter(r => selectedRequestIds.includes(r.id));
-  const totalAmount = calculateTotalAmount(pricingLineItems);
 
   if (error) {
     return (
@@ -403,16 +391,14 @@ export default function RequestsClient() {
                       <motion.div layoutId={isMobile ? `request-status-${req.id}` : undefined}>
                         {isAgency ? (
                           <PortalBadge
-                            variant={mapStatusColor(STATUS_CONFIG[req.status]?.color || 'gray')}
+                            variant={getStatusBadgeVariant(req.status)}
                             className="text-[10px]"
                           >
                             {t(`portal.requests.status.${req.status?.toLowerCase() || 'new'}` as any)}
                           </PortalBadge>
                         ) : (
                           <PortalBadge
-                            variant={mapStatusColor(
-                              CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[req.status]]?.color || 'gray'
-                            )}
+                            variant={getClientStatusBadgeVariant(req.status)}
                             className="text-[10px]"
                           >
                             {t(
@@ -532,16 +518,13 @@ export default function RequestsClient() {
                             <motion.div layoutId={!isMobile ? `request-status-${req.id}` : undefined}>
                               {isAgency ? (
                                 <PortalBadge
-                                  variant={mapStatusColor(STATUS_CONFIG[req.status]?.color || 'gray')}
+                                  variant={getStatusBadgeVariant(req.status)}
                                 >
                                   {t(`portal.requests.status.${req.status?.toLowerCase() || 'new'}` as any)}
                                 </PortalBadge>
                               ) : (
                                 <PortalBadge
-                                  variant={mapStatusColor(
-                                    CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[req.status]]?.color ||
-                                      'gray'
-                                  )}
+                                  variant={getClientStatusBadgeVariant(req.status)}
                                 >
                                   {t(
                                     `portal.requests.clientStatus.${CLIENT_STATUS_MAP[req.status]?.toLowerCase() || 'submitted'}` as any

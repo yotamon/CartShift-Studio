@@ -244,7 +244,7 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
           animate={{ width: '0%' }}
           transition={{ duration: toast.duration / 1000, ease: 'linear' }}
           className={cn(
-            'absolute bottom-0 left-0 h-1 rounded-b-2xl',
+            'absolute bottom-0 start-0 h-1 rounded-b-2xl',
             toast.type === 'success' && 'bg-emerald-400',
             toast.type === 'error' && 'bg-rose-400',
             toast.type === 'warning' && 'bg-amber-400',

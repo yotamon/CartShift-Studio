@@ -207,7 +207,7 @@ export default function GoogleCalendarIntegration({
                             onChange={(e) => handleCalendarChange(e.target.value)}
                             disabled={updatingSettings}
                             className={cn(
-                                "w-full appearance-none bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-700 rounded-lg py-2 pl-3 pr-8 text-sm text-surface-700 dark:text-surface-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20",
+                                "w-full appearance-none bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-700 rounded-lg py-2 ps-3 pe-8 text-sm text-surface-700 dark:text-surface-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20",
                                 updatingSettings && "opacity-50 cursor-wait"
                             )}
                         >
@@ -220,7 +220,7 @@ export default function GoogleCalendarIntegration({
                                 </option>
                             ))}
                         </select>
-                        <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none" />
+                        <ChevronDown size={14} className="absolute end-3 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none" />
                     </div>
                 )}
                 <p className="text-[10px] text-surface-400 mt-1">

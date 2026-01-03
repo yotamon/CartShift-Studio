@@ -146,6 +146,7 @@ export async function getRequestsByOrg(
 }
 
 export async function getAllRequests(): Promise<Request[]> {
+  await waitForAuth();
   const auth = getFirebaseAuth();
   const currentUser = auth.currentUser;
 
@@ -164,7 +165,6 @@ export async function getAllRequests(): Promise<Request[]> {
   }
 
   try {
-    await waitForAuth();
     const db = getFirestoreDb();
     const q = query(collection(db, REQUESTS_COLLECTION), orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
@@ -380,6 +380,53 @@ export function subscribeToOrgRequests(
     })
     .catch(error => {
       console.error('Error waiting for auth in subscribeToOrgRequests:', error);
+      callback([]);
+    });
+
+  return () => {
+    isUnsubscribed = true;
+    if (unsubscribe) {
+      unsubscribe();
+    }
+  };
+}
+
+export function subscribeToAllRequests(
+  callback: (requests: Request[]) => void
+): () => void {
+  let unsubscribe: (() => void) | null = null;
+  let isUnsubscribed = false;
+
+  waitForAuth()
+    .then(() => {
+      if (isUnsubscribed) return;
+      const db = getFirestoreDb();
+      const q = query(
+        collection(db, REQUESTS_COLLECTION),
+        orderBy('createdAt', 'desc')
+      );
+
+      unsubscribe = onSnapshot(
+        q,
+        snapshot => {
+          const requests = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as Request[];
+          callback(requests);
+        },
+        error => {
+          console.error('[portal-requests] Error in all requests snapshot:', error);
+          if (error.code === 'permission-denied') {
+            console.error('[portal-requests] Permission denied accessing all requests');
+            console.error('[portal-requests] User may not have agency permissions');
+          }
+          callback([]);
+        }
+      );
+    })
+    .catch(error => {
+      console.error('Error waiting for auth in subscribeToAllRequests:', error);
       callback([]);
     });
 

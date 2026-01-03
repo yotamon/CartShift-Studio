@@ -423,7 +423,7 @@ export default function ShopifyStoreIntegration({
               <div>
                 <label className="block text-xs font-bold text-surface-500 uppercase tracking-wider mb-2">
                   {t('form.collaboratorCode')}
-                  <span className="text-surface-400 normal-case font-normal ml-1">({t('form.optional')})</span>
+                  <span className="text-surface-400 normal-case font-normal ms-1">({t('form.optional')})</span>
                 </label>
                 <div className="relative">
                   <input

@@ -152,8 +152,8 @@ export function EmptyState({
           {icon || content.icon}
         </div>
         {/* Decorative dots */}
-        <div className="absolute -top-2 -right-2 w-3 h-3 bg-blue-400 rounded-full opacity-60" />
-        <div className="absolute -bottom-1 -left-3 w-2 h-2 bg-purple-400 rounded-full opacity-40" />
+        <div className="absolute -top-2 -end-2 w-3 h-3 bg-blue-400 rounded-full opacity-60" />
+        <div className="absolute -bottom-1 -start-3 w-2 h-2 bg-purple-400 rounded-full opacity-40" />
       </div>
 
       <h3 className="text-xl font-bold text-surface-900 dark:text-white mb-2">

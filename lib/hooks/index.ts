@@ -465,3 +465,17 @@ export function useAsync<T, Args extends unknown[] = []>(
 
   return { execute, loading, error, data, setData };
 }
+
+// ============================================
+// PORTAL-SPECIFIC HOOKS (Re-exports)
+// ============================================
+
+export { usePortalAuth } from './usePortalAuth';
+export { useRequestDetail } from './useRequestDetail';
+export { useRequestActions } from './useRequestActions';
+export { usePricingForm } from './usePricingForm';
+export { useOptimisticMutation } from './useOptimisticMutation';
+export { useResolvedOrgId } from './useResolvedOrgId';
+export { useResolvedRequestId } from './useResolvedRequestId';
+export { useResolvedClientId } from './useResolvedClientId';
+export { useResolvedPricingId } from './useResolvedPricingId';

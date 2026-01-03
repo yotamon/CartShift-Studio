@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useToast } from '@/components/portal/ui';
+import { useTranslations } from 'next-intl';
 
 interface OptimisticMutationOptions<T> {
   onMutate: (newData: T) => void;
@@ -11,6 +12,7 @@ interface OptimisticMutationOptions<T> {
 export function useOptimisticMutation<T>() {
   const [isMutating, setIsMutating] = useState(false);
   const { addToast } = useToast();
+  const t = useTranslations('portal.common');
 
   const mutate = useCallback(async (
     mutationFn: () => Promise<void>,
@@ -42,13 +44,13 @@ export function useOptimisticMutation<T>() {
 
       addToast({
         type: 'error',
-        title: 'Action Failed',
-        message: 'Your changes could not be saved and were reverted.',
+        title: t('actionFailed'),
+        message: t('changesReverted'),
       });
     } finally {
       setIsMutating(false);
     }
-  }, [addToast]);
+  }, [addToast, t]);
 
   return { mutate, isMutating };
 }
@@ -65,6 +67,7 @@ export function useOptimisticAction<TData, TVariables>(
 ) {
   const [isLoading, setIsLoading] = useState(false);
   const { addToast } = useToast();
+  const t = useTranslations('portal.common');
 
   const execute = async (variables: TVariables) => {
     setIsLoading(true);
@@ -78,11 +81,11 @@ export function useOptimisticAction<TData, TVariables>(
       console.error('Optimistic action failed:', error);
       options.onRollback(error, variables);
 
-      const message = error instanceof Error ? error.message : 'Operation failed';
+      const message = error instanceof Error ? error.message : t('operationFailed');
       addToast({
         type: 'error',
-        title: 'Error',
-        message: options.onError ? message : 'Changes reverted due to an error.',
+        title: t('error'),
+        message: options.onError ? message : t('errorReverted'),
       });
       options.onError?.(error);
       throw error;

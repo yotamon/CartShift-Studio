@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from '@/lib/motion';
 import {
   ArrowLeft,
@@ -30,487 +30,231 @@ import { RequestAttachments } from '@/components/portal/requests/RequestAttachme
 import { RequestDiscussion } from '@/components/portal/requests/RequestDiscussion';
 import { InvoiceDownloadButton } from '@/components/portal/invoices/InvoiceDownloadButton';
 import { ActivityTimeline } from '@/components/portal/ActivityTimeline';
-import { getOrganization } from '@/lib/services/portal-organizations';
-import {
-  updateRequestStatus,
-  subscribeToRequest,
-  acceptRequest,
-  declineRequest,
-  markRequestPaid,
-  startRequestWork,
-  addPricingToRequest,
-  assignRequest,
-  requestRevision,
-} from '@/lib/services/portal-requests';
-import { getAgencyTeam } from '@/lib/services/portal-agency';
-import { logActivity, subscribeToRequestActivities } from '@/lib/services/portal-activities';
-import { createComment, subscribeToRequestComments } from '@/lib/services/portal-comments';
-import { uploadFile } from '@/lib/services/portal-files';
-import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
-import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
-import { useResolvedRequestId } from '@/lib/hooks/useResolvedRequestId';
-import { Timestamp } from 'firebase/firestore';
-import {
-  Request,
-  Comment,
-  PortalUser,
-  STATUS_CONFIG,
-  RequestStatus,
-  formatCurrency,
-  PricingLineItem,
-  Currency,
-  CURRENCY_CONFIG,
-  generateLineItemId,
-  calculateTotalAmount,
-  Organization,
-  ActivityLog,
-  CLIENT_STATUS_MAP,
-  CLIENT_STATUS_CONFIG,
-} from '@/lib/types/portal';
-import { useTranslations, useLocale } from 'next-intl';
-import { Link } from '@/i18n/navigation';
-import { format } from 'date-fns';
-import { getDateLocale } from '@/lib/locale-config';
-import { cn } from '@/lib/utils';
 import { PayPalProvider } from '@/components/providers/PayPalProvider';
 import { PayPalCheckoutButton } from '@/components/portal/PayPalCheckoutButton';
 
-const mapStatusColor = (color: string): 'blue' | 'green' | 'yellow' | 'red' | 'gray' => {
-  if (color === 'purple') return 'blue';
-  if (color === 'emerald') return 'green';
-  if (['blue', 'green', 'yellow', 'red', 'gray'].includes(color)) {
-    return color as 'blue' | 'green' | 'yellow' | 'red' | 'gray';
-  }
-  return 'gray';
-};
+// Consolidated hooks (no more inline state duplication!)
+import { useRequestDetail } from '@/lib/hooks/useRequestDetail';
+import { useRequestActions } from '@/lib/hooks/useRequestActions';
+import { usePricingForm } from '@/lib/hooks/usePricingForm';
+
+// Consolidated utilities (no more mapStatusColor duplication!)
+import {
+  getStatusBadgeVariant,
+  getClientStatusBadgeVariant,
+  formatPortalDate,
+} from '@/lib/utils/portal-helpers';
+
+import {
+  PortalUser,
+  CLIENT_STATUS_MAP,
+  formatCurrency,
+  CURRENCY_CONFIG,
+  Currency,
+} from '@/lib/types/portal';
+import { useTranslations, useLocale } from 'next-intl';
+import { Link } from '@/i18n/navigation';
+import { cn } from '@/lib/utils';
+
+// ============================================
+// SUBCOMPONENTS (Extracted for clarity)
+// ============================================
+
+function LoadingSkeleton({ requestId }: { requestId: string | null }) {
+  return (
+    <div className="space-y-6 animate-pulse" role="status" aria-live="polite">
+      <span className="sr-only">Loading request details...</span>
+      <div className="h-8 w-48 bg-surface-200 dark:bg-surface-800 rounded-lg" />
+      <motion.div
+        layoutId={requestId ? `request-container-${requestId}` : undefined}
+        className="flex flex-col md:flex-row gap-6 p-4 rounded-xl"
+      >
+        <div className="flex-1 space-y-4">
+          <div className="flex items-center gap-4">
+            {requestId ? (
+              <motion.div layoutId={`request-title-${requestId}`} className="w-3/4">
+                <PortalSkeleton className="h-10 w-full" />
+              </motion.div>
+            ) : (
+              <PortalSkeleton className="h-10 w-3/4" />
+            )}
+            {requestId ? (
+              <motion.div layoutId={`request-status-${requestId}`}>
+                <PortalSkeleton className="h-8 w-24 rounded-full" />
+              </motion.div>
+            ) : (
+              <PortalSkeleton className="h-8 w-24 rounded-full" />
+            )}
+          </div>
+          <PortalSkeleton className="h-6 w-1/3" />
+        </div>
+      </motion.div>
+      <div className="flex items-center gap-2">
+        <PortalSkeleton className="h-10 w-24 rounded-xl" />
+        <PortalSkeleton className="h-10 w-28 rounded-xl" />
+        <PortalSkeleton className="h-10 w-24 rounded-xl" />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <PortalSkeleton className="h-64 w-full rounded-2xl" />
+          <PortalSkeleton className="h-40 w-full rounded-2xl" />
+        </div>
+        <div className="space-y-6">
+          <PortalSkeleton className="h-48 w-full rounded-2xl" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ErrorState({
+  error,
+  orgId,
+  t
+}: {
+  error: string | null;
+  orgId: string | null;
+  t: ReturnType<typeof useTranslations>;
+}) {
+  return (
+    <div className="text-center py-20 px-4">
+      <div className="w-20 h-20 bg-rose-50 dark:bg-rose-900/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
+        <AlertCircle size={40} className="text-rose-500" />
+      </div>
+      <h2 className="text-2xl font-bold text-surface-900 dark:text-white font-outfit">
+        {error || t('requests.detail.notFound')}
+      </h2>
+      <p className="text-surface-500 mt-2 max-w-sm mx-auto font-medium">
+        {t('requests.detail.notFoundDesc')}
+      </p>
+      <Link href={`/portal/org/${orgId}/requests/`} className="mt-8 inline-block">
+        <PortalButton variant="outline" className="font-outfit">
+          {t('requests.detail.backToRequests')}
+        </PortalButton>
+      </Link>
+    </div>
+  );
+}
+
+// ============================================
+// MAIN COMPONENT
+// ============================================
 
 export default function RequestDetailClient() {
-  const orgId = useResolvedOrgId();
-  const requestId = useResolvedRequestId();
-  const { userData, isAgency, loading: authLoading, isAuthenticated } = usePortalAuth();
-  const [activeTab, setActiveTab] = useState<'overview' | 'discussion' | 'history'>('overview');
-  const [request, setRequest] = useState<Request | null>(null);
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isAccepting, setIsAccepting] = useState(false);
-  const [isDeclining, setIsDeclining] = useState(false);
-  const [showPricingForm, setShowPricingForm] = useState(false);
-  const [pricingLineItems, setPricingLineItems] = useState<PricingLineItem[]>([
-    { id: generateLineItemId(), description: '', quantity: 1, unitPrice: 0 },
-  ]);
-  const [pricingCurrency, setPricingCurrency] = useState<Currency>('USD');
-  const [isAddingPricing, setIsAddingPricing] = useState(false);
-  const [organization, setOrganization] = useState<Organization | null>(null);
-  const [agencyTeam, setAgencyTeam] = useState<PortalUser[]>([]);
-  const [isAssigning, setIsAssigning] = useState(false);
-  const [showRevisionModal, setShowRevisionModal] = useState(false);
-  const [revisionNotes, setRevisionNotes] = useState('');
-  const [isSubmittingRevision, setIsSubmittingRevision] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const [activities, setActivities] = useState<ActivityLog[]>([]);
   const t = useTranslations('portal');
   const locale = useLocale();
 
-  // Line item handlers for pricing form
-  const addLineItem = () => {
-    setPricingLineItems([
-      ...pricingLineItems,
-      { id: generateLineItemId(), description: '', quantity: 1, unitPrice: 0 },
-    ]);
-  };
+  // ========== CONSOLIDATED DATA HOOKS ==========
+  // All subscriptions, state, and derived permissions are now in useRequestDetail
+  const {
+    request,
+    comments,
+    activities,
+    organization,
+    agencyTeam,
+    userData,
+    isAgency,
+    orgId,
+    requestId,
+    loading,
+    error,
+    showAgencyActions,
+    showClientActions,
+    setComments,
+  } = useRequestDetail();
 
-  const removeLineItem = (id: string) => {
-    if (pricingLineItems.length > 1) {
-      setPricingLineItems(pricingLineItems.filter(item => item.id !== id));
-    }
-  };
+  // ========== CONSOLIDATED ACTION HOOKS ==========
+  // All request actions with toast notifications are now in useRequestActions
+  const {
+    handleAddPricing,
+    isAddingPricing,
+    handleAcceptQuote,
+    handleDeclineQuote,
+    isAccepting,
+    isDeclining,
+    handleStartWork,
+    handlePaymentSuccess,
+    handleAssignSpecialist,
+    isAssigning,
+    handleRequestRevision,
+    isSubmittingRevision,
+    handleFileUpload,
+    isUploading,
+    handleStatusChange,
+    handleSendComment,
+    isSubmittingComment,
+  } = useRequestActions({
+    request,
+    userData,
+    orgId,
+    requestId,
+    isAgency,
+    onCommentsUpdate: setComments,
+  });
 
-  const updateLineItem = (id: string, field: keyof PricingLineItem, value: string | number) => {
-    setPricingLineItems(
-      pricingLineItems.map(item => (item.id === id ? { ...item, [field]: value } : item))
-    );
-  };
+  // ========== CONSOLIDATED PRICING FORM ==========
+  // All pricing form state is now in usePricingForm hook
+  const {
+    lineItems: pricingLineItems,
+    currency: pricingCurrency,
+    isFormVisible: showPricingForm,
+    setCurrency: setPricingCurrency,
+    setFormVisible: setShowPricingForm,
+    addLineItem,
+    removeLineItem,
+    updateLineItem,
+    resetForm: resetPricingForm,
+    totalAmount: pricingTotal,
+    isValid: isPricingValid,
+  } = usePricingForm(request?.currency || 'USD');
 
-  // Submit pricing form
-  const handleAddPricing = async () => {
-    if (
-      !requestId ||
-      typeof requestId !== 'string' ||
-      !orgId ||
-      typeof orgId !== 'string' ||
-      !userData
-    ) {
-      return;
-    }
+  // ========== LOCAL UI STATE ==========
+  const [activeTab, setActiveTab] = useState<'overview' | 'discussion' | 'history'>('overview');
+  const [showRevisionModal, setShowRevisionModal] = useState(false);
+  const [revisionNotes, setRevisionNotes] = useState('');
 
-    // Validate line items
-    const validItems = pricingLineItems.filter(
-      item => item.description.trim() && item.quantity > 0 && item.unitPrice > 0
-    );
+  // ========== RENDER ==========
 
-    if (validItems.length === 0) return;
-
-    setIsAddingPricing(true);
-    try {
-      await addPricingToRequest(requestId, orgId, userData.id, userData.name || userData.email, {
-        lineItems: validItems,
-        currency: pricingCurrency,
-      });
-      setShowPricingForm(false);
-      setPricingLineItems([
-        { id: generateLineItemId(), description: '', quantity: 1, unitPrice: 0 },
-      ]);
-    } catch (err) {
-      console.error('Error adding pricing:', err);
-    } finally {
-      setIsAddingPricing(false);
-    }
-  };
-
-  // Handlers for pricing actions
-  const handleAcceptQuote = async () => {
-    if (
-      !requestId ||
-      typeof requestId !== 'string' ||
-      !orgId ||
-      typeof orgId !== 'string' ||
-      !userData
-    )
-      return;
-    setIsAccepting(true);
-    try {
-      await acceptRequest(requestId, orgId, userData.id, userData.name || userData.email);
-    } catch (err) {
-      console.error('Error accepting quote:', err);
-    } finally {
-      setIsAccepting(false);
-    }
-  };
-
-  const handleDeclineQuote = async () => {
-    if (
-      !requestId ||
-      typeof requestId !== 'string' ||
-      !orgId ||
-      typeof orgId !== 'string' ||
-      !userData
-    )
-      return;
-    setIsDeclining(true);
-    try {
-      await declineRequest(requestId, orgId, userData.id, userData.name || userData.email);
-    } catch (err) {
-      console.error('Error declining quote:', err);
-    } finally {
-      setIsDeclining(false);
-    }
-  };
-
-  const handleStartWork = async () => {
-    if (
-      !requestId ||
-      typeof requestId !== 'string' ||
-      !orgId ||
-      typeof orgId !== 'string' ||
-      !userData
-    )
-      return;
-    try {
-      await startRequestWork(requestId, orgId, userData.id, userData.name || userData.email);
-    } catch (err) {
-      console.error('Error starting work:', err);
-    }
-  };
-
-  const handlePaymentSuccess = async (result: { paymentId?: string }) => {
-    if (
-      !requestId ||
-      typeof requestId !== 'string' ||
-      !orgId ||
-      typeof orgId !== 'string' ||
-      !result.paymentId ||
-      !userData
-    )
-      return;
-    try {
-      await markRequestPaid(
-        requestId,
-        orgId,
-        userData.id,
-        userData.name || userData.email,
-        result.paymentId
-      );
-    } catch (err) {
-      console.error('Error marking as paid:', err);
-    }
-  };
-
-  const handleAssignSpecialist = async (specialistId: string, specialistName: string) => {
-    if (!requestId || typeof requestId !== 'string' || !userData || !orgId) return;
-    setIsAssigning(true);
-    try {
-      await assignRequest(
-        requestId,
-        orgId as string,
-        userData.id,
-        userData.name || userData.email,
-        specialistId,
-        specialistName
-      );
-    } catch (err) {
-      console.error('Error assigning specialist:', err);
-    } finally {
-      setIsAssigning(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!requestId || typeof requestId !== 'string') {
-      console.warn('[RequestDetailClient] Invalid requestId:', requestId);
-      setError(t('portal.requests.invalidRequestId'));
-      setLoading(false);
-      return undefined;
-    }
-    if (authLoading) {
-      return undefined;
-    }
-    if (!isAuthenticated) {
-      setError(t('common.error'));
-      setLoading(false);
-      return undefined;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Subscribe to request data
-      const unsubscribeRequest = subscribeToRequest(requestId, (data, error) => {
-        if (error) {
-          setError(error.message);
-          setLoading(false);
-          return;
-        }
-        if (!data) {
-          setError(t('requests.detail.notFound'));
-          setLoading(false);
-          return;
-        }
-        setRequest(data);
-        setLoading(false);
-      });
-
-      // Subscribe to comments - only after userData and orgId are available
-      let unsubscribeComments: () => void = () => {};
-      if (typeof orgId === 'string') {
-        unsubscribeComments = subscribeToRequestComments(
-          requestId,
-          data => {
-            setComments(data);
-          },
-          Boolean(userData?.isAgency),
-          orgId
-        );
-      }
-
-      // Subscribe to activities
-      let unsubscribeActivities: () => void;
-      if (typeof orgId === 'string') {
-        unsubscribeActivities = subscribeToRequestActivities(
-          requestId,
-          data => {
-            setActivities(data);
-          },
-          orgId
-        );
-      } else {
-        unsubscribeActivities = () => {};
-      }
-
-      return () => {
-        unsubscribeRequest();
-        unsubscribeComments();
-        unsubscribeActivities();
-      };
-    } catch (err) {
-      console.error('Failed to subscribe to request details:', err);
-      setError(t('common.error'));
-      setLoading(false);
-      return undefined;
-    }
-  }, [requestId, orgId, userData, authLoading, isAuthenticated, t]);
-
-  // Fetch organization details for invoice generation
-  useEffect(() => {
-    if (orgId && typeof orgId === 'string') {
-      getOrganization(orgId)
-        .then(org => {
-          if (org) setOrganization(org);
-        })
-        .catch(console.error);
-    }
-  }, [orgId]);
-
-  const handleRequestRevision = async () => {
-    if (!revisionNotes.trim() || !requestId || !orgId || !userData) return;
-    setIsSubmittingRevision(true);
-    try {
-      await requestRevision(
-        requestId as string,
-        orgId as string,
-        userData.id,
-        userData.name || userData.email,
-        revisionNotes.trim()
-      );
-      setShowRevisionModal(false);
-      setRevisionNotes('');
-    } catch (err) {
-      console.error('Failed to request revision:', err);
-    } finally {
-      setIsSubmittingRevision(false);
-    }
-  };
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !requestId || !orgId || !userData) return;
-
-    setIsUploading(true);
-    try {
-      await uploadFile(orgId as string, userData.id, userData.name || userData.email, file, {
-        requestId: requestId as string,
-      });
-      // Activity is logged by the upload service potentially?
-      // Actually portal-files.ts doesn't log activity yet.
-      // I should add activity logging to portal-files.ts or here.
-      await logActivity({
-        orgId: orgId as string,
-        requestId: requestId as string,
-        userId: userData.id,
-        userName: userData.name || userData.email,
-        action: 'ADDED_ATTACHMENT',
-        details: { fileName: file.name },
-      });
-    } catch (err) {
-      console.error('Failed to upload file:', err);
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (isAgency) {
-      getAgencyTeam()
-        .then(team => {
-          setAgencyTeam(team);
-        })
-        .catch(console.error);
-    }
-  }, [isAgency]);
-
-  const handleStatusChange = async (newStatus: RequestStatus) => {
-    if (!requestId || typeof requestId !== 'string' || !userData || !isAgency) return;
-    try {
-      await updateRequestStatus(requestId, newStatus);
-      // We could also log activity here if updateRequestStatus took user info
-      // For now, these specific actions (started work, etc) handle logging themselves
-      // But for generic status changes (e.g. Needs Info), we might want a logActivity call
-      await logActivity({
-        orgId: orgId as string,
-        requestId: requestId,
-        userId: userData.id,
-        userName: userData.name || userData.email,
-        action: 'STATUS_CHANGED',
-        details: { status: newStatus },
-      });
-    } catch (error) {
-      console.error('Error updating status:', error);
-    }
-  };
-
-  if (authLoading || loading) {
-    return (
-      <div className="space-y-6 animate-pulse" role="status" aria-live="polite">
-        <span className="sr-only">Loading request details...</span>
-        <div className="h-8 w-48 bg-surface-200 dark:bg-surface-800 rounded-lg" />
-        <motion.div
-          layoutId={requestId ? `request-container-${requestId}` : undefined}
-          className="flex flex-col md:flex-row gap-6 p-4 rounded-xl"
-        >
-          <div className="flex-1 space-y-4">
-            <div className="flex items-center gap-4">
-              {requestId ? (
-                <motion.div layoutId={`request-title-${requestId}`} className="w-3/4">
-                  <PortalSkeleton className="h-10 w-full" />
-                </motion.div>
-              ) : (
-                <PortalSkeleton className="h-10 w-3/4" />
-              )}
-              {requestId ? (
-                <motion.div layoutId={`request-status-${requestId}`}>
-                  <PortalSkeleton className="h-8 w-24 rounded-full" />
-                </motion.div>
-              ) : (
-                <PortalSkeleton className="h-8 w-24 rounded-full" />
-              )}
-            </div>
-            <PortalSkeleton className="h-6 w-1/3" />
-          </div>
-        </motion.div>
-        <div className="flex items-center gap-2">
-          <PortalSkeleton className="h-10 w-24 rounded-xl" />
-          <PortalSkeleton className="h-10 w-28 rounded-xl" />
-          <PortalSkeleton className="h-10 w-24 rounded-xl" />
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
-            <PortalSkeleton className="h-64 w-full rounded-2xl" />
-            <PortalSkeleton className="h-40 w-full rounded-2xl" />
-          </div>
-          <div className="space-y-6">
-            <PortalSkeleton className="h-48 w-full rounded-2xl" />
-          </div>
-        </div>
-      </div>
-    );
+  if (loading) {
+    return <LoadingSkeleton requestId={requestId} />;
   }
 
   if (error || !request) {
-    return (
-      <div className="text-center py-20 px-4">
-        <div className="w-20 h-20 bg-rose-50 dark:bg-rose-900/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
-          <AlertCircle size={40} className="text-rose-500" />
-        </div>
-        <h2 className="text-2xl font-bold text-surface-900 dark:text-white font-outfit">
-          {error || t('requests.detail.notFound')}
-        </h2>
-        <p className="text-surface-500 mt-2 max-w-sm mx-auto font-medium">
-          {t('requests.detail.notFoundDesc')}
-        </p>
-        <Link href={`/portal/org/${orgId}/requests/`} className="mt-8 inline-block">
-          <PortalButton variant="outline" className="font-outfit">
-            {t('requests.detail.backToRequests')}
-          </PortalButton>
-        </Link>
-      </div>
-    );
+    return <ErrorState error={error} orgId={orgId} t={t} />;
   }
 
   const breadcrumbItems = [
     { label: t('requests.title'), href: `/portal/org/${orgId}/requests/` },
     { label: request.title },
   ];
-  const canAct = Boolean(userData);
-  const showAgencyActions = canAct && isAgency;
-  const showClientActions = canAct && !isAgency;
+
+  const handlePricingSubmit = async () => {
+    const success = await handleAddPricing(pricingLineItems, pricingCurrency);
+    if (success) {
+      resetPricingForm();
+    }
+  };
+
+  const handleRevisionSubmit = async () => {
+    const success = await handleRequestRevision(revisionNotes);
+    if (success) {
+      setShowRevisionModal(false);
+      setRevisionNotes('');
+    }
+  };
+
+  const onFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileUpload(file);
+    }
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <Breadcrumb items={breadcrumbItems} />
 
+      {/* Header */}
       <motion.div layoutId={`request-container-${request.id}`} className="flex flex-col md:flex-row md:items-center gap-6 p-4 rounded-xl">
         <Link
           href={`/portal/org/${orgId}/requests/`}
@@ -523,25 +267,19 @@ export default function RequestDetailClient() {
             <motion.h1 layoutId={`request-title-${request.id}`} className="text-2xl font-bold text-surface-900 dark:text-white leading-tight font-outfit">
               {request.title}
             </motion.h1>
-            {isAgency ? (
-              <motion.div layoutId={`request-status-${request.id}`}>
-                <PortalBadge variant={mapStatusColor(STATUS_CONFIG[request.status]?.color || 'gray')}>
-                  {t(`requests.status.${request.status.toLowerCase()}` as any)}
-                </PortalBadge>
-              </motion.div>
-            ) : (
-              <motion.div layoutId={`request-status-${request.id}`}>
-                <PortalBadge
-                  variant={mapStatusColor(
-                    CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[request.status]]?.color || 'gray'
-                  )}
-                >
-                  {t(
-                    `requests.clientStatus.${CLIENT_STATUS_MAP[request.status].toLowerCase()}` as any
-                  )}
-                </PortalBadge>
-              </motion.div>
-            )}
+            <motion.div layoutId={`request-status-${request.id}`}>
+              <PortalBadge
+                variant={isAgency
+                  ? getStatusBadgeVariant(request.status)
+                  : getClientStatusBadgeVariant(request.status)
+                }
+              >
+                {isAgency
+                  ? t(`requests.status.${request.status.toLowerCase()}` as any)
+                  : t(`requests.clientStatus.${CLIENT_STATUS_MAP[request.status].toLowerCase()}` as any)
+                }
+              </PortalBadge>
+            </motion.div>
           </div>
           <div className="flex items-center gap-3 mt-1 underline-offset-4">
             <p className="text-xs font-black text-surface-400 uppercase tracking-widest">
@@ -562,6 +300,7 @@ export default function RequestDetailClient() {
         </div>
       </motion.div>
 
+      {/* Tabs */}
       <div className="flex items-center gap-1 p-1 bg-surface-100 dark:bg-surface-900 rounded-2xl w-fit">
         <button
           onClick={() => setActiveTab('overview')}
@@ -604,10 +343,13 @@ export default function RequestDetailClient() {
         </button>
       </div>
 
+      {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column - Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {activeTab === 'overview' ? (
             <div className="space-y-6 animate-in slide-in-from-start-4 duration-500">
+              {/* Details Card */}
               <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950">
                 <h3 className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest mb-4">
                   {t('requests.detail.details')}
@@ -625,11 +367,7 @@ export default function RequestDetailClient() {
                         {t('requests.detail.submissionDate')}
                       </p>
                       <p className="text-sm font-bold text-surface-900 dark:text-white font-outfit">
-                        {request.createdAt?.toDate
-                          ? format(request.createdAt.toDate(), 'MMMM d, yyyy', {
-                              locale: getDateLocale(locale),
-                            })
-                          : t('common.recently')}
+                        {formatPortalDate(request.createdAt, 'MMMM d, yyyy', locale, t('common.recently'))}
                       </p>
                     </div>
                   </div>
@@ -668,59 +406,8 @@ export default function RequestDetailClient() {
               comments={comments}
               currentUser={userData as PortalUser | null}
               agencyTeam={agencyTeam}
-              onSendMessage={async (content, parentId) => {
-                if (!requestId || !orgId || !userData) return;
-
-                // Optimistic logic would ideally be moved into RequestDiscussion or kept here if we want to control state
-                // For simplicity, we'll keep the optimisitc update here or refactor it.
-                // Since RequestDiscussion is controlled by `comments` prop, we need to update state here.
-
-                const tempId = `temp-${Date.now()}`;
-                const optimisticComment: Comment = {
-                  id: tempId,
-                  requestId: requestId as string,
-                  orgId: orgId as string,
-                  userId: userData.id,
-                  userName: userData.name || userData.email,
-                  userPhotoUrl: userData.photoUrl,
-                  content: content,
-                  attachmentIds: [],
-                  isInternal: false,
-                  parentId: parentId,
-                  createdAt: Timestamp.now(),
-                  reactions: {},
-                  mentions: [],
-                };
-
-                setComments(prev => [...prev, optimisticComment]);
-
-                setIsSubmitting(true);
-                try {
-                  await createComment(
-                    requestId as string,
-                    orgId as string,
-                    userData.id,
-                    userData.name || userData.email,
-                    userData.photoUrl,
-                    {
-                      content: content,
-                      parentId: parentId,
-                    }
-                  );
-
-                  // Filter out temp, let subscription handle real
-                  setTimeout(() => {
-                    setComments(prev => prev.filter(c => c.id !== tempId));
-                  }, 1000);
-                } catch (error) {
-                  console.error('Error sending comment:', error);
-                  setComments(prev => prev.filter(c => c.id !== tempId));
-                  // Maybe show toast error
-                } finally {
-                  setIsSubmitting(false);
-                }
-              }}
-              isSubmitting={isSubmitting}
+              onSendMessage={handleSendComment}
+              isSubmitting={isSubmittingComment}
             />
           ) : (
             <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-500">
@@ -737,6 +424,7 @@ export default function RequestDetailClient() {
           )}
         </div>
 
+        {/* Right Column - Sidebar */}
         <div className="space-y-6">
           {/* Agency Add Pricing Section - For NEW requests without pricing */}
           {showAgencyActions && request.status === 'NEW' && !request.isBillable && (
@@ -856,13 +544,13 @@ export default function RequestDetailClient() {
                   </button>
 
                   {/* Total */}
-                  {pricingLineItems.some(item => item.quantity > 0 && item.unitPrice > 0) && (
+                  {pricingTotal > 0 && (
                     <div className="pt-3 border-t border-surface-200 dark:border-surface-800 flex items-center justify-between">
                       <span className="text-sm font-bold text-surface-600 dark:text-surface-400">
                         {t('requests.detail.total')}
                       </span>
                       <span className="text-lg font-black text-surface-900 dark:text-white font-outfit">
-                        {formatCurrency(calculateTotalAmount(pricingLineItems), pricingCurrency)}
+                        {formatCurrency(pricingTotal, pricingCurrency)}
                       </span>
                     </div>
                   )}
@@ -872,25 +560,15 @@ export default function RequestDetailClient() {
                     <PortalButton
                       variant="outline"
                       className="flex-1 h-10"
-                      onClick={() => {
-                        setShowPricingForm(false);
-                        setPricingLineItems([
-                          { id: generateLineItemId(), description: '', quantity: 1, unitPrice: 0 },
-                        ]);
-                      }}
+                      onClick={resetPricingForm}
                     >
                       {t('common.cancel')}
                     </PortalButton>
                     <PortalButton
                       variant="primary"
                       className="flex-1 h-10"
-                      onClick={handleAddPricing}
-                      disabled={
-                        isAddingPricing ||
-                        !pricingLineItems.some(
-                          item => item.description.trim() && item.quantity > 0 && item.unitPrice > 0
-                        )
-                      }
+                      onClick={handlePricingSubmit}
+                      disabled={isAddingPricing || !isPricingValid}
                     >
                       {isAddingPricing ? (
                         <Loader2 size={16} className="animate-spin me-2" />
@@ -930,11 +608,11 @@ export default function RequestDetailClient() {
                     </div>
                     <div className="text-end ms-4">
                       <p className="font-bold text-surface-900 dark:text-white text-sm">
-                        {formatCurrency(item.unitPrice * item.quantity, request.currency || t('portal.common.defaultCurrency'))}
+                        {formatCurrency(item.unitPrice * item.quantity, request.currency || 'USD')}
                       </p>
                       <p className="text-xs text-surface-500 dark:text-surface-400">
                         {item.quantity} ×{' '}
-                        {formatCurrency(item.unitPrice, request.currency || t('portal.common.defaultCurrency'))}
+                        {formatCurrency(item.unitPrice, request.currency || 'USD')}
                       </p>
                     </div>
                   </div>
@@ -944,7 +622,7 @@ export default function RequestDetailClient() {
                     {t('requests.detail.total')}
                   </span>
                   <span className="text-xl font-black text-surface-900 dark:text-white font-outfit">
-                    {formatCurrency(request.totalAmount || 0, request.currency || t('portal.common.defaultCurrency'))}
+                    {formatCurrency(request.totalAmount || 0, request.currency || 'USD')}
                   </span>
                 </div>
 
@@ -1012,7 +690,7 @@ export default function RequestDetailClient() {
                         orgId: request.orgId,
                         title: request.title,
                         totalAmount: request.totalAmount || 0,
-                        currency: request.currency || t('portal.common.defaultCurrency'),
+                        currency: request.currency || 'USD',
                         lineItems: request.lineItems,
                         status: 'ACCEPTED',
                         createdBy: request.createdBy,
@@ -1029,6 +707,7 @@ export default function RequestDetailClient() {
             </PortalCard>
           )}
 
+          {/* Workflow Actions Card */}
           <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950">
             <h4 className="text-[10px] font-black text-surface-400 dark:text-surface-500 mb-6 uppercase tracking-widest">
               {t('requests.detail.workflowActions')}
@@ -1052,7 +731,7 @@ export default function RequestDetailClient() {
                     type="file"
                     id="file-upload"
                     className="hidden"
-                    onChange={handleFileUpload}
+                    onChange={onFileUpload}
                     disabled={isUploading}
                   />
                   <PortalButton
@@ -1085,6 +764,7 @@ export default function RequestDetailClient() {
             </div>
           </PortalCard>
 
+          {/* Assigned Specialist Card */}
           <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950">
             <div className="flex items-center justify-between mb-6">
               <h4 className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest">
@@ -1126,7 +806,7 @@ export default function RequestDetailClient() {
               <div className="w-12 h-12 rounded-2xl bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 flex items-center justify-center text-blue-600 shadow-sm overflow-hidden">
                 {request.assignedTo ? (
                   <div className="w-full h-full flex items-center justify-center bg-blue-50 dark:bg-blue-900/30 text-blue-600 font-bold text-lg">
-                    {request.assignedToName?.charAt(0) || t('portal.common.defaultInitial')}
+                    {request.assignedToName?.charAt(0) || '?'}
                   </div>
                 ) : (
                   <UserIcon size={20} />
@@ -1143,6 +823,7 @@ export default function RequestDetailClient() {
             </div>
           </PortalCard>
 
+          {/* Linked Assets Card */}
           <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950">
             <h4 className="text-[10px] font-black text-surface-400 dark:text-surface-500 mb-6 uppercase tracking-widest">
               {t('requests.detail.linkedAssets')}
@@ -1194,7 +875,7 @@ export default function RequestDetailClient() {
                 <PortalButton
                   variant="primary"
                   className="flex-1 h-12"
-                  onClick={handleRequestRevision}
+                  onClick={handleRevisionSubmit}
                   disabled={isSubmittingRevision || !revisionNotes.trim()}
                 >
                   {isSubmittingRevision ? (
