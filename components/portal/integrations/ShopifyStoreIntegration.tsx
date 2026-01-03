@@ -61,7 +61,11 @@ export default function ShopifyStoreIntegration({
   onUpdate,
   isAgencyView = false,
 }: ShopifyStoreIntegrationProps) {
-  const t = useTranslations('portal.agency.settings.integrations.shopify');
+  const t = useTranslations(
+    isAgencyView
+      ? 'portal.agency.settings.integrations.shopify'
+      : 'portal.settings.general.integrations.shopify'
+  );
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [shopifyDomain, setShopifyDomain] = useState(organization.shopifyDomain || '');

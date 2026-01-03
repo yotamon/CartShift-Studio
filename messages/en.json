@@ -422,7 +422,61 @@
           "success": "Onboarding will start on next page load",
           "error": "Failed to reset onboarding status"
         },
-        "storeIntegrations": "Store Integrations"
+        "storeIntegrations": "Store Integrations",
+        "integrations": {
+          "shopify": {
+            "title": "Shopify Store Access",
+            "description": "Enable fast, secure collaborator access to your Shopify store.",
+            "storeUrl": "Store URL",
+            "collaboratorCode": "Collaborator Code",
+            "status": {
+              "pending": "Pending",
+              "requested": "Access Requested",
+              "connected": "Connected",
+              "revoked": "Revoked"
+            },
+            "statusMessages": {
+              "pending": "Waiting for your agency to request access to your store.",
+              "requested": "Access has been requested. Please approve in your Shopify admin.",
+              "connected": "Your agency has full collaborator access to your store."
+            },
+            "features": {
+              "feature1": "Enable fast theme customizations and updates",
+              "feature2": "Allow your agency to manage apps and integrations",
+              "feature3": "Secure collaborator access with no staff seat used"
+            },
+            "form": {
+              "storeUrl": "Your Shopify Store URL",
+              "storeUrlHint": "Enter your store's .myshopify.com URL (e.g., yourstore.myshopify.com)",
+              "collaboratorCode": "Collaborator Request Code",
+              "collaboratorCodeHint": "Found in Shopify Admin > Settings > Users > Security. Leave empty if not enabled.",
+              "optional": "optional",
+              "infoTitle": "Where to find the collaborator code?",
+              "infoDesc": "In your Shopify admin, go to Settings > Users and permissions > Security. If enabled, you'll see a 4-digit code.",
+              "save": "Save Store Details",
+              "saving": "Saving...",
+              "cancel": "Cancel"
+            },
+            "actions": {
+              "connect": "Connect Store",
+              "edit": "Edit Store Details"
+            },
+            "errors": {
+              "invalidDomain": "Please enter a valid .myshopify.com domain",
+              "invalidCode": "Collaborator code must be 4 digits",
+              "saveFailed": "Failed to save. Please try again."
+            },
+            "agency": {
+              "notConnected": "Shopify Store Not Connected",
+              "notConnectedDesc": "The client hasn't connected their Shopify store yet.",
+              "requestAccess": "Request Collaborator Access",
+              "markRequested": "Mark as Requested",
+              "markConnected": "Mark as Connected",
+              "openPartnerDashboard": "Open Partner Dashboard",
+              "openAdmin": "Open Store Admin"
+            }
+          }
+        }
       },
       "notifications": {
         "title": "Channels & Alerts",
@@ -1024,290 +1078,6 @@
         }
       }
     },
-    "agency": {
-      "inbox": {
-        "title": "Agency Inbox",
-        "subtitle": "Global view of all client requests and communications.",
-        "searchPlaceholder": "Search requests...",
-        "activeItems": "Active Items",
-        "loading": "Loading agency inbox...",
-        "emptyTitle": "Your inbox is clear",
-        "emptyDesc": "All client requests have been processed or sorted.",
-        "clientOrg": "Client Org",
-        "accessRequired": "Agency Access Required",
-        "accessDenied": "Your account ({email}) does not have permissions to access the Agency Inbox.",
-        "accessDeniedTitle": "Access Denied",
-        "notRegisteredAsAdmin": "Your account ({email}) is not registered as an Agency Administrator.",
-        "repairPermissions": "Repair Permissions",
-        "repairFailed": "Permission repair failed. Check console for details.",
-        "errors": {
-          "sameOrgRequired": "Please select requests from the same client organization."
-        }
-      },
-      "pricing": {
-        "subtitle": "Manage pricing offers across all client organizations.",
-        "revenue": "Revenue"
-      },
-      "workboard": {
-        "title": "Project Workboard",
-        "subtitle": "Real-time status of all active client projects across the agency.",
-        "loading": "Synchronizing Kanban Board...",
-        "roadmap": "Q4 Roadmap",
-        "assign": "Assign Item",
-        "emptyColumn": "No Active Tasks",
-        "moved": "Card moved",
-        "moveError": "Move failed",
-        "columns": {
-          "backlog": "New & Backlog",
-          "inProgress": "In Progress",
-          "review": "Feedback & Review",
-          "delivered": "Delivered"
-        },
-        "viewRequest": "View request"
-      },
-      "clients": {
-        "title": "Client Portfolio",
-        "subtitle": "Direct access and management for all partner organizations.",
-        "onboard": "Onboard New Client",
-        "searchPlaceholder": "Search by company name...",
-        "activeAccounts": "Active Accounts",
-        "export": "Performance Export",
-        "loading": "Retrieving Client Portfolio...",
-        "tickets": "Open Tickets",
-        "members": "Members",
-        "dashboard": "Enter Dashboard",
-        "emptyTitle": "No clients found",
-        "emptyDesc": "Either you have no active clients or they don't match your search criteria.",
-        "badge": {
-          "active": "ACTIVE",
-          "inactive": "INACTIVE",
-          "suspended": "SUSPENDED"
-        },
-        "plans": {
-          "free": "Free Starter",
-          "pro": "Pro Partner",
-          "enterprise": "Enterprise Partner"
-        },
-        "enterprise": "Enterprise Partner",
-        "noClientId": "No client ID provided",
-        "unexpectedError": "An unexpected error occurred",
-        "detail": {
-          "loading": "Loading client details...",
-          "backToClients": "Back to Clients",
-          "overview": "Client Overview",
-          "viewDashboard": "View Client Dashboard",
-          "editClient": "Edit Client",
-          "stats": {
-            "totalRequests": "Total Requests",
-            "activeRequests": "Active Requests",
-            "completedRequests": "Completed",
-            "teamMembers": "Team Members",
-            "avgResolution": "Avg. Resolution",
-            "totalRevenue": "Total Revenue",
-            "days": "days",
-            "lastActive": "Last Active",
-            "joinedDate": "Client Since"
-          },
-          "sections": {
-            "information": "Client Information",
-            "recentActivity": "Recent Activity",
-            "requests": "Recent Requests",
-            "team": "Team Members"
-          },
-          "info": {
-            "website": "Website",
-            "industry": "Industry",
-            "plan": "Plan",
-            "status": "Status",
-            "email": "Contact Email",
-            "phone": "Phone"
-          },
-          "actions": {
-            "createRequest": "Create Request for Client",
-            "viewAllRequests": "View All Requests",
-            "managePlan": "Manage Plan",
-            "sendEmail": "Send Email",
-            "exportData": "Export Client Data"
-          },
-          "requests": {
-            "viewAll": "View All",
-            "emptyTitle": "No requests yet",
-            "emptyDesc": "This client hasn't created any requests."
-          },
-          "team": {
-            "viewAll": "View All Members",
-            "owner": "Owner",
-            "admin": "Admin",
-            "member": "Member",
-            "emptyTitle": "No team members",
-            "emptyDesc": "This client hasn't invited any team members yet."
-          },
-          "activity": {
-            "emptyTitle": "No recent activity",
-            "emptyDesc": "No activity recorded for this client yet."
-          }
-        }
-      },
-      "settings": {
-        "title": "Agency Settings",
-        "subtitle": "Manage global agency configurations and team defaults.",
-        "tabs": {
-          "profile": "Agency Profile",
-          "services": "Service Packages",
-          "team": "Internal Team",
-          "integrations": "Integrations",
-          "billing": "Payouts"
-        },
-        "profile": {
-          "title": "Agency Profile",
-          "nameLabel": "Agency Name",
-          "namePlaceholder": "Your Agency Name",
-          "emailLabel": "Support Email",
-          "emailPlaceholder": "support@agency.com",
-          "websiteLabel": "Agency Website",
-          "websitePlaceholder": "https://agency.com",
-          "phoneLabel": "Phone Number",
-          "phonePlaceholder": "+1 (555) 123-4567",
-          "descLabel": "Agency Description",
-          "descPlaceholder": "Brief description of your agency and services...",
-          "save": "Save Changes",
-          "saving": "Saving...",
-          "success": "Settings saved successfully!",
-          "failedToUpload": "Failed to upload photo"
-        },
-        "team": {
-          "title": "Internal Team",
-          "subtitle": "Manage your agency team members and permissions.",
-          "invite": "Invite Member",
-          "table": {
-            "member": "Member",
-            "status": "Status",
-            "joined": "Joined",
-            "action": "Action"
-          },
-          "active": "Active",
-          "inactive": "Inactive",
-          "suspended": "Suspended",
-          "edit": "Edit",
-          "noMembers": "No team members found",
-          "pendingInvites": "Pending Invitations",
-          "cancelInvite": "Cancel"
-        },
-        "services": {
-          "title": "Service Catalog",
-          "subtitle": "Define and manage the services your agency offers.",
-          "add": "Add Service",
-          "empty": "No services defined yet",
-          "emptyDesc": "Create your first service to start offering it to clients.",
-          "form": {
-            "addTitle": "Add New Service",
-            "addSubtitle": "Create a new service offering for your clients.",
-            "editTitle": "Edit Service",
-            "editSubtitle": "Update service details for your catalog.",
-            "fields": {
-              "name": "Service Name",
-              "namePlaceholder": "e.g. Website Maintenance",
-              "basePrice": "Base Price",
-              "currency": "Currency",
-              "category": "Category",
-              "categoryPlaceholder": "e.g. Development, Design, SEO",
-              "description": "Description",
-              "descriptionPlaceholder": "Briefly describe what this service includes...",
-              "active": "Active & Visible to Clients"
-            },
-            "actions": {
-              "create": "Create Service",
-              "update": "Update Service",
-              "cancel": "Cancel"
-            },
-            "errors": {
-              "required": "Name and price are required",
-              "failed": "Failed to save service"
-            }
-          }
-        },
-        "integrations": {
-          "subtitle": "Connect your favorite tools",
-          "connected": "Connected",
-          "googleCalendar": {
-            "title": "Google Calendar",
-            "description": "Sync consultations with your Google Calendar and get automatic Meet links.",
-            "connect": "Connect Google Calendar",
-            "connecting": "Connecting...",
-            "disconnect": "Disconnect",
-            "disconnectConfirm": "Are you sure you want to disconnect Google Calendar?",
-            "syncNow": "Sync Now",
-            "syncing": "Syncing...",
-            "account": "Account",
-            "lastSync": "Last synced",
-            "calendars": "Calendars",
-            "feature1": "Auto-create calendar events for consultations",
-            "feature2": "Get Google Meet links automatically",
-            "feature3": "View your availability in the portal"
-          },
-          "slack": {
-            "title": "Slack",
-            "description": "Get notifications in your Slack workspace"
-          },
-          "stripe": {
-            "title": "Stripe",
-            "description": "Accept payments on your pricing offers"
-          },
-          "shopify": {
-            "title": "Shopify Store Access",
-            "description": "Enable fast, secure collaborator access to your Shopify store.",
-            "storeUrl": "Store URL",
-            "collaboratorCode": "Collaborator Code",
-            "status": {
-              "pending": "Pending",
-              "requested": "Access Requested",
-              "connected": "Connected",
-              "revoked": "Revoked"
-            },
-            "statusMessages": {
-              "pending": "Waiting for your agency to request access to your store.",
-              "requested": "Access has been requested. Please approve in your Shopify admin.",
-              "connected": "Your agency has full collaborator access to your store."
-            },
-            "features": {
-              "feature1": "Enable fast theme customizations and updates",
-              "feature2": "Allow your agency to manage apps and integrations",
-              "feature3": "Secure collaborator access with no staff seat used"
-            },
-            "form": {
-              "storeUrl": "Your Shopify Store URL",
-              "storeUrlHint": "Enter your store's .myshopify.com URL (e.g., yourstore.myshopify.com)",
-              "collaboratorCode": "Collaborator Request Code",
-              "collaboratorCodeHint": "Found in Shopify Admin > Settings > Users > Security. Leave empty if not enabled.",
-              "optional": "optional",
-              "infoTitle": "Where to find the collaborator code?",
-              "infoDesc": "In your Shopify admin, go to Settings > Users and permissions > Security. If enabled, you'll see a 4-digit code.",
-              "save": "Save Store Details",
-              "saving": "Saving...",
-              "cancel": "Cancel"
-            },
-            "actions": {
-              "connect": "Connect Store",
-              "edit": "Edit Store Details"
-            },
-            "errors": {
-              "invalidDomain": "Please enter a valid .myshopify.com domain",
-              "invalidCode": "Collaborator code must be 4 digits",
-              "saveFailed": "Failed to save. Please try again."
-            },
-            "agency": {
-              "notConnected": "Shopify Store Not Connected",
-              "notConnectedDesc": "The client hasn't connected their Shopify store yet.",
-              "requestAccess": "Request Collaborator Access",
-              "markRequested": "Mark as Requested",
-              "markConnected": "Mark as Connected",
-              "openPartnerDashboard": "Open Partner Dashboard",
-              "openAdmin": "Open Store Admin"
-            }
-          }
-        }
-      }
-    },
     "team": {
       "title": "Team Members",
       "subtitle": "Manage collaborators and permissions for this organization.",
@@ -1487,6 +1257,290 @@
         "complete": {
           "title": "You're All Set!",
           "description": "Your workspace is ready. Start by creating your first request or explore the dashboard to see what's possible."
+        }
+      }
+    }
+  },
+  "agency": {
+    "inbox": {
+      "title": "Agency Inbox",
+      "subtitle": "Global view of all client requests and communications.",
+      "searchPlaceholder": "Search requests...",
+      "activeItems": "Active Items",
+      "loading": "Loading agency inbox...",
+      "emptyTitle": "Your inbox is clear",
+      "emptyDesc": "All client requests have been processed or sorted.",
+      "clientOrg": "Client Org",
+      "accessRequired": "Agency Access Required",
+      "accessDenied": "Your account ({email}) does not have permissions to access the Agency Inbox.",
+      "accessDeniedTitle": "Access Denied",
+      "notRegisteredAsAdmin": "Your account ({email}) is not registered as an Agency Administrator.",
+      "repairPermissions": "Repair Permissions",
+      "repairFailed": "Permission repair failed. Check console for details.",
+      "errors": {
+        "sameOrgRequired": "Please select requests from the same client organization."
+      }
+    },
+    "pricing": {
+      "subtitle": "Manage pricing offers across all client organizations.",
+      "revenue": "Revenue"
+    },
+    "workboard": {
+      "title": "Project Workboard",
+      "subtitle": "Real-time status of all active client projects across the agency.",
+      "loading": "Synchronizing Kanban Board...",
+      "roadmap": "Q4 Roadmap",
+      "assign": "Assign Item",
+      "emptyColumn": "No Active Tasks",
+      "moved": "Card moved",
+      "moveError": "Move failed",
+      "columns": {
+        "backlog": "New & Backlog",
+        "inProgress": "In Progress",
+        "review": "Feedback & Review",
+        "delivered": "Delivered"
+      },
+      "viewRequest": "View request"
+    },
+    "clients": {
+      "title": "Client Portfolio",
+      "subtitle": "Direct access and management for all partner organizations.",
+      "onboard": "Onboard New Client",
+      "searchPlaceholder": "Search by company name...",
+      "activeAccounts": "Active Accounts",
+      "export": "Performance Export",
+      "loading": "Retrieving Client Portfolio...",
+      "tickets": "Open Tickets",
+      "members": "Members",
+      "dashboard": "Enter Dashboard",
+      "emptyTitle": "No clients found",
+      "emptyDesc": "Either you have no active clients or they don't match your search criteria.",
+      "badge": {
+        "active": "ACTIVE",
+        "inactive": "INACTIVE",
+        "suspended": "SUSPENDED"
+      },
+      "plans": {
+        "free": "Free Starter",
+        "pro": "Pro Partner",
+        "enterprise": "Enterprise Partner"
+      },
+      "enterprise": "Enterprise Partner",
+      "noClientId": "No client ID provided",
+      "unexpectedError": "An unexpected error occurred",
+      "detail": {
+        "loading": "Loading client details...",
+        "backToClients": "Back to Clients",
+        "overview": "Client Overview",
+        "viewDashboard": "View Client Dashboard",
+        "editClient": "Edit Client",
+        "stats": {
+          "totalRequests": "Total Requests",
+          "activeRequests": "Active Requests",
+          "completedRequests": "Completed",
+          "teamMembers": "Team Members",
+          "avgResolution": "Avg. Resolution",
+          "totalRevenue": "Total Revenue",
+          "days": "days",
+          "lastActive": "Last Active",
+          "joinedDate": "Client Since"
+        },
+        "sections": {
+          "information": "Client Information",
+          "recentActivity": "Recent Activity",
+          "requests": "Recent Requests",
+          "team": "Team Members"
+        },
+        "info": {
+          "website": "Website",
+          "industry": "Industry",
+          "plan": "Plan",
+          "status": "Status",
+          "email": "Contact Email",
+          "phone": "Phone"
+        },
+        "actions": {
+          "createRequest": "Create Request for Client",
+          "viewAllRequests": "View All Requests",
+          "managePlan": "Manage Plan",
+          "sendEmail": "Send Email",
+          "exportData": "Export Client Data"
+        },
+        "requests": {
+          "viewAll": "View All",
+          "emptyTitle": "No requests yet",
+          "emptyDesc": "This client hasn't created any requests."
+        },
+        "team": {
+          "viewAll": "View All Members",
+          "owner": "Owner",
+          "admin": "Admin",
+          "member": "Member",
+          "emptyTitle": "No team members",
+          "emptyDesc": "This client hasn't invited any team members yet."
+        },
+        "activity": {
+          "emptyTitle": "No recent activity",
+          "emptyDesc": "No activity recorded for this client yet."
+        }
+      }
+    },
+    "settings": {
+      "title": "Agency Settings",
+      "subtitle": "Manage global agency configurations and team defaults.",
+      "tabs": {
+        "profile": "Agency Profile",
+        "services": "Service Packages",
+        "team": "Internal Team",
+        "integrations": "Integrations",
+        "billing": "Payouts"
+      },
+      "profile": {
+        "title": "Agency Profile",
+        "nameLabel": "Agency Name",
+        "namePlaceholder": "Your Agency Name",
+        "emailLabel": "Support Email",
+        "emailPlaceholder": "support@agency.com",
+        "websiteLabel": "Agency Website",
+        "websitePlaceholder": "https://agency.com",
+        "phoneLabel": "Phone Number",
+        "phonePlaceholder": "+1 (555) 123-4567",
+        "descLabel": "Agency Description",
+        "descPlaceholder": "Brief description of your agency and services...",
+        "save": "Save Changes",
+        "saving": "Saving...",
+        "success": "Settings saved successfully!",
+        "failedToUpload": "Failed to upload photo"
+      },
+      "team": {
+        "title": "Internal Team",
+        "subtitle": "Manage your agency team members and permissions.",
+        "invite": "Invite Member",
+        "table": {
+          "member": "Member",
+          "status": "Status",
+          "joined": "Joined",
+          "action": "Action"
+        },
+        "active": "Active",
+        "inactive": "Inactive",
+        "suspended": "Suspended",
+        "edit": "Edit",
+        "noMembers": "No team members found",
+        "pendingInvites": "Pending Invitations",
+        "cancelInvite": "Cancel"
+      },
+      "services": {
+        "title": "Service Catalog",
+        "subtitle": "Define and manage the services your agency offers.",
+        "add": "Add Service",
+        "empty": "No services defined yet",
+        "emptyDesc": "Create your first service to start offering it to clients.",
+        "form": {
+          "addTitle": "Add New Service",
+          "addSubtitle": "Create a new service offering for your clients.",
+          "editTitle": "Edit Service",
+          "editSubtitle": "Update service details for your catalog.",
+          "fields": {
+            "name": "Service Name",
+            "namePlaceholder": "e.g. Website Maintenance",
+            "basePrice": "Base Price",
+            "currency": "Currency",
+            "category": "Category",
+            "categoryPlaceholder": "e.g. Development, Design, SEO",
+            "description": "Description",
+            "descriptionPlaceholder": "Briefly describe what this service includes...",
+            "active": "Active & Visible to Clients"
+          },
+          "actions": {
+            "create": "Create Service",
+            "update": "Update Service",
+            "cancel": "Cancel"
+          },
+          "errors": {
+            "required": "Name and price are required",
+            "failed": "Failed to save service"
+          }
+        }
+      },
+      "integrations": {
+        "subtitle": "Connect your favorite tools",
+        "connected": "Connected",
+        "googleCalendar": {
+          "title": "Google Calendar",
+          "description": "Sync consultations with your Google Calendar and get automatic Meet links.",
+          "connect": "Connect Google Calendar",
+          "connecting": "Connecting...",
+          "disconnect": "Disconnect",
+          "disconnectConfirm": "Are you sure you want to disconnect Google Calendar?",
+          "syncNow": "Sync Now",
+          "syncing": "Syncing...",
+          "account": "Account",
+          "lastSync": "Last synced",
+          "calendars": "Calendars",
+          "feature1": "Auto-create calendar events for consultations",
+          "feature2": "Get Google Meet links automatically",
+          "feature3": "View your availability in the portal"
+        },
+        "slack": {
+          "title": "Slack",
+          "description": "Get notifications in your Slack workspace"
+        },
+        "stripe": {
+          "title": "Stripe",
+          "description": "Accept payments on your pricing offers"
+        },
+        "shopify": {
+          "title": "Shopify Store Access",
+          "description": "Enable fast, secure collaborator access to your Shopify store.",
+          "storeUrl": "Store URL",
+          "collaboratorCode": "Collaborator Code",
+          "status": {
+            "pending": "Pending",
+            "requested": "Access Requested",
+            "connected": "Connected",
+            "revoked": "Revoked"
+          },
+          "statusMessages": {
+            "pending": "Waiting for your agency to request access to your store.",
+            "requested": "Access has been requested. Please approve in your Shopify admin.",
+            "connected": "Your agency has full collaborator access to your store."
+          },
+          "features": {
+            "feature1": "Enable fast theme customizations and updates",
+            "feature2": "Allow your agency to manage apps and integrations",
+            "feature3": "Secure collaborator access with no staff seat used"
+          },
+          "form": {
+            "storeUrl": "Your Shopify Store URL",
+            "storeUrlHint": "Enter your store's .myshopify.com URL (e.g., yourstore.myshopify.com)",
+            "collaboratorCode": "Collaborator Request Code",
+            "collaboratorCodeHint": "Found in Shopify Admin > Settings > Users > Security. Leave empty if not enabled.",
+            "optional": "optional",
+            "infoTitle": "Where to find the collaborator code?",
+            "infoDesc": "In your Shopify admin, go to Settings > Users and permissions > Security. If enabled, you'll see a 4-digit code.",
+            "save": "Save Store Details",
+            "saving": "Saving...",
+            "cancel": "Cancel"
+          },
+          "actions": {
+            "connect": "Connect Store",
+            "edit": "Edit Store Details"
+          },
+          "errors": {
+            "invalidDomain": "Please enter a valid .myshopify.com domain",
+            "invalidCode": "Collaborator code must be 4 digits",
+            "saveFailed": "Failed to save. Please try again."
+          },
+          "agency": {
+            "notConnected": "Shopify Store Not Connected",
+            "notConnectedDesc": "The client hasn't connected their Shopify store yet.",
+            "requestAccess": "Request Collaborator Access",
+            "markRequested": "Mark as Requested",
+            "markConnected": "Mark as Connected",
+            "openPartnerDashboard": "Open Partner Dashboard",
+            "openAdmin": "Open Store Admin"
+          }
         }
       }
     }
