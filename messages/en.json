@@ -85,6 +85,8 @@
         "generic": "An unexpected error occurred. Please try again.",
         "emailInUse": "An account with this email already exists.",
         "weakPassword": "Password is too weak. Please choose a stronger password.",
+        "passwordTooShort": "Password must be at least 6 characters",
+        "passwordRequirements": "Password must contain both letters and numbers",
         "matchPassword": "Passwords don't match",
         "invalidCode": "Invalid invite code",
         "inviteNotFound": "Invite not found",

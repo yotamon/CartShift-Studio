@@ -73,9 +73,18 @@ export async function signUpWithEmail(
       throw new Error('Invalid email format');
     }
 
-    // Validate password length
+    // Validate password strength: at least 6 characters with both letters and numbers
     if (password.length < 6) {
       throw new Error('Password must be at least 6 characters');
+    }
+
+    // Check for letters (both uppercase and lowercase)
+    const hasLetters = /[a-zA-Z]/.test(password);
+    // Check for numbers
+    const hasNumbers = /[0-9]/.test(password);
+
+    if (!hasLetters || !hasNumbers) {
+      throw new Error('Password must contain both letters and numbers');
     }
 
     const authInstance = getAuthInstance();

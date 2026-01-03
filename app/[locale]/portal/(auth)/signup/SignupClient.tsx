@@ -21,8 +21,13 @@ const getSignupSchema = (t: (path: string) => string) =>
     .object({
       name: z.string().min(2, 'Name must be at least 2 characters'),
       email: z.string().email(t('portal.auth.errors.invalidEmail')),
-      password: z.string().min(6, t('portal.auth.errors.weakPassword')),
-      confirmPassword: z.string().min(6, t('portal.auth.errors.weakPassword')),
+      password: z
+        .string()
+        .min(6, t('portal.auth.errors.passwordTooShort'))
+        .refine((password) => /[a-zA-Z]/.test(password) && /[0-9]/.test(password), {
+          message: t('portal.auth.errors.passwordRequirements'),
+        }),
+      confirmPassword: z.string(),
     })
     .refine(data => data.password === data.confirmPassword, {
       message: t('portal.auth.errors.matchPassword'),

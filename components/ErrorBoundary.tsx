@@ -90,9 +90,7 @@ class ErrorBoundaryInner extends Component<InnerProps, State> {
 interface ErrorBoundaryProps {
   children: ReactNode;
   fallback?: ReactNode;
-}
-
-export function ErrorBoundary({ children, fallback }: ErrorBoundaryProps) {
+}export function ErrorBoundary({ children, fallback }: ErrorBoundaryProps) {
   const t = useTranslations('errorBoundary');
   return (
     <ErrorBoundaryInner t={t as any} fallback={fallback}>
