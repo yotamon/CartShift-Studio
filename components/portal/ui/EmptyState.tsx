@@ -3,6 +3,7 @@
 import { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { PortalButton } from './PortalButton';
+import { useTranslations } from 'next-intl';
 import {
   FileQuestion,
   Users,
@@ -41,53 +42,53 @@ interface EmptyStateProps {
   compact?: boolean;
 }
 
-const defaultContent: Record<EmptyStateVariant, { icon: ReactNode; title: string; description: string }> = {
+const getDefaultContent = (t: ReturnType<typeof useTranslations>): Record<EmptyStateVariant, { icon: ReactNode; title: string; description: string }> => ({
   requests: {
     icon: <ClipboardList size={32} />,
-    title: 'No requests yet',
-    description: 'Create your first request to get started with our services.',
+    title: t('portal.emptyState.requests.title'),
+    description: t('portal.emptyState.requests.description'),
   },
   team: {
     icon: <Users size={32} />,
-    title: 'No team members',
-    description: 'Invite your team members to collaborate on this workspace.',
+    title: t('portal.emptyState.team.title'),
+    description: t('portal.emptyState.team.description'),
   },
   files: {
     icon: <FolderOpen size={32} />,
-    title: 'No files uploaded',
-    description: 'Upload files to share with your team and agency.',
+    title: t('portal.emptyState.files.title'),
+    description: t('portal.emptyState.files.description'),
   },
   notifications: {
     icon: <Bell size={32} />,
-    title: 'All caught up!',
-    description: 'You have no new notifications at this time.',
+    title: t('portal.emptyState.notifications.title'),
+    description: t('portal.emptyState.notifications.description'),
   },
   inbox: {
     icon: <Inbox size={32} />,
-    title: 'Inbox is empty',
-    description: 'New messages and updates will appear here.',
+    title: t('portal.emptyState.inbox.title'),
+    description: t('portal.emptyState.inbox.description'),
   },
   calendar: {
     icon: <Calendar size={32} />,
-    title: 'No consultations scheduled',
-    description: 'Schedule a consultation to discuss your project.',
+    title: t('portal.emptyState.calendar.title'),
+    description: t('portal.emptyState.calendar.description'),
   },
   pricing: {
     icon: <DollarSign size={32} />,
-    title: 'No pricing offers',
-    description: 'Pricing proposals will appear here once created.',
+    title: t('portal.emptyState.pricing.title'),
+    description: t('portal.emptyState.pricing.description'),
   },
   messages: {
     icon: <MessageSquare size={32} />,
-    title: 'No messages yet',
-    description: 'Start a conversation or wait for updates.',
+    title: t('portal.emptyState.messages.title'),
+    description: t('portal.emptyState.messages.description'),
   },
   generic: {
     icon: <FileQuestion size={32} />,
-    title: 'Nothing here yet',
-    description: 'This section is empty. Check back later!',
+    title: t('portal.emptyState.generic.title'),
+    description: t('portal.emptyState.generic.description'),
   },
-};
+});
 
 export function EmptyState({
   variant = 'generic',
@@ -102,6 +103,8 @@ export function EmptyState({
   className,
   compact = false,
 }: EmptyStateProps) {
+  const t = useTranslations();
+  const defaultContent = getDefaultContent(t);
   const content = defaultContent[variant];
 
   if (compact) {
@@ -129,7 +132,7 @@ export function EmptyState({
             {...(actionHref && { as: 'a', href: actionHref })}
           >
             <Plus size={14} className="me-1.5" />
-            {actionLabel || 'Get Started'}
+            {actionLabel || t('portal.common.getStarted')}
           </PortalButton>
         )}
       </div>
@@ -168,7 +171,7 @@ export function EmptyState({
             {...(actionHref && { as: 'a', href: actionHref })}
           >
             <Plus size={16} className="me-2" />
-            {actionLabel || 'Get Started'}
+            {actionLabel || t('portal.common.getStarted')}
           </PortalButton>
         )}
         {secondaryActionLabel && onSecondaryAction && (

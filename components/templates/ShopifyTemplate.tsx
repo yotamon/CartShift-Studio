@@ -5,16 +5,17 @@ import { PageHero } from "@/components/sections/PageHero";
 import { ShopifyPageContent } from "@/components/sections/ShopifyPageContent";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { useTranslations, useLocale } from "next-intl";
+import { isRTLLocale } from '@/lib/locale-config';
 
 export const ShopifyTemplate: React.FC = () => {
   const t = useTranslations();
   const locale = useLocale();
-  const isHe = locale === "he";
+  const isHe = isRTLLocale(locale);
 
   const breadcrumbItems = [
-    { name: isHe ? "ראשי" : "Home", url: "/" },
-    { name: isHe ? "פתרונות" : "Solutions", url: "/" },
-    { name: isHe ? "פתרונות שופיפיי" : "Shopify Solutions", url: "/solutions/shopify" },
+    { name: t("navigation.home"), url: "/" },
+    { name: t("navigation.solutions"), url: "/" },
+    { name: t("navigation.shopify"), url: "/solutions/shopify" },
   ];
 
   return (

@@ -80,7 +80,7 @@ export function OnboardingWizard() {
     } catch (err) {
       console.error('Failed to create organization:', err);
       setError(
-        t('portal.onboarding.error' as any) || 'Failed to create organization. Please try again.'
+        t('portal.onboarding.error')
       );
     } finally {
       setIsSubmitting(false);
@@ -124,8 +124,8 @@ export function OnboardingWizard() {
             <OnboardingStep
               key="welcome"
               isActive={step === 'welcome'}
-              title={t('portal.onboarding.welcome.title') || 'Welcome!'}
-              description={t('portal.onboarding.welcome.subtitle') || "Let's set up your workspace"}
+              title={t('portal.onboarding.welcome.title')}
+              description={t('portal.onboarding.welcome.subtitle')}
             >
               <div className="flex flex-col items-center text-center space-y-6">
                 <motion.div
@@ -139,8 +139,7 @@ export function OnboardingWizard() {
 
                 <div className="max-w-md mx-auto">
                   <p className="text-lg text-surface-600 dark:text-surface-300 leading-relaxed">
-                    {t('portal.onboarding.welcome.description' as any) ||
-                      "We're excited to have you here. In just a few steps, we'll create your dedicated workspace where you can manage requests, team members, and more."}
+                    {t('portal.onboarding.welcome.description')}
                   </p>
                 </div>
 
@@ -149,7 +148,7 @@ export function OnboardingWizard() {
                   size="lg"
                   className="w-full md:w-auto min-w-[200px] h-14 text-lg font-bold shadow-lg shadow-blue-500/20"
                 >
-                  {t('portal.onboarding.welcome.cta' as any) || 'Get Started'}
+                  {t('portal.onboarding.welcome.cta')}
                   <ArrowRight className="ms-2" size={20} />
                 </PortalButton>
               </div>
@@ -161,18 +160,16 @@ export function OnboardingWizard() {
             <OnboardingStep
               key="info"
               isActive={step === 'info'}
-              title={t('portal.onboarding.info.title' as any) || 'Organization Details'}
+              title={t('portal.onboarding.info.title')}
               description={
-                t('portal.onboarding.info.subtitle' as any) || 'Tell us a bit about your company'
+                t('portal.onboarding.info.subtitle')
               }
             >
               <div className="space-y-6">
                 <div>
                   <PortalInput
-                    label={t('portal.onboarding.form.orgNameLabel') || 'Organization Name'}
-                    placeholder={
-                      t('portal.onboarding.form.orgNamePlaceholder') || 'e.g., My Company Inc.'
-                    }
+                    label={t('portal.onboarding.form.orgNameLabel')}
+                    placeholder={t('portal.onboarding.form.orgNamePlaceholder')}
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
                     leftIcon={<Building2 size={18} />}
@@ -180,15 +177,14 @@ export function OnboardingWizard() {
                     autoFocus
                   />
                   <p className="text-xs text-surface-500 mt-2">
-                    {t('portal.onboarding.form.orgNameHint') ||
-                      'This is your internal display name.'}
+                    {t('portal.onboarding.form.orgNameHint')}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-sm font-bold text-surface-700 dark:text-surface-300">
-                      {t('portal.onboarding.form.industryLabel' as any) || 'Industry'}
+                      {t('portal.onboarding.form.industryLabel')}
                     </label>
                     <div className="relative">
                       <Briefcase
@@ -200,11 +196,12 @@ export function OnboardingWizard() {
                         onChange={e => setFormData({ ...formData, industry: e.target.value })}
                         className="portal-input w-full ps-10 h-11 bg-white dark:bg-surface-900 appearance-none cursor-pointer"
                       >
-                        <option value="">Select industry...</option>
+                        <option value="">
+                          {t('portal.onboarding.form.industrySelectPlaceholder')}
+                        </option>
                         {industries.map(ind => (
                           <option key={ind} value={ind}>
-                            {t(`portal.industries.${ind}` as any) ||
-                              ind.charAt(0).toUpperCase() + ind.slice(1)}
+                            {t(`portal.industries.${ind}`)}
                           </option>
                         ))}
                       </select>
@@ -213,7 +210,7 @@ export function OnboardingWizard() {
 
                   <div className="space-y-1.5">
                     <label className="text-sm font-bold text-surface-700 dark:text-surface-300">
-                      {t('portal.onboarding.form.sizeLabel' as any) || 'Company Size'}
+                      {t('portal.onboarding.form.sizeLabel')}
                     </label>
                     <div className="relative">
                       <Users
@@ -225,10 +222,12 @@ export function OnboardingWizard() {
                         onChange={e => setFormData({ ...formData, size: e.target.value })}
                         className="portal-input w-full ps-10 h-11 bg-white dark:bg-surface-900 appearance-none cursor-pointer"
                       >
-                        <option value="">Select size...</option>
+                        <option value="">
+                          {t('portal.onboarding.form.sizeSelectPlaceholder')}
+                        </option>
                         {sizes.map(s => (
                           <option key={s} value={s}>
-                            {s} employees
+                            {s} {t('portal.onboarding.form.employeesLabel')}
                           </option>
                         ))}
                       </select>
@@ -249,7 +248,7 @@ export function OnboardingWizard() {
                     className="text-surface-500 hover:text-surface-900 dark:text-surface-400 dark:hover:text-white"
                   >
                     <ArrowLeft className="me-2" size={18} />
-                    {t('portal.onboarding.back' as any) || 'Back'}
+                    {t('portal.onboarding.back')}
                   </PortalButton>
 
                   <PortalButton
@@ -258,7 +257,7 @@ export function OnboardingWizard() {
                     disabled={!formData.name.trim()}
                     className="min-w-[140px] shadow-lg shadow-blue-500/20"
                   >
-                    <span>{t('portal.onboarding.form.createButton') || 'Create Workspace'}</span>
+                    <span>{t('portal.onboarding.form.createButton')}</span>
                     {!isSubmitting && <ArrowRight className="ms-2" size={18} />}
                   </PortalButton>
                 </div>
@@ -271,11 +270,8 @@ export function OnboardingWizard() {
             <OnboardingStep
               key="completion"
               isActive={step === 'completion'}
-              title={t('portal.onboarding.completion.title' as any) || "You're all set!"}
-              description={
-                t('portal.onboarding.completion.subtitle' as any) ||
-                'Your workspace has been created successfully.'
-              }
+              title={t('portal.onboarding.completion.title')}
+              description={t('portal.onboarding.completion.subtitle')}
             >
               <div className="flex flex-col items-center text-center space-y-6">
                 <motion.div
@@ -288,8 +284,7 @@ export function OnboardingWizard() {
                 </motion.div>
 
                 <p className="text-surface-600 dark:text-surface-300 max-w-sm mx-auto">
-                  {t('portal.onboarding.completion.description' as any) ||
-                    "We've set up your dashboard. You can now start managing your projects, invite team members, and explore the platform."}
+                  {t('portal.onboarding.completion.description')}
                 </p>
 
                 <PortalButton
@@ -297,7 +292,7 @@ export function OnboardingWizard() {
                   size="lg"
                   className="w-full md:w-auto min-w-[200px] h-14 text-lg font-bold bg-emerald-600 hover:bg-emerald-700 shadow-xl shadow-emerald-500/20 border-transparent text-white"
                 >
-                  {t('portal.onboarding.completion.cta' as any) || 'Go to Dashboard'}
+                  {t('portal.onboarding.completion.cta')}
                   <ArrowRight className="ms-2" size={20} />
                 </PortalButton>
               </div>

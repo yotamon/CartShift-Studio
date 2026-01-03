@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from "@/lib/motion";
-import { skeletonToContent } from "@/lib/animation-variants";
+import { motion, AnimatePresence } from '@/lib/motion';
+import { skeletonToContent } from '@/lib/animation-variants';
 import { Clock, Plus, Loader2, AlertCircle } from 'lucide-react';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';

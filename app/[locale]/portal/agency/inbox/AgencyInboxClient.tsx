@@ -33,7 +33,7 @@ import {
   calculateTotalAmount,
 } from '@/lib/types/portal';
 import { formatDistanceToNow } from 'date-fns';
-import { enUS, he } from 'date-fns/locale';
+import { getDateLocale } from '@/lib/locale-config';
 import { Link } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { PortalAvatar } from '@/components/portal/ui/PortalAvatar';
@@ -41,7 +41,7 @@ import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { cn } from '@/lib/utils';
 
 export default function AgencyInboxClient() {
-  const t = useTranslations('portal');
+  const t = useTranslations();
   const locale = useLocale();
   const { userData, loading: authLoading, isAuthenticated, user } = usePortalAuth();
   const [requests, setRequests] = useState<Request[]>([]);
@@ -130,14 +130,14 @@ export default function AgencyInboxClient() {
         await setDoc(userRef, {
           ...updateData,
           email: user.email,
-          name: user.displayName || 'Agency Admin',
+          name: user.displayName || t('portal.common.agencyAdmin'),
           createdAt: new Date(),
         });
       }
       window.location.reload();
     } catch (err) {
       console.error('Repair failed:', err);
-      alert('Permission repair failed. Check console for details.');
+      alert(t('agency.inbox.repairFailed'));
     } finally {
       setIsRepairing(false);
     }
@@ -157,8 +157,8 @@ export default function AgencyInboxClient() {
         const selectedOrgId = selectedReqs[0]?.orgId;
         if (selectedOrgId && newReq.orgId !== selectedOrgId) {
           // Show which organizations are involved
-          const selectedOrgName = organizations[selectedOrgId]?.name || 'Unknown';
-          const newOrgName = organizations[newReq.orgId]?.name || 'Unknown';
+          const selectedOrgName = organizations[selectedOrgId]?.name || t('portal.common.unknown');
+          const newOrgName = organizations[newReq.orgId]?.name || t('portal.common.unknown');
           alert(
             `${t('agency.inbox.errors.sameOrgRequired')}\n\n` +
               `Currently selected: ${selectedOrgName}\n` +
@@ -213,7 +213,7 @@ export default function AgencyInboxClient() {
     const uniqueOrgIds = [...new Set(selectedReqs.map(r => r.orgId))];
 
     if (uniqueOrgIds.length > 1) {
-      const orgNames = uniqueOrgIds.map(id => organizations[id]?.name || 'Unknown').join(', ');
+      const orgNames = uniqueOrgIds.map(id => organizations[id]?.name || t('portal.common.unknown')).join(', ');
       alert(
         `${t('agency.inbox.errors.sameOrgRequired')}\n\n` +
           `Selected requests are from: ${orgNames}\n\n` +
@@ -230,7 +230,7 @@ export default function AgencyInboxClient() {
       const pricingOffer = await createPricingRequest(
         orgId,
         userData.id,
-        userData.name || 'Unknown',
+        userData.name || t('portal.common.unknown'),
         {
           title: pricingTitle.trim(),
           lineItems: validItems,
@@ -313,7 +313,7 @@ export default function AgencyInboxClient() {
                 {selectedRequestIds.length}
               </div>
               <span className="text-sm font-bold text-blue-800 dark:text-blue-200">
-                {selectedRequestIds.length} {t('requests.selected' as never) || 'requests selected'}
+                {selectedRequestIds.length} {t('portal.requests.selected')}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -324,7 +324,7 @@ export default function AgencyInboxClient() {
                 className="text-slate-600 dark:text-slate-300"
               >
                 <X size={14} className="me-1" />
-                {t('common.cancel' as never) || 'Cancel'}
+                {t('portal.common.cancel')}
               </PortalButton>
               <PortalButton
                 size="sm"
@@ -332,7 +332,7 @@ export default function AgencyInboxClient() {
                 className="bg-green-600 hover:bg-green-700 text-white"
               >
                 <DollarSign size={14} className="me-1" />
-                {t('requests.createPricingOffer' as never) || 'Create Pricing Offer'}
+                {t('portal.requests.createPricingOffer')}
               </PortalButton>
             </div>
           </div>
@@ -348,10 +348,10 @@ export default function AgencyInboxClient() {
             <div className="py-20 text-center px-4">
               <ShieldCheck className="w-16 h-16 text-red-100 dark:text-red-900/20 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-surface-900 dark:text-white">
-                Agency Access Required
+                {t('agency.inbox.accessRequired')}
               </h3>
               <p className="text-surface-500 dark:text-surface-400 text-sm mt-1 max-w-sm mx-auto mb-6">
-                Your account ({user?.email}) does not have permissions to access the Agency Inbox.
+                {t('agency.inbox.accessDenied', { email: user?.email || '' })}
               </p>
               <PortalButton
                 onClick={handleRepair}
@@ -361,7 +361,7 @@ export default function AgencyInboxClient() {
                 className="border-red-200 text-red-600 hover:bg-red-50"
               >
                 {isRepairing ? <Loader2 className="animate-spin me-2" size={14} /> : null}
-                Repair Permissions
+                {t('agency.inbox.repairPermissions')}
               </PortalButton>
             </div>
           ) : error ? (
@@ -408,7 +408,7 @@ export default function AgencyInboxClient() {
                         </button>
                       ) : req.pricingOfferId ? (
                         <PortalBadge variant="green" className="text-[9px]">
-                          {t('requests.hasPricing' as never) || 'Priced'}
+                          {t('portal.requests.hasPricing')}
                         </PortalBadge>
                       ) : (
                         <div className="w-5 h-5" />
@@ -428,7 +428,7 @@ export default function AgencyInboxClient() {
                           <Star size={18} />
                         </button>
                         <PortalAvatar
-                          name={req.createdByName || 'User'}
+                          name={req.createdByName || t('portal.consultations.userFallback')}
                           size="md"
                           className="ring-2 ring-white dark:ring-surface-900 shadow-sm"
                         />
@@ -440,7 +440,7 @@ export default function AgencyInboxClient() {
                             {organizations[req.orgId]?.name || t('agency.inbox.clientOrg')}
                           </p>
                           <p className="text-sm font-bold text-surface-900 dark:text-white truncate">
-                            {req.createdByName || 'User'}
+                            {req.createdByName || t('portal.consultations.userFallback')}
                           </p>
                         </div>
                         <div className="md:col-span-2">
@@ -465,7 +465,7 @@ export default function AgencyInboxClient() {
                               {isMounted && req.createdAt?.toDate
                                 ? formatDistanceToNow(req.createdAt.toDate(), {
                                     addSuffix: true,
-                                    locale: locale === 'he' ? he : enUS,
+                                    locale: getDateLocale(locale),
                                   })
                                 : '—'}
                             </span>
@@ -505,11 +505,11 @@ export default function AgencyInboxClient() {
             <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">
-                  {t('requests.createPricingOffer' as never) || 'Create Pricing Offer'}
+                  {t('portal.requests.createPricingOffer')}
                 </h2>
                 <p className="text-sm text-slate-500 mt-1">
                   {selectedRequests.length}{' '}
-                  {t('requests.requestsIncluded' as never) || 'requests included'}
+                  {t('portal.requests.requestsIncluded')}
                 </p>
               </div>
               <button
@@ -524,7 +524,7 @@ export default function AgencyInboxClient() {
               {/* Selected Requests Preview */}
               <div>
                 <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">
-                  {t('requests.selectedRequests' as never) || 'Selected Requests'}
+                  {t('portal.requests.selectedRequests')}
                 </label>
                 <div className="space-y-2 max-h-32 overflow-y-auto">
                   {selectedRequests.map(req => (
@@ -546,14 +546,14 @@ export default function AgencyInboxClient() {
               {/* Pricing Title */}
               <div>
                 <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">
-                  {t('pricing.form.titleLabel' as never) || 'Offer Title'} *
+                  {t('portal.pricing.form.titleLabel')} *
                 </label>
                 <input
                   type="text"
                   value={pricingTitle}
                   onChange={e => setPricingTitle(e.target.value)}
                   placeholder={
-                    t('pricing.form.titlePlaceholder' as never) || 'e.g., Website Redesign Package'
+                    t('portal.pricing.form.titlePlaceholder')
                   }
                   className="portal-input w-full"
                 />
@@ -562,7 +562,7 @@ export default function AgencyInboxClient() {
               {/* Currency */}
               <div>
                 <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">
-                  {t('pricing.form.currency' as never) || 'Currency'}
+                  {t('portal.pricing.form.currency')}
                 </label>
                 <select
                   value={pricingCurrency}
@@ -580,7 +580,7 @@ export default function AgencyInboxClient() {
               {/* Line Items */}
               <div>
                 <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">
-                  {t('pricing.form.lineItems' as never) || 'Line Items'} *
+                  {t('portal.pricing.form.lineItems')} *
                 </label>
                 <div className="space-y-3">
                   {pricingLineItems.map(item => (
@@ -590,7 +590,7 @@ export default function AgencyInboxClient() {
                     >
                       <input
                         type="text"
-                        placeholder={t('pricing.form.itemDescription' as never) || 'Description'}
+                        placeholder={t('portal.pricing.form.itemDescription')}
                         value={item.description}
                         onChange={e => updateLineItem(item.id, 'description', e.target.value)}
                         className="portal-input w-full h-9 text-sm"
@@ -599,7 +599,7 @@ export default function AgencyInboxClient() {
                         <input
                           type="number"
                           min="1"
-                          placeholder={t('pricing.form.quantity' as never) || 'Qty'}
+                          placeholder={t('portal.pricing.form.quantity')}
                           value={item.quantity || ''}
                           onChange={e =>
                             updateLineItem(item.id, 'quantity', parseInt(e.target.value) || 0)
@@ -615,7 +615,7 @@ export default function AgencyInboxClient() {
                             type="number"
                             min="0"
                             step="0.01"
-                            placeholder={t('pricing.form.unitPrice' as never) || 'Price'}
+                            placeholder={t('portal.pricing.form.unitPrice')}
                             value={item.unitPrice ? (item.unitPrice / 100).toFixed(2) : ''}
                             onChange={e =>
                               updateLineItem(
@@ -650,14 +650,14 @@ export default function AgencyInboxClient() {
                   className="mt-3 w-full p-2 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl text-slate-500 hover:border-blue-400 hover:text-blue-600 transition-colors text-sm font-medium"
                 >
                   <Plus size={16} className="inline me-1" />
-                  {t('pricing.form.addItem' as never) || 'Add Item'}
+                  {t('portal.pricing.form.addItem')}
                 </button>
               </div>
 
               {/* Total */}
               <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl flex items-center justify-between">
                 <span className="text-sm font-bold text-slate-600 dark:text-slate-300">
-                  {t('pricing.form.total' as never) || 'Total'}
+                  {t('portal.pricing.form.total')}
                 </span>
                 <span className="text-2xl font-black text-green-600 font-outfit">
                   {formatCurrency(totalAmount, pricingCurrency)}
@@ -667,7 +667,7 @@ export default function AgencyInboxClient() {
 
             <div className="p-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end gap-3">
               <PortalButton variant="outline" onClick={clearSelection}>
-                {t('common.cancel' as never) || 'Cancel'}
+                {t('portal.common.cancel')}
               </PortalButton>
               <PortalButton
                 onClick={handleCreatePricingOffer}
@@ -683,7 +683,7 @@ export default function AgencyInboxClient() {
                 ) : (
                   <DollarSign size={16} className="me-2" />
                 )}
-                {t('requests.createAndSend' as never) || 'Create & Send Offer'}
+                {t('portal.requests.createAndSend')}
               </PortalButton>
             </div>
           </div>

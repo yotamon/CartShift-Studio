@@ -19,7 +19,7 @@ import { ActivityLog } from '@/lib/types/portal';
 import { Timestamp } from 'firebase/firestore';
 import { Link } from '@/i18n/navigation';
 import { formatDistanceToNow } from 'date-fns';
-import { enUS, he } from 'date-fns/locale';
+import { getDateLocale, isRTLLocale } from '@/lib/locale-config';
 
 interface ActivityTimelineProps {
   activities: ActivityLog[];
@@ -32,7 +32,7 @@ const formatTimeAgo = (timestamp: Timestamp, locale: string): string => {
   if (!timestamp) return '';
   return formatDistanceToNow(timestamp.toDate(), {
     addSuffix: true,
-    locale: locale === 'he' ? he : enUS,
+    locale: getDateLocale(locale),
   });
 };
 
@@ -94,7 +94,8 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
 }) => {
   const locale = useLocale();
   const t = useTranslations('portal.activity.actions');
-  const isHe = locale === 'he';
+  const tActivity = useTranslations('portal.activity');
+  const isHe = isRTLLocale(locale);
 
   const visibleActivities = React.useMemo(() => {
     return activities.slice(0, maxItems);
@@ -104,8 +105,8 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
     return (
       <PortalEmptyState
         icon={Clock}
-        title={isHe ? 'אין פעילות' : 'No Activity'}
-        description={isHe ? 'הרשימה תתעדכן כשתהיה פעילות חדשה' : 'Activity log will update when new actions occur'}
+        title={tActivity('noActivity')}
+        description={tActivity('noActivityDescription')}
         variant="plain"
         className={cn("bg-transparent border-0 py-8 opacity-60", className)}
       />
@@ -160,10 +161,8 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
               <div className="flex-1 min-w-0 py-0.5">
                 <div className="flex items-center justify-between gap-4">
                   <span className="text-sm font-bold text-surface-900 dark:text-white truncate font-outfit">
-                    {String(
-                      t(String(activity.action.toLowerCase() || '').toLowerCase() as any) ||
-                        String(activity.action).replace(/_/g, ' ')
-                    )}
+                    {t(activity.action.toLowerCase() as any) ||
+                      String(activity.action).replace(/_/g, ' ')}
                   </span>
                   <span className="text-[10px] font-black text-surface-400 uppercase tracking-tight whitespace-nowrap">
                     {formatTimeAgo(activity.createdAt, locale)}

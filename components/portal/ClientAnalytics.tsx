@@ -4,8 +4,9 @@ import React, { useMemo, useEffect, useState } from 'react';
 import { motion, useSpring, useTransform, useMotionValueEvent } from "@/lib/motion";
 import { analyticsCard, staggerContainer } from "@/lib/animation-variants";
 import { AnimatedNumber } from "@/components/portal/ui/AnimatedNumber";
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { FileText, Clock, CheckCircle2, DollarSign, TrendingUp, Activity } from 'lucide-react';
+import { isRTLLocale } from '@/lib/locale-config';
 import { cn } from '@/lib/utils';
 import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
 import { Request, REQUEST_STATUS, RequestStatus } from '@/lib/types/portal';
@@ -107,7 +108,8 @@ const getRecentRequests = (requests: Request[]): Request[] => {
 
 export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({ requests, className }) => {
   const locale = useLocale();
-  const isHe = locale === 'he';
+  const t = useTranslations();
+  const isHe = isRTLLocale(locale);
 
   const analytics = useMemo(() => {
     const recentRequests = getRecentRequests(requests);
@@ -148,11 +150,9 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({ requests, clas
 
   const cards: AnalyticCard[] = [
     {
-      title: isHe ? 'סה״כ בקשות' : 'Total Requests',
+      title: t('portal.analytics.totalRequests'),
       value: analytics.total,
-      subtitle: isHe
-        ? `${analytics.recent} ב-30 יום אחרונים`
-        : `${analytics.recent} in last 30 days`,
+      subtitle: `${analytics.recent} ${t('portal.analytics.inLast30Days')}`,
       icon: FileText,
       trend:
         analytics.trend !== 0
@@ -162,25 +162,25 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({ requests, clas
       bgGradient: 'from-blue-500 to-indigo-600',
     },
     {
-      title: isHe ? 'בקשות פעילות' : 'Active Requests',
+      title: t('portal.analytics.activeRequests'),
       value: analytics.active,
-      subtitle: isHe ? 'בטיפול כעת' : 'Currently in progress',
+      subtitle: t('portal.analytics.activeRequestsSubtitle'),
       icon: Activity,
       color: 'text-amber-600 dark:text-amber-400',
       bgGradient: 'from-amber-500 to-orange-600',
     },
     {
-      title: isHe ? 'הושלמו' : 'Completed',
+      title: t('portal.analytics.completed'),
       value: analytics.completed,
-      subtitle: isHe ? 'נמסרו בהצלחה' : 'Successfully delivered',
+      subtitle: t('portal.analytics.completedSubtitle'),
       icon: CheckCircle2,
       color: 'text-green-600 dark:text-green-400',
       bgGradient: 'from-green-500 to-emerald-600',
     },
     {
-      title: isHe ? 'זמן ממוצע לסיום' : 'Avg. Resolution',
+      title: t('portal.analytics.avgResolution'),
       value: analytics.avgResolution > 0 ? `${analytics.avgResolution}` : '-',
-      subtitle: isHe ? 'ימים' : 'days',
+      subtitle: t('portal.analytics.days'),
       icon: Clock,
       color: 'text-purple-600 dark:text-purple-400',
       bgGradient: 'from-purple-500 to-pink-600',
@@ -190,9 +190,9 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({ requests, clas
   // Add spend card if there's any spend data
   if (analytics.totalSpend > 0) {
     cards.push({
-      title: isHe ? 'סה״כ הוצאות' : 'Total Spend',
+      title: t('portal.analytics.totalSpend'),
       value: formatCurrency(analytics.totalSpend),
-      subtitle: isHe ? 'תשלומים שבוצעו' : 'Payments completed',
+      subtitle: t('portal.analytics.totalSpendSubtitle'),
       icon: DollarSign,
       color: 'text-emerald-600 dark:text-emerald-400',
       bgGradient: 'from-emerald-500 to-teal-600',
@@ -204,12 +204,8 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({ requests, clas
       <div className={cn('py-8', className)}>
         <PortalEmptyState
           icon={Activity}
-          title={isHe ? 'אין נתונים עדיין' : 'No Data Yet'}
-          description={
-            isHe
-              ? 'צרו את הבקשה הראשונה שלכם כדי לראות אנליטיקס'
-              : 'Create your first request to see analytics'
-          }
+          title={t('portal.analytics.noDataYet')}
+          description={t('portal.analytics.noDataDescription')}
           variant="plain"
           className="bg-transparent border-0"
         />
@@ -306,7 +302,8 @@ export const ClientAnalyticsCompact: React.FC<{
   className?: string;
 }> = ({ requests, className }) => {
   const locale = useLocale();
-  const isHe = locale === 'he';
+  const t = useTranslations();
+  const isHe = isRTLLocale(locale);
 
   const analytics = useMemo(() => {
     return {
@@ -317,9 +314,9 @@ export const ClientAnalyticsCompact: React.FC<{
   }, [requests]);
 
   const items = [
-    { label: isHe ? 'סה״כ' : 'Total', value: analytics.total, color: 'bg-blue-500' },
-    { label: isHe ? 'פעילות' : 'Active', value: analytics.active, color: 'bg-amber-500' },
-    { label: isHe ? 'הושלמו' : 'Done', value: analytics.completed, color: 'bg-green-500' },
+    { label: t('portal.analytics.total'), value: analytics.total, color: 'bg-blue-500' },
+    { label: t('portal.analytics.active'), value: analytics.active, color: 'bg-amber-500' },
+    { label: t('portal.analytics.done'), value: analytics.completed, color: 'bg-green-500' },
   ];
 
   return (

@@ -231,7 +231,7 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
         <button
           onClick={onDismiss}
           className="flex-shrink-0 p-1 rounded-lg text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 hover:bg-surface-200/50 dark:hover:bg-surface-800/50 transition-colors"
-          aria-label={t('portal.toast.dismiss' as any) || 'Dismiss'}
+          aria-label={t('portal.toast.dismiss')}
         >
           <X size={14} />
         </button>

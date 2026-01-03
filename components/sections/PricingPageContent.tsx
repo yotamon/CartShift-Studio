@@ -12,6 +12,7 @@ import { PageHero } from '@/components/sections/PageHero';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { trackPricingView, trackPackageClick } from '@/lib/analytics';
+import { isRTLLocale } from '@/lib/locale-config';
 
 interface PackageCardProps {
   name: string;
@@ -113,7 +114,7 @@ const PackageCard: React.FC<PackageCardProps> = ({
 export const PricingPageContent: React.FC = () => {
   const t = useTranslations();
   const locale = useLocale();
-  const isHe = locale === 'he';
+  const isHe = isRTLLocale(locale);
 
   // Track pricing page view
   useEffect(() => {
@@ -169,7 +170,7 @@ export const PricingPageContent: React.FC = () => {
     cta: { title: string; titleSpan: string; description: string; button: string };
   };
 
-  const popularBadgeText = isHe ? 'הכי פופולרי' : 'Most Popular';
+  const popularBadgeText = pricing.popularBadge;
   const packages = [
     { ...pricing.packages.storeAudit, index: 0 },
     { ...pricing.packages.quickLaunch, index: 1 },
@@ -183,7 +184,7 @@ export const PricingPageContent: React.FC = () => {
   }));
 
   const breadcrumbItems = [
-    { name: isHe ? 'ראשי' : 'Home', url: '/' },
+    { name: t('navigation.home'), url: '/' },
     { name: pricing.hero.title, url: '/pricing' },
   ];
 

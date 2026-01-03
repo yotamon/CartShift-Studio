@@ -20,7 +20,6 @@ import {
   RefreshCw,
   User as UserIcon,
   Camera,
-  ImageIcon,
 } from 'lucide-react';
 import { PortalAvatar } from '@/components/portal/ui/PortalAvatar';
 import { cn } from '@/lib/utils';
@@ -32,10 +31,8 @@ import {
   uploadOrganizationLogo,
   deleteOrganizationLogo,
   regenerateOrganizationLogoUrl,
-  convertToPublicUrl,
   validateStorageRules,
 } from '@/lib/services/portal-uploads';
-import { getFirebaseStorage } from '@/lib/firebase';
 import { resetPassword } from '@/lib/services/auth';
 import { CreateOrganizationForm } from '@/components/portal/forms/CreateOrganizationForm';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
@@ -89,9 +86,8 @@ export default function SettingsClient() {
       if (!orgId || typeof orgId !== 'string') return;
 
       setLoading(true);
+      setLogoLoadError(false);
 
-      // Validate storage rules on component mount
-      console.log('🔥 [DEBUG] Validating storage rules...');
       const rulesValid = await validateStorageRules();
       if (!rulesValid) {
         console.warn(
@@ -102,24 +98,28 @@ export default function SettingsClient() {
       try {
         const org = await getOrganization(orgId);
         if (org) {
-          // Convert token-based logo URLs to public URLs immediately
           if (org.logoUrl) {
             try {
-              const storage = getFirebaseStorage();
-              const bucket = storage.app.options.storageBucket || '';
-              const publicUrl = convertToPublicUrl(org.logoUrl, bucket);
-              if (publicUrl && publicUrl !== org.logoUrl) {
-                // Update in background without blocking UI
-                regenerateOrganizationLogoUrl(orgId, org.logoUrl, true).catch(() => {
-                  // Silently fail - will retry on error
-                });
-                org.logoUrl = publicUrl;
+              const urlObj = new URL(org.logoUrl);
+              const isPublicUrl =
+                urlObj.searchParams.has('alt') && !urlObj.searchParams.has('token');
+              const isBrokenUrl =
+                urlObj.hostname === 'firebasestorage.googleapis.com' && isPublicUrl;
+
+              if (isBrokenUrl) {
+                const regeneratedUrl = await regenerateOrganizationLogoUrl(
+                  orgId,
+                  org.logoUrl,
+                  true
+                );
+                if (regeneratedUrl) {
+                  org.logoUrl = regeneratedUrl;
+                }
               }
             } catch (error) {
-              // Silently fail - will retry on error
+              console.warn('Failed to regenerate logo URL:', error);
             }
           }
-
           setOrganization(org);
           setLogoLoadError(false);
           setFormData({
@@ -134,7 +134,7 @@ export default function SettingsClient() {
             'error',
             typeof errorMsg === 'string' && errorMsg !== 'portal.settings.general.orgNotFound'
               ? errorMsg
-              : 'Organization not found'
+              : t('portal.common.organizationNotFound')
           );
         }
       } catch (error: unknown) {
@@ -155,7 +155,7 @@ export default function SettingsClient() {
             firestoreError.message ||
             (typeof errorMsg === 'string' && errorMsg !== 'portal.settings.general.error'
               ? errorMsg
-              : 'Failed to save settings');
+              : t('portal.requests.form.failedToSave'));
           showFeedback('error', message);
         }
       } finally {
@@ -317,73 +317,41 @@ export default function SettingsClient() {
   };
 
   const handleLogoError = async () => {
-    console.log('🔥 [DEBUG] handleLogoError called', {
-      logoUrl: organization?.logoUrl,
-      orgId,
-      userId: user?.uid,
-    });
-
     if (!organization?.logoUrl || !orgId || typeof orgId !== 'string') {
-      console.log('🔥 [DEBUG] Early return - missing logoUrl or orgId');
       setLogoLoadError(true);
       return;
     }
 
     try {
-      console.log('🔥 [DEBUG] Attempting to regenerate logo URL...');
       const newUrl = await regenerateOrganizationLogoUrl(orgId, organization.logoUrl);
-      console.log('🔥 [DEBUG] regenerateOrganizationLogoUrl returned:', newUrl);
-      if (newUrl) {
+      if (newUrl && newUrl !== organization.logoUrl) {
         setOrganization((prev: any) => ({ ...prev, logoUrl: newUrl }));
         setLogoLoadError(false);
-        console.log('🔥 [DEBUG] Logo URL regenerated successfully');
       } else {
         setLogoLoadError(true);
-        console.log('🔥 [DEBUG] Logo URL regeneration failed - no new URL');
       }
     } catch (error) {
-      console.warn('🔥 [DEBUG] Failed to regenerate logo URL:', error);
+      console.warn('Failed to regenerate logo URL:', error);
       setLogoLoadError(true);
     }
   };
 
   const handleOrgLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    console.log('🔥 [DEBUG] handleOrgLogoUpload called', {
-      fileName: file?.name,
-      fileSize: file?.size,
-      fileType: file?.type,
-      orgId,
-      userId: user?.uid,
-    });
-
-    if (!file || !orgId || typeof orgId !== 'string') {
-      console.log('🔥 [DEBUG] Early return - missing file or orgId');
-      return;
-    }
+    if (!file || !orgId || typeof orgId !== 'string') return;
 
     if (file.size > 2 * 1024 * 1024) {
-      console.log('🔥 [DEBUG] File size too large:', file.size);
       showFeedback('error', t('portal.settings.general.logo.sizeError'));
       return;
     }
 
     setUploadingOrgLogo(true);
-    setLogoLoadError(false);
-
     try {
-      console.log('🔥 [DEBUG] Calling uploadOrganizationLogo...');
       const url = await uploadOrganizationLogo(orgId, file);
-      console.log('🔥 [DEBUG] uploadOrganizationLogo returned:', url);
       setOrganization((prev: any) => ({ ...prev, logoUrl: url }));
       showFeedback('success', t('portal.settings.general.logo.uploadSuccess'));
     } catch (error) {
-      console.error('🔥 [DEBUG] Error uploading org logo:', error);
-      console.error('🔥 [DEBUG] Error details:', {
-        message: error instanceof Error ? error.message : 'Unknown error',
-        code: error instanceof Error && 'code' in error ? (error as any).code : undefined,
-        stack: error instanceof Error ? error.stack : undefined,
-      });
+      console.error('Error uploading org logo:', error);
       showFeedback('error', t('portal.settings.general.logo.uploadError'));
     } finally {
       setUploadingOrgLogo(false);
@@ -488,25 +456,19 @@ export default function SettingsClient() {
                     <div className="flex items-center gap-6">
                       <div className="relative group">
                         <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:border-blue-400 dark:group-hover:border-blue-500">
-                          {organization?.logoUrl && !logoLoadError ? (
+                          {organization?.logoUrl ? (
                             <img
                               src={organization.logoUrl}
-                              alt={organization.name || 'Organization logo'}
+                              alt={organization.name || t('portal.common.organizationLogo')}
                               className="w-full h-full object-cover"
                               onError={handleLogoError}
-                              onLoad={() =>
-                                console.log(
-                                  '🔥 [DEBUG] Logo image loaded successfully:',
-                                  organization.logoUrl
-                                )
-                              }
                             />
                           ) : (
                             <Building2 size={32} className="text-slate-300 dark:text-slate-600" />
                           )}
                         </div>
                         {uploadingOrgLogo && (
-                          <div className="absolute inset-0 bg-white/80 dark:bg-slate-900/80 rounded-2xl flex items-center justify-center">
+                          <div className="absolute inset-0 bg-white/80 dark:bg-slate-900/80 rounded-2xl flex items-center justify-center z-10">
                             <Loader2 size={24} className="animate-spin text-blue-500" />
                           </div>
                         )}
@@ -980,7 +942,7 @@ export default function SettingsClient() {
                         {formData.name}
                       </PortalBadge>
                       <span className="text-[10px] font-black text-blue-100 uppercase tracking-widest bg-blue-500/30 px-3 py-1 rounded-full">
-                        {organization?.plan?.toUpperCase() || 'FREE'}
+                        {organization?.plan?.toUpperCase() || t('portal.common.free')}
                       </span>
                     </div>
                     <h3 className="text-2xl font-bold mb-1 font-outfit uppercase tracking-tight">

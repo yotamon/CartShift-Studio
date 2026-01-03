@@ -18,19 +18,6 @@ function getPublicStorageUrl(storagePath: string, bucket: string): string {
 }
 
 /**
- * Check if a URL is a token-based Firebase Storage URL
- */
-function isTokenBasedUrl(url: string): boolean {
-  try {
-    const urlObj = new URL(url);
-    // Token-based URLs have 'token' parameter, public URLs have 'alt=media'
-    return urlObj.searchParams.has('token') && !urlObj.searchParams.has('alt');
-  } catch {
-    return false;
-  }
-}
-
-/**
  * Convert any Firebase Storage URL to a public URL
  */
 /**
@@ -255,37 +242,29 @@ export async function uploadOrganizationLogo(orgId: string, file: File): Promise
     throw uploadError;
   }
 
-  // CRITICAL: Always use public URL to avoid permission issues
-  // Do NOT use getDownloadURL() as it creates token-based URLs that require authentication
   const bucket = storage.app.options.storageBucket || '';
-  console.log('🔥 [DEBUG] Constructing public URL', { bucket, storagePath });
-
   if (!bucket) {
     throw new Error('Firebase storage bucket not configured');
   }
 
-  const publicUrl = getPublicStorageUrl(storagePath, bucket);
-  console.log('🔥 [DEBUG] Public URL constructed:', publicUrl);
+  const downloadUrl = await getDownloadURL(storageRef);
 
-  // Update organization document in Firestore
   const orgDocRef = doc(db, ORGS_COLLECTION, orgId);
   await updateDoc(orgDocRef, {
-    logoUrl: publicUrl,
+    logoUrl: downloadUrl,
     updatedAt: serverTimestamp(),
   });
 
-  console.log('🔥 [DEBUG] Organization document updated with logo URL');
-
-  return publicUrl;
+  return downloadUrl;
 }
 
 /**
  * Regenerate download URL for an organization logo
- * Converts token-based URLs to public URLs that work with public read rules
+ * Gets a fresh download URL from Firebase Storage
  * @param orgId - The organization's ID
- * @param logoUrl - The current logo URL (can be token-based or public)
+ * @param logoUrl - The current logo URL
  * @param updateFirestore - Whether to update Firestore with the new URL (default: true)
- * @returns The new public URL
+ * @returns The new download URL
  */
 export async function regenerateOrganizationLogoUrl(
   orgId: string,
@@ -297,22 +276,20 @@ export async function regenerateOrganizationLogoUrl(
     const storage = getFirebaseStorage();
     const db = getFirestoreDb();
 
-    // Extract storage path from URL (works with both token-based and public URLs)
+    // Extract storage path from URL
     const urlObj = new URL(logoUrl);
     const pathMatch = urlObj.pathname.match(/\/o\/(.+?)(\?|$)/);
     if (pathMatch) {
       const storagePath = decodeURIComponent(pathMatch[1]);
-
-      // Construct public URL without token
-      const bucket = storage.app.options.storageBucket || '';
-      const publicUrl = getPublicStorageUrl(storagePath, bucket);
+      const storageRef = ref(storage, storagePath);
+      const downloadUrl = await getDownloadURL(storageRef);
 
       // Update Firestore with the new URL if requested and different
-      if (updateFirestore && publicUrl !== logoUrl) {
+      if (updateFirestore && downloadUrl !== logoUrl) {
         try {
           const orgDocRef = doc(db, ORGS_COLLECTION, orgId);
           await updateDoc(orgDocRef, {
-            logoUrl: publicUrl,
+            logoUrl: downloadUrl,
             updatedAt: serverTimestamp(),
           });
         } catch (firestoreError) {
@@ -320,7 +297,7 @@ export async function regenerateOrganizationLogoUrl(
         }
       }
 
-      return publicUrl;
+      return downloadUrl;
     }
     return null;
   } catch (error) {

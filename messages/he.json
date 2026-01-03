@@ -34,6 +34,111 @@
       "schedule": "קבע שיחה",
       "upload": "העלה קובץ"
     },
+    "activity": {
+      "title": "פעילות אחרונה",
+      "noActivity": "אין פעילות",
+      "noActivityDescription": "יומן הפעילות יתעדכן כאשר יהיו פעולות חדשות",
+      "actions": {
+        "created_request": "יצר בקשה",
+        "assigned_request": "הקצה בקשה",
+        "added_pricing": "הוסיף הצעת מחיר",
+        "accepted_quote": "אישר הצעת מחיר",
+        "declined_quote": "דחה הצעת מחיר",
+        "started_work": "התחיל עבודה",
+        "paid_request": "שילם על בקשה",
+        "added_comment": "הוסיף תגובה",
+        "completed_consultation": "סיים ייעוץ",
+        "canceled_consultation": "ביטל ייעוץ"
+      }
+    },
+    "milestones": {
+      "noMilestones": "אין שלבי פרויקט מוגדרים",
+      "projectProgress": "התקדמות הפרויקט",
+      "milestonesCompleted": "שלבים הושלמו",
+      "current": "נוכחי",
+      "due": "יעד:",
+      "days": "ימים",
+      "newMilestone": "שלב חדש",
+      "editMilestones": "עריכת שלבי פרויקט",
+      "milestoneTitle": "שם השלב",
+      "descriptionOptional": "תיאור (אופציונלי)",
+      "done": "סגור",
+      "addMilestone": "הוסף שלב",
+      "cancel": "ביטול",
+      "saveMilestones": "שמור שלבים",
+      "saveError": "שגיאה בשמירה. נסו שוב.",
+      "title": "שלבי הפרויקט",
+      "subtitle": "מעקב התקדמות ושלבים קרובים",
+      "managePipeline": "ניהול צינור",
+      "overallProgress": "התקדמות כללית",
+      "target": "יעד:",
+      "tbd": "טרם נקבע",
+      "noMilestonesForProject": "אין שלבים מוגדרים לפרויקט זה.",
+      "addNewPhase": "הוסף שלב חדש",
+      "discard": "בטל",
+      "applyPipelineUpdates": "החל עדכוני צינור",
+      "deliverablesDescription": "תוצרים ותיאור משימה",
+      "status": {
+        "pending": "ממתין",
+        "inProgress": "בתהליך",
+        "completed": "הושלם",
+        "blocked": "חסום"
+      }
+    },
+    "invoices": {
+      "generatingInvoice": "מייצר חשבונית...",
+      "downloadInvoice": "הורד חשבונית",
+      "loadingPdf": "טוען PDF..."
+    },
+    "common": {
+      "error": "אירעה שגיאה"
+    },
+    "access": {
+      "restrictedMessage": "גישה חסומה"
+    },
+    "dashboard": {
+      "loading": "טוען דאשבורד...",
+      "title": "דאשבורד",
+      "subtitle": "סקירה של הפרויקטים והפעילויות שלך",
+      "error": {
+        "title": "נכשל בטעינת הדאשבורד",
+        "retry": "נסה שוב"
+      },
+      "actions": {
+        "newRequest": "בקשה חדשה"
+      },
+      "serviceStatus": {
+        "title": "סטטוס שירות",
+        "design": "עיצוב",
+        "active": "פעיל",
+        "dev": "פיתוח",
+        "peak": "שעות שיא",
+        "etaLabel": "זמן משוער",
+        "days": "ימים",
+        "avgResponse": "זמן תגובה ממוצע",
+        "responseTime": "< 2 שעות"
+      }
+    },
+    "analytics": {
+      "totalRequests": "סה״כ בקשות",
+      "activeRequests": "בקשות פעילות",
+      "activeRequestsSubtitle": "בטיפול כעת",
+      "completed": "הושלמו",
+      "completedSubtitle": "נמסרו בהצלחה",
+      "totalSpend": "סה״כ הוצאות",
+      "totalSpendSubtitle": "תשלומים שבוצעו",
+      "noDataYet": "אין נתונים עדיין",
+      "noDataDescription": "צור את הבקשה הראשונה שלך כדי לראות ניתוחים",
+      "inLast30Days": "ב-30 יום אחרונים",
+      "total": "סה״כ",
+      "active": "פעילות",
+      "done": "הושלמו",
+      "avgResolution": "זמן ממוצע לסיום",
+      "days": "ימים"
+    },
+    "requests": {
+      "invalidRequestId": "מזהה בקשה לא תקין"
+    },
     "loading": {
       "init": "מאתחל סביבת סטודיו",
       "workspace": "מתחבר לסביבת עבודה מאובטחת",
@@ -65,13 +170,53 @@
         "orgNamePlaceholder": "לדוגמה: החברה שלי בע״מ",
         "orgNameHint": "זה שם התצוגה הפנימי של הארגון שלכם.",
         "industryLabel": "תעשייה",
+        "industrySelectPlaceholder": "בחר תעשייה...",
         "sizeLabel": "גודל חברה",
+        "sizeSelectPlaceholder": "בחר גודל...",
+        "employeesLabel": "עובדים",
         "creating": "יוצר...",
         "createButton": "צור סביבת עבודה"
       },
       "back": "חזור",
       "error": "יצירת הארגון נכשלה. אנא נסה שנית.",
-      "help": "תוכלו להזמין חברי צוות ולנהל את סביבת העבודה שלכם לאחר היצירה."
+      "help": "תוכלו להזמין חברי צוות ולנהל את סביבת העבודה שלכם לאחר היצירה.",
+      "skip": "דלג על הסיור",
+      "step": "שלב",
+      "prev": "חזור",
+      "next": "המשך",
+      "start": "בואו נתחיל!",
+      "goToStep": "עבור לשלב",
+      "keyboardHint": "השתמשו בחצים לניווט, Enter להמשיך, Esc לדלג",
+      "steps": {
+        "welcome": {
+          "title": "ברוכים הבאים לפורטל CartShift!",
+          "description": "שמחים שהצטרפתם. בואו ניקח סיור קצר שיעזור לכם להתמצא בסביבת העבודה החדשה."
+        },
+        "dashboard": {
+          "title": "לוח הבקרה שלכם",
+          "description": "זהו מרכז הפיקוד שלכם. צפו בסקירה של הפרויקטים, עקבו אחר התקדמות וגשו במהירות לפעילות האחרונה."
+        },
+        "requests": {
+          "title": "שליחת בקשות",
+          "description": "צריכים משהו? צרו בקשות לפיצ׳רים חדשים, תיקון באגים, אופטימיזציה או כל עבודה אחרת. הצוות שלנו יבדוק ויתחיל לעבוד."
+        },
+        "pricing": {
+          "title": "תמחור והצעות מחיר",
+          "description": "סקרו הצעות מחיר מהצוות שלנו, אשרו הצעות ונהלו תשלומים — הכל במקום אחד."
+        },
+        "team": {
+          "title": "שיתוף פעולה עם הצוות",
+          "description": "הזמינו עמיתים לסביבת העבודה שלכם. כל חברי הצוות יכולים לשלוח בקשות ולעקוב אחר ההתקדמות יחד."
+        },
+        "notifications": {
+          "title": "הישארו מעודכנים",
+          "description": "לעולם לא תפספסו עדכון. נודיע לכם כשיש פעילות בבקשות שלכם או שינויי סטטוס חשובים."
+        },
+        "complete": {
+          "title": "הכל מוכן!",
+          "description": "סביבת העבודה שלכם מוכנה. התחילו ביצירת הבקשה הראשונה או חקרו את לוח הבקרה לראות מה אפשר."
+        }
+      }
     },
     "industries": {
       "ecommerce": "מסחר אלקטרוני",
@@ -433,7 +578,8 @@
       "helpCenter": "מרכז עזרה",
       "notifications": "צפה בהתראות",
       "userProfile": "פרופיל משתמש",
-      "search": "חיפוש"
+      "search": "חיפוש",
+      "searchPlaceholder": "חיפוש..."
     },
     "common": {
       "loading": "טוען...",
@@ -460,7 +606,41 @@
       "next": "הבא",
       "recently": "לאחרונה",
       "general": "כללי",
-      "total": "סה\"כ"
+      "total": "סה\"כ",
+      "unknownError": "שגיאה לא ידועה",
+      "authRequired": "נדרש אימות",
+      "descriptionRequired": "תיאור נדרש",
+      "namePlaceholder": "יוחנן דו",
+      "organizationLogo": "לוגו ארגון",
+      "failedToSubscribe": "ההרשמה נכשלה",
+      "uploadFailed": "העלאה נכשלה",
+      "failedToRemove": "הסרת התמונה נכשלה",
+      "selectImageFile": "אנא בחרו קובץ תמונה",
+      "imageTooLarge": "התמונה חייבת להיות קטנה מ-2MB",
+      "organizationNotFound": "ארגון לא נמצא",
+      "userNotAuthenticated": "משתמש לא מאומת",
+      "missingOAuthParams": "פרמטרי OAuth חסרים",
+      "failedToGetAuthToken": "קבלת אסימון אימות נכשלה",
+      "getStarted": "בואו נתחיל",
+      "noItems": "אין פריטים",
+      "unknownUser": "משתמש לא ידוע",
+      "unnamedUser": "משתמש ללא שם",
+      "paymentFailed": "התשלום נכשל",
+      "paymentFailedRetry": "השלמת התשלום נכשלה. אנא נסו שוב.",
+      "notAuthenticated": "לא מאומת",
+      "deleteConfirm": "האם אתה בטוח?",
+      "sentRecently": "נשלח לאחרונה",
+      "agencyAdmin": "מנהל סוכנות",
+      "agencyFallback": "סוכנות",
+      "unknown": "לא ידוע",
+      "loading": "טוען...",
+      "noDescription": "לא סופק תיאור.",
+      "rollback": "מחזיר שינויים.",
+      "normal": "רגיל",
+      "edit": "ערוך",
+      "archive": "ארכיון",
+      "free": "חינם",
+      "defaultInitial": "ש"
     },
     "breadcrumbs": {
       "home": "בית",
@@ -657,10 +837,16 @@
       },
       "empty": {
         "title": "לא נמצאו פגישות",
-        "description": "תאמו את פגישת הייעוץ הראשונה שלכם"
+        "description": "תאמו את פגישת הייעוץ הראשונה שלכם",
+        "noClientOrganizations": "לא נמצאו ארגוני לקוחות"
       },
       "noUpcoming": "אין פגישות קרובות",
       "noUpcomingDesc": "מוכנים לדון בפרויקט שלכם? תאמו שיחה עם הצוות שלנו.",
+      "agenda": "סדר יום",
+      "join": "הצטרף",
+      "cancel": "בטל",
+      "minutes": "דק'",
+      "userFallback": "משתמש",
       "types": {
         "onboarding": "שיחת הכרות",
         "strategy": "פגישת אסטרטגיה",
@@ -681,7 +867,11 @@
         "time": "שעה",
         "duration": "משך זמן",
         "notes": "סדר יום / הערות",
-        "notesPlaceholder": "מה תדונו?"
+        "notesPlaceholder": "מה תדונו?",
+        "failedToCancel": "ביטול הפגישה נכשל",
+        "notFound": "פגישה לא נמצאה",
+        "calendarConflict": "יש התנגשות בלוח השנה. האם אתם רוצים להמשיך בכל זאת?",
+        "cancelConfirm": "האם אתם בטוחים שברצונכם לבטל את הפגישה הזו?"
       }
     },
     "requests": {
@@ -894,6 +1084,12 @@
         "emptyTitle": "תיבת הדואר שלך ריקה",
         "emptyDesc": "כל בקשות הלקוחות טופלו או מוינו.",
         "clientOrg": "ארגון לקוח",
+        "accessRequired": "נדרש גישה לסוכנות",
+        "accessDenied": "לחשבון שלכם ({email}) אין הרשאות לגשת לתיבת הדואר של הסוכנות.",
+        "accessDeniedTitle": "גישה נדחתה",
+        "notRegisteredAsAdmin": "החשבון שלכם ({email}) לא רשום כמנהל סוכנות.",
+        "repairPermissions": "תיקון הרשאות",
+        "repairFailed": "תיקון ההרשאות נכשל. בדקו את הקונסולה לפרטים.",
         "errors": {
           "sameOrgRequired": "אנא בחרו בקשות מאותו ארגון לקוח."
         }
@@ -943,6 +1139,8 @@
           "enterprise": "שותף ארגוני"
         },
         "enterprise": "שותף ארגוני",
+        "noClientId": "לא סופק מזהה לקוח",
+        "unexpectedError": "אירעה שגיאה בלתי צפויה",
         "detail": {
           "loading": "טוען פרטי לקוח...",
           "backToClients": "חזרה ללקוחות",
@@ -1207,7 +1405,10 @@
         "load": "טעינת פרטי הצוות נכשלה.",
         "cancelInvite": "ביטול ההזמנה נכשל"
       },
-      "confirmCancel": "האם אתם בטוחים שברצונכם לבטל הזמנה זו?"
+      "confirmCancel": "האם אתם בטוחים שברצונכם לבטל הזמנה זו?",
+      "changeRole": "שנה תפקיד",
+      "removeMember": "הסר חבר",
+      "removeMemberConfirm": "הסר את {name} מהצוות?"
     },
     "pricing": {
       "title": "הצעות מחיר",
@@ -1251,13 +1452,29 @@
         "saveChanges": "שמור שינויים",
         "saving": "שומר...",
         "linkedRequestsNote": "לא ניתן לשנות בקשות מקושרות לאחר יצירה.",
+        "linkedRequestsLabel": "בקשות מקושרות להצעה זו",
         "selectRequests": "בחירת בקשות",
         "selectRequestsDescription": "בחר בקשות לכלול בהצעת מחיר זו",
         "selected": "נבחרו",
         "noRequestsAvailable": "אין בקשות זמינות",
         "allRequestsInOffers": "כל הבקשות כבר נמצאות בהצעות מחיר או שולמו",
         "settings": "הגדרות",
-        "clientInfo": "פרטי לקוח"
+        "clientInfo": "פרטי לקוח",
+        "errors": {
+          "titleTooLong": "הכותרת ארוכה מדי",
+          "titleTooShort": "הכותרת חייבת להכיל לפחות 3 תווים",
+          "priceMustBePositive": "המחיר חייב להיות חיובי",
+          "quantityMustBeAtLeast1": "הכמות חייבת להיות לפחות 1",
+          "checkLineItems": "אנא בדקו את פריטי השורה",
+          "notFound": "הצעת מחיר לא נמצאה",
+          "failedToLoad": "טעינת הצעת המחיר נכשלה"
+        },
+        "sendConfirm": "לשלוח את הצעת המחיר הזו ללקוח?",
+        "sendFailed": "השליחה נכשלה. אנא נסו שוב.",
+        "deleteConfirm": "האם אתם בטוחים שברצונכם למחוק את הצעת המחיר הזו?",
+        "deleteFailed": "המחיקה נכשלה. אנא נסו שוב.",
+        "itemDescriptionPlaceholder": "שירות או מוצר...",
+        "agencyNotesPlaceholder": "הערות פנימיות (לא נראות ללקוח)..."
       },
       "detail": {
         "breakdown": "פירוט המחיר",
@@ -1270,6 +1487,10 @@
         "paymentComplete": "התשלום הושלם",
         "paidOn": "שולם בתאריך",
         "transactionId": "מזהה עסקה"
+      },
+      "payment": {
+        "loadError": "טעינת מערכת התשלום נכשלה. אנא רעננו את הדף.",
+        "statusUnknown": "לא ידוע"
       },
       "clientView": {
         "title": "הצעות מחיר",
@@ -1381,6 +1602,30 @@
       "subtitle": "תובנות מעשיות שיעזרו לכם לצמוח באונליין",
       "badge": "מאמרים חדשים"
     },
+    "content": {
+      "featuredPosts": "מאמרים מובלטים",
+      "searchPlaceholder": "חיפוש מאמרים...",
+      "allCategories": "הכל",
+      "articles": "מאמרים",
+      "sort": {
+        "newest": "החדשים ביותר",
+        "oldest": "הישנים ביותר",
+        "popular": "פופולריים"
+      },
+      "noPostsFound": "לא נמצאו מאמרים",
+      "readingTime": "דק׳",
+      "pagination": {
+        "previous": "הקודם",
+        "next": "הבא"
+      },
+      "newsletter": {
+        "title": "הירשמו לניוזלטר",
+        "description": "קבלו טיפים ועדכונים שבועיים",
+        "placeholder": "האימייל שלך",
+        "subscribe": "הירשם",
+        "categories": "קטגוריות"
+      }
+    },
     "categories": "קטגוריות:",
     "noPosts": "אין עדיין מאמרים. חזרו בקרוב!",
     "readMore": "קראו עוד",
@@ -1407,6 +1652,16 @@
       "wordpressLink": "שירותי פיתוח וורדפרס",
       "shopifyServices": "שירותי שופיפיי",
       "wordpressServices": "שירותי וורדפרס"
+    },
+    "content": {
+      "tableOfContents": "תוכן עניינים",
+      "tableOfContentsFull": "תוכן עניינים",
+      "shareArticle": "שתף מאמר",
+      "sections": "חלקים",
+      "minRead": "דקות קריאה",
+      "share": "שתף:",
+      "expertServices": "שירותי מומחים",
+      "keepReading": "המשך לקרוא"
     }
   },
   "blogTeaser": {
@@ -1414,6 +1669,9 @@
     "subtitle": "טיפים, מגמות ומדריכי צמיחה",
     "readMore": "קראו עוד",
     "viewAll": "לכל המאמרים",
+    "new": "חדש",
+    "featured": "מאמר מומלץ",
+    "readTime": "5 דקות קריאה",
     "posts": [
       {
         "title": "אופטימיזציה לשיעור המרה באיקומרס: 20 אסטרטגיות שעובדות",
@@ -1897,12 +2155,22 @@
     "scheduleTitle": "מעדיפים שיחה?",
     "scheduleText1": "נשמח לשיחת היכרות חינמית של 30 דקות לדבר על מטרות, היקף והצעדים הבאים.",
     "scheduleText2": "ציינו זאת בהודעה ונתאם זמן שנוח לכם.",
+    "scheduleNow": "תאמו עכשיו",
+    "scheduleMeeting": "קביעת פגישה",
+    "whatsappDescription": "מעדיפים הודעה מהירה? צרו קשר בוואטסאפ.",
+    "whatsappMessageText": "שלום! אשמח לשמוע פרטים נוספים.",
+    "sendMessage": "שלחו הודעה",
     "form": {
       "title": "שלחו לנו הודעה",
       "nameLabel": "שם מלא",
       "namePlaceholder": "השם שלך",
+      "nameRequired": "שם הוא שדה חובה",
       "emailLabel": "אימייל",
       "emailPlaceholder": "your@email.com",
+      "emailRequired": "אימייל הוא שדה חובה",
+      "emailInvalid": "כתובת אימייל לא תקינה",
+      "messageRequired": "הודעה היא שדה חובה",
+      "projectTypeRequired": "אנא בחרו סוג פרויקט",
       "companyLabel": "חברה/אתר (אופציונלי)",
       "companyPlaceholder": "שם החברה או כתובת האתר",
       "projectTypeLabel": "במה נוכל לעזור?",
@@ -1923,11 +2191,23 @@
       "sendAnother": "שלחו הודעה נוספת"
     }
   },
+  "faq": {
+    "collapseAll": "כווץ הכל",
+    "expandAll": "הרחב הכל"
+  },
   "footer": {
     "description": "אתרי מסחר אלקטרוני נועזים לאמנים, יוצרים ומותגים. שופיפיי ווורדפרס שנראים מעולה, נטענים מהר ומוכרים יותר.",
     "solutions": "פתרונות",
     "company": "חברה",
     "rights": "כל הזכויות שמורות.",
+    "newsletter": {
+      "title": "הישארו מעודכנים",
+      "description": "קבלו טיפים וחדשות על מסחר אלקטרוני ישירות למייל.",
+      "placeholder": "האימייל שלך",
+      "success": "תודה שנרשמת!",
+      "sslSecured": "SSL מאובטח",
+      "shopifyPartner": "שותף Shopify"
+    },
     "links": {
       "shopify": "פתרונות שופיפיי",
       "wordpress": "פתרונות וורדפרס",
@@ -1942,7 +2222,107 @@
     "learnMore": "לפרטים נוספים",
     "contactUs": "דברו איתנו",
     "getStarted": "בואו נתחיל",
-    "viewWork": "לתיק העבודות"
+    "viewWork": "לתיק העבודות",
+    "exitIntent": {
+      "title": "רגע לפני שהולכים...",
+      "subtitle": "קבלו ייעוץ חינם לפרויקט שלכם",
+      "description": "נשמח לשמוע על מה שאתם בונים ולראות איך נוכל לעזור.",
+      "cta": "קבעו שיחה חינם",
+      "dismiss": "לא עכשיו"
+    }
+  },
+  "navigation": {
+    "home": "ראשי",
+    "solutions": "פתרונות",
+    "wordpress": "פתרונות וורדפרס",
+    "shopify": "פתרונות שופיפיי",
+    "clientPortal": "פורטל לקוחות",
+    "about": "אודות",
+    "contact": "צור קשר",
+    "blog": "בלוג",
+    "blogPost": "פוסט בבלוג"
+  },
+  "industries": {
+    "title": "תעשיות",
+    "whyWorkWithUs": "למה לעבוד איתנו?",
+    "benefitsTailored": "יתרונות מותאמים לתעשייה שלכם",
+    "ourServices": "השירותים שלנו",
+    "everythingNeeded": "הכל מה שצריך כדי להצליח אונליין",
+    "readyToGetStarted": "מוכנים להתחיל?",
+    "projects": "פרויקטים",
+    "satisfaction": "שביעות רצון",
+    "avgGrowth": "גידול ממוצע",
+    "support": "תמיכה",
+    "getFreeQuote": "קבלו הצעת מחיר חינם",
+    "viewOurWork": "צפו בעבודות שלנו",
+    "ctaDescription": "בואו נדבר על הפרויקט שלכם ונראה איך אנחנו יכולים לעזור לכם לצמוח"
+  },
+  "industriesContent": {
+    "fashion": {
+      "title": "אופנה וביגוד",
+      "subtitle": "חנויות אונליין ששובות את הלב",
+      "description": "בנו חנות אופנה מרהיבה שממירה מבקרים ללקוחות נאמנים",
+      "badge": "אופנה"
+    },
+    "food": {
+      "title": "מזון ומשקאות",
+      "subtitle": "מהמטבח לשולחן הלקוח",
+      "description": "הזמנות אונליין, תפריטים דיגיטליים ומערכות הזמנות חכמות",
+      "badge": "מזון"
+    },
+    "health": {
+      "title": "בריאות ואיכות חיים",
+      "subtitle": "עזרו ללקוחות לחיות טוב יותר",
+      "description": "חנויות לתוספי תזונה, ציוד ספורט ומוצרי ספא",
+      "badge": "בריאות"
+    },
+    "tech": {
+      "title": "טכנולוגיה ו-SaaS",
+      "subtitle": "דפי נחיתה שממירים",
+      "description": "אתרים לסטארטאפים, חברות טכנולוגיה ומוצרי SaaS",
+      "badge": "טכנולוגיה"
+    },
+    "arts": {
+      "title": "אמנות ויצירה",
+      "subtitle": "הציגו את היצירות שלכם",
+      "description": "חנויות לאמנים, יוצרים ובעלי מלאכה",
+      "badge": "אמנות"
+    },
+    "local": {
+      "title": "עסקים מקומיים",
+      "subtitle": "הביאו את העסק לאונליין",
+      "description": "אתרים לעסקים קטנים ובינוניים שרוצים לצמוח",
+      "badge": "עסקים מקומיים"
+    },
+    "benefits": [
+      {
+        "title": "הגדלת מכירות",
+        "description": "עיצוב ממיר ותהליכי רכישה חלקים שמגדילים הכנסות"
+      },
+      {
+        "title": "ביצועים מהירים",
+        "description": "אתרים מהירים שמשפרים דירוג בגוגל ושביעות רצון לקוחות"
+      },
+      {
+        "title": "אמינות ואבטחה",
+        "description": "תשלומים מאובטחים ועמידה בתקני פרטיות"
+      },
+      {
+        "title": "מותאם לקהל היעד",
+        "description": "עיצוב וקופי שמדברים ישירות ללקוחות שלכם"
+      }
+    ],
+    "services": [
+      "עיצוב ופיתוח אתר מותאם אישית",
+      "אינטגרציה עם מערכות תשלום",
+      "אופטימיזציה למנועי חיפוש (SEO)",
+      "ניהול מוצרים ומלאי",
+      "הגדרת אנליטיקס ומעקב",
+      "תמיכה ותחזוקה שוטפת"
+    ]
+  },
+  "seo": {
+    "clientPortalH1": "פורטל לקוחות לניהול פרויקטים | שקיפות ומהירות"
   },
   "process": {
     "title": "איך אנחנו עובדים",
@@ -2002,6 +2382,24 @@
     },
     "viewProject": "צפייה בפרויקט",
     "comingSoon": "קייס סטאדיז בקרוב. אנחנו מתעדים את הפרויקטים האחרונים שלנו.",
+    "empty": {
+      "title": "אין פרויקטים",
+      "description": "נסו לשנות את הסינון כדי לראות יותר פרויקטים."
+    },
+    "caseStudy": {
+      "backToWork": "חזרה לעבודות",
+      "challenge": "האתגר",
+      "solution": "הפתרון",
+      "results": "התוצאות",
+      "metric": "מדד",
+      "before": "לפני",
+      "after": "אחרי",
+      "change": "שינוי",
+      "clientSays": "מה הלקוח אומר",
+      "readyToStart": "מוכנים להתחיל?",
+      "ctaText": "בואו נדבר על הפרויקט שלכם",
+      "ctaButton": "קבעו שיחה"
+    },
     "detail": {
       "projectDetails": "פרטי הפרויקט",
       "client": "לקוח",
@@ -2025,6 +2423,7 @@
       "description": "בחרו חבילה שמתאימה לצרכים שלכם, או בואו נבנה משהו מותאם אישית.",
       "badge": "מחירים"
     },
+    "popularBadge": "הכי פופולרי",
     "packages": {
       "quickLaunch": {
         "name": "השקה מהירה",
@@ -2327,7 +2726,13 @@
           "להבין כיצד אתה משתמש באתר שלנו",
           "לשפר את השירותים שלנו"
         ],
-        "control": "אתה יכול לשלוט בעוגיות דרך הגדרות הדפדפן שלך."
+        "control": "אתה יכול לשלוט בעוגיות דרך הגדרות הדפדפן שלך.",
+        "consent": {
+          "message": "אנחנו משתמשים בעוגיות כדי לשפר את חווית הגלישה שלכם ולנתח את השימוש באתר.",
+          "accept": "אישור",
+          "decline": "דחייה",
+          "learnMore": "למידע נוסף"
+        }
       },
       "security": {
         "title": "אבטחת מידע",

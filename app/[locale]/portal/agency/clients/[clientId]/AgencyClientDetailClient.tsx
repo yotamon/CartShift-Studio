@@ -32,7 +32,7 @@ import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { useResolvedClientId } from '@/lib/hooks/useResolvedClientId';
 import { useTranslations, useLocale } from 'next-intl';
 import { formatDistanceToNow } from 'date-fns';
-import { enUS, he } from 'date-fns/locale';
+import { getDateLocale, getDateLocaleString } from '@/lib/locale-config';
 import { cn } from '@/lib/utils';
 import { ShopifyStoreIntegration } from '@/components/portal/integrations';
 
@@ -56,7 +56,7 @@ export default function AgencyClientDetailClient({
 
   useEffect(() => {
     if (!clientId) {
-      setError('No client ID provided');
+      setError(t('clients.noClientId'));
       setLoading(false);
       return undefined;
     }
@@ -134,7 +134,7 @@ export default function AgencyClientDetailClient({
       };
     } catch (err) {
       console.error('[AgencyClientDetail] Critical error in useEffect:', err);
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+      setError(err instanceof Error ? err.message : t('clients.unexpectedError'));
       setLoading(false);
       return undefined;
     }
@@ -294,7 +294,7 @@ export default function AgencyClientDetailClient({
                       <span>
                         {t('agency.clients.detail.stats.joinedDate')}:{' '}
                         {new Date(organization.createdAt.toDate()).toLocaleDateString(
-                          locale === 'he' ? 'he-IL' : 'en-US',
+                          getDateLocaleString(locale),
                           {
                             year: 'numeric',
                             month: 'short',
@@ -479,7 +479,7 @@ export default function AgencyClientDetailClient({
                               {isMounted
                                 ? formatDistanceToNow(request.createdAt.toDate(), {
                                     addSuffix: true,
-                                    locale: locale === 'he' ? he : enUS,
+                                    locale: getDateLocale(locale),
                                   })
                                 : '—'}
                             </span>
@@ -543,7 +543,7 @@ export default function AgencyClientDetailClient({
                             {isMounted
                               ? formatDistanceToNow(activity.createdAt.toDate(), {
                                   addSuffix: true,
-                                  locale: locale === 'he' ? he : enUS,
+                                  locale: getDateLocale(locale),
                                 })
                               : '—'}
                           </span>
@@ -700,7 +700,7 @@ export default function AgencyClientDetailClient({
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-bold text-surface-900 dark:text-white truncate">
-                          {member.name || 'Anonymous'}
+                          {member.name || t('portal.common.anonymous')}
                         </p>
                         <p className="text-xs text-surface-500 truncate">{member.email}</p>
                       </div>

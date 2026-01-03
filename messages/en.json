@@ -34,6 +34,111 @@
       "schedule": "Schedule Call",
       "upload": "Upload File"
     },
+    "activity": {
+      "title": "Recent Activity",
+      "noActivity": "No Activity",
+      "noActivityDescription": "Activity log will update when new actions occur",
+      "actions": {
+        "created_request": "Created Request",
+        "assigned_request": "Assigned Request",
+        "added_pricing": "Added Pricing",
+        "accepted_quote": "Accepted Quote",
+        "declined_quote": "Declined Quote",
+        "started_work": "Started Work",
+        "paid_request": "Paid Request",
+        "added_comment": "Added Comment",
+        "completed_consultation": "Completed Consultation",
+        "canceled_consultation": "Canceled Consultation"
+      }
+    },
+    "milestones": {
+      "noMilestones": "No milestones defined yet",
+      "projectProgress": "Project Progress",
+      "milestonesCompleted": "milestones completed",
+      "current": "Current",
+      "due": "Due:",
+      "days": "days",
+      "newMilestone": "New Milestone",
+      "editMilestones": "Edit Milestones",
+      "milestoneTitle": "Milestone title",
+      "descriptionOptional": "Description (optional)",
+      "done": "Done",
+      "addMilestone": "Add Milestone",
+      "cancel": "Cancel",
+      "saveMilestones": "Save Milestones",
+      "saveError": "Failed to save. Please try again.",
+      "title": "Project Milestones",
+      "subtitle": "Track progress and upcoming phases",
+      "managePipeline": "Manage Pipeline",
+      "overallProgress": "Overall Progress",
+      "target": "Target:",
+      "tbd": "TBD",
+      "noMilestonesForProject": "No milestones defined for this project.",
+      "addNewPhase": "Add New Phase",
+      "discard": "Discard",
+      "applyPipelineUpdates": "Apply Pipeline Updates",
+      "deliverablesDescription": "Deliverables and task description",
+      "status": {
+        "pending": "Pending",
+        "inProgress": "In Progress",
+        "completed": "Completed",
+        "blocked": "Blocked"
+      }
+    },
+    "invoices": {
+      "generatingInvoice": "Generating Invoice...",
+      "downloadInvoice": "Download Invoice",
+      "loadingPdf": "Loading PDF..."
+    },
+    "common": {
+      "error": "An error occurred"
+    },
+    "access": {
+      "restrictedMessage": "Access restricted"
+    },
+    "dashboard": {
+      "loading": "Loading dashboard...",
+      "title": "Dashboard",
+      "subtitle": "Overview of your projects and activities",
+      "error": {
+        "title": "Failed to load dashboard",
+        "retry": "Try Again"
+      },
+      "actions": {
+        "newRequest": "New Request"
+      },
+      "serviceStatus": {
+        "title": "Service Status",
+        "design": "Design",
+        "active": "Active",
+        "dev": "Development",
+        "peak": "Peak Hours",
+        "etaLabel": "ETA",
+        "days": "days",
+        "avgResponse": "Avg Response",
+        "responseTime": "< 2hrs"
+      }
+    },
+    "analytics": {
+      "totalRequests": "Total Requests",
+      "activeRequests": "Active Requests",
+      "activeRequestsSubtitle": "Currently in progress",
+      "completed": "Completed",
+      "completedSubtitle": "Successfully delivered",
+      "totalSpend": "Total Spend",
+      "totalSpendSubtitle": "Payments completed",
+      "noDataYet": "No Data Yet",
+      "noDataDescription": "Create your first request to see analytics",
+      "inLast30Days": "in last 30 days",
+      "total": "Total",
+      "active": "Active",
+      "done": "Done",
+      "avgResolution": "Avg. Resolution",
+      "days": "days"
+    },
+    "requests": {
+      "invalidRequestId": "Invalid request ID"
+    },
     "loading": {
       "init": "Initializing Studio Environment",
       "workspace": "Accessing Secure Workspace",
@@ -65,7 +170,10 @@
         "orgNamePlaceholder": "e.g., My Company Inc.",
         "orgNameHint": "This is your internal display name.",
         "industryLabel": "Industry",
+        "industrySelectPlaceholder": "Select industry...",
         "sizeLabel": "Company Size",
+        "sizeSelectPlaceholder": "Select size...",
+        "employeesLabel": "employees",
         "creating": "Creating...",
         "createButton": "Create Workspace"
       },
@@ -433,11 +541,14 @@
       "helpCenter": "Help center",
       "notifications": "View notifications",
       "userProfile": "User profile",
-      "search": "Search"
+      "search": "Search",
+      "searchPlaceholder": "Search..."
     },
     "common": {
       "loading": "Loading...",
       "error": "Something went wrong",
+      "unknownError": "Unknown error",
+      "authRequired": "Authentication required",
       "retry": "Retry",
       "noData": "No data available",
       "save": "Save Changes",
@@ -460,7 +571,39 @@
       "next": "Next",
       "recently": "Recently",
       "general": "General",
-      "total": "Total"
+      "total": "Total",
+      "descriptionRequired": "Description required",
+      "namePlaceholder": "John Doe",
+      "organizationLogo": "Organization logo",
+      "failedToSubscribe": "Failed to subscribe",
+      "uploadFailed": "Upload failed",
+      "failedToRemove": "Failed to remove image",
+      "selectImageFile": "Please select an image file",
+      "imageTooLarge": "Image must be smaller than 2MB",
+      "organizationNotFound": "Organization not found",
+      "userNotAuthenticated": "User not authenticated",
+      "missingOAuthParams": "Missing OAuth parameters",
+      "failedToGetAuthToken": "Failed to get authentication token",
+      "getStarted": "Get Started",
+      "noItems": "No items",
+      "unknownUser": "Unknown User",
+      "unnamedUser": "Unnamed User",
+      "paymentFailed": "Payment failed",
+      "paymentFailedRetry": "Failed to complete payment. Please try again.",
+      "notAuthenticated": "Not authenticated",
+      "deleteConfirm": "Are you sure?",
+      "sentRecently": "Sent recently",
+      "agencyAdmin": "Agency Admin",
+      "agencyFallback": "Agency",
+      "unknown": "Unknown",
+      "loading": "Loading...",
+      "noDescription": "No description provided.",
+      "rollback": "Rolling back changes.",
+      "normal": "NORMAL",
+      "edit": "Edit",
+      "archive": "Archive",
+      "free": "FREE",
+      "defaultInitial": "S"
     },
     "breadcrumbs": {
       "home": "Home",
@@ -651,10 +794,16 @@
       },
       "empty": {
         "title": "No consultations found",
-        "description": "Schedule your first consultation to get started"
+        "description": "Schedule your first consultation to get started",
+        "noClientOrganizations": "No client organizations found"
       },
       "noUpcoming": "No upcoming consultations",
       "noUpcomingDesc": "Ready to discuss your project? Schedule a call with our team.",
+      "agenda": "Agenda",
+      "join": "Join",
+      "cancel": "Cancel",
+      "minutes": "min",
+      "userFallback": "User",
       "types": {
         "onboarding": "Onboarding Call",
         "strategy": "Strategy Session",
@@ -675,7 +824,11 @@
         "time": "Time",
         "duration": "Duration",
         "notes": "Agenda / Notes",
-        "notesPlaceholder": "What will you discuss?"
+        "notesPlaceholder": "What will you discuss?",
+        "failedToCancel": "Failed to cancel consultation",
+        "notFound": "Consultation not found",
+        "calendarConflict": "There is a calendar conflict. Do you want to proceed anyway?",
+        "cancelConfirm": "Are you sure you want to cancel this consultation?"
       }
     },
     "requests": {
@@ -768,7 +921,9 @@
           "titleLong": "Title is too long",
           "descShort": "Please provide more details (at least 20 characters)",
           "typeRequired": "Please select a request type"
-        }
+        },
+        "failedToSubmit": "Failed to submit form",
+        "failedToSave": "Failed to save settings"
       },
       "detail": {
         "loading": "Opening your request...",
@@ -879,6 +1034,12 @@
         "emptyTitle": "Your inbox is clear",
         "emptyDesc": "All client requests have been processed or sorted.",
         "clientOrg": "Client Org",
+        "accessRequired": "Agency Access Required",
+        "accessDenied": "Your account ({email}) does not have permissions to access the Agency Inbox.",
+        "accessDeniedTitle": "Access Denied",
+        "notRegisteredAsAdmin": "Your account ({email}) is not registered as an Agency Administrator.",
+        "repairPermissions": "Repair Permissions",
+        "repairFailed": "Permission repair failed. Check console for details.",
         "errors": {
           "sameOrgRequired": "Please select requests from the same client organization."
         }
@@ -928,6 +1089,8 @@
           "enterprise": "Enterprise Partner"
         },
         "enterprise": "Enterprise Partner",
+        "noClientId": "No client ID provided",
+        "unexpectedError": "An unexpected error occurred",
         "detail": {
           "loading": "Loading client details...",
           "backToClients": "Back to Clients",
@@ -1009,7 +1172,8 @@
           "descPlaceholder": "Brief description of your agency and services...",
           "save": "Save Changes",
           "saving": "Saving...",
-          "success": "Settings saved successfully!"
+          "success": "Settings saved successfully!",
+          "failedToUpload": "Failed to upload photo"
         },
         "team": {
           "title": "Internal Team",
@@ -1192,7 +1356,10 @@
         "load": "Failed to load team information.",
         "cancelInvite": "Failed to cancel invite"
       },
-      "confirmCancel": "Are you sure you want to cancel this invitation?"
+      "confirmCancel": "Are you sure you want to cancel this invitation?",
+      "changeRole": "Change Role",
+      "removeMember": "Remove Member",
+      "removeMemberConfirm": "Remove {name} from team?"
     },
     "pricing": {
       "title": "Pricing Offers",
@@ -1236,13 +1403,29 @@
         "saveChanges": "Save Changes",
         "saving": "Saving...",
         "linkedRequestsNote": "Linked requests cannot be changed after creation.",
+        "linkedRequestsLabel": "Requests linked to this offer",
         "selectRequests": "Select Requests",
         "selectRequestsDescription": "Choose requests to include in this pricing offer",
         "selected": "selected",
         "noRequestsAvailable": "No requests available",
         "allRequestsInOffers": "All requests are already in pricing offers or paid",
         "settings": "Settings",
-        "clientInfo": "Client Info"
+        "clientInfo": "Client Info",
+        "errors": {
+          "titleTooLong": "Title is too long",
+          "titleTooShort": "Title must be at least 3 characters",
+          "priceMustBePositive": "Price must be positive",
+          "quantityMustBeAtLeast1": "Quantity must be at least 1",
+          "checkLineItems": "Please check line items",
+          "notFound": "Pricing offer not found",
+          "failedToLoad": "Failed to load pricing offer"
+        },
+        "sendConfirm": "Send this pricing offer to the client?",
+        "sendFailed": "Failed to send. Please try again.",
+        "deleteConfirm": "Are you sure you want to delete this pricing offer?",
+        "deleteFailed": "Failed to delete. Please try again.",
+        "itemDescriptionPlaceholder": "Service or product...",
+        "agencyNotesPlaceholder": "Internal notes (not visible to client)..."
       },
       "detail": {
         "breakdown": "Pricing Breakdown",
@@ -1255,6 +1438,10 @@
         "paymentComplete": "Payment Complete",
         "paidOn": "Paid on",
         "transactionId": "Transaction ID"
+      },
+      "payment": {
+        "loadError": "Failed to load payment system. Please refresh the page.",
+        "statusUnknown": "UNKNOWN"
       },
       "clientView": {
         "title": "Pricing Requests",
@@ -1366,6 +1553,30 @@
       "subtitle": "Practical insights to help you grow your online business",
       "badge": "Fresh Posts"
     },
+    "content": {
+      "featuredPosts": "Featured Posts",
+      "searchPlaceholder": "Search articles...",
+      "allCategories": "All",
+      "articles": "articles",
+      "sort": {
+        "newest": "Newest First",
+        "oldest": "Oldest First",
+        "popular": "Most Popular"
+      },
+      "noPostsFound": "No posts found",
+      "readingTime": "min",
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "newsletter": {
+        "title": "Subscribe to Newsletter",
+        "description": "Get weekly tips and updates",
+        "placeholder": "Your email",
+        "subscribe": "Subscribe",
+        "categories": "Categories"
+      }
+    },
     "categories": "Categories:",
     "noPosts": "No posts yet. Check back soon!",
     "readMore": "Read more",
@@ -1392,6 +1603,16 @@
       "wordpressLink": "WordPress Development Services",
       "shopifyServices": "Shopify Services",
       "wordpressServices": "WordPress Services"
+    },
+    "content": {
+      "tableOfContents": "Contents",
+      "tableOfContentsFull": "Table of Contents",
+      "shareArticle": "Share Article",
+      "sections": "sections",
+      "minRead": "min read",
+      "share": "Share:",
+      "expertServices": "Expert Services",
+      "keepReading": "Keep Reading"
     }
   },
   "blogTeaser": {
@@ -1399,6 +1620,9 @@
     "subtitle": "Tips, trends, and growth playbooks",
     "readMore": "Read more",
     "viewAll": "View all posts",
+    "new": "New",
+    "featured": "Featured",
+    "readTime": "5 min read",
     "posts": [
       {
         "title": "E-commerce Conversion Rate Optimization: 20 Proven Strategies That Work",
@@ -1882,12 +2106,22 @@
     "scheduleTitle": "Want to hop on a call?",
     "scheduleText1": "We can do a free 30-minute discovery call to discuss goals, scope, and next steps.",
     "scheduleText2": "Mention it in your message, and we'll coordinate a time that works for you.",
+    "scheduleNow": "Schedule Now",
+    "scheduleMeeting": "Schedule Meeting",
+    "whatsappDescription": "Prefer instant messaging? Reach us on WhatsApp.",
+    "whatsappMessageText": "Hello! I'd like to get in touch.",
+    "sendMessage": "Send Message",
     "form": {
       "title": "Send us a message",
       "nameLabel": "Name",
       "namePlaceholder": "Your name",
+      "nameRequired": "Name is required",
       "emailLabel": "Email",
       "emailPlaceholder": "your@email.com",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email address",
+      "messageRequired": "Message is required",
+      "projectTypeRequired": "Please select a project type",
       "companyLabel": "Company/Website (optional)",
       "companyPlaceholder": "Your company or website",
       "projectTypeLabel": "What do you need help with?",
@@ -1908,11 +2142,23 @@
       "sendAnother": "Send Another Message"
     }
   },
+  "faq": {
+    "collapseAll": "Collapse All",
+    "expandAll": "Expand All"
+  },
   "footer": {
     "description": "Bold e-commerce builds for artists, makers, and brands. Shopify and WordPress websites that look great, load fast, and sell more.",
     "solutions": "Solutions",
     "company": "Company",
     "rights": "All rights reserved.",
+    "newsletter": {
+      "title": "Stay Updated",
+      "description": "Get e-commerce tips and news delivered to your inbox.",
+      "placeholder": "Your email",
+      "success": "Thanks for subscribing!",
+      "sslSecured": "SSL Secured",
+      "shopifyPartner": "Shopify Partner"
+    },
     "links": {
       "shopify": "Shopify Solutions",
       "wordpress": "WordPress Solutions",
@@ -1927,7 +2173,107 @@
     "learnMore": "Learn More",
     "contactUs": "Contact Us",
     "getStarted": "Get Started",
-    "viewWork": "View Our Work"
+    "viewWork": "View Our Work",
+    "exitIntent": {
+      "title": "Before you go...",
+      "subtitle": "Get a free consultation for your project",
+      "description": "We'd love to hear about what you're building and see how we can help.",
+      "cta": "Book a Free Call",
+      "dismiss": "Not now"
+    }
+  },
+  "navigation": {
+    "home": "Home",
+    "solutions": "Solutions",
+    "wordpress": "WordPress Solutions",
+    "shopify": "Shopify Solutions",
+    "clientPortal": "Client Portal",
+    "about": "About",
+    "contact": "Contact",
+    "blog": "Blog",
+    "blogPost": "Blog Post"
+  },
+  "industries": {
+    "title": "Industries",
+    "whyWorkWithUs": "Why Work With Us?",
+    "benefitsTailored": "Benefits tailored to your industry",
+    "ourServices": "Our Services",
+    "everythingNeeded": "Everything you need to succeed online",
+    "readyToGetStarted": "Ready to Get Started?",
+    "projects": "Projects",
+    "satisfaction": "Satisfaction",
+    "avgGrowth": "Avg Growth",
+    "support": "Support",
+    "getFreeQuote": "Get a Free Quote",
+    "viewOurWork": "View Our Work",
+    "ctaDescription": "Let's discuss your project and see how we can help you grow"
+  },
+  "industriesContent": {
+    "fashion": {
+      "title": "Fashion & Apparel",
+      "subtitle": "E-commerce That Captivates",
+      "description": "Build a stunning fashion store that converts visitors into loyal customers",
+      "badge": "Fashion"
+    },
+    "food": {
+      "title": "Food & Beverage",
+      "subtitle": "From Kitchen to Customer",
+      "description": "Online ordering, digital menus, and smart reservation systems",
+      "badge": "Food"
+    },
+    "health": {
+      "title": "Health & Wellness",
+      "subtitle": "Help Customers Live Better",
+      "description": "Stores for supplements, fitness gear, and spa products",
+      "badge": "Health"
+    },
+    "tech": {
+      "title": "Tech & SaaS",
+      "subtitle": "Landing Pages That Convert",
+      "description": "Websites for startups, tech companies, and SaaS products",
+      "badge": "Tech"
+    },
+    "arts": {
+      "title": "Arts & Crafts",
+      "subtitle": "Showcase Your Creations",
+      "description": "Stores for artists, creators, and craftspeople",
+      "badge": "Arts"
+    },
+    "local": {
+      "title": "Local Businesses",
+      "subtitle": "Bring Your Business Online",
+      "description": "Websites for small and medium businesses ready to grow",
+      "badge": "Local"
+    },
+    "benefits": [
+      {
+        "title": "Increase Sales",
+        "description": "Conversion-focused design and smooth checkout processes"
+      },
+      {
+        "title": "Fast Performance",
+        "description": "Lightning-fast sites that improve Google rankings and customer satisfaction"
+      },
+      {
+        "title": "Trust & Security",
+        "description": "Secure payments and privacy compliance"
+      },
+      {
+        "title": "Target Audience",
+        "description": "Design and copy that speaks directly to your customers"
+      }
+    ],
+    "services": [
+      "Custom website design & development",
+      "Payment system integration",
+      "Search engine optimization (SEO)",
+      "Product & inventory management",
+      "Analytics & tracking setup",
+      "Ongoing support & maintenance"
+    ]
+  },
+  "seo": {
+    "clientPortalH1": "Client Portal for Project Management | Fast & Transparent"
   },
   "process": {
     "title": "How We Work",
@@ -1987,6 +2333,24 @@
     },
     "viewProject": "View Project",
     "comingSoon": "Case studies coming soon. We're documenting our recent projects.",
+    "empty": {
+      "title": "No Projects Found",
+      "description": "Try changing the filter to see more projects."
+    },
+    "caseStudy": {
+      "backToWork": "Back to Work",
+      "challenge": "The Challenge",
+      "solution": "The Solution",
+      "results": "The Results",
+      "metric": "Metric",
+      "before": "Before",
+      "after": "After",
+      "change": "Change",
+      "clientSays": "What the Client Says",
+      "readyToStart": "Ready to Start?",
+      "ctaText": "Let's talk about your project",
+      "ctaButton": "Book a Call"
+    },
     "detail": {
       "projectDetails": "Project Details",
       "client": "Client",
@@ -2010,6 +2374,7 @@
       "description": "Choose a package that fits your needs, or let's build something custom.",
       "badge": "Pricing"
     },
+    "popularBadge": "Most Popular",
     "packages": {
       "quickLaunch": {
         "name": "Quick Launch",
@@ -2312,7 +2677,13 @@
           "Understand how you use our website",
           "Improve our services"
         ],
-        "control": "You can control cookies through your browser settings."
+        "control": "You can control cookies through your browser settings.",
+        "consent": {
+          "message": "We use cookies to improve your browsing experience and analyze site usage.",
+          "accept": "Accept",
+          "decline": "Decline",
+          "learnMore": "Learn more"
+        }
       },
       "security": {
         "title": "Data Security",

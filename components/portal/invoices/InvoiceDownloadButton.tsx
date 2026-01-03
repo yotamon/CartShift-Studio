@@ -6,18 +6,25 @@ import { Request, Organization } from '@/lib/types/portal';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { FileText, Loader2 } from 'lucide-react';
 import { InvoiceDocument } from './InvoiceDocument';
+import { useTranslations } from 'next-intl';
+
+// Loading component for dynamic import
+const PDFLoadingButton = () => {
+  const t = useTranslations();
+  return (
+    <PortalButton variant="outline" disabled className="gap-2">
+      <Loader2 size={16} className="animate-spin" />
+      {t('portal.invoices.loadingPdf')}
+    </PortalButton>
+  );
+};
 
 // Dynamically import PDFDownloadLink to avoid SSR issues
 const PDFDownloadLink = dynamic(
   () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
   {
     ssr: false,
-    loading: () => (
-      <PortalButton variant="outline" disabled className="gap-2">
-        <Loader2 size={16} className="animate-spin" />
-        Loading PDF...
-      </PortalButton>
-    ),
+    loading: () => <PDFLoadingButton />,
   }
 );
 
@@ -32,6 +39,7 @@ export const InvoiceDownloadButton: React.FC<InvoiceDownloadButtonProps> = ({
   organization,
   className,
 }) => {
+  const t = useTranslations();
   const invoiceId = `INV-${request.id.substring(0, 8).toUpperCase()}`;
   const fileName = `invoice-${invoiceId}.pdf`;
 
@@ -58,7 +66,7 @@ export const InvoiceDownloadButton: React.FC<InvoiceDownloadButtonProps> = ({
             ) : (
               <FileText size={16} />
             )}
-            {loading ? 'Generating Invoice...' : 'Download Invoice'}
+            {loading ? t('portal.invoices.generatingInvoice') : t('portal.invoices.downloadInvoice')}
           </PortalButton>
         )}
       </PDFDownloadLink>

@@ -43,7 +43,7 @@ export const ContactPageContent: React.FC = () => {
       const result = await submitContactFormClient(data);
 
       if (!result.success) {
-        throw new Error(result.error || 'Failed to submit form');
+        throw new Error(result.error || t('portal.requests.form.failedToSubmit'));
       }
 
       trackFormSubmission('contact-form');
@@ -129,7 +129,7 @@ export const ContactPageContent: React.FC = () => {
                     className="inline-flex items-center gap-2 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"
                   >
                     <Calendar className="w-5 h-5" />
-                    <span>{isRtl ? 'קביעת פגישה' : 'Schedule Now'}</span>
+                    <span>{t('contact.scheduleNow')}</span>
                   </a>
                 </div>
               </div>
@@ -141,23 +141,21 @@ export const ContactPageContent: React.FC = () => {
                 </Parallax>
                 <div>
                   <h3 className="font-semibold text-surface-900 dark:text-white mb-2 text-base md:text-lg">
-                    {isRtl ? 'וואטסאפ' : 'WhatsApp'}
+                    {t('floatingActions.whatsapp')}
                   </h3>
                   <p className="text-surface-600 dark:text-surface-300 mb-3 text-base md:text-lg leading-relaxed">
-                    {isRtl
-                      ? 'מעדיפים הודעה מהירה? צרו קשר בוואטסאפ.'
-                      : 'Prefer instant messaging? Reach us on WhatsApp.'}
+                    {t('contact.whatsappDescription')}
                   </p>
                   <a
                     href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '972503591552'}?text=${encodeURIComponent(
-                      isRtl ? 'שלום! אשמח לשמוע פרטים נוספים.' : "Hello! I'd like to get in touch."
+                      t('contact.whatsappMessageText')
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-[#25D366] hover:text-[#128C7E] font-medium transition-colors"
                   >
                     <Icon name="whatsapp" size={20} />
-                    <span>{isRtl ? 'שלחו הודעה' : 'Send Message'}</span>
+                    <span>{t('contact.sendMessage')}</span>
                   </a>
                 </div>
               </div>
@@ -196,7 +194,7 @@ export const ContactPageContent: React.FC = () => {
                     >
                       <Button className="w-full sm:w-auto">
                         <Calendar className="w-4 h-4 me-2" />
-                        {isRtl ? 'קביעת פגישה' : 'Schedule Meeting'}
+                        {t('contact.scheduleMeeting')}
                       </Button>
                     </a>
                     <Button
@@ -229,7 +227,7 @@ export const ContactPageContent: React.FC = () => {
                       <input
                         id="name"
                         type="text"
-                        {...register('name', { required: 'Name is required' })}
+                        {...register('name', { required: t('contact.form.nameRequired') })}
                         className="w-full px-4 py-4 md:py-3 rounded-xl glass-effect text-surface-900 dark:text-white placeholder:text-surface-500 dark:placeholder:text-surface-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all touch-manipulation"
                         placeholder={t('contact.form.namePlaceholder')}
                         aria-required="true"
@@ -305,7 +303,7 @@ export const ContactPageContent: React.FC = () => {
                       </label>
                       <select
                         id="projectType"
-                        {...register('projectType', { required: 'Please select a project type' })}
+                        {...register('projectType', { required: t('contact.form.projectTypeRequired') })}
                         className="w-full px-4 py-4 md:py-3 rounded-xl glass-effect text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all bg-white dark:bg-surface-900 [&>option]:text-surface-900 dark:[&>option]:text-white touch-manipulation"
                         aria-required="true"
                         aria-invalid={errors.projectType ? 'true' : 'false'}
@@ -347,7 +345,7 @@ export const ContactPageContent: React.FC = () => {
                       <textarea
                         id="message"
                         rows={6}
-                        {...register('message', { required: 'Message is required' })}
+                        {...register('message', { required: t('contact.form.messageRequired') })}
                         className="w-full px-4 py-4 md:py-3 rounded-xl glass-effect text-surface-900 dark:text-white placeholder:text-surface-500 dark:placeholder:text-surface-400 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all resize-none touch-manipulation"
                         placeholder={t('contact.form.messagePlaceholder')}
                         aria-required="true"

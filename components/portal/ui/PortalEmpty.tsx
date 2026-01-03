@@ -1,5 +1,6 @@
 import React from 'react';
 import { LucideIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface PortalEmptyProps {
   title?: string;
@@ -16,6 +17,7 @@ export const PortalEmpty: React.FC<PortalEmptyProps> = ({
   variant = 'default',
   action,
 }) => {
+  const t = useTranslations();
   const variantStyles = {
     default: 'text-surface-400 dark:text-surface-500',
     success: 'text-green-500 dark:text-green-400',
@@ -40,7 +42,7 @@ export const PortalEmpty: React.FC<PortalEmptyProps> = ({
     <div className="text-center py-12">
       {renderIcon()}
       <h3 className="font-semibold text-surface-900 dark:text-white mb-2">
-        {title || 'No items found'}
+        {title || t('portal.emptyState.generic.title')}
       </h3>
       {description && (
         <p className="text-sm text-surface-500 dark:text-surface-400 max-w-sm mx-auto">

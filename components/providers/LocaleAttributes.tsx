@@ -2,15 +2,16 @@
 
 import {useLocale} from 'next-intl';
 import {useEffect} from 'react';
+import { getLocaleDirection, isRTLLocale } from '@/lib/locale-config';
 
 export function LocaleAttributes() {
   const locale = useLocale();
-  const direction = locale === 'he' ? 'rtl' : 'ltr';
+  const direction = getLocaleDirection(locale);
 
   useEffect(() => {
     document.documentElement.lang = locale;
     document.documentElement.dir = direction;
-    if (locale === 'he') {
+    if (isRTLLocale(locale)) {
       document.body.classList.add('lang-he');
     } else {
       document.body.classList.remove('lang-he');

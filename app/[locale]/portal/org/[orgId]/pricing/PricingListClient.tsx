@@ -30,7 +30,7 @@ import {
   deletePricingRequest,
 } from '@/lib/services/pricing-requests';
 import { format } from 'date-fns';
-import { enUS, he } from 'date-fns/locale';
+import { getDateLocale } from '@/lib/locale-config';
 import { cn } from '@/lib/utils';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
@@ -105,17 +105,17 @@ export default function PricingListClient() {
       await sendPricingRequest(requestId);
     } catch (err) {
       console.error('Failed to send pricing request:', err);
-      alert('Failed to send. Please try again.');
+      alert(t('portal.pricing.sendFailed'));
     }
   };
 
   const handleDelete = async (requestId: string) => {
-    if (!confirm('Are you sure you want to delete this pricing offer?')) return;
+    if (!confirm(t('portal.pricing.deleteConfirm'))) return;
     try {
       await deletePricingRequest(requestId);
     } catch (err) {
       console.error('Failed to delete pricing request:', err);
-      alert('Failed to delete. Please try again.');
+      alert(t('portal.pricing.deleteFailed'));
     }
   };
 
@@ -295,7 +295,7 @@ export default function PricingListClient() {
                         <span className="text-sm font-bold text-slate-800 dark:text-slate-200 font-outfit whitespace-nowrap">
                           {req.createdAt?.toDate
                             ? format(req.createdAt.toDate(), 'MMM d, yyyy', {
-                                locale: locale === 'he' ? he : enUS,
+                                locale: getDateLocale(locale),
                               })
                             : t('portal.common.recently')}
                         </span>
@@ -304,7 +304,7 @@ export default function PricingListClient() {
                             ? t('portal.pricing.status.draft')
                             : req.sentAt?.toDate
                               ? format(req.sentAt.toDate(), 'MMM d', {
-                                  locale: locale === 'he' ? he : enUS,
+                                  locale: getDateLocale(locale),
                                 })
                               : ''}
                         </span>

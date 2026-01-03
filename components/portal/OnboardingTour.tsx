@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { PortalButton } from './ui/PortalButton';
 import { useTranslations, useLocale } from 'next-intl';
+import { isRTLLocale } from '@/lib/locale-config';
 import { cn } from '@/lib/utils';
 import { doc, updateDoc } from 'firebase/firestore';
 import { getFirestoreDb } from '@/lib/firebase';
@@ -42,7 +43,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ userId, onComple
   const [mounted, setMounted] = useState(false);
   const t = useTranslations();
   const locale = useLocale();
-  const isRTL = locale === 'he';
+  const isRTL = isRTLLocale(locale);
 
   useEffect(() => {
     setMounted(true);

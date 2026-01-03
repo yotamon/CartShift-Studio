@@ -70,7 +70,7 @@ import {
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { format } from 'date-fns';
-import { enUS, he } from 'date-fns/locale';
+import { getDateLocale } from '@/lib/locale-config';
 import { cn } from '@/lib/utils';
 import { PayPalProvider } from '@/components/providers/PayPalProvider';
 import { PayPalCheckoutButton } from '@/components/portal/PayPalCheckoutButton';
@@ -270,7 +270,7 @@ export default function RequestDetailClient() {
   useEffect(() => {
     if (!requestId || typeof requestId !== 'string') {
       console.warn('[RequestDetailClient] Invalid requestId:', requestId);
-      setError('Invalid request ID');
+      setError(t('portal.requests.invalidRequestId'));
       setLoading(false);
       return undefined;
     }
@@ -627,7 +627,7 @@ export default function RequestDetailClient() {
                       <p className="text-sm font-bold text-surface-900 dark:text-white font-outfit">
                         {request.createdAt?.toDate
                           ? format(request.createdAt.toDate(), 'MMMM d, yyyy', {
-                              locale: locale === 'he' ? he : enUS,
+                              locale: getDateLocale(locale),
                             })
                           : t('common.recently')}
                       </p>
@@ -930,11 +930,11 @@ export default function RequestDetailClient() {
                     </div>
                     <div className="text-end ms-4">
                       <p className="font-bold text-surface-900 dark:text-white text-sm">
-                        {formatCurrency(item.unitPrice * item.quantity, request.currency || 'USD')}
+                        {formatCurrency(item.unitPrice * item.quantity, request.currency || t('portal.common.defaultCurrency'))}
                       </p>
                       <p className="text-xs text-surface-500 dark:text-surface-400">
                         {item.quantity} ×{' '}
-                        {formatCurrency(item.unitPrice, request.currency || 'USD')}
+                        {formatCurrency(item.unitPrice, request.currency || t('portal.common.defaultCurrency'))}
                       </p>
                     </div>
                   </div>
@@ -944,7 +944,7 @@ export default function RequestDetailClient() {
                     {t('requests.detail.total')}
                   </span>
                   <span className="text-xl font-black text-surface-900 dark:text-white font-outfit">
-                    {formatCurrency(request.totalAmount || 0, request.currency || 'USD')}
+                    {formatCurrency(request.totalAmount || 0, request.currency || t('portal.common.defaultCurrency'))}
                   </span>
                 </div>
 
@@ -1012,7 +1012,7 @@ export default function RequestDetailClient() {
                         orgId: request.orgId,
                         title: request.title,
                         totalAmount: request.totalAmount || 0,
-                        currency: request.currency || 'USD',
+                        currency: request.currency || t('portal.common.defaultCurrency'),
                         lineItems: request.lineItems,
                         status: 'ACCEPTED',
                         createdBy: request.createdBy,
@@ -1126,7 +1126,7 @@ export default function RequestDetailClient() {
               <div className="w-12 h-12 rounded-2xl bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 flex items-center justify-center text-blue-600 shadow-sm overflow-hidden">
                 {request.assignedTo ? (
                   <div className="w-full h-full flex items-center justify-center bg-blue-50 dark:bg-blue-900/30 text-blue-600 font-bold text-lg">
-                    {request.assignedToName?.charAt(0) || 'S'}
+                    {request.assignedToName?.charAt(0) || t('portal.common.defaultInitial')}
                   </div>
                 ) : (
                   <UserIcon size={20} />

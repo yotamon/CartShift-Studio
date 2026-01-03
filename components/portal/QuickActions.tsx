@@ -56,7 +56,7 @@ export function QuickActions() {
             </h2>
           </div>
           <p className="text-sm text-surface-500 dark:text-surface-400">
-            {t('portal.quickActions.subtitle' as any) || 'Common tasks for you'}
+            {t('portal.quickActions.subtitle')}
           </p>
         </div>
       </div>

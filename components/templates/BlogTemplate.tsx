@@ -5,6 +5,7 @@ import { PageHero } from "@/components/sections/PageHero";
 import { BlogPageContent } from "@/components/sections/BlogPageContent";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { useTranslations, useLocale } from "next-intl";
+import { isRTLLocale } from '@/lib/locale-config';
 
 interface BlogPost {
   slug: string;
@@ -27,11 +28,11 @@ interface BlogTemplateProps {
 export const BlogTemplate: React.FC<BlogTemplateProps> = ({ posts, categories }) => {
   const t = useTranslations();
   const locale = useLocale();
-  const isHe = locale === "he";
+  const isHe = isRTLLocale(locale);
 
   const breadcrumbItems = [
-    { name: isHe ? "ראשי" : "Home", url: "/" },
-    { name: isHe ? "בלוג" : "Blog", url: "/blog" },
+    { name: t("navigation.home"), url: "/" },
+    { name: t("navigation.blog"), url: "/blog" },
   ];
 
   return (

@@ -1,7 +1,7 @@
 # Portal Framer Motion Implementation Analysis
 
-**Analysis Date:** January 3, 2026  
-**Context:** Client Portal Application  
+**Analysis Date:** January 3, 2026
+**Context:** Client Portal Application
 **Components Analyzed:** 70+ portal-specific components
 
 ---
@@ -40,6 +40,7 @@ Your portal implementation demonstrates **excellent animation practices** with a
 ```
 
 **Strengths:**
+
 - ✅ Perfect backdrop with exit animations
 - ✅ Spring physics for natural feel
 - ✅ Proper keyboard navigation support
@@ -68,6 +69,7 @@ Your portal implementation demonstrates **excellent animation practices** with a
 ```
 
 **Strengths:**
+
 - ✅ Smooth progress bar animations
 - ✅ RTL-aware stagger (respects Hebrew layout)
 - ✅ Proper connector lines between items
@@ -79,17 +81,20 @@ Your portal implementation demonstrates **excellent animation practices** with a
 **ActivityTimeline.tsx** - Perfect stagger implementation:
 
 ```tsx
-{visibleActivities.map((activity, index) => (
-  <motion.div
-    key={activity.id}
-    initial={{ opacity: 0, x: isHe ? 20 : -20 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ duration: 0.3, delay: index * 0.05 }}
-  />
-))}
+{
+  visibleActivities.map((activity, index) => (
+    <motion.div
+      key={activity.id}
+      initial={{ opacity: 0, x: isHe ? 20 : -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.05 }}
+    />
+  ));
+}
 ```
 
 **Strengths:**
+
 - ✅ Fast stagger (0.05s delay)
 - ✅ RTL support
 - ✅ Connector lines between items
@@ -123,6 +128,7 @@ You're using animations to communicate state changes:
 ```
 
 **Strengths:**
+
 - ✅ Proper mobile detection
 - ✅ Sidebar collapse animations
 - ✅ RTL slide direction
@@ -131,6 +137,7 @@ You're using animations to communicate state changes:
 ### 6. **Notification System** ✅
 
 Portal notifications have proper entry/exit animations:
+
 - Badge updates
 - Dropdown positioning
 - Unread count animations
@@ -145,14 +152,18 @@ Portal notifications have proper entry/exit animations:
 **Problem:** Your portal uses skeletons (CardSkeleton, DashboardSkeleton, etc.) but they don't animate when real content loads.
 
 **Current Pattern:**
+
 ```tsx
-{loading ? <Skeleton /> : <Content />}
+{
+  loading ? <Skeleton /> : <Content />;
+}
 // Instant swap, no transition
 ```
 
 **Better Pattern:**
+
 ```tsx
-import { skeletonToContent } from "@/lib/animation-variants";
+import { skeletonToContent } from '@/lib/animation-variants';
 
 <AnimatePresence mode="wait">
   {loading ? (
@@ -160,27 +171,23 @@ import { skeletonToContent } from "@/lib/animation-variants";
       <Skeleton />
     </motion.div>
   ) : (
-    <motion.div 
-      key="content" 
-      variants={skeletonToContent}
-      initial="hidden"
-      animate="visible"
-    >
+    <motion.div key="content" variants={skeletonToContent} initial="hidden" animate="visible">
       <Content />
     </motion.div>
   )}
-</AnimatePresence>
+</AnimatePresence>;
 ```
 
 **Add to animation-variants.ts:**
+
 ```tsx
 export const skeletonToContent: Variants = {
   hidden: { opacity: 0, y: 10 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
-    transition: { duration: 0.3, ease: "easeOut" }
-  }
+    transition: { duration: 0.3, ease: 'easeOut' },
+  },
 };
 ```
 
@@ -193,6 +200,7 @@ export const skeletonToContent: Variants = {
 **Observation:** You have `DroppableColumn.tsx` and `DraggableCard.tsx` for workboard/kanban, but I don't see framer-motion drag implementation.
 
 **Current (likely using @dnd-kit):**
+
 - No animation during drag
 - No reorder animations
 - No drop feedback
@@ -201,12 +209,12 @@ export const skeletonToContent: Variants = {
 
 ```tsx
 // components/portal/workboard/DraggableCard.tsx
-import { motion, Reorder } from "@/lib/motion";
+import { motion, Reorder } from '@/lib/motion';
 
 <Reorder.Group values={cards} onReorder={setCards}>
   {cards.map(card => (
-    <Reorder.Item 
-      key={card.id} 
+    <Reorder.Item
+      key={card.id}
       value={card}
       layout
       initial={{ opacity: 0, scale: 0.8 }}
@@ -217,10 +225,11 @@ import { motion, Reorder } from "@/lib/motion";
       <Card {...card} />
     </Reorder.Item>
   ))}
-</Reorder.Group>
+</Reorder.Group>;
 ```
 
 **Benefits:**
+
 - Smooth reordering with FLIP
 - Visual feedback during drag
 - Layout shift animations
@@ -245,13 +254,13 @@ import { motion, Reorder } from "@/lib/motion";
 // Better - add shake/attention effect
 <motion.div
   initial={{ opacity: 0, y: -10 }}
-  animate={{ 
-    opacity: 1, 
+  animate={{
+    opacity: 1,
     y: 0,
     x: [0, -5, 5, -5, 5, 0] // shake effect
   }}
   exit={{ opacity: 0, y: -10 }}
-  transition={{ 
+  transition={{
     y: { duration: 0.3 },
     x: { duration: 0.4, delay: 0.1 }
   }}
@@ -259,6 +268,7 @@ import { motion, Reorder } from "@/lib/motion";
 ```
 
 **Benefits:**
+
 - Draws attention to errors
 - Better error visibility
 - Professional feel
@@ -290,6 +300,7 @@ import { motion, Reorder } from "@/lib/motion";
 ```
 
 **Benefits:**
+
 - Data visualization feels alive
 - Professional polish
 - Helps users understand data flow
@@ -305,14 +316,15 @@ import { motion, Reorder } from "@/lib/motion";
 exit={{ opacity: 0 }}
 
 // Better - exit in direction it came from
-exit={{ 
-  opacity: 0, 
+exit={{
+  opacity: 0,
   x: position.includes('right') ? 100 : -100,
   scale: 0.8
 }}
 ```
 
 **Benefits:**
+
 - More natural exit
 - Clearer spatial relationship
 - Better UX
@@ -337,14 +349,15 @@ const handleFavorite = async () => {
 };
 
 <motion.div
-  animate={{ 
+  animate={{
     scale: isOptimistic || isFavorite ? 1 : 0.95,
-    color: isOptimistic || isFavorite ? '#F59E0B' : '#6B7280'
+    color: isOptimistic || isFavorite ? '#F59E0B' : '#6B7280',
   }}
-/>
+/>;
 ```
 
 **Benefits:**
+
 - Instant feedback
 - Feels faster
 - Better perceived performance
@@ -353,19 +366,19 @@ const handleFavorite = async () => {
 
 ## 📊 Portal vs Marketing Site Comparison
 
-| Aspect | Marketing Site | Portal | Winner |
-|--------|---------------|---------|---------|
-| **AnimatePresence** | 22 components | 18+ components | Tie ✅ |
-| **Stagger Animations** | Manual delays | Manual delays | Tie ✅ |
-| **Loading States** | Basic | Skeletons (no transition) | Marketing |
-| **Modal/Overlay** | Standard | Production-quality | **Portal** 🏆 |
-| **Timeline Animations** | Simple | Professional | **Portal** 🏆 |
-| **Drag-and-Drop** | None | Partial (no FM) | Neither ❌ |
-| **Form Feedback** | Basic | Basic | Tie |
-| **RTL Support** | Good | **Excellent** | **Portal** 🏆 |
-| **Performance** | Optimized | Optimized | Tie ✅ |
+| Aspect                  | Marketing Site | Portal                    | Winner        |
+| ----------------------- | -------------- | ------------------------- | ------------- |
+| **AnimatePresence**     | 22 components  | 18+ components            | Tie ✅        |
+| **Stagger Animations**  | Manual delays  | Manual delays             | Tie ✅        |
+| **Loading States**      | Basic          | Skeletons (no transition) | Marketing     |
+| **Modal/Overlay**       | Standard       | Production-quality        | **Portal** 🏆 |
+| **Timeline Animations** | Simple         | Professional              | **Portal** 🏆 |
+| **Drag-and-Drop**       | None           | Partial (no FM)           | Neither ❌    |
+| **Form Feedback**       | Basic          | Basic                     | Tie           |
+| **RTL Support**         | Good           | **Excellent**             | **Portal** 🏆 |
+| **Performance**         | Optimized      | Optimized                 | Tie ✅        |
 
-**Portal Wins:** Timeline animations, modal quality, RTL support  
+**Portal Wins:** Timeline animations, modal quality, RTL support
 **Portal Needs:** Skeleton transitions, drag animations, chart animations
 
 ---
@@ -378,71 +391,71 @@ Add these to `lib/animation-variants.ts`:
 // Toast/Notification animations
 export const toastSlideIn: Variants = {
   hidden: { opacity: 0, x: 100, scale: 0.9 },
-  visible: { 
-    opacity: 1, 
-    x: 0, 
+  visible: {
+    opacity: 1,
+    x: 0,
     scale: 1,
-    transition: { duration: 0.3, ease: "easeOut" }
+    transition: { duration: 0.3, ease: 'easeOut' },
   },
-  exit: { 
-    opacity: 0, 
-    x: 100, 
+  exit: {
+    opacity: 0,
+    x: 100,
     scale: 0.8,
-    transition: { duration: 0.2 }
-  }
+    transition: { duration: 0.2 },
+  },
 };
 
 // Skeleton to content
 export const skeletonToContent: Variants = {
   hidden: { opacity: 0, y: 10 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
-    transition: { duration: 0.3, ease: "easeOut" }
-  }
+    transition: { duration: 0.3, ease: 'easeOut' },
+  },
 };
 
 // Sidebar animations
 export const sidebarSlide: Variants = {
   closed: { x: -300 },
-  open: { 
+  open: {
     x: 0,
-    transition: { type: "spring", damping: 25, stiffness: 200 }
-  }
+    transition: { type: 'spring', damping: 25, stiffness: 200 },
+  },
 };
 
 // Error shake
 export const errorShake: Variants = {
   hidden: { opacity: 0, y: -10 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
     x: [0, -5, 5, -5, 5, 0],
     transition: {
       y: { duration: 0.3 },
-      x: { duration: 0.4, delay: 0.1 }
-    }
-  }
+      x: { duration: 0.4, delay: 0.1 },
+    },
+  },
 };
 
 // Progress bar
 export const progressBar: Variants = {
   hidden: { width: 0 },
-  visible: (width: number) => ({ 
+  visible: (width: number) => ({
     width: `${width}%`,
-    transition: { duration: 0.8, ease: "easeOut" }
-  })
+    transition: { duration: 0.8, ease: 'easeOut' },
+  }),
 };
 
 // Kanban card
 export const kanbanCard: Variants = {
   idle: { scale: 1, rotate: 0 },
-  dragging: { 
-    scale: 1.05, 
+  dragging: {
+    scale: 1.05,
     rotate: 3,
     cursor: 'grabbing',
-    boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
-  }
+    boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+  },
 };
 ```
 
@@ -451,6 +464,7 @@ export const kanbanCard: Variants = {
 ## 📝 Portal Animation Checklist
 
 ### Currently Excellent ✅
+
 - [x] Modal/overlay animations (OnboardingTour)
 - [x] Timeline animations (Milestones, Activity)
 - [x] Staggered lists
@@ -461,6 +475,7 @@ export const kanbanCard: Variants = {
 - [x] Keyboard navigation
 
 ### Needs Improvement 🔧
+
 - [ ] Skeleton→Content transitions
 - [ ] Drag-and-drop animations (Workboard)
 - [ ] Form error shake effects
@@ -471,6 +486,7 @@ export const kanbanCard: Variants = {
 - [ ] Empty state animations
 
 ### Performance ⚡
+
 - ✅ No continuous animations in lists
 - ✅ Proper AnimatePresence usage
 - ✅ `once: true` for scroll triggers
@@ -488,14 +504,18 @@ export const kanbanCard: Variants = {
 All portal-specific Framer Motion improvements have been successfully implemented:
 
 ### Priority 1: Skeleton Transitions ✅ **COMPLETED**
+
 **Status:** All skeleton-to-content transitions implemented
+
 - ✅ Added `skeletonToContent` variant to `animation-variants.ts`
 - ✅ Updated `RequestsClient.tsx` with `AnimatePresence` and skeleton transitions
 - ✅ Updated `DashboardClient.tsx` with smooth loading→content transitions
 - **Impact:** Significantly improved perceived performance
 
 ### Priority 2: Animation Variants ✅ **COMPLETED**
+
 **Status:** All portal-specific variants added and implemented
+
 - ✅ `toastSlideIn` - Enhanced toast entry/exit with spring physics
 - ✅ `errorShake` - Attention-grabbing shake animation for form errors
 - ✅ `skeletonToContent` - Smooth skeleton→real content transitions
@@ -506,7 +526,9 @@ All portal-specific Framer Motion improvements have been successfully implemente
 - ✅ `kanbanCard` - Drag animations (ready for future use)
 
 ### Priority 3: Component Updates ✅ **COMPLETED**
+
 **Status:** All key portal components updated
+
 - ✅ **FormError.tsx** - Now uses `errorShake` variant with attention-grabbing effect
 - ✅ **Toast.tsx** - Updated to use `toastSlideIn` with proper exit direction
 - ✅ **ClientAnalytics.tsx** - Added staggered card animations + animated number counters
@@ -516,7 +538,9 @@ All portal-specific Framer Motion improvements have been successfully implemente
 - ✅ **DashboardClient.tsx** - Smooth content transitions
 
 ### New Feature: AnimatedNumber Component ✅ **CREATED**
+
 **File:** `components/portal/ui/AnimatedNumber.tsx`
+
 - GPU-accelerated number animations using `useSpring`
 - Smooth counting animations for analytics cards
 - Configurable duration
@@ -527,6 +551,7 @@ All portal-specific Framer Motion improvements have been successfully implemente
 ## 📊 Implementation Impact
 
 ### Before Implementation:
+
 - ❌ Instant skeleton→content swaps (jarring)
 - ❌ Basic fade-only error messages
 - ❌ Toast exits with no directional feedback
@@ -535,6 +560,7 @@ All portal-specific Framer Motion improvements have been successfully implemente
 - ❌ No centralized portal-specific variants
 
 ### After Implementation:
+
 - ✅ Smooth skeleton→content transitions
 - ✅ Error shake animations for better visibility
 - ✅ Directional toast exits (slides out naturally)
@@ -548,36 +574,38 @@ All portal-specific Framer Motion improvements have been successfully implemente
 ## 🎨 Portal Animation System
 
 ### Centralized Variants (`lib/animation-variants.ts`)
+
 All portal-specific animations are now centralized:
 
 ```tsx
 // Toast animations
-toastSlideIn
+toastSlideIn;
 
-// Loading transitions  
-skeletonToContent
+// Loading transitions
+skeletonToContent;
 
 // Error feedback
-errorShake
+errorShake;
 
 // Timeline animations
-timelineItem
-timelineItemRTL
+timelineItem;
+timelineItemRTL;
 
 // Progress indicators
-progressBar
+progressBar;
 
 // Analytics
-analyticsCard
+analyticsCard;
 
 // Sidebar (ready for implementation)
-sidebarSlide
+sidebarSlide;
 
 // Kanban (ready for implementation)
-kanbanCard
+kanbanCard;
 ```
 
 ### Component Architecture
+
 - **FormError** - Attention-grabbing shake on entry
 - **Toast** - Natural slide-in/out with spring physics
 - **Analytics** - Staggered reveals + animated counters
@@ -609,14 +637,14 @@ kanbanCard
 
 ## 🎓 Updated Portal Grade
 
-| Category | Before | After | Improvement |
-|----------|--------|-------|-------------|
-| **Skeleton Transitions** | 60/100 | **95/100** | +35 |
-| **Error Feedback** | 70/100 | **90/100** | +20 |
-| **Toast Animations** | 80/100 | **95/100** | +15 |
-| **Analytics Animations** | 75/100 | **95/100** | +20 |
-| **Timeline Consistency** | 85/100 | **98/100** | +13 |
-| **Code Organization** | 80/100 | **98/100** | +18 |
+| Category                 | Before | After      | Improvement |
+| ------------------------ | ------ | ---------- | ----------- |
+| **Skeleton Transitions** | 60/100 | **95/100** | +35         |
+| **Error Feedback**       | 70/100 | **90/100** | +20         |
+| **Toast Animations**     | 80/100 | **95/100** | +15         |
+| **Analytics Animations** | 75/100 | **95/100** | +20         |
+| **Timeline Consistency** | 85/100 | **98/100** | +13         |
+| **Code Organization**    | 80/100 | **98/100** | +18         |
 
 **Overall Portal Grade: A (96/100)** ⬆️ from A- (92/100)
 
@@ -625,11 +653,13 @@ kanbanCard
 ## 💡 What's Next (Future Enhancements)
 
 ### Ready-to-Implement Variants:
+
 1. **`sidebarSlide`** - For mobile menu animations
 2. **`kanbanCard`** - For drag-and-drop workboard
 3. **Optimistic UI** - For instant user feedback on actions
 
 ### Potential Additions:
+
 - Chart/graph entry animations
 - Empty state transitions
 - File upload progress animations
@@ -640,6 +670,7 @@ kanbanCard
 ## ✨ Final Assessment
 
 Your portal now has **production-grade animations** that:
+
 - ✅ **Communicate state changes** clearly and elegantly
 - ✅ **Feel fast** with smooth skeleton→content transitions
 - ✅ **Guide attention** with error shake effects
@@ -669,16 +700,16 @@ Your portal now has **production-grade animations** that:
 
 ## 🎓 Portal Grade Breakdown
 
-| Category | Score | Notes |
-|----------|-------|-------|
-| **Modal/Overlay Quality** | 98/100 | Production-quality onboarding |
-| **Timeline Animations** | 95/100 | Best-in-class milestones/activity |
-| **Stagger/Lists** | 90/100 | Excellent, could use variants |
-| **State Communication** | 85/100 | Good, needs skeleton transitions |
-| **Drag Interactions** | 60/100 | Missing framer-motion integration |
-| **Form Feedback** | 70/100 | Basic, could use shake effects |
-| **Performance** | 95/100 | Well optimized |
-| **RTL Support** | 98/100 | Outstanding |
+| Category                  | Score  | Notes                             |
+| ------------------------- | ------ | --------------------------------- |
+| **Modal/Overlay Quality** | 98/100 | Production-quality onboarding     |
+| **Timeline Animations**   | 95/100 | Best-in-class milestones/activity |
+| **Stagger/Lists**         | 90/100 | Excellent, could use variants     |
+| **State Communication**   | 85/100 | Good, needs skeleton transitions  |
+| **Drag Interactions**     | 60/100 | Missing framer-motion integration |
+| **Form Feedback**         | 70/100 | Basic, could use shake effects    |
+| **Performance**           | 95/100 | Well optimized                    |
+| **RTL Support**           | 98/100 | Outstanding                       |
 
 **Overall Portal Grade: A- (92/100)**
 
@@ -695,6 +726,7 @@ Your portal animation implementation is **significantly better** than most produ
 - Accessibility
 
 The main opportunities are:
+
 1. **Skeleton transitions** - Quick win for perceived performance
 2. **Drag animations** - Major UX upgrade for workboard
 3. **Micro-animations** - Polish for errors, charts, loading states

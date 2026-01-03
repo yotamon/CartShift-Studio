@@ -5,6 +5,7 @@ import { motion } from "@/lib/motion";
 import { SectionHeader } from '@/components/ui/Section';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
+import { getDateLocaleString } from '@/lib/locale-config';
 
 export const BlogTeaser: React.FC = () => {
   const t = useTranslations();
@@ -17,7 +18,7 @@ export const BlogTeaser: React.FC = () => {
   const secondaryPosts = latestPosts.slice(1);
 
   // Calculate approximate read time
-  const getReadTime = () => (locale === 'he' ? '5 דקות קריאה' : '5 min read');
+  const getReadTime = () => t('blogTeaser.readTime');
 
   return (
     <section className="py-20 md:py-32 px-4 sm:px-6 lg:px-8 relative bg-surface-50 dark:bg-surface-900 overflow-hidden">
@@ -50,7 +51,7 @@ export const BlogTeaser: React.FC = () => {
                 transition={{ delay: 0.3 }}
                 className="absolute top-6 end-6 px-3 py-1.5 bg-accent-500 text-white text-xs font-bold uppercase rounded-full shadow-lg"
               >
-                {locale === 'he' ? 'חדש' : 'New'}
+                {t('blogTeaser.new')}
               </motion.span>
 
               {/* Decorative accent line */}
@@ -61,7 +62,7 @@ export const BlogTeaser: React.FC = () => {
                   {/* Category tag */}
                   <div className="inline-flex items-center gap-2 mb-5">
                     <span className="px-4 py-1.5 bg-primary-500/10 dark:bg-primary-500/20 text-primary-600 dark:text-primary-400 text-sm font-semibold rounded-full">
-                      {locale === 'he' ? 'מאמר מומלץ' : 'Featured'}
+                      {t('blogTeaser.featured')}
                     </span>
                     <span className="text-xs text-surface-500 dark:text-surface-400">
                       {getReadTime()}
@@ -79,7 +80,7 @@ export const BlogTeaser: React.FC = () => {
                   <div className="flex items-center gap-4">
                     <span className="text-sm text-surface-500 dark:text-surface-400">
                       {new Date(featuredPost.date).toLocaleDateString(
-                        locale === 'he' ? 'he-IL' : 'en-US',
+                        getDateLocaleString(locale),
                         {
                           year: 'numeric',
                           month: 'long',
@@ -126,7 +127,7 @@ export const BlogTeaser: React.FC = () => {
                     <div className="flex items-center gap-3 mb-4">
                       <span className="text-xs text-surface-500 dark:text-surface-400 uppercase tracking-wider">
                         {new Date(post.date).toLocaleDateString(
-                          locale === 'he' ? 'he-IL' : 'en-US'
+                          getDateLocaleString(locale)
                         )}
                       </span>
                       <span className="w-1 h-1 rounded-full bg-surface-300 dark:bg-surface-600"></span>

@@ -112,13 +112,13 @@ export default function CreatePricingForm() {
         title: z
           .string()
           .min(3, 'Title must be at least 3 characters')
-          .max(200, 'Title is too long'),
+          .max(200, t('portal.pricing.form.errors.titleTooLong')),
         description: z.string().optional(),
         lineItems: z
           .array(
             z.object({
-              description: z.string().min(1, 'Description required'),
-              quantity: z.number().min(1, 'Quantity must be at least 1'),
+              description: z.string().min(1, t('portal.common.descriptionRequired')),
+              quantity: z.number().min(1, t('portal.pricing.form.errors.quantityMustBeAtLeast1')),
               unitPrice: z.number().min(0, 'Price must be positive'),
               notes: z.string().optional(),
             })
@@ -174,7 +174,7 @@ export default function CreatePricingForm() {
 
   const onSubmit = async (data: PricingFormData, shouldSend: boolean) => {
     if (!userData?.id || !orgId || typeof orgId !== 'string') {
-      setErrorMessage('Authentication required');
+      setErrorMessage(t('portal.common.authRequired'));
       setSubmitStatus('error');
       return;
     }
@@ -193,7 +193,7 @@ export default function CreatePricingForm() {
         notes: item.notes,
       }));
 
-      const request = await createPricingRequest(orgId, userData.id, userData.name || 'Unknown', {
+      const request = await createPricingRequest(orgId, userData.id, userData.name || t('portal.common.unknown'), {
         title: data.title,
         description: data.description,
         lineItems,
@@ -309,7 +309,7 @@ export default function CreatePricingForm() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit">
-                  {t('portal.pricing.form.selectRequests' as never) || 'Select Requests'}
+                  {t('portal.pricing.form.selectRequests')}
                 </h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
                   {t('portal.pricing.form.selectRequestsDescription' as never) ||
@@ -319,7 +319,7 @@ export default function CreatePricingForm() {
               {selectedRequestIds.length > 0 && (
                 <PortalBadge variant="blue">
                   {selectedRequestIds.length}{' '}
-                  {t('portal.pricing.form.selected' as never) || 'selected'}
+                  {t('portal.pricing.form.selected')}
                 </PortalBadge>
               )}
             </div>
@@ -332,7 +332,7 @@ export default function CreatePricingForm() {
               <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                 <FileText className="w-10 h-10 mx-auto mb-3 opacity-50" />
                 <p className="font-medium">
-                  {t('portal.pricing.form.noRequestsAvailable' as never) || 'No requests available'}
+                  {t('portal.pricing.form.noRequestsAvailable')}
                 </p>
                 <p className="text-sm mt-1">
                   {t('portal.pricing.form.allRequestsInOffers' as never) ||
@@ -478,7 +478,7 @@ export default function CreatePricingForm() {
                   <AlertCircle size={14} />
                   {typeof errors.lineItems.message === 'string'
                     ? errors.lineItems.message
-                    : 'Please check line items'}
+                    : t('portal.pricing.form.errors.checkLineItems')}
                 </p>
               )}
             </div>
@@ -550,7 +550,7 @@ export default function CreatePricingForm() {
                 <input
                   {...register('clientName')}
                   type="text"
-                  placeholder="John Doe"
+                  placeholder={t('portal.common.namePlaceholder')}
                   className="portal-input w-full"
                 />
               </div>
@@ -577,7 +577,7 @@ export default function CreatePricingForm() {
             <textarea
               {...register('agencyNotes')}
               rows={4}
-              placeholder="Internal notes (not visible to client)..."
+              placeholder={t('portal.pricing.agencyNotesPlaceholder')}
               className="portal-input w-full resize-none text-sm"
             />
           </PortalCard>

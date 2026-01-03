@@ -94,7 +94,7 @@ export const CreateRequestForm = ({ orgId }: CreateRequestFormProps) => {
     setError(null);
 
     try {
-      const userName = userData?.name || user.displayName || user.email?.split('@')[0] || 'Unknown';
+      const userName = userData?.name || user.displayName || user.email?.split('@')[0] || t('portal.common.unknown');
 
       // 1. Create the request
       const request = await createRequest(orgId, user.uid, userName, {
@@ -325,7 +325,7 @@ export const CreateRequestForm = ({ orgId }: CreateRequestFormProps) => {
                 <div className="h-full flex flex-col items-center justify-center opacity-30 text-center grayscale py-8">
                   <File size={24} className="mb-2" />
                   <p className="text-[10px] font-black uppercase tracking-widest">
-                    {t('portal.requests.detail.noAssets' as never) || 'No files selected'}
+                    {t('portal.requests.detail.noAssets')}
                   </p>
                 </div>
               )}

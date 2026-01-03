@@ -11,20 +11,8 @@ interface DraggableCardProps {
   disabled?: boolean;
 }
 
-export function DraggableCard({
-  id,
-  children,
-  className,
-  disabled = false
-}: DraggableCardProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
+export function DraggableCard({ id, children, className, disabled = false }: DraggableCardProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id,
     disabled,
   });

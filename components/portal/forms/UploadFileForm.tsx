@@ -44,7 +44,7 @@ export const UploadFileForm = ({ orgId, requestId, onSuccess, onCancel }: Upload
     setUploadProgress(0);
 
     try {
-      const userName = userData?.name || user.displayName || 'Unknown User';
+      const userName = userData?.name || user.displayName || t('portal.common.unknownUser');
 
       // Note: Progress tracking simulation since uploadFile doesn't support callbacks
       const progressInterval = setInterval(() => {

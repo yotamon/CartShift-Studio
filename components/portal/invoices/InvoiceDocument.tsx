@@ -166,7 +166,7 @@ export const InvoiceDocument: React.FC<InvoiceDocumentProps> = ({
   invoiceId = `INV-${request.id.substring(0, 8).toUpperCase()}`,
   date = new Date()
 }) => {
-  const currency = request.currency || 'USD';
+  const currency = request.currency || t('portal.common.defaultCurrency');
   const lineItems = request.lineItems || [
     {
       id: '1',

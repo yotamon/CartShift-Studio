@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from '@/lib/motion';
 import { useTranslations, useLocale } from 'next-intl';
 import { format } from 'date-fns';
-import { enUS, he } from 'date-fns/locale';
+import { getDateLocale } from '@/lib/locale-config';
 import {
   Calendar,
   Clock,
@@ -71,7 +71,7 @@ export default function AgencyConsultationsClient() {
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
 
-  const dateLocale = locale === 'he' ? he : enUS;
+  const dateLocale = getDateLocale(locale);
 
   useEffect(() => {
     if (!userData?.isAgency) return;
@@ -131,7 +131,7 @@ export default function AgencyConsultationsClient() {
       consultation.id,
       consultation.orgId,
       userData.id,
-      userData.name || 'Agency'
+      userData.name || t('portal.common.agencyFallback')
     );
   };
 
@@ -141,7 +141,7 @@ export default function AgencyConsultationsClient() {
       consultation.id,
       consultation.orgId,
       userData.id,
-      userData.name || 'Agency'
+      userData.name || t('portal.common.agencyFallback')
     );
   };
 
@@ -150,16 +150,16 @@ export default function AgencyConsultationsClient() {
   ).length;
 
   return (
-    <div className="p-6 md:p-10 max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-black text-surface-900 dark:text-white font-outfit tracking-tight">
-            {t('portal.consultations.title' as any) || 'Consultations'}
+            {t('portal.consultations.title')}
           </h1>
           <p className="text-surface-500 dark:text-surface-400 mt-1">
             {t('portal.consultations.subtitle' as any) ||
-              'Manage client meetings and consultations'}
+              t('portal.consultations.subtitle')}
           </p>
         </div>
         <PortalButton
@@ -168,7 +168,7 @@ export default function AgencyConsultationsClient() {
           onClick={() => setShowScheduleModal(true)}
         >
           <Plus size={18} />
-          {t('portal.consultations.schedule' as any) || 'Schedule Consultation'}
+          {t('portal.consultations.schedule')}
         </PortalButton>
       </div>
 
@@ -206,7 +206,7 @@ export default function AgencyConsultationsClient() {
                     ))}
                     {organizations.length === 0 && (
                       <p className="text-center text-surface-500 py-4">
-                        No client organizations found
+                        {t('portal.consultations.empty.noClientOrganizations')}
                       </p>
                     )}
                   </div>
@@ -214,7 +214,7 @@ export default function AgencyConsultationsClient() {
                     onClick={() => setShowScheduleModal(false)}
                     className="mt-4 w-full py-2 text-surface-500 hover:text-surface-700 text-sm font-medium"
                   >
-                    Cancel
+                    {t('portal.consultations.cancel')}
                   </button>
                 </motion.div>
               </motion.div>
@@ -247,7 +247,7 @@ export default function AgencyConsultationsClient() {
                 {upcomingCount}
               </p>
               <p className="text-xs text-surface-500 font-medium">
-                {t('portal.consultations.stats.upcoming' as any) || 'Upcoming'}
+                {t('portal.consultations.stats.upcoming')}
               </p>
             </div>
           </div>
@@ -262,7 +262,7 @@ export default function AgencyConsultationsClient() {
                 {consultations.filter(c => c.status === CONSULTATION_STATUS.COMPLETED).length}
               </p>
               <p className="text-xs text-surface-500 font-medium">
-                {t('portal.consultations.stats.completed' as any) || 'Completed'}
+                {t('portal.consultations.stats.completed')}
               </p>
             </div>
           </div>
@@ -277,7 +277,7 @@ export default function AgencyConsultationsClient() {
                 {consultations.filter(c => c.status === CONSULTATION_STATUS.CANCELED).length}
               </p>
               <p className="text-xs text-surface-500 font-medium">
-                {t('portal.consultations.stats.canceled' as any) || 'Canceled'}
+                {t('portal.consultations.stats.canceled')}
               </p>
             </div>
           </div>
@@ -292,7 +292,7 @@ export default function AgencyConsultationsClient() {
                 {consultations.length}
               </p>
               <p className="text-xs text-surface-500 font-medium">
-                {t('portal.consultations.stats.total' as any) || 'Total'}
+                {t('portal.consultations.stats.total')}
               </p>
             </div>
           </div>
@@ -309,7 +309,7 @@ export default function AgencyConsultationsClient() {
           <input
             type="text"
             placeholder={
-              t('portal.consultations.searchPlaceholder' as any) || 'Search consultations...'
+              t('portal.consultations.searchPlaceholder')
             }
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
@@ -330,9 +330,7 @@ export default function AgencyConsultationsClient() {
             >
               {status === 'all'
                 ? t('portal.common.all')
-                : CONSULTATION_STATUS_CONFIG[status as ConsultationStatus]?.[
-                    locale === 'he' ? 'labelHe' : 'label'
-                  ] || status}
+                : t(`portal.consultations.status.${status}`)}
             </button>
           ))}
         </div>
@@ -349,7 +347,7 @@ export default function AgencyConsultationsClient() {
             <Calendar className="w-8 h-8 text-surface-400" />
           </div>
           <h3 className="text-lg font-bold text-surface-700 dark:text-surface-300 mb-2">
-            {t('portal.consultations.empty.title' as any) || 'No consultations found'}
+            {t('portal.consultations.empty.title')}
           </h3>
           <p className="text-surface-500 text-sm">
             {t('portal.consultations.empty.description' as any) ||
@@ -395,7 +393,7 @@ export default function AgencyConsultationsClient() {
                           <div className="flex items-center gap-3 mt-1 text-sm text-surface-500">
                             <span className="flex items-center gap-1">
                               <Building2 size={14} />
-                              {orgNames[consultation.orgId] || 'Loading...'}
+                              {orgNames[consultation.orgId] || t('portal.common.loading')}
                             </span>
                             <span className="flex items-center gap-1">
                               <Calendar size={14} />
@@ -407,7 +405,7 @@ export default function AgencyConsultationsClient() {
                             </span>
                             <span className="flex items-center gap-1">
                               <Users size={14} />
-                              {consultation.duration} min
+                              {consultation.duration} {t('portal.consultations.minutes')}
                             </span>
                           </div>
                         </div>
@@ -419,7 +417,7 @@ export default function AgencyConsultationsClient() {
                               statusConfig.color
                             )}
                           >
-                            {locale === 'he' ? statusConfig.labelHe : statusConfig.label}
+                            {t(`portal.consultations.status.${consultation.status}`)}
                           </span>
                           {consultation.externalCalendarLink && (
                             <a
@@ -443,7 +441,7 @@ export default function AgencyConsultationsClient() {
                               <button
                                 onClick={() => handleCancel(consultation)}
                                 className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
-                                title="Cancel"
+                                title={t('portal.consultations.cancel')}
                               >
                                 <XCircle size={16} className="text-red-600" />
                               </button>

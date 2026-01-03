@@ -43,7 +43,7 @@ export default function GoogleCalendarIntegration({
   onDisconnect,
   onSync,
 }: GoogleCalendarIntegrationProps) {
-  const t = useTranslations('portal.agency.settings.integrations');
+  const t = useTranslations();
   const [connecting, setConnecting] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
   const [syncing, setSyncing] = useState(false);
@@ -92,7 +92,7 @@ export default function GoogleCalendarIntegration({
   };
 
   const handleDisconnect = async () => {
-    if (!confirm(t('googleCalendar.disconnectConfirm') || 'Are you sure you want to disconnect?')) {
+    if (!confirm(t('googleCalendar.disconnectConfirm'))) {
       return;
     }
     setDisconnecting(true);
@@ -153,12 +153,12 @@ export default function GoogleCalendarIntegration({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <h3 className="text-lg font-bold text-surface-900 dark:text-white font-outfit">
-              {t('googleCalendar.title') || 'Google Calendar'}
+              {t('googleCalendar.title')}
             </h3>
             {isConnected && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800">
                 <Check size={10} />
-                {t('connected') || 'Connected'}
+                {t('connected')}
               </span>
             )}
           </div>
@@ -182,7 +182,7 @@ export default function GoogleCalendarIntegration({
               {connection.email && (
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-surface-500 uppercase tracking-wider">
-                    {t('googleCalendar.account') || 'Account'}
+                    {t('googleCalendar.account')}
                   </span>
                   <span className="text-sm font-medium text-surface-700 dark:text-surface-300">
                     {connection.email}
@@ -230,7 +230,7 @@ export default function GoogleCalendarIntegration({
               {connection.lastSynced && (
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-surface-500 uppercase tracking-wider">
-                    {t('googleCalendar.lastSync') || 'Last synced'}
+                    {t('googleCalendar.lastSync')}
                   </span>
                   <span className="text-sm font-medium text-surface-700 dark:text-surface-300">
                     {connection.lastSynced.toLocaleString()}
@@ -240,7 +240,7 @@ export default function GoogleCalendarIntegration({
               {connection.syncedCalendars && connection.syncedCalendars.length > 0 && (
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-surface-500 uppercase tracking-wider">
-                    {t('googleCalendar.calendars') || 'Calendars'}
+                    {t('googleCalendar.calendars')}
                   </span>
                   <span className="text-sm font-medium text-surface-700 dark:text-surface-300">
                     {connection.syncedCalendars.length} synced
@@ -268,15 +268,15 @@ export default function GoogleCalendarIntegration({
               <ul className="space-y-2 text-sm text-surface-600 dark:text-surface-400">
                 <li className="flex items-center gap-2">
                   <Check size={14} className="text-blue-500" />
-                  {t('googleCalendar.feature1') || 'Auto-create calendar events for consultations'}
+                  {t('googleCalendar.feature1')}
                 </li>
                 <li className="flex items-center gap-2">
                   <Check size={14} className="text-blue-500" />
-                  {t('googleCalendar.feature2') || 'Get Google Meet links automatically'}
+                  {t('googleCalendar.feature2')}
                 </li>
                 <li className="flex items-center gap-2">
                   <Check size={14} className="text-blue-500" />
-                  {t('googleCalendar.feature3') || 'View your availability in the portal'}
+                  {t('googleCalendar.feature3')}
                 </li>
               </ul>
             </div>
@@ -298,8 +298,8 @@ export default function GoogleCalendarIntegration({
               >
                 <RefreshCw size={16} className={cn(syncing && "animate-spin")} />
                 {syncing
-                  ? (t('googleCalendar.syncing') || 'Syncing...')
-                  : (t('googleCalendar.syncNow') || 'Sync Now')}
+                  ? t('googleCalendar.syncing')
+                  : t('googleCalendar.syncNow')}
               </PortalButton>
             )}
             <PortalButton
@@ -314,7 +314,7 @@ export default function GoogleCalendarIntegration({
               ) : (
                 <X size={16} />
               )}
-              {t('googleCalendar.disconnect') || 'Disconnect'}
+              {t('googleCalendar.disconnect')}
             </PortalButton>
           </>
         ) : (
@@ -331,8 +331,8 @@ export default function GoogleCalendarIntegration({
               <Calendar size={16} />
             )}
             {connecting
-              ? (t('googleCalendar.connecting') || 'Connecting...')
-              : (t('googleCalendar.connect') || 'Connect Google Calendar')}
+              ? t('googleCalendar.connecting')
+              : t('googleCalendar.connect')}
             {!connecting && <ExternalLink size={12} className="opacity-60" />}
           </PortalButton>
         )}

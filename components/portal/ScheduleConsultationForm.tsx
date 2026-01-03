@@ -126,7 +126,7 @@ export default function ScheduleConsultationForm({
     e.preventDefault();
     if (!userData || !title || !scheduledDate || !scheduledTime) return;
 
-    if (hasConflict && !window.confirm('There is a calendar conflict. Do you want to proceed anyway?')) {
+    if (hasConflict && !window.confirm(t('portal.consultations.calendarConflict'))) {
         return;
     }
 
@@ -161,7 +161,7 @@ export default function ScheduleConsultationForm({
         externalEventId: calendarResult.success ? calendarResult.eventId : undefined,
       };
 
-      await createConsultation(userData.id, userData.name || 'Agency', consultationData);
+      await createConsultation(userData.id, userData.name || t('portal.common.agencyFallback'), consultationData);
 
       setAutoCreated(calendarResult.success);
       setMeetLink(calendarResult.meetLink || null);
@@ -204,7 +204,7 @@ export default function ScheduleConsultationForm({
               </div>
               <div>
                 <h2 className="text-lg font-bold text-surface-900 dark:text-white">
-                  {t('portal.consultations.schedule' as any) || 'Schedule Consultation'}
+                  {t('portal.consultations.schedule')}
                 </h2>
                 {orgName && (
                   <p className="text-sm text-surface-500">{orgName}</p>
@@ -294,7 +294,7 @@ export default function ScheduleConsultationForm({
               {/* Consultation Type */}
               <div>
                 <label className="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-2">
-                  {t('portal.consultations.form.type' as any) || 'Type'}
+                  {t('portal.consultations.form.type')}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   {Object.values(CONSULTATION_TYPE).map((typeOption) => {
@@ -314,7 +314,7 @@ export default function ScheduleConsultationForm({
                       >
                         <Icon className={cn('w-4 h-4', config.color)} />
                         <span className="text-sm font-medium text-surface-700 dark:text-surface-300">
-                          {locale === 'he' ? config.labelHe : config.label}
+                          {t(`portal.consultations.types.${typeOption}`)}
                         </span>
                       </button>
                     );
@@ -325,13 +325,13 @@ export default function ScheduleConsultationForm({
               {/* Title */}
               <div>
                 <label className="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-2">
-                  {t('portal.consultations.form.title' as any) || 'Meeting Title'}
+                  {t('portal.consultations.form.title')}
                 </label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder={t('portal.consultations.form.titlePlaceholder' as any) || 'e.g., Strategy Discussion'}
+                  placeholder={t('portal.consultations.form.titlePlaceholder')}
                   className="portal-input w-full"
                   required
                 />
@@ -343,7 +343,7 @@ export default function ScheduleConsultationForm({
                   <div>
                     <label className="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-2">
                       <Calendar size={14} className="inline me-1" />
-                      {t('portal.consultations.form.date' as any) || 'Date'}
+                      {t('portal.consultations.form.date')}
                     </label>
                     <input
                       type="date"
@@ -357,7 +357,7 @@ export default function ScheduleConsultationForm({
                   <div>
                     <label className="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-2">
                       <Clock size={14} className="inline me-1" />
-                      {t('portal.consultations.form.time' as any) || 'Time'}
+                      {t('portal.consultations.form.time')}
                     </label>
                     <input
                       type="time"
@@ -402,7 +402,7 @@ export default function ScheduleConsultationForm({
               <div>
                 <label className="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-2">
                   <Clock size={14} className="inline me-1" />
-                  {t('portal.consultations.form.duration' as any) || 'Duration'}
+                  {t('portal.consultations.form.duration')}
                 </label>
                 <select
                   value={duration}
@@ -422,12 +422,12 @@ export default function ScheduleConsultationForm({
               <div>
                 <label className="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-2">
                   <FileText size={14} className="inline me-1" />
-                  {t('portal.consultations.form.notes' as any) || 'Agenda / Notes'}
+                  {t('portal.consultations.form.notes')}
                 </label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder={t('portal.consultations.form.notesPlaceholder' as any) || 'What will you discuss?'}
+                  placeholder={t('portal.consultations.form.notesPlaceholder')}
                   rows={3}
                   className="portal-input w-full resize-none"
                 />

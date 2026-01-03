@@ -10,6 +10,7 @@ import { PageHero } from '@/components/sections/PageHero';
 import { Link } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import type { CaseStudy } from '@/lib/case-studies';
+import { isRTLLocale } from '@/lib/locale-config';
 import ReactMarkdown from 'react-markdown';
 
 interface CaseStudyDetailContentProps {
@@ -19,7 +20,7 @@ interface CaseStudyDetailContentProps {
 export const CaseStudyDetailContent: React.FC<CaseStudyDetailContentProps> = ({ caseStudy }) => {
   const t = useTranslations();
   const locale = useLocale();
-  const isHe = locale === 'he';
+  const isHe = isRTLLocale(locale);
 
   // Get translations with type safety workaround
   const workT = t.raw('work' as never) as {

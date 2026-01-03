@@ -4,8 +4,9 @@ import React from 'react';
 import { PageHero } from '@/components/sections/PageHero';
 import { BlogPostContent } from '@/components/sections/BlogPostContent';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { BlogPost } from '@/lib/markdown';
+import { isRTLLocale, getDateLocaleString } from '@/lib/locale-config';
 
 interface BlogPostTemplateProps {
   post: BlogPost;
@@ -24,8 +25,9 @@ interface BlogPostTemplateProps {
 }
 
 export const BlogPostTemplate: React.FC<BlogPostTemplateProps> = ({ post, relatedPosts }) => {
+  const t = useTranslations();
   const locale = useLocale();
-  const isHe = locale === 'he';
+  const isHe = isRTLLocale(locale);
 
   const title = isHe && post.translation?.title ? post.translation.title : post.title;
   const subtitle = isHe && post.translation?.category ? post.translation.category : post.category;
@@ -34,7 +36,7 @@ export const BlogPostTemplate: React.FC<BlogPostTemplateProps> = ({ post, relate
 
   // Format date correctly based on locale
   const formattedDate = new Date(post.date).toLocaleDateString(
-    locale === 'he' ? 'he-IL' : 'en-US'
+    getDateLocaleString(locale)
   );
   const readingTimeText = post.readingTime
     ? isHe
@@ -55,8 +57,8 @@ export const BlogPostTemplate: React.FC<BlogPostTemplateProps> = ({ post, relate
   }));
 
   const breadcrumbItems = [
-    { name: isHe ? 'ראשי' : 'Home', url: '/' },
-    { name: isHe ? 'בלוג' : 'Blog', url: '/blog' },
+    { name: t('navigation.home'), url: '/' },
+    { name: t('navigation.blog'), url: '/blog' },
     { name: title, url: `/blog/${post.slug}` },
   ];
 
@@ -66,7 +68,7 @@ export const BlogPostTemplate: React.FC<BlogPostTemplateProps> = ({ post, relate
         title={title}
         subtitle={subtitle}
         description={finalDescription}
-        badge={isHe ? 'פוסט בבלוג' : 'Blog Post'}
+        badge={t('navigation.blogPost')}
         highlightLastWord={false}
         compact
       />

@@ -23,7 +23,7 @@ import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
 import { getFilesByOrg, formatFileSize, deleteFile } from '@/lib/services/portal-files';
 import { FileAttachment } from '@/lib/types/portal';
 import { format } from 'date-fns';
-import { enUS, he } from 'date-fns/locale';
+import { getDateLocale } from '@/lib/locale-config';
 import { UploadFileForm } from '@/components/portal/forms/UploadFileForm';
 import { useTranslations, useLocale } from 'next-intl';
 import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
@@ -236,14 +236,14 @@ export default function FilesClient() {
                         variant="gray"
                         className="text-[9px] font-black border-slate-200 dark:border-slate-800"
                       >
-                        {file.mimeType.split('/').pop()?.toUpperCase() || 'FILE'}
+                        {file.mimeType.split('/').pop()?.toUpperCase() || t('portal.common.file')}
                       </PortalBadge>
                     </td>
                     <td className="px-6 py-5">
                       <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tight">
                         {file.uploadedAt?.toDate
                           ? format(file.uploadedAt.toDate(), 'MMM d, yyyy', {
-                              locale: locale === 'he' ? he : enUS,
+                              locale: getDateLocale(locale),
                             })
                           : t('portal.files.recentlyAdded')}
                       </span>

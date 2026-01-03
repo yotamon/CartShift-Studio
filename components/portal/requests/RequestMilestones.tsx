@@ -9,6 +9,7 @@ import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { useTranslations } from 'next-intl';
 
 interface RequestMilestonesProps {
   request: Request;
@@ -16,6 +17,7 @@ interface RequestMilestonesProps {
 }
 
 export function RequestMilestones({ request, isAgency }: RequestMilestonesProps) {
+  const t = useTranslations();
   const [isEditing, setIsEditing] = useState(false);
   const [milestones, setMilestones] = useState<Milestone[]>(request.milestones || []);
   const [isSaving, setIsSaving] = useState(false);
@@ -23,7 +25,7 @@ export function RequestMilestones({ request, isAgency }: RequestMilestonesProps)
   const handleAddMilestone = () => {
     const newMilestone: Milestone = {
       id: `ms_${Date.now()}`,
-      title: 'New Milestone',
+      title: t('portal.milestones.newMilestone'),
       status: MILESTONE_STATUS.PENDING as MilestoneStatus,
       order: milestones.length,
       createdAt: Timestamp.now(),
@@ -91,10 +93,10 @@ export function RequestMilestones({ request, isAgency }: RequestMilestonesProps)
       <div className="flex items-center justify-between mb-8">
         <div>
           <h3 className="text-xl font-bold text-surface-900 dark:text-white font-outfit">
-            Project Milestones
+            {t('portal.milestones.title')}
           </h3>
           <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mt-1">
-            Track progress and upcoming phases
+            {t('portal.milestones.subtitle')}
           </p>
         </div>
         {isAgency && !isEditing && (
@@ -104,7 +106,7 @@ export function RequestMilestones({ request, isAgency }: RequestMilestonesProps)
             className="h-9 px-4 font-outfit"
             onClick={() => setIsEditing(true)}
           >
-            Manage Pipeline
+            {t('portal.milestones.managePipeline')}
           </PortalButton>
         )}
       </div>
@@ -114,7 +116,7 @@ export function RequestMilestones({ request, isAgency }: RequestMilestonesProps)
           {/* Progress Bar */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-surface-400">
-              <span>Overall Progress</span>
+              <span>{t('portal.milestones.overallProgress')}</span>
               <span className="text-blue-600">{Math.round(progress)}%</span>
             </div>
             <div className="w-full h-2 bg-surface-100 dark:bg-surface-900 rounded-full overflow-hidden">
@@ -168,18 +170,18 @@ export function RequestMilestones({ request, isAgency }: RequestMilestonesProps)
                         </h4>
                         {isActive && (
                           <span className="text-[9px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-900/30">
-                            Current
+                            {t('portal.milestones.current')}
                           </span>
                         )}
                       </div>
                       <p className="text-xs text-surface-500 font-medium">
-                        {ms.description || 'Deliverables and task description'}
+                        {ms.description || t('portal.milestones.deliverablesDescription')}
                       </p>
                       {ms.dueDate && (
                         <div className="flex items-center gap-1.5 mt-2 text-[10px] font-bold text-surface-400 uppercase tracking-tight">
                           <Calendar size={12} />
-                          Target:{' '}
-                          {ms.dueDate.toDate ? format(ms.dueDate.toDate(), 'MMM d, yyyy') : 'TBD'}
+                          {t('portal.milestones.target')}{' '}
+                          {ms.dueDate.toDate ? format(ms.dueDate.toDate(), 'MMM d, yyyy') : t('portal.milestones.tbd')}
                         </div>
                       )}
                     </div>
@@ -188,7 +190,7 @@ export function RequestMilestones({ request, isAgency }: RequestMilestonesProps)
               })
             ) : (
               <div className="py-8 text-center text-surface-400 italic text-sm">
-                No milestones defined for this project.
+                {t('portal.milestones.noMilestonesForProject')}
               </div>
             )}
           </div>
@@ -207,17 +209,17 @@ export function RequestMilestones({ request, isAgency }: RequestMilestonesProps)
                     className="bg-white dark:bg-surface-950 border border-surface-200 dark:border-surface-800 rounded-xl px-3 py-2 text-sm font-bold font-outfit"
                     value={ms.title}
                     onChange={e => handleUpdateMilestone(ms.id, { title: e.target.value })}
-                    placeholder="Milestone Title"
+                    placeholder={t('portal.milestones.milestoneTitle')}
                   />
                   <select
                     className="bg-white dark:bg-surface-950 border border-surface-200 dark:border-surface-800 rounded-xl px-3 py-2 text-sm font-bold font-outfit"
                     value={ms.status}
                     onChange={e => handleUpdateMilestone(ms.id, { status: e.target.value as any })}
                   >
-                    <option value="pending">Pending</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="blocked">Blocked</option>
+                    <option value="pending">{t('portal.milestones.status.pending')}</option>
+                    <option value="in_progress">{t('portal.milestones.status.inProgress')}</option>
+                    <option value="completed">{t('portal.milestones.status.completed')}</option>
+                    <option value="blocked">{t('portal.milestones.status.blocked')}</option>
                   </select>
                 </div>
                 <button
@@ -234,19 +236,19 @@ export function RequestMilestones({ request, isAgency }: RequestMilestonesProps)
             onClick={handleAddMilestone}
             className="w-full py-4 border-2 border-dashed border-surface-200 dark:border-surface-800 rounded-2xl text-surface-400 hover:text-blue-500 hover:border-blue-500 hover:bg-blue-50/20 transition-all font-outfit font-bold flex items-center justify-center gap-2"
           >
-            <Plus size={18} /> Add New Phase
+            <Plus size={18} /> {t('portal.milestones.addNewPhase')}
           </button>
 
           <div className="flex gap-3 pt-6 border-t border-surface-100 dark:border-surface-800">
             <PortalButton variant="outline" className="flex-1" onClick={() => setIsEditing(false)}>
-              Discard
+              {t('portal.milestones.discard')}
             </PortalButton>
             <PortalButton
               className="flex-1 shadow-lg shadow-blue-500/20"
               onClick={handleSave}
               isLoading={isSaving}
             >
-              Apply Pipeline Updates
+              {t('portal.milestones.applyPipelineUpdates')}
             </PortalButton>
           </div>
         </div>

@@ -18,6 +18,7 @@ import { FileAttachment, Request } from '@/lib/types/portal';
 import { subscribeToRequestFiles, deleteFile, formatFileSize, getFileIcon } from '@/lib/services/portal-files';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { format } from 'date-fns';
+import { useTranslations } from 'next-intl';
 
 interface RequestAttachmentsProps {
   request: Request;
@@ -26,6 +27,7 @@ interface RequestAttachmentsProps {
 }
 
 export function RequestAttachments({ request, isAgency, orgId }: RequestAttachmentsProps) {
+  const t = useTranslations();
   const [files, setFiles] = useState<FileAttachment[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedFileId, setExpandedFileId] = useState<string | null>(null);
@@ -54,7 +56,7 @@ export function RequestAttachments({ request, isAgency, orgId }: RequestAttachme
   });
 
   const handleDelete = async (file: FileAttachment) => {
-    if (!confirm('Are you sure you want to delete this file?')) return;
+    if (!confirm(t('portal.files.actions.deleteConfirm'))) return;
     try {
       await deleteFile(file.id, file.storagePath);
     } catch (error) {

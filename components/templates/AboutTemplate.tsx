@@ -5,15 +5,16 @@ import { PageHero } from "@/components/sections/PageHero";
 import { AboutPageContent } from "@/components/sections/AboutPageContent";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { useTranslations, useLocale } from "next-intl";
+import { isRTLLocale } from '@/lib/locale-config';
 
 export const AboutTemplate: React.FC = () => {
   const t = useTranslations();
   const locale = useLocale();
-  const isHe = locale === "he";
+  const isHe = isRTLLocale(locale);
 
   const breadcrumbItems = [
-    { name: isHe ? "ראשי" : "Home", url: "/" },
-    { name: isHe ? "אודות" : "About", url: "/about" },
+    { name: t("navigation.home"), url: "/" },
+    { name: t("navigation.about"), url: "/about" },
   ];
 
   return (

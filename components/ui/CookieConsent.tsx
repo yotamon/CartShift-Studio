@@ -1,17 +1,19 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "@/lib/motion";
-import { Button } from "./Button";
-import { useLocale } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from '@/lib/motion';
+import { Button } from './Button';
+import { useLocale, useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
+import { isRTLLocale } from '@/lib/locale-config';
 
-const COOKIE_CONSENT_KEY = "cookie_consent";
+const COOKIE_CONSENT_KEY = 'cookie_consent';
 
 export const CookieConsent: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
   const locale = useLocale();
-  const isHe = locale === "he";
+  const isHe = isRTLLocale(locale);
+  const t = useTranslations();
 
   useEffect(() => {
     const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
@@ -23,22 +25,20 @@ export const CookieConsent: React.FC = () => {
   }, []);
 
   const handleAccept = () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, "accepted");
+    localStorage.setItem(COOKIE_CONSENT_KEY, 'accepted');
     setIsVisible(false);
   };
 
   const handleDecline = () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, "declined");
+    localStorage.setItem(COOKIE_CONSENT_KEY, 'declined');
     setIsVisible(false);
   };
 
   const content = {
-    message: isHe
-      ? "אנחנו משתמשים בעוגיות כדי לשפר את חווית הגלישה שלכם ולנתח את השימוש באתר."
-      : "We use cookies to improve your browsing experience and analyze site usage.",
-    accept: isHe ? "אישור" : "Accept",
-    decline: isHe ? "דחייה" : "Decline",
-    learnMore: isHe ? "למידע נוסף" : "Learn more"
+    message: t('privacy.sections.cookies.consent.message'),
+    accept: t('privacy.sections.cookies.consent.accept'),
+    decline: t('privacy.sections.cookies.consent.decline'),
+    learnMore: t('privacy.sections.cookies.consent.learnMore'),
   };
 
   return (
@@ -55,7 +55,7 @@ export const CookieConsent: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center gap-4">
               <div className="flex-1">
                 <p className="text-surface-600 dark:text-surface-400 text-sm md:text-base">
-                  {content.message}{" "}
+                  {content.message}{' '}
                   <Link
                     href="/privacy"
                     className="text-accent-600 dark:text-accent-400 hover:underline"
@@ -82,6 +82,3 @@ export const CookieConsent: React.FC = () => {
     </AnimatePresence>
   );
 };
-
-
-

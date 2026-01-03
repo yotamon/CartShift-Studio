@@ -1,7 +1,8 @@
 import {useLocale} from 'next-intl';
+import { getLocaleDirection } from './locale-config';
 
 export function useDirection(): 'ltr' | 'rtl' {
   const locale = useLocale();
-  return locale === 'he' ? 'rtl' : 'ltr';
+  return getLocaleDirection(locale);
 }
 

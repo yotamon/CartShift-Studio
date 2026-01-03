@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { handleOAuthCallback } from '@/lib/services/portal-google-calendar';
 
 export default function OAuthCallbackClient() {
+  const t = useTranslations();
   const searchParams = useSearchParams();
   const router = useRouter();
   const locale = useLocale();
@@ -21,15 +22,17 @@ export default function OAuthCallbackClient() {
 
       if (error) {
         setStatus('error');
-        setErrorMessage(error === 'access_denied'
-          ? 'You denied access to Google Calendar'
-          : `OAuth error: ${error}`);
+        setErrorMessage(
+          error === 'access_denied'
+            ? 'You denied access to Google Calendar'
+            : `OAuth error: ${error}`
+        );
         return;
       }
 
       if (!code || !state) {
         setStatus('error');
-        setErrorMessage('Missing OAuth parameters');
+        setErrorMessage(t('portal.common.missingOAuthParams'));
         return;
       }
 
@@ -43,7 +46,7 @@ export default function OAuthCallbackClient() {
         }, 2000);
       } else {
         setStatus('error');
-        setErrorMessage(result.error || 'Unknown error occurred');
+        setErrorMessage(result.error || t('portal.common.unknownError'));
       }
     }
 
@@ -89,9 +92,7 @@ export default function OAuthCallbackClient() {
             <h1 className="text-xl font-bold text-surface-900 dark:text-white mb-2">
               Connection Failed
             </h1>
-            <p className="text-surface-500 dark:text-surface-400 mb-4">
-              {errorMessage}
-            </p>
+            <p className="text-surface-500 dark:text-surface-400 mb-4">{errorMessage}</p>
             <button
               onClick={() => router.push(`/${locale}/portal/agency/settings`)}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"

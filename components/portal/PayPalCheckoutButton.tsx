@@ -39,7 +39,7 @@ export function PayPalCheckoutButton({
     return (
       <div className="text-center py-4">
         <p className="text-red-500 text-sm">
-          {t('portal.payment.loadError' as any) || 'Failed to load payment system. Please refresh the page.'}
+          {t('portal.pricing.payment.loadError')}
         </p>
       </div>
     );
@@ -74,18 +74,18 @@ export function PayPalCheckoutButton({
             const orderDetails = await actions.order.capture();
             const result = extractPaymentResult({
               orderId: orderDetails.id || '',
-              status: orderDetails.status || 'UNKNOWN',
+              status: orderDetails.status || t('portal.pricing.payment.statusUnknown'),
               payer: orderDetails.payer,
             });
 
             if (result.success) {
               onSuccess(result);
             } else {
-              onError(result.error || 'Payment failed');
+              onError(result.error || t('portal.common.paymentFailed'));
             }
           } catch (error) {
             console.error('PayPal capture error:', error);
-            onError('Failed to complete payment. Please try again.');
+            onError(t('portal.common.paymentFailedRetry'));
           }
         }}
         onError={(err) => {

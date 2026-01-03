@@ -29,7 +29,7 @@ import {
 } from '@/lib/services/portal-organizations';
 import { OrganizationMember, Invite } from '@/lib/types/portal';
 import { format } from 'date-fns';
-import { enUS, he } from 'date-fns/locale';
+import { getDateLocale } from '@/lib/locale-config';
 import { InviteTeamMemberForm } from '@/components/portal/forms/InviteTeamMemberForm';
 import { cn } from '@/lib/utils';
 import { useTranslations, useLocale } from 'next-intl';
@@ -241,15 +241,15 @@ export default function TeamClient() {
                         }
                         items={[
                           {
-                            label: 'Change Role',
+                            label: t('portal.team.changeRole'),
                             onClick: () => console.log('Change role', member.id),
                             icon: <Settings size={16} />,
                             disabled: member.role === 'owner',
                           },
                           {
-                            label: 'Remove Member',
+                            label: t('portal.team.removeMember'),
                             onClick: () => {
-                              if (confirm(`Remove ${member.name || member.email} from team?`)) {
+                              if (confirm(t('portal.team.removeMemberConfirm', { name: member.name || member.email }))) {
                                 console.log('Remove member', member.id);
                               }
                             },
@@ -300,7 +300,7 @@ export default function TeamClient() {
                     <span className="flex items-center gap-1.5 uppercase tracking-tighter">
                       <Clock size={12} className="text-slate-300" />
                       {invite.createdAt?.toDate
-                        ? `${t('portal.team.sent')} ${format(invite.createdAt.toDate(), 'MMM d', { locale: locale === 'he' ? he : enUS })}`
+                        ? `${t('portal.team.sent')} ${format(invite.createdAt.toDate(), 'MMM d', { locale: getDateLocale(locale) })}`
                         : t('portal.common.recently')}
                     </span>
                     <button

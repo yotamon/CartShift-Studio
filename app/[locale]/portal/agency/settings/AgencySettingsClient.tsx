@@ -177,7 +177,7 @@ export default function AgencySettingsClient() {
   }, [activeTab]);
 
   const handleCancelInvite = async (inviteId: string) => {
-    if (!confirm(t('common.confirm') || 'Are you sure?')) return;
+    if (!confirm(t('portal.common.confirm'))) return;
     setCancellingInvite(inviteId);
     try {
       await cancelInvite(inviteId);
@@ -197,7 +197,7 @@ export default function AgencySettingsClient() {
       const currentUser = auth.currentUser;
 
       if (!currentUser || !currentUser.uid) {
-        throw new Error('User not authenticated');
+        throw new Error(t('portal.common.userNotAuthenticated'));
       }
 
       const userId = currentUser.uid;
@@ -208,7 +208,7 @@ export default function AgencySettingsClient() {
 
       const token = await currentUser.getIdToken(true);
       if (!token) {
-        throw new Error('Failed to get authentication token');
+        throw new Error(t('portal.common.failedToGetAuthToken'));
       }
 
       console.log('Saving agency profile:', { userId, agencyId: userId });
@@ -236,7 +236,7 @@ export default function AgencySettingsClient() {
       alert(t('agency.settings.profile.success'));
     } catch (error) {
       console.error('Error saving agency profile:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage = error instanceof Error ? error.message : t('portal.common.unknownError');
       alert(`Failed to save settings: ${errorMessage}`);
     } finally {
       setSaving(false);
@@ -249,7 +249,7 @@ export default function AgencySettingsClient() {
   };
 
   const handleDeleteService = async (serviceId: string) => {
-    if (!confirm(t('common.confirm') || 'Are you sure?')) return;
+    if (!confirm(t('portal.common.confirm'))) return;
     try {
       await deleteService(serviceId);
     } catch (error) {
@@ -324,7 +324,7 @@ export default function AgencySettingsClient() {
       await updatePortalUser(user.uid, { photoUrl: url });
     } catch (error) {
       console.error('Error uploading avatar:', error);
-      alert('Failed to upload photo');
+      alert(t('agency.settings.profile.failedToUpload'));
     } finally {
       setUploadingAvatar(false);
     }
@@ -631,7 +631,7 @@ export default function AgencySettingsClient() {
                           )}
                         </h4>
                         <p className="text-xs text-surface-500 line-clamp-2 min-h-[2rem]">
-                          {service.description || 'No description provided.'}
+                          {service.description || t('portal.common.noDescription')}
                         </p>
                       </div>
 
@@ -724,13 +724,13 @@ export default function AgencySettingsClient() {
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
                               <PortalAvatar
-                                name={member.name || 'User'}
+                                name={member.name || t('portal.consultations.userFallback')}
                                 size="sm"
                                 className="ring-2 ring-white dark:ring-surface-900 shadow-sm"
                               />
                               <div>
                                 <p className="text-sm font-bold text-surface-900 dark:text-white font-outfit">
-                                  {member.name || 'Unnamed User'}
+                                  {member.name || t('portal.common.unnamedUser')}
                                 </p>
                                 <p className="text-[10px] font-bold text-surface-400 uppercase tracking-tight">
                                   {member.email}
@@ -783,7 +783,7 @@ export default function AgencySettingsClient() {
                 <div className="flex items-center gap-2 mb-4 px-1">
                   <UserIcon className="text-blue-500" size={16} />
                   <h4 className="text-[10px] font-black text-surface-400 uppercase tracking-widest">
-                    {t('agency.settings.team.pendingInvites') || 'Pending Invitations'}
+                    {t('agency.settings.team.pendingInvites')}
                   </h4>
                 </div>
 
@@ -806,7 +806,7 @@ export default function AgencySettingsClient() {
                           <span className="text-[10px] font-bold text-surface-400 uppercase tracking-tighter">
                             {invite.createdAt?.toDate
                               ? invite.createdAt.toDate().toLocaleDateString()
-                              : 'Sent recently'}
+                              : t('portal.common.sentRecently')}
                           </span>
                           <button
                             onClick={() => handleCancelInvite(invite.id)}
@@ -815,7 +815,7 @@ export default function AgencySettingsClient() {
                           >
                             {cancellingInvite === invite.id
                               ? '...'
-                              : t('agency.settings.team.cancelInvite') || 'Cancel'}
+                              : t('agency.settings.team.cancelInvite')}
                           </button>
                         </div>
                       </div>
@@ -844,7 +844,7 @@ export default function AgencySettingsClient() {
                       {t('agency.settings.tabs.integrations')}
                     </h3>
                     <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mt-0.5">
-                      {t('agency.settings.integrations.subtitle') || 'Connect your favorite tools'}
+                      {t('agency.settings.integrations.subtitle')}
                     </p>
                   </div>
                 </div>
@@ -875,7 +875,7 @@ export default function AgencySettingsClient() {
 
                   {/* Coming Soon - Slack */}
                   <IntegrationCard
-                    title={t('agency.settings.integrations.slack.title') || 'Slack'}
+                    title={t('agency.settings.integrations.slack.title')}
                     description={
                       t('agency.settings.integrations.slack.description') ||
                       'Get notifications in your Slack workspace'
@@ -887,10 +887,9 @@ export default function AgencySettingsClient() {
 
                   {/* Coming Soon - Stripe */}
                   <IntegrationCard
-                    title={t('agency.settings.integrations.stripe.title') || 'Stripe'}
+                    title={t('agency.settings.integrations.stripe.title')}
                     description={
-                      t('agency.settings.integrations.stripe.description') ||
-                      'Accept payments on your pricing offers'
+                      t('agency.settings.integrations.stripe.description')
                     }
                     icon={CreditCard}
                     iconGradient="from-indigo-500 to-purple-600"

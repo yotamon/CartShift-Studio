@@ -6,6 +6,7 @@ import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { ChevronRight, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { isRTLLocale } from '@/lib/locale-config';
 
 interface BreadcrumbsProps {
   className?: string;
@@ -29,7 +30,7 @@ export function Breadcrumbs({
   const pathname = usePathname();
   const locale = useLocale();
   const t = useTranslations();
-  const isRTL = locale === 'he';
+  const isRTL = isRTLLocale(locale);
 
   const breadcrumbs = useMemo((): BreadcrumbItem[] => {
     if (!pathname) return [];
@@ -46,20 +47,20 @@ export function Breadcrumbs({
 
     // Translation map for common path segments
     const segmentLabels: Record<string, string> = {
-      portal: t('portal.breadcrumbs.portal' as any) || 'Portal',
-      org: t('portal.breadcrumbs.organization' as any) || 'Organization',
-      dashboard: t('portal.breadcrumbs.dashboard' as any) || 'Dashboard',
-      requests: t('portal.breadcrumbs.requests' as any) || 'Requests',
-      settings: t('portal.breadcrumbs.settings' as any) || 'Settings',
-      team: t('portal.breadcrumbs.team' as any) || 'Team',
-      files: t('portal.breadcrumbs.files' as any) || 'Files',
-      pricing: t('portal.breadcrumbs.pricing' as any) || 'Pricing',
-      consultations: t('portal.breadcrumbs.consultations' as any) || 'Consultations',
-      agency: t('portal.breadcrumbs.agency' as any) || 'Agency',
-      inbox: t('portal.breadcrumbs.inbox' as any) || 'Inbox',
-      workboard: t('portal.breadcrumbs.workboard' as any) || 'Workboard',
-      clients: t('portal.breadcrumbs.clients' as any) || 'Clients',
-      new: t('portal.breadcrumbs.new' as any) || 'New',
+      portal: t('portal.breadcrumbs.portal'),
+      org: t('portal.breadcrumbs.organization'),
+      dashboard: t('portal.breadcrumbs.dashboard'),
+      requests: t('portal.breadcrumbs.requests'),
+      settings: t('portal.breadcrumbs.settings'),
+      team: t('portal.breadcrumbs.team'),
+      files: t('portal.breadcrumbs.files'),
+      pricing: t('portal.breadcrumbs.pricing'),
+      consultations: t('portal.breadcrumbs.consultations'),
+      agency: t('portal.breadcrumbs.agency'),
+      inbox: t('portal.breadcrumbs.inbox'),
+      workboard: t('portal.breadcrumbs.workboard'),
+      clients: t('portal.breadcrumbs.clients'),
+      new: t('portal.breadcrumbs.new'),
       ...customLabels,
     };
 
@@ -116,7 +117,7 @@ export function Breadcrumbs({
       <Link
         href="/portal/"
         className="flex items-center gap-1.5 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors flex-shrink-0 group"
-        aria-label={homeLabel || t('portal.breadcrumbs.home' as any) || 'Home'}
+        aria-label={homeLabel || t('portal.breadcrumbs.home')}
       >
         <Home size={14} className="group-hover:scale-110 transition-transform" />
       </Link>

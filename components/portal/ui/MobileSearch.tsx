@@ -6,6 +6,7 @@ import { Search, X, Clock, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
+import { isRTLLocale } from '@/lib/locale-config';
 
 interface MobileSearchProps {
   isOpen: boolean;
@@ -16,7 +17,7 @@ interface MobileSearchProps {
 export function MobileSearch({ isOpen, onClose, className }: MobileSearchProps) {
   const t = useTranslations();
   const locale = useLocale();
-  const isRTL = locale === 'he';
+  const isRTL = isRTLLocale(locale);
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState('');
@@ -117,7 +118,7 @@ export function MobileSearch({ isOpen, onClose, className }: MobileSearchProps) 
                       handleSearch(query);
                     }
                   }}
-                  placeholder={t('portal.header.searchPlaceholder' as any) || 'Search...'}
+                  placeholder={t('portal.header.searchPlaceholder')}
                   className="flex-1 bg-transparent text-surface-900 dark:text-white placeholder-surface-400 outline-none text-base"
                   aria-label="Search"
                 />
@@ -246,7 +247,7 @@ export function MobileSearchButton({
         'p-3 rounded-2xl text-surface-400 hover:text-surface-900 dark:hover:text-white hover:bg-surface-50 dark:hover:bg-surface-900 transition-all md:hidden',
         className
       )}
-      aria-label={t('portal.accessibility.search' as any) || 'Search'}
+      aria-label={t('portal.accessibility.search')}
     >
       <Search size={20} />
     </button>

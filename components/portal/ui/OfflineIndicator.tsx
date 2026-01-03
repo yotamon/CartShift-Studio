@@ -36,7 +36,7 @@ export const OfflineIndicator = () => {
         >
           <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider">
             <WifiOff size={14} className="text-red-400" />
-            <span>{t('portal.common.offline' as any) || 'You are currently offline'}</span>
+            <span>{t('portal.common.offline')}</span>
           </div>
         </motion.div>
       )}

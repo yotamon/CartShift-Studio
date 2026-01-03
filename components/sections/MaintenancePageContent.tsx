@@ -159,7 +159,7 @@ export const MaintenancePageContent: React.FC = () => {
   }));
 
   const breadcrumbItems = [
-    { name: locale === 'he' ? 'ראשי' : 'Home', url: '/' },
+    { name: t('navigation.home'), url: '/' },
     { name: maintenance.hero.title, url: '/maintenance' },
   ];
 

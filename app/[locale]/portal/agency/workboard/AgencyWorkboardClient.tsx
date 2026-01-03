@@ -29,7 +29,7 @@ import { ShieldCheck } from 'lucide-react';
 import { useRouter } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { formatDistanceToNow } from 'date-fns';
-import { enUS, he } from 'date-fns/locale';
+import { getDateLocale } from '@/lib/locale-config';
 import { WorkboardSkeleton } from '@/components/portal/skeletons/WorkboardSkeleton';
 import { useOptimisticAction } from '@/lib/hooks/useOptimisticMutation';
 import { useToast } from '@/components/portal/ui';
@@ -153,7 +153,7 @@ export default function AgencyWorkboardClient() {
         await setDoc(userRef, {
           ...updateData,
           email: user.email,
-          name: user.displayName || 'Agency Admin',
+          name: user.displayName || t('portal.common.agencyAdmin'),
           createdAt: new Date(),
         });
       }
@@ -198,7 +198,7 @@ export default function AgencyWorkboardClient() {
 
         if (request && targetCol) {
           success(
-            t('agency.workboard.moved') || 'Card moved',
+            t('agency.workboard.moved'),
             `${request.title} → ${targetCol.title}`
           );
         }
@@ -206,7 +206,7 @@ export default function AgencyWorkboardClient() {
       onRollback: (_error, { requestId, oldStatus }) => {
         setRequests(prev => prev.map(r => (r.id === requestId ? { ...r, status: oldStatus } : r)));
 
-        showError(t('agency.workboard.moveError') || 'Failed to move', 'Rolling back changes.');
+        showError(t('agency.workboard.moveError'), t('portal.common.rollback'));
       },
     }
   );
@@ -256,9 +256,9 @@ export default function AgencyWorkboardClient() {
     return (
       <div className="min-h-[400px] flex flex-col items-center justify-center p-10 text-center">
         <ShieldCheck className="w-16 h-16 text-red-500 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-surface-900 dark:text-white mb-2">Access Denied</h2>
+        <h2 className="text-2xl font-bold text-surface-900 dark:text-white mb-2">{t('agency.inbox.accessDeniedTitle')}</h2>
         <p className="text-surface-500 max-w-sm mx-auto mb-8">
-          Your account ({user?.email}) is not registered as an Agency Administrator.
+          {t('agency.inbox.notRegisteredAsAdmin', { email: user?.email || '' })}
         </p>
         <PortalButton
           onClick={handleRepair}
@@ -295,7 +295,7 @@ export default function AgencyWorkboardClient() {
           <div className="flex items-center gap-3">
             <PortalAvatarGroup max={3} className="me-2">
               <PortalAvatar name="CartShift Studio" size="sm" />
-              <PortalAvatar name="John Doe" size="sm" />
+              <PortalAvatar name={t('portal.common.namePlaceholder')} size="sm" />
             </PortalAvatarGroup>
             <PortalButton
               size="sm"
@@ -330,7 +330,7 @@ export default function AgencyWorkboardClient() {
                         e.key === 'Enter' &&
                         router.push(`/portal/org/${req.orgId}/requests/${req.id}/`)
                       }
-                      aria-label={`${t('agency.workboard.viewRequest' as any) || 'View request'}: ${req.title}`}
+                      aria-label={`${t('agency.workboard.viewRequest')}: ${req.title}`}
                     >
                       <RequestCard request={req} locale={locale} isMounted={isMounted} />
                     </div>
@@ -390,7 +390,7 @@ function RequestCard({
           }
           className="text-[9px] px-1.5 h-4 font-black uppercase tracking-tighter"
         >
-          {req.priority || 'NORMAL'}
+          {req.priority || t('portal.common.normal')}
         </PortalBadge>
         <div className="text-[10px] font-bold text-surface-400 font-mono tracking-tighter">
           #ID-{req.id.slice(0, 4).toUpperCase()}
@@ -431,7 +431,7 @@ function RequestCard({
             {isMounted && req.createdAt?.toDate
               ? formatDistanceToNow(req.createdAt.toDate(), {
                   addSuffix: true,
-                  locale: locale === 'he' ? he : enUS,
+                  locale: getDateLocale(locale),
                 })
               : '—'}
           </span>

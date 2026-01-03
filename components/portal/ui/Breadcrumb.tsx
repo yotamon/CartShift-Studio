@@ -5,6 +5,7 @@ import { Link } from '@/i18n/navigation';
 import { ChevronRight, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLocale } from 'next-intl';
+import { isRTLLocale } from '@/lib/locale-config';
 
 export interface BreadcrumbItem {
   label: string;
@@ -18,7 +19,7 @@ interface BreadcrumbProps {
 
 export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className }) => {
   const locale = useLocale();
-  const isRTL = locale === 'he';
+  const isRTL = isRTLLocale(locale);
 
   return (
     <nav

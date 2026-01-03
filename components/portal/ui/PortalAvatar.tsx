@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 
 interface PortalAvatarProps {
@@ -16,6 +17,7 @@ export const PortalAvatar: React.FC<PortalAvatarProps> = ({
   size = 'md',
   className,
 }) => {
+  const t = useTranslations();
   const sizeClasses = {
     xs: 'w-5 h-5 text-[9px]',
     sm: 'w-7 h-7 text-[10px]',
@@ -36,7 +38,7 @@ export const PortalAvatar: React.FC<PortalAvatarProps> = ({
     return (
       <img
         src={src}
-        alt={name || 'Avatar'}
+        alt={name || t('portal.common.avatar')}
         className={cn('rounded-full object-cover', sizeClasses[size], className)}
       />
     );

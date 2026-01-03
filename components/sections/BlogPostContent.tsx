@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { logError } from '@/lib/logger';
+import { isRTLLocale, getDateLocaleString } from '@/lib/locale-config';
 
 interface RelatedPost {
   slug: string;
@@ -40,7 +41,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
 }) => {
   const t = useTranslations();
   const locale = useLocale();
-  const isHe = locale === 'he';
+  const isHe = isRTLLocale(locale);
   const [readingProgress, setReadingProgress] = useState(0);
   const [headings, setHeadings] = useState<Array<{ id: string; text: string; level: number }>>([]);
   const [mobileTocOpen, setMobileTocOpen] = useState(false);
@@ -275,7 +276,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                           d="M4 6h16M4 12h16M4 18h7"
                         />
                       </svg>
-                      {isHe ? 'תוכן עניינים' : 'Contents'}
+                      {t('blogPost.content.tableOfContents')}
                     </h3>
                     <nav className="space-y-1" dir={isHe ? 'rtl' : 'ltr'}>
                       {headings.map((heading, index) => (
@@ -300,7 +301,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                 {/* Quick Actions */}
                 <div className="p-4 rounded-xl bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/20 dark:to-accent-900/20 border border-primary-200/50 dark:border-primary-800/30">
                   <p className="text-xs font-medium text-surface-600 dark:text-surface-400 mb-3 uppercase tracking-wider">
-                    {isHe ? 'שתף מאמר' : 'Share Article'}
+                    {t('blogPost.content.shareArticle')}
                   </p>
                   <div className="flex gap-2">
                     <button
@@ -375,11 +376,11 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                           d="M4 6h16M4 12h16M4 18h7"
                         />
                       </svg>
-                      {isHe ? 'תוכן עניינים' : 'Table of Contents'}
+                      {t('blogPost.content.tableOfContentsFull')}
                     </span>
                     <div className="flex items-center gap-3">
                       <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-100 dark:bg-primary-900/30 px-2 py-0.5 rounded-full">
-                        {headings.length} {isHe ? 'חלקים' : 'sections'}
+                        {headings.length} {t('blogPost.content.sections')}
                       </span>
                       <svg
                         className={`w-5 h-5 text-surface-500 dark:text-surface-400 transition-transform duration-300 ${mobileTocOpen ? 'rotate-180' : ''}`}
@@ -478,7 +479,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                           </svg>
                         </span>
                         <span className="font-medium">
-                          {readingTime} {isHe ? 'דקות קריאה' : 'min read'}
+                          {readingTime} {t('blogPost.content.minRead')}
                         </span>
                       </span>
                     )}
@@ -487,7 +488,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                   {/* Mobile Share Buttons */}
                   <div className="lg:hidden flex items-center gap-3 pt-4 mt-4 border-t border-surface-200 dark:border-surface-700">
                     <span className="text-sm font-medium text-surface-600 dark:text-surface-400">
-                      {isHe ? 'שתף:' : 'Share:'}
+                      {t('blogPost.content.share')}
                     </span>
                     <div className="flex gap-2">
                       <button
@@ -748,7 +749,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                             d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
                           />
                         </svg>
-                        {isHe ? 'שירותי מומחים' : 'Expert Services'}
+                        {t('blogPost.content.expertServices')}
                       </div>
 
                       <h3 className="text-2xl md:text-3xl lg:text-4xl font-display font-bold text-surface-900 dark:text-white leading-[1.1] tracking-tight">
@@ -808,7 +809,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
             >
               <div className="text-center mb-12">
                 <span className="inline-block px-4 py-1.5 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-semibold mb-4">
-                  {isHe ? 'המשך לקרוא' : 'Keep Reading'}
+                  {t('blogPost.content.keepReading')}
                 </span>
                 <h2 className="text-3xl md:text-4xl font-bold text-surface-900 dark:text-white font-display leading-tight tracking-tight">
                   {t('blog.relatedPosts.title')}{' '}
@@ -830,7 +831,7 @@ export const BlogPostContent: React.FC<BlogPostContentProps> = ({
                       ? relatedPost.translation.excerpt
                       : relatedPost.excerpt;
                   const formattedDate = new Date(relatedPost.date).toLocaleDateString(
-                    locale === 'he' ? 'he-IL' : 'en-US'
+                    getDateLocaleString(locale)
                   );
 
                   return (

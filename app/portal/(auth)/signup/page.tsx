@@ -112,7 +112,7 @@ function SignupForm() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <PortalInput
             label={t('portal.auth.signup.fullName')}
-            placeholder="John Doe"
+            placeholder={t('portal.common.namePlaceholder')}
             error={errors.name?.message}
             {...register('name')}
           />

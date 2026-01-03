@@ -40,7 +40,7 @@ import {
   ClientStatus,
 } from '@/lib/types/portal';
 import { format } from 'date-fns';
-import { enUS, he } from 'date-fns/locale';
+import { getDateLocale } from '@/lib/locale-config';
 import { cn } from '@/lib/utils';
 import { useTranslations, useLocale } from 'next-intl';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
@@ -136,8 +136,8 @@ export default function RequestsClient() {
     }
 
     const matchesSearch =
-      req.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      req.id.toLowerCase().includes(searchQuery.toLowerCase());
+      (req.title?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+      (req.id?.toLowerCase() || '').includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
@@ -200,7 +200,7 @@ export default function RequestsClient() {
       const pricingOffer = await createPricingRequest(
         orgId,
         userData.id,
-        userData.name || 'Unknown',
+        userData.name || t('portal.common.unknown'),
         {
           title: pricingTitle.trim(),
           lineItems: validItems,
@@ -295,7 +295,7 @@ export default function RequestsClient() {
                   ? t('portal.common.all' as any)
                   : isAgency
                     ? t(`portal.requests.status.${filter.toLowerCase()}` as any)
-                    : CLIENT_STATUS_CONFIG[filter as ClientStatus]?.label || filter}
+                    : t(`portal.requests.clientStatus.${filter.toLowerCase()}` as any)}
               </button>
             ))}
           </div>
@@ -321,7 +321,7 @@ export default function RequestsClient() {
                 className="text-surface-600 dark:text-surface-300"
               >
                 <X size={14} className="me-1" />
-                {t('portal.common.cancel' as never) || 'Cancel'}
+                {t('portal.common.cancel')}
               </PortalButton>
               <PortalButton
                 size="sm"
@@ -329,7 +329,7 @@ export default function RequestsClient() {
                 className="bg-green-600 hover:bg-green-700 text-white"
               >
                 <DollarSign size={14} className="me-1" />
-                {t('portal.requests.createPricingOffer' as never) || 'Create Pricing Offer'}
+                {t('portal.requests.createPricingOffer')}
               </PortalButton>
             </div>
           </div>
@@ -344,7 +344,7 @@ export default function RequestsClient() {
                 <span className="sr-only">Loading requests...</span>
               </motion.div>
             ) : filteredRequests.length > 0 ? (
-              <motion.div 
+              <motion.div
                 key="content"
                 variants={skeletonToContent}
                 initial="hidden"
@@ -406,7 +406,7 @@ export default function RequestsClient() {
                             variant={mapStatusColor(STATUS_CONFIG[req.status]?.color || 'gray')}
                             className="text-[10px]"
                           >
-                            {t(`portal.requests.status.${req.status.toLowerCase()}` as any)}
+                            {t(`portal.requests.status.${req.status?.toLowerCase() || 'new'}` as any)}
                           </PortalBadge>
                         ) : (
                           <PortalBadge
@@ -415,7 +415,9 @@ export default function RequestsClient() {
                             )}
                             className="text-[10px]"
                           >
-                            {CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[req.status]]?.label}
+                            {t(
+                              `portal.requests.clientStatus.${CLIENT_STATUS_MAP[req.status]?.toLowerCase() || 'submitted'}` as any
+                            )}
                           </PortalBadge>
                         )}
                       </motion.div>
@@ -423,7 +425,7 @@ export default function RequestsClient() {
                       <span className="text-[10px] font-bold text-surface-400 font-outfit">
                         {req.createdAt?.toDate
                           ? format(req.createdAt.toDate(), 'MMM d', {
-                              locale: locale === 'he' ? he : enUS,
+                              locale: getDateLocale(locale),
                             })
                           : ''}
                       </span>
@@ -495,7 +497,7 @@ export default function RequestsClient() {
                             )}
                             {req.pricingOfferId && (
                               <PortalBadge variant="green" className="text-[9px]">
-                                {t('portal.requests.hasPricing' as never) || 'Priced'}
+                                {t('portal.requests.hasPricing')}
                               </PortalBadge>
                             )}
                           </td>
@@ -532,7 +534,7 @@ export default function RequestsClient() {
                                 <PortalBadge
                                   variant={mapStatusColor(STATUS_CONFIG[req.status]?.color || 'gray')}
                                 >
-                                  {t(`portal.requests.status.${req.status.toLowerCase()}` as any)}
+                                  {t(`portal.requests.status.${req.status?.toLowerCase() || 'new'}` as any)}
                                 </PortalBadge>
                               ) : (
                                 <PortalBadge
@@ -541,7 +543,9 @@ export default function RequestsClient() {
                                       'gray'
                                   )}
                                 >
-                                  {CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[req.status]]?.label}
+                                  {t(
+                                    `portal.requests.clientStatus.${CLIENT_STATUS_MAP[req.status]?.toLowerCase() || 'submitted'}` as any
+                                  )}
                                 </PortalBadge>
                               )}
                             </motion.div>
@@ -560,7 +564,7 @@ export default function RequestsClient() {
                               )}
                             />
                             <span className="text-sm font-bold text-surface-600 dark:text-surface-300 font-outfit whitespace-nowrap">
-                              {t(`portal.requests.priority.${req.priority.toLowerCase()}` as any)}
+                              {t(`portal.requests.priority.${req.priority?.toLowerCase() || 'normal'}` as any)}
                             </span>
                           </div>
                         </td>
@@ -569,7 +573,7 @@ export default function RequestsClient() {
                             <span className="text-sm font-bold text-surface-800 dark:text-surface-200 font-outfit whitespace-nowrap">
                               {req.createdAt?.toDate
                                 ? format(req.createdAt.toDate(), 'MMM d, yyyy', {
-                                    locale: locale === 'he' ? he : enUS,
+                                    locale: getDateLocale(locale),
                                   })
                                 : t('portal.common.recently')}
                             </span>
@@ -598,19 +602,19 @@ export default function RequestsClient() {
                               }
                               items={[
                                 {
-                                  label: 'Edit Request',
+                                  label: t('portal.common.edit'),
                                   onClick: () => console.log('Edit request', req.id),
                                   icon: <Edit size={16} />,
                                 },
                                 {
-                                  label: 'Archive',
+                                  label: t('portal.common.archive'),
                                   onClick: () => console.log('Archive request', req.id),
                                   icon: <Archive size={16} />,
                                 },
                                 {
-                                  label: 'Delete',
+                                  label: t('portal.common.delete'),
                                   onClick: () => {
-                                    if (confirm('Delete this request?')) {
+                                    if (confirm(t('portal.common.deleteConfirm'))) {
                                       console.log('Delete request', req.id);
                                     }
                                   },
@@ -692,11 +696,11 @@ export default function RequestsClient() {
             <div className="p-6 border-b border-surface-200 dark:border-surface-800 flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-bold text-surface-900 dark:text-white font-outfit">
-                  {t('portal.requests.createPricingOffer' as never) || 'Create Pricing Offer'}
+                  {t('portal.requests.createPricingOffer')}
                 </h2>
                 <p className="text-sm text-surface-500 mt-1">
                   {selectedRequests.length}{' '}
-                  {t('portal.requests.requestsIncluded' as never) || 'requests included'}
+                  {t('portal.requests.requestsIncluded')}
                 </p>
               </div>
               <button
@@ -711,7 +715,7 @@ export default function RequestsClient() {
               {/* Selected Requests Preview */}
               <div>
                 <label className="block text-xs font-bold text-surface-500 mb-2 uppercase tracking-widest">
-                  {t('portal.requests.selectedRequests' as never) || 'Selected Requests'}
+                  {t('portal.requests.selectedRequests')}
                 </label>
                 <div className="space-y-2 max-h-32 overflow-y-auto">
                   {selectedRequests.map(req => (
@@ -733,7 +737,7 @@ export default function RequestsClient() {
               {/* Pricing Title */}
               <div>
                 <label className="block text-xs font-bold text-surface-500 mb-2 uppercase tracking-widest">
-                  {t('portal.pricing.form.titleLabel' as never) || 'Offer Title'} *
+                  {t('portal.pricing.form.titleLabel')} *
                 </label>
                 <input
                   type="text"
@@ -750,7 +754,7 @@ export default function RequestsClient() {
               {/* Currency */}
               <div>
                 <label className="block text-xs font-bold text-surface-500 mb-2 uppercase tracking-widest">
-                  {t('portal.pricing.form.currency' as never) || 'Currency'}
+                  {t('portal.pricing.form.currency')}
                 </label>
                 <select
                   value={pricingCurrency}
@@ -768,7 +772,7 @@ export default function RequestsClient() {
               {/* Line Items */}
               <div>
                 <label className="block text-xs font-bold text-surface-500 mb-2 uppercase tracking-widest">
-                  {t('portal.pricing.form.lineItems' as never) || 'Line Items'} *
+                  {t('portal.pricing.form.lineItems')} *
                 </label>
                 <div className="space-y-3">
                   {pricingLineItems.map(item => (
@@ -779,7 +783,7 @@ export default function RequestsClient() {
                       <input
                         type="text"
                         placeholder={
-                          t('portal.pricing.form.itemDescription' as never) || 'Description'
+                          t('portal.pricing.form.itemDescription')
                         }
                         value={item.description}
                         onChange={e => updateLineItem(item.id, 'description', e.target.value)}
@@ -789,7 +793,7 @@ export default function RequestsClient() {
                         <input
                           type="number"
                           min="1"
-                          placeholder={t('portal.pricing.form.quantity' as never) || 'Qty'}
+                          placeholder={t('portal.pricing.form.quantity')}
                           value={item.quantity || ''}
                           onChange={e =>
                             updateLineItem(item.id, 'quantity', parseInt(e.target.value) || 0)
@@ -805,7 +809,7 @@ export default function RequestsClient() {
                             type="number"
                             min="0"
                             step="0.01"
-                            placeholder={t('portal.pricing.form.unitPrice' as never) || 'Price'}
+                            placeholder={t('portal.pricing.form.unitPrice')}
                             value={item.unitPrice ? (item.unitPrice / 100).toFixed(2) : ''}
                             onChange={e =>
                               updateLineItem(
@@ -840,14 +844,14 @@ export default function RequestsClient() {
                   className="mt-3 w-full p-2 border-2 border-dashed border-surface-200 dark:border-surface-700 rounded-xl text-surface-500 hover:border-blue-400 hover:text-blue-600 transition-colors text-sm font-medium"
                 >
                   <Plus size={16} className="inline me-1" />
-                  {t('portal.pricing.form.addItem' as never) || 'Add Item'}
+                  {t('portal.pricing.form.addItem')}
                 </button>
               </div>
 
               {/* Total */}
               <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl flex items-center justify-between">
                 <span className="text-sm font-bold text-surface-600 dark:text-surface-300">
-                  {t('portal.pricing.form.total' as never) || 'Total'}
+                  {t('portal.pricing.form.total')}
                 </span>
                 <span className="text-2xl font-black text-green-600 font-outfit">
                   {formatCurrency(totalAmount, pricingCurrency)}
@@ -857,7 +861,7 @@ export default function RequestsClient() {
 
             <div className="p-6 border-t border-surface-200 dark:border-surface-800 flex items-center justify-end gap-3">
               <PortalButton variant="outline" onClick={clearSelection}>
-                {t('portal.common.cancel' as never) || 'Cancel'}
+                {t('portal.common.cancel')}
               </PortalButton>
               <PortalButton
                 onClick={handleCreatePricingOffer}
@@ -873,7 +877,7 @@ export default function RequestsClient() {
                 ) : (
                   <DollarSign size={16} className="me-2" />
                 )}
-                {t('portal.requests.createAndSend' as never) || 'Create & Send Offer'}
+                {t('portal.requests.createAndSend')}
               </PortalButton>
             </div>
           </div>

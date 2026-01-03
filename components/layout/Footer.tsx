@@ -5,6 +5,7 @@ import { Logo } from '@/components/ui/Logo';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { useTranslations, useLocale } from 'next-intl';
+import { isRTLLocale } from '@/lib/locale-config';
 import { Link } from '@/i18n/navigation';
 import { trackNewsletterSignup } from '@/lib/analytics';
 import { subscribeNewsletterClient } from '@/lib/services/newsletter-client';
@@ -16,7 +17,7 @@ export const Footer: React.FC = () => {
   const [subscribed, setSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const isHe = locale === 'he';
+  const isHe = isRTLLocale(locale);
 
   const footerLinks = {
     solutions: [
@@ -48,14 +49,14 @@ export const Footer: React.FC = () => {
       const result = await subscribeNewsletterClient({ email });
 
       if (!result.success) {
-        throw new Error(result.error || 'Failed to subscribe');
+        throw new Error(result.error || t('portal.common.failedToSubscribe'));
       }
 
       setSubscribed(true);
       setEmail('');
       trackNewsletterSignup('footer');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to subscribe');
+      setError(err instanceof Error ? err.message : t('portal.common.failedToSubscribe'));
     } finally {
       setLoading(false);
     }
@@ -125,21 +126,19 @@ export const Footer: React.FC = () => {
 
           <div className="text-start">
             <h3 className="text-surface-900 dark:text-white font-bold mb-6 text-base md:text-lg leading-tight">
-              {isHe ? 'הישארו מעודכנים' : 'Stay Updated'}
+              {t('footer.newsletter.title')}
             </h3>
             {subscribed ? (
               <div className="flex items-center gap-2 text-success">
                 <Icon name="check" size={20} />
                 <span className="text-sm font-medium">
-                  {isHe ? 'תודה שנרשמת!' : 'Thanks for subscribing!'}
+                  {t('footer.newsletter.success')}
                 </span>
               </div>
             ) : (
               <form onSubmit={handleNewsletterSubmit} className="space-y-3">
                 <p className="text-surface-600 dark:text-surface-400 text-sm leading-relaxed mb-4">
-                  {isHe
-                    ? 'קבלו טיפים וחדשות על מסחר אלקטרוני ישירות למייל.'
-                    : 'Get e-commerce tips and news delivered to your inbox.'}
+                  {t('footer.newsletter.description')}
                 </p>
                 <div className="flex gap-2">
                   <input
@@ -149,7 +148,7 @@ export const Footer: React.FC = () => {
                       setEmail(e.target.value);
                       setError(null);
                     }}
-                    placeholder={isHe ? 'האימייל שלך' : 'Your email'}
+                    placeholder={t('footer.newsletter.placeholder')}
                     className="flex-1 px-4 py-2.5 rounded-xl bg-white/80 dark:bg-surface-800 text-surface-900 dark:text-white placeholder:text-surface-500 dark:placeholder:text-surface-400 border border-surface-300/60 dark:border-surface-700 focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-all text-sm shadow-sm"
                     style={{ direction: 'ltr' }}
                     required
@@ -197,11 +196,11 @@ export const Footer: React.FC = () => {
             <div className="flex items-center gap-6 text-xs md:text-sm text-surface-500 dark:text-surface-500">
               <span className="flex items-center gap-2">
                 <Icon name="shield" size={16} className="text-success" />
-                {isHe ? 'SSL מאובטח' : 'SSL Secured'}
+                {t('footer.newsletter.sslSecured')}
               </span>
               <span className="flex items-center gap-2">
                 <Icon name="award" size={16} className="text-accent-500" />
-                {isHe ? 'שותף Shopify' : 'Shopify Partner'}
+                {t('footer.newsletter.shopifyPartner')}
               </span>
             </div>
           </div>

@@ -196,7 +196,7 @@ export default function PricingDetailClient() {
             <div className="mb-6">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit mb-4">
                 <FileText className="inline w-5 h-5 me-2" />
-                {t('portal.pricing.includedRequests' as never) || 'Included Requests'}
+                {t('portal.pricing.includedRequests')}
               </h3>
               <div className="space-y-2">
                 {linkedRequests.map(request => {

@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from 'react';
 import { Camera, Trash2, Loader2, User, Building2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PortalButton } from './PortalButton';
+import { useTranslations } from 'next-intl';
 
 interface ImageUploadProps {
   /** Current image URL */
@@ -46,6 +47,7 @@ export const ImageUpload = ({
   className,
   labels = {},
 }: ImageUploadProps) => {
+  const t = useTranslations();
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -68,20 +70,20 @@ export const ImageUpload = ({
 
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        setError('Please select an image file');
+        setError(t('portal.common.selectImageFile'));
         return;
       }
 
       // Validate file size (max 2MB)
       if (file.size > 2 * 1024 * 1024) {
-        setError('Image must be smaller than 2MB');
+        setError(t('portal.common.imageTooLarge'));
         return;
       }
 
       try {
         await onUpload(file);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Upload failed');
+        setError(err instanceof Error ? err.message : t('portal.common.uploadFailed'));
       }
     },
     [onUpload]
@@ -126,7 +128,7 @@ export const ImageUpload = ({
       try {
         await onDelete();
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to remove image');
+        setError(err instanceof Error ? err.message : t('portal.common.failedToRemove'));
       }
     }
   };
@@ -154,7 +156,7 @@ export const ImageUpload = ({
           <>
             <img
               src={currentImageUrl}
-              alt={placeholder || 'Uploaded image'}
+              alt={placeholder || t('portal.files.imageLabels.uploadedImage')}
               className="w-full h-full object-cover"
             />
             {/* Hover overlay */}
@@ -219,12 +221,12 @@ export const ImageUpload = ({
           {isUploading ? (
             <>
               <Loader2 className="w-3 h-3 animate-spin me-1.5" />
-              {labels.uploading || 'Uploading...'}
+              {labels.uploading || t('portal.files.imageLabels.uploading')}
             </>
           ) : (
             <>
               <Camera className="w-3 h-3 me-1.5" />
-              {currentImageUrl ? labels.change || 'Change' : labels.upload || 'Upload'}
+              {currentImageUrl ? labels.change || t('portal.files.imageLabels.change') : labels.upload || t('portal.files.imageLabels.upload')}
             </>
           )}
         </PortalButton>
@@ -238,7 +240,7 @@ export const ImageUpload = ({
             className="text-xs font-bold text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-900/20"
           >
             <Trash2 className="w-3 h-3 me-1.5" />
-            {labels.remove || 'Remove'}
+            {labels.remove || t('portal.files.imageLabels.remove')}
           </PortalButton>
         )}
       </div>
@@ -246,7 +248,7 @@ export const ImageUpload = ({
       {/* Hint text */}
       {!error && !currentImageUrl && (
         <p className="text-[10px] font-medium text-slate-400 text-center uppercase tracking-wider">
-          {labels.dropHint || 'Drop an image or click to upload'}
+          {labels.dropHint || t('portal.files.imageLabels.dropHint')}
         </p>
       )}
 

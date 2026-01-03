@@ -34,10 +34,8 @@ export function ErrorState({
 }: ErrorStateProps) {
   const t = useTranslations();
 
-  const defaultTitle = t('portal.errorState.title' as any) || 'Something went wrong';
-  const defaultMessage =
-    t('portal.errorState.message' as any) ||
-    'We encountered an error while processing your request. Please try again.';
+  const defaultTitle = t('portal.errorState.title');
+  const defaultMessage = t('portal.errorState.message');
 
   if (variant === 'inline') {
     return (
@@ -60,7 +58,7 @@ export function ErrorState({
             onClick={onRetry}
             className="flex-shrink-0 text-xs font-bold text-rose-600 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 hover:underline underline-offset-2"
           >
-            {t('portal.errorState.retry' as any) || 'Try again'}
+            {t('portal.errorState.retry')}
           </button>
         )}
       </div>
@@ -94,27 +92,27 @@ export function ErrorState({
           {onRetry && (
             <PortalButton onClick={onRetry} className="shadow-lg shadow-blue-500/20">
               <RefreshCw size={16} className="me-2" />
-              {t('portal.errorState.retry' as any) || 'Try Again'}
+              {t('portal.errorState.retry')}
             </PortalButton>
           )}
           {onGoBack && (
             <PortalButton variant="outline" onClick={onGoBack}>
               <ArrowLeft size={16} className="me-2 rtl:rotate-180" />
-              {t('portal.errorState.goBack' as any) || 'Go Back'}
+              {t('portal.errorState.goBack')}
             </PortalButton>
           )}
           {showHomeLink && (
             <Link href="/portal/">
               <PortalButton variant="outline">
                 <Home size={16} className="me-2" />
-                {t('portal.errorState.home' as any) || 'Go Home'}
+                {t('portal.errorState.home')}
               </PortalButton>
             </Link>
           )}
           {showSupportLink && (
             <PortalButton variant="ghost" className="text-surface-500">
               <Headphones size={16} className="me-2" />
-              {t('portal.errorState.contactSupport' as any) || 'Contact Support'}
+              {t('portal.errorState.contactSupport')}
             </PortalButton>
           )}
         </div>
@@ -146,13 +144,13 @@ export function ErrorState({
         {onRetry && (
           <PortalButton size="sm" onClick={onRetry}>
             <RefreshCw size={14} className="me-2" />
-            {t('portal.errorState.retry' as any) || 'Try Again'}
+              {t('portal.errorState.retry')}
           </PortalButton>
         )}
         {onGoBack && (
           <PortalButton size="sm" variant="outline" onClick={onGoBack}>
             <ArrowLeft size={14} className="me-2 rtl:rotate-180" />
-            {t('portal.errorState.goBack' as any) || 'Go Back'}
+            {t('portal.errorState.goBack')}
           </PortalButton>
         )}
       </div>

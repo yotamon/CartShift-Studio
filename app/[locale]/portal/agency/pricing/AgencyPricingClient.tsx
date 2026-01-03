@@ -25,7 +25,7 @@ import { subscribeToAllPricingRequests, sendPricingRequest } from '@/lib/service
 import { getAllOrganizations } from '@/lib/services/portal-organizations';
 import { Organization } from '@/lib/types/portal';
 import { format } from 'date-fns';
-import { enUS, he } from 'date-fns/locale';
+import { getDateLocale } from '@/lib/locale-config';
 import { cn } from '@/lib/utils';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
@@ -229,7 +229,7 @@ export default function AgencyPricingClient() {
             </div>
             <div>
               <p className="text-[10px] font-black text-emerald-600/70 uppercase tracking-widest">
-                {t('portal.agency.pricing.revenue' as never) || 'Revenue'}
+                {t('portal.agency.pricing.revenue')}
               </p>
               <p className="text-2xl font-black text-emerald-700 dark:text-emerald-400">
                 {formatCurrency(statsData.totalRevenue, 'USD')}
@@ -299,7 +299,7 @@ export default function AgencyPricingClient() {
                     {t('portal.pricing.form.titleLabel')}
                   </th>
                   <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest">
-                    {t('portal.agency.inbox.clientOrg' as never) || 'Client'}
+                    {t('portal.agency.inbox.clientOrg')}
                   </th>
                   <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">
                     {t('portal.common.status')}
@@ -348,7 +348,7 @@ export default function AgencyPricingClient() {
                           {(organizations[req.orgId]?.name || '?')[0].toUpperCase()}
                         </div>
                         <span className="text-sm font-bold text-slate-700 dark:text-slate-300 truncate max-w-[150px]">
-                          {organizations[req.orgId]?.name || 'Unknown'}
+                          {organizations[req.orgId]?.name || t('portal.common.unknown')}
                         </span>
                       </div>
                     </td>
@@ -376,7 +376,7 @@ export default function AgencyPricingClient() {
                         <span className="text-sm font-bold text-slate-800 dark:text-slate-200 font-outfit whitespace-nowrap">
                           {req.createdAt?.toDate
                             ? format(req.createdAt.toDate(), 'MMM d, yyyy', {
-                                locale: locale === 'he' ? he : enUS,
+                                locale: getDateLocale(locale),
                               })
                             : t('portal.common.recently')}
                         </span>
@@ -385,7 +385,7 @@ export default function AgencyPricingClient() {
                             ? t('portal.pricing.status.draft')
                             : req.sentAt?.toDate
                               ? format(req.sentAt.toDate(), 'MMM d', {
-                                  locale: locale === 'he' ? he : enUS,
+                                  locale: getDateLocale(locale),
                                 })
                               : ''}
                         </span>

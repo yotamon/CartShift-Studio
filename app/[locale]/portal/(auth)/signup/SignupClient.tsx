@@ -132,7 +132,7 @@ function SignupForm() {
             <PortalInput
               label={t('portal.auth.signup.fullName')}
               type="text"
-              placeholder="John Doe"
+              placeholder={t('portal.common.namePlaceholder')}
               error={errors.name?.message}
               success={touchedFields.name && !errors.name}
               leftIcon={<User size={18} />}

@@ -9,6 +9,7 @@ import { FAQ, FAQItem } from "@/components/ui/FAQ";
 import { ProcessSection } from "@/components/sections/ProcessSection";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { getDateLocaleString } from '@/lib/locale-config';
 
 export const WordPressPageContent: React.FC = () => {
     const t = useTranslations();
@@ -18,7 +19,7 @@ export const WordPressPageContent: React.FC = () => {
     const faqData = t.raw("wordpress.faq" as any) as { title: string; subtitle: string; items: FAQItem[] };
     const faqItems = faqData?.items || [];
     const learnMoreData = t.raw("wordpress.learnMore" as any) as { title: string; excerpt: string; category: string; date: string; href: string };
-    const formattedDate = new Date(learnMoreData.date).toLocaleDateString(locale === 'he' ? 'he-IL' : 'en-US');
+    const formattedDate = new Date(learnMoreData.date).toLocaleDateString(getDateLocaleString(locale));
 
   return (
     <>
@@ -118,7 +119,7 @@ export const WordPressPageContent: React.FC = () => {
       <Section background="light" className="relative overflow-hidden">
         <div className="max-w-4xl mx-auto">
           <SectionHeader
-            title={faqData?.title || "Frequently Asked Questions"}
+            title={faqData?.title || t('wordpress.faq.title')}
             subtitle={faqData?.subtitle || "Everything you need to know about our WordPress e-commerce development services"}
           />
           <FAQ items={faqItems} />

@@ -4,8 +4,9 @@ import React, { useState, useMemo } from 'react';
 import { motion } from "@/lib/motion";
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Search, Clock, ArrowRight, Sparkles, Calendar } from 'lucide-react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
+import { isRTLLocale, getDateLocaleString } from '@/lib/locale-config';
 
 interface BlogPost {
   slug: string;
@@ -29,8 +30,9 @@ interface BlogPageContentProps {
 type SortOption = 'newest' | 'oldest' | 'popular';
 
 export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categories }) => {
+  const t = useTranslations();
   const locale = useLocale();
-  const isHe = locale === 'he';
+  const isHe = isRTLLocale(locale);
 
   // State management
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -113,7 +115,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
             <div className="flex items-center gap-3 mb-8">
               <Sparkles className="w-6 h-6 text-accent-600 dark:text-primary-400" />
               <h2 className="text-2xl md:text-3xl font-display font-bold text-surface-900 dark:text-white">
-                {isHe ? 'מאמרים מובלטים' : 'Featured Posts'}
+                {t('blog.content.featuredPosts')}
               </h2>
             </div>
 
@@ -123,7 +125,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                 const category =
                   isHe && post.translation?.category ? post.translation.category : post.category;
                 const formattedDate = new Date(post.date).toLocaleDateString(
-                  locale === 'he' ? 'he-IL' : 'en-US',
+                  getDateLocaleString(locale),
                   {
                     month: 'short',
                     day: 'numeric',
@@ -157,7 +159,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                             {post.readingTime && (
                               <span className="flex items-center gap-1">
                                 <Clock className="w-4 h-4" />
-                                {post.readingTime} {isHe ? 'דק׳' : 'min'}
+                                {post.readingTime} {t('blog.content.readingTime')}
                               </span>
                             )}
                           </div>
@@ -186,7 +188,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                 <Search className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-surface-400" />
                 <input
                   type="text"
-                  placeholder={isHe ? 'חיפוש מאמרים...' : 'Search articles...'}
+                  placeholder={t('blog.content.searchPlaceholder')}
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   className="w-full ps-12 pe-4 py-3 rounded-xl glass-effect border border-surface-200 dark:border-surface-700 focus:outline-none focus:ring-2 focus:ring-accent-500 dark:focus:ring-primary-500 text-surface-900 dark:text-white placeholder:text-surface-400"
@@ -204,7 +206,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                         : 'glass-effect text-surface-700 dark:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800'
                     }`}
                   >
-                    {isHe ? 'הכל' : 'All'}
+                    {t('blog.content.allCategories')}
                   </button>
                   {categories.map(category => (
                     <button
@@ -225,16 +227,16 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
               {/* Sort and Results Count */}
               <div className="flex items-center justify-between">
                 <span className="text-sm text-surface-600 dark:text-surface-400">
-                  {filteredAndSortedPosts.length} {isHe ? 'מאמרים' : 'articles'}
+                  {filteredAndSortedPosts.length} {t('blog.content.articles')}
                 </span>
                 <select
                   value={sortBy}
                   onChange={e => setSortBy(e.target.value as SortOption)}
                   className="px-4 py-2 rounded-lg glass-effect border border-surface-200 dark:border-surface-700 text-sm font-medium text-surface-700 dark:text-surface-200 focus:outline-none focus:ring-2 focus:ring-accent-500"
                 >
-                  <option value="newest">{isHe ? 'החדשים ביותר' : 'Newest First'}</option>
-                  <option value="oldest">{isHe ? 'הישנים ביותר' : 'Oldest First'}</option>
-                  <option value="popular">{isHe ? 'פופולריים' : 'Most Popular'}</option>
+                  <option value="newest">{t('blog.content.sort.newest')}</option>
+                  <option value="oldest">{t('blog.content.sort.oldest')}</option>
+                  <option value="popular">{t('blog.content.sort.popular')}</option>
                 </select>
               </div>
             </motion.div>
@@ -243,7 +245,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
             {paginatedPosts.length === 0 ? (
               <div className="text-center py-16">
                 <p className="text-lg text-surface-600 dark:text-surface-300">
-                  {isHe ? 'לא נמצאו מאמרים' : 'No posts found'}
+                  {t('blog.content.noPostsFound')}
                 </p>
               </div>
             ) : (
@@ -259,7 +261,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                     const excerpt =
                       isHe && post.translation?.excerpt ? post.translation.excerpt : post.excerpt;
                     const formattedDate = new Date(post.date).toLocaleDateString(
-                      locale === 'he' ? 'he-IL' : 'en-US',
+                      getDateLocaleString(locale),
                       {
                         month: 'short',
                         day: 'numeric',
@@ -298,7 +300,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                                   {post.readingTime && (
                                     <span className="flex items-center gap-1">
                                       <Clock className="w-4 h-4" />
-                                      {post.readingTime} {isHe ? 'דק׳' : 'min'}
+                                      {post.readingTime} {t('blog.content.readingTime')}
                                     </span>
                                   )}
                                 </div>
@@ -322,7 +324,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                       disabled={currentPage === 1}
                       className="px-4 py-2 rounded-lg glass-effect text-sm font-medium text-surface-700 dark:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     >
-                      {isHe ? 'הקודם' : 'Previous'}
+                      {t('blog.content.pagination.previous')}
                     </button>
 
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
@@ -344,7 +346,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                       disabled={currentPage === totalPages}
                       className="px-4 py-2 rounded-lg glass-effect text-sm font-medium text-surface-700 dark:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     >
-                      {isHe ? 'הבא' : 'Next'}
+                      {t('blog.content.pagination.next')}
                     </button>
                   </div>
                 )}
@@ -367,23 +369,23 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                     <div className="flex items-center gap-2 mb-3">
                       <Sparkles className="w-5 h-5 text-accent-600 dark:text-primary-400" />
                       <h3 className="text-lg font-display font-bold text-surface-900 dark:text-white">
-                        {isHe ? 'הירשמו לניוזלטר' : 'Subscribe to Newsletter'}
+                        {t('blog.content.newsletter.title')}
                       </h3>
                     </div>
                     <p className="text-sm text-surface-600 dark:text-surface-300 mb-4">
-                      {isHe ? 'קבלו טיפים ועדכונים שבועיים' : 'Get weekly tips and updates'}
+                      {t('blog.content.newsletter.description')}
                     </p>
                     <form className="space-y-3">
                       <input
                         type="email"
-                        placeholder={isHe ? 'האימייל שלך' : 'Your email'}
+                        placeholder={t('blog.content.newsletter.placeholder')}
                         className="w-full px-4 py-2 rounded-lg border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-900 dark:text-white placeholder:text-surface-400 focus:outline-none focus:ring-2 focus:ring-accent-500"
                       />
                       <button
                         type="submit"
                         className="w-full px-4 py-2 rounded-lg bg-accent-600 hover:bg-accent-700 dark:bg-accent-500 dark:hover:bg-accent-600 text-white font-medium transition-colors"
                       >
-                        {isHe ? 'הירשם' : 'Subscribe'}
+                        {t('blog.content.newsletter.subscribe')}
                       </button>
                     </form>
                   </CardContent>
@@ -398,7 +400,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                 >
                   <Card>
                     <CardHeader>
-                      <CardTitle>{isHe ? 'קטגוריות' : 'Categories'}</CardTitle>
+                      <CardTitle>{t('blog.content.newsletter.categories')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">

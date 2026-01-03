@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from "@/lib/motion";
+import { motion, AnimatePresence } from '@/lib/motion';
 import { Button } from './Button';
 import { Icon } from './Icon';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { trackExitIntentShown, trackExitIntentClosed, trackBookCallClick } from '@/lib/analytics';
+import { isRTLLocale } from '@/lib/locale-config';
 
 interface ExitIntentModalProps {
   delay?: number;
@@ -19,16 +20,15 @@ export const ExitIntentModal: React.FC<ExitIntentModalProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const locale = useLocale();
-  const isHe = locale === 'he';
+  const t = useTranslations();
+  const isHe = isRTLLocale(locale);
 
   const content = {
-    title: isHe ? 'רגע לפני שהולכים...' : 'Before you go...',
-    subtitle: isHe ? 'קבלו ייעוץ חינם לפרויקט שלכם' : 'Get a free consultation for your project',
-    description: isHe
-      ? 'נשמח לשמוע על מה שאתם בונים ולראות איך נוכל לעזור.'
-      : "We'd love to hear about what you're building and see how we can help.",
-    cta: isHe ? 'קבעו שיחה חינם' : 'Book a Free Call',
-    dismiss: isHe ? 'לא עכשיו' : 'Not now',
+    title: t('common.exitIntent.title'),
+    subtitle: t('common.exitIntent.subtitle'),
+    description: t('common.exitIntent.description'),
+    cta: t('common.exitIntent.cta'),
+    dismiss: t('common.exitIntent.dismiss'),
   };
 
   useEffect(() => {
@@ -149,4 +149,3 @@ export const ExitIntentModal: React.FC<ExitIntentModalProps> = ({
     </AnimatePresence>
   );
 };
-

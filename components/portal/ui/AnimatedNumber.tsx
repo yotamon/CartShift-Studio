@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useSpring, useTransform, useMotionValueEvent } from "@/lib/motion";
+import React, { useEffect, useState } from 'react';
+import { useSpring, useTransform, useMotionValueEvent } from '@/lib/motion';
 
 interface AnimatedNumberProps {
   value: number | string;
@@ -7,16 +7,17 @@ interface AnimatedNumberProps {
 }
 
 export const AnimatedNumber: React.FC<AnimatedNumberProps> = ({ value, duration = 1000 }) => {
-  const numericValue = typeof value === "string" ? parseFloat(value.replace(/[^0-9.]/g, "")) || 0 : value;
+  const numericValue =
+    typeof value === 'string' ? parseFloat(value.replace(/[^0-9.]/g, '')) || 0 : value;
   const [displayValue, setDisplayValue] = useState(0);
-  
-  const motionValue = useSpring(0, { 
-    stiffness: 80, 
+
+  const motionValue = useSpring(0, {
+    stiffness: 80,
     damping: 20,
-    duration
+    duration,
   });
-  
-  useMotionValueEvent(motionValue, "change", (latest) => {
+
+  useMotionValueEvent(motionValue, 'change', latest => {
     setDisplayValue(Math.round(latest));
   });
 
@@ -24,7 +25,7 @@ export const AnimatedNumber: React.FC<AnimatedNumberProps> = ({ value, duration 
     motionValue.set(numericValue);
   }, [numericValue, motionValue]);
 
-  if (typeof value === "string" && value.includes("$")) {
+  if (typeof value === 'string' && value.includes('$')) {
     return <>{value}</>;
   }
 

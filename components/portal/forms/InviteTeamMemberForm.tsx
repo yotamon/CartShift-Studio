@@ -60,7 +60,7 @@ export const InviteTeamMemberForm = ({
     setError(null);
 
     try {
-      if (!userData) throw new Error('Not authenticated');
+      if (!userData) throw new Error(t('portal.common.notAuthenticated'));
 
       if (isAgency) {
         await inviteAgencyMember(

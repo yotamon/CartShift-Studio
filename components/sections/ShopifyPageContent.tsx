@@ -95,7 +95,7 @@ export const ShopifyPageContent: React.FC = () => {
             <Card hover className="overflow-hidden">
               <CardHeader>
                 <CardTitle className="text-2xl mb-2">
-                  {learnMoreData?.title || 'Learn More About Shopify'}
+                  {learnMoreData?.title || t('shopify.learnMore.title')}
                 </CardTitle>
                 <p className="text-base md:text-lg text-surface-600 dark:text-surface-300 leading-relaxed">
                   {learnMoreData?.description ||
@@ -142,7 +142,7 @@ export const ShopifyPageContent: React.FC = () => {
       <Section background="light" className="relative overflow-hidden">
         <div className="max-w-4xl mx-auto">
           <SectionHeader
-            title={faqData?.title || 'Frequently Asked Questions'}
+            title={faqData?.title || t('shopify.faq.title')}
             subtitle={
               faqData?.subtitle ||
               'Everything you need to know about our Shopify development services'

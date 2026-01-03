@@ -93,9 +93,9 @@ export default function EditPricingForm() {
           .array(
             z.object({
               id: z.string(),
-              description: z.string().min(1, 'Description required'),
-              quantity: z.number().min(1, 'Quantity must be at least 1'),
-              unitPrice: z.number().min(0, 'Price must be positive'),
+              description: z.string().min(1, t('portal.common.descriptionRequired')),
+              quantity: z.number().min(1, t('portal.pricing.form.errors.quantityMustBeAtLeast1')),
+              unitPrice: z.number().min(0, t('portal.pricing.form.errors.priceMustBePositive')),
               notes: z.string().optional(),
             })
           )
@@ -200,7 +200,7 @@ export default function EditPricingForm() {
         });
       } catch (err) {
         console.error('Failed to fetch pricing request:', err);
-        setErrorMessage('Failed to load pricing offer');
+        setErrorMessage(t('portal.pricing.form.errors.failedToLoad'));
       } finally {
         setIsLoading(false);
       }
@@ -230,7 +230,7 @@ export default function EditPricingForm() {
       !pricingId ||
       typeof pricingId !== 'string'
     ) {
-      setErrorMessage('Authentication required');
+      setErrorMessage(t('portal.common.authRequired'));
       setSubmitStatus('error');
       return;
     }
@@ -357,10 +357,10 @@ export default function EditPricingForm() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
-            {t('portal.pricing.editOffer' as never) || 'Edit Pricing Offer'}
+            {t('portal.pricing.editOffer')}
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">
-            {t('portal.pricing.editOfferDescription' as never) || 'Update your pricing proposal.'}
+            {t('portal.pricing.editOfferDescription')}
           </p>
         </div>
         {pricingRequest && (
@@ -375,7 +375,7 @@ export default function EditPricingForm() {
         <div className="lg:col-span-2 space-y-6">
           <PortalCard className="p-6">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit mb-4">
-              {t('portal.pricing.form.offerDetails' as never) || 'Offer Details'}
+              {t('portal.pricing.form.offerDetails')}
             </h3>
 
             <div className="space-y-4">
@@ -423,15 +423,15 @@ export default function EditPricingForm() {
                 <div>
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit">
                     <FileText className="inline w-5 h-5 me-2" />
-                    {t('portal.pricing.includedRequests' as never) || 'Included Requests'}
+                    {t('portal.pricing.includedRequests')}
                   </h3>
                   <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
                     {t('portal.pricing.form.linkedRequestsNote' as never) ||
-                      'Requests linked to this offer'}
+                      t('portal.pricing.form.linkedRequestsLabel')}
                   </p>
                 </div>
                 <PortalBadge variant="blue">
-                  {linkedRequests.length} {t('portal.pricing.form.selected' as never) || 'linked'}
+                  {linkedRequests.length} {t('portal.pricing.form.selected')}
                 </PortalBadge>
               </div>
 
@@ -559,7 +559,7 @@ export default function EditPricingForm() {
                   <AlertCircle size={14} />
                   {typeof errors.lineItems.message === 'string'
                     ? errors.lineItems.message
-                    : 'Please check line items'}
+                    : t('portal.pricing.form.errors.checkLineItems')}
                 </p>
               )}
             </div>
@@ -581,7 +581,7 @@ export default function EditPricingForm() {
           {/* Currency & Validity */}
           <PortalCard className="p-6">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit mb-4">
-              {t('portal.pricing.form.settings' as never) || 'Settings'}
+              {t('portal.pricing.form.settings')}
             </h3>
 
             <div className="space-y-4">
@@ -620,7 +620,7 @@ export default function EditPricingForm() {
           {/* Client Info */}
           <PortalCard className="p-6">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit mb-4">
-              {t('portal.pricing.form.clientInfo' as never) || 'Client Info'}
+              {t('portal.pricing.form.clientInfo')}
             </h3>
 
             <div className="space-y-4">
@@ -631,7 +631,7 @@ export default function EditPricingForm() {
                 <input
                   {...register('clientName')}
                   type="text"
-                  placeholder="John Doe"
+                  placeholder={t('portal.common.namePlaceholder')}
                   className="portal-input w-full"
                 />
               </div>
@@ -658,7 +658,7 @@ export default function EditPricingForm() {
             <textarea
               {...register('agencyNotes')}
               rows={4}
-              placeholder="Internal notes (not visible to client)..."
+              placeholder={t('portal.pricing.agencyNotesPlaceholder')}
               className="portal-input w-full resize-none text-sm"
             />
           </PortalCard>
@@ -701,7 +701,7 @@ export default function EditPricingForm() {
               ) : (
                 <Save size={18} />
               )}
-              {t('portal.pricing.form.saveChanges' as never) || 'Save Changes'}
+              {t('portal.pricing.form.saveChanges')}
             </PortalButton>
 
             <button

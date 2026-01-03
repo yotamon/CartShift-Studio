@@ -41,7 +41,7 @@ import {
 } from '@/lib/services/portal-notifications';
 import { Notification, ACCOUNT_TYPE } from '@/lib/types/portal';
 import { formatDistanceToNow } from 'date-fns';
-import { enUS, he } from 'date-fns/locale';
+import { getDateLocale, getLocaleDirection, getLocaleFontFamily, isRTLLocale } from '@/lib/locale-config';
 import { OnboardingTour } from './OnboardingTour';
 import { OfflineIndicator } from './ui/OfflineIndicator';
 import { Breadcrumbs } from './ui/Breadcrumbs';
@@ -543,7 +543,7 @@ export const PortalShell = ({
             >
               <div className="p-6 border-b border-surface-200/50 dark:border-surface-800/30 flex items-center justify-between bg-white/50 dark:bg-surface-900/50">
                 <h3 className="text-base font-black text-surface-900 dark:text-white">
-                  {t('portal.header.notifications' as any) || 'Notifications'}
+                  {t('portal.header.notifications')}
                 </h3>
                 {unreadCount > 0 && (
                   <button
@@ -551,7 +551,7 @@ export const PortalShell = ({
                     className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1.5 hover:underline decoration-2 underline-offset-4 transition-all"
                   >
                     <CheckCheck size={14} />
-                    {t('portal.header.markAllRead' as any) || 'Mark all as read'}
+                    {t('portal.header.markAllRead')}
                   </button>
                 )}
               </div>
@@ -563,7 +563,7 @@ export const PortalShell = ({
                       <Bell size={24} className="text-surface-300 dark:text-surface-700" />
                     </div>
                     <p className="text-sm text-surface-500 font-bold">
-                      {t('portal.header.noNotifications' as any) || 'No notifications'}
+                      {t('portal.header.noNotifications')}
                     </p>
                   </div>
                 ) : (
@@ -607,7 +607,7 @@ export const PortalShell = ({
                               <div className="px-2 py-0.5 rounded-md bg-surface-100 dark:bg-surface-800 text-[10px] font-black uppercase text-surface-400">
                                 {formatDistanceToNow(createdAt, {
                                   addSuffix: true,
-                                  locale: locale === 'he' ? he : enUS,
+                                  locale: getDateLocale(locale),
                                 })}
                               </div>
                             </div>
@@ -629,9 +629,9 @@ export const PortalShell = ({
     <div
       className={cn(
         'portal-shell min-h-screen bg-white dark:bg-surface-950 text-surface-900 dark:text-surface-50 antialiased overflow-x-hidden selection:bg-blue-500/20',
-        locale === 'he' ? 'font-inter' : 'font-outfit'
+        getLocaleFontFamily(locale)
       )}
-      dir={locale === 'he' ? 'rtl' : 'ltr'}
+      dir={getLocaleDirection(locale)}
     >
       <OfflineIndicator />
 
@@ -640,7 +640,7 @@ export const PortalShell = ({
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:start-4 focus:z-[100] focus:px-6 focus:py-3 focus:bg-blue-600 focus:text-white focus:rounded-2xl focus:shadow-xl focus:outline-none"
       >
-        {t('portal.accessibility.skipToContent' as any) || 'Skip to main content'}
+        {t('portal.accessibility.skipToContent')}
       </a>
       {/* Mobile Sidebar Backdrop */}
       <AnimatePresence>
@@ -662,10 +662,10 @@ export const PortalShell = ({
           'bg-white dark:bg-surface-950/80 backdrop-blur-xl',
           'border-e border-surface-200/50 dark:border-surface-800/30 shadow-2xl shadow-surface-950/20',
           'w-[85vw] max-w-sm',
-          locale === 'he' ? 'right-0' : 'left-0',
+          isRTLLocale(locale) ? 'right-0' : 'left-0',
           isMobileMenuOpen
             ? 'translate-x-0'
-            : locale === 'he'
+            : isRTLLocale(locale)
               ? 'translate-x-full'
               : '-translate-x-full',
           'md:translate-x-0',
@@ -817,7 +817,7 @@ export const PortalShell = ({
               />
               <input
                 type="text"
-                placeholder={t('portal.header.search' as any) || 'Search...'}
+                placeholder={t('portal.header.search')}
                 className="w-full h-10 ps-12 pe-4 bg-surface-50/50 dark:bg-surface-900/50 border border-surface-200/50 dark:border-surface-800/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm font-medium transition-all group-hover:bg-surface-100/50 dark:group-hover:bg-surface-800/50"
                 aria-label="Search"
               />
