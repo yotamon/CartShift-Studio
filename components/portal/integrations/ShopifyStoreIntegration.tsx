@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from "@/lib/motion";
 import { useTranslations } from 'next-intl';
 import {
   ShoppingBag,

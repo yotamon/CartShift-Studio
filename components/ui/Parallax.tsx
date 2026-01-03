@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useLayoutEffect } from "react";
-import { motion, useScroll, useTransform, MotionValue, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform, MotionValue, useSpring } from "@/lib/motion";
 
 /**
  * Hook: useParallax - Returns parallax motion values based on viewport scroll

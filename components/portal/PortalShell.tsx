@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { usePathname, useRouter } from '@/i18n/navigation';
 import { Link } from '@/i18n/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from "@/lib/motion";
 import {
   LayoutDashboard,
   ClipboardList,
@@ -885,10 +885,12 @@ export const PortalShell = ({
 
         {/* Page Content Container */}
         <main id="main-content" className="portal-content">
-          {/* Breadcrumbs */}
-          <div>
-            <Breadcrumbs />
-          </div>
+          {/* Breadcrumbs - Skip for request detail pages that have their own breadcrumbs */}
+          {!pathname?.includes('/requests/') && (
+            <div>
+              <Breadcrumbs />
+            </div>
+          )}
           <div className="portal-reveal">{children}</div>
         </main>
       </div>

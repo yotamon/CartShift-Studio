@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from "@/lib/motion";
 import { useTranslations, useLocale } from 'next-intl';
 import {
   X,

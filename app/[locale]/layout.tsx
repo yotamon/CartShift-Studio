@@ -5,6 +5,8 @@ import { LocaleAttributes } from '@/components/providers/LocaleAttributes';
 import { GeoLocaleRedirect } from '@/components/providers/GeoLocaleRedirect';
 import { generateOrganizationSchema } from '@/lib/seo';
 import { ConditionalLayout } from '@/components/layout/ConditionalLayout';
+import { MotionProvider } from '@/lib/motion';
+import { MotionConfig } from '@/lib/motion';
 import Script from 'next/script';
 import { NextIntlClientProvider } from 'next-intl';
 import { hasLocale } from 'next-intl';
@@ -99,12 +101,23 @@ export default async function LocaleLayout({
         dangerouslySetInnerHTML={{ __html: schemaJson }}
       />
       <ThemeProvider>
-        <NextIntlClientProvider messages={messages} locale={locale}>
-          <LocaleAttributes />
-          <GeoLocaleRedirect />
-          <GoogleAnalytics />
-          <ConditionalLayout>{children}</ConditionalLayout>
-        </NextIntlClientProvider>
+        <MotionProvider>
+          <MotionConfig
+            transition={{
+              type: "spring",
+              stiffness: 300,
+              damping: 30,
+              mass: 0.8
+            }}
+          >
+            <NextIntlClientProvider messages={messages} locale={locale}>
+              <LocaleAttributes />
+              <GeoLocaleRedirect />
+              <GoogleAnalytics />
+              <ConditionalLayout>{children}</ConditionalLayout>
+            </NextIntlClientProvider>
+          </MotionConfig>
+        </MotionProvider>
       </ThemeProvider>
     </>
   );

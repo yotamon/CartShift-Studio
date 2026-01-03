@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from "@/lib/motion";
 import { Search, X, Clock, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations, useLocale } from 'next-intl';

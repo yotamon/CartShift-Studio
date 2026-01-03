@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from "@/lib/motion";
 import { ParallaxLayer } from '@/components/ui/Parallax';
 import { Sparkles } from 'lucide-react';
 

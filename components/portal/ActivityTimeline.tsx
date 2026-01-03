@@ -1,5 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from "@/lib/motion";
+import { timelineItem, timelineItemRTL } from "@/lib/animation-variants";
 import { useLocale, useTranslations } from 'next-intl';
 import {
   CheckCircle2,
@@ -120,17 +121,18 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
         return (
           <motion.div
             key={activity.id}
-            initial={{ opacity: 0, x: isHe ? 20 : -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.05 }}
+            variants={isHe ? timelineItemRTL : timelineItem}
+            initial="hidden"
+            animate="visible"
+            transition={{ delay: index * 0.05 }}
             className="relative"
           >
             {/* Connector line */}
             {index < visibleActivities.length - 1 && (
               <div
                 className={cn(
-                  'absolute top-10 bottom-0 w-0.5 bg-surface-100 dark:bg-surface-800',
-                  isHe ? 'end-6' : 'start-6'
+                  'absolute top-9 -bottom-10 w-0.5 bg-surface-100 dark:bg-surface-800',
+                  isHe ? 'end-9' : 'start-9'
                 )}
               />
             )}
@@ -140,7 +142,7 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
                 activity.requestId ? `/portal/org/${orgId}/requests/${activity.requestId}` : '#'
               }
               className={cn(
-                'flex items-start gap-4 p-3.5 rounded-2xl hover:bg-surface-50 dark:hover:bg-surface-900/50 transition-all cursor-pointer group hover-lift-sm',
+                'flex items-start gap-4 p-4 rounded-2xl hover:bg-surface-50 dark:hover:bg-surface-900/50 transition-all cursor-pointer group hover-lift-sm',
                 isHe && 'flex-row-reverse text-end'
               )}
             >

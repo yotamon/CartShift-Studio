@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from "@/lib/motion";
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Link } from '@/i18n/navigation';

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { motion } from "@/lib/motion";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { useTranslations } from "next-intl";

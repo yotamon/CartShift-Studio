@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from "@/lib/motion";
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Search, Clock, ArrowRight, Sparkles, Calendar } from 'lucide-react';
 import { useLocale } from 'next-intl';

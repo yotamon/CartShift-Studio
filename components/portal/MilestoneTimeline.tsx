@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from "@/lib/motion";
+import { progressBar, timelineItem, timelineItemRTL } from "@/lib/animation-variants";
 import { useLocale } from 'next-intl';
 import { Circle, Loader2, CheckCircle2, AlertCircle, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -96,9 +97,10 @@ export const MilestoneTimeline: React.FC<MilestoneTimelineProps> = ({
       <div className="relative h-2 bg-surface-200 dark:bg-surface-700 rounded-full overflow-hidden">
         <motion.div
           className="absolute inset-y-0 start-0 bg-gradient-to-r from-accent-500 to-primary-500 rounded-full"
-          initial={{ width: 0 }}
-          animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
+          variants={progressBar}
+          initial="hidden"
+          animate="visible"
+          custom={progress}
         />
       </div>
 
@@ -119,8 +121,9 @@ export const MilestoneTimeline: React.FC<MilestoneTimelineProps> = ({
             return (
               <motion.div
                 key={milestone.id}
-                initial={{ opacity: 0, x: isHe ? 20 : -20 }}
-                animate={{ opacity: 1, x: 0 }}
+                variants={isHe ? timelineItemRTL : timelineItem}
+                initial="hidden"
+                animate="visible"
                 transition={{ delay: index * 0.1 }}
                 className={cn(
                   'relative flex items-start gap-4',

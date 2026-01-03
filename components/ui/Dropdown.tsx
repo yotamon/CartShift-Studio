@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from "@/lib/motion";
 
 export interface DropdownItem {
   label: string;
@@ -382,21 +382,47 @@ export function Dropdown({ trigger, items, align = 'right', className = '' }: Dr
     </AnimatePresence>
   );
 
-  return (
-    <div className={`relative inline-block ${className}`} style={{ overflow: 'visible' }}>
-      <button
-        ref={triggerRef}
-        type="button"
-        onClick={e => {
+  const isTriggerButton = React.isValidElement(trigger) && trigger.type === 'button';
+
+  const triggerElement = isTriggerButton
+    ? React.cloneElement(trigger as React.ReactElement<any>, {
+        ref: (node: HTMLButtonElement | null) => {
+          triggerRef.current = node;
+          if (typeof (trigger as any).ref === 'function') {
+            (trigger as any).ref(node);
+          } else if ((trigger as any).ref) {
+            (trigger as any).ref.current = node;
+          }
+        },
+        onClick: (e: React.MouseEvent) => {
           e.stopPropagation();
           setIsOpen(!isOpen);
-        }}
-        className="inline-flex items-center justify-center"
-        aria-haspopup="true"
-        aria-expanded={isOpen}
-      >
-        {trigger}
-      </button>
+          if (trigger.props?.onClick) {
+            trigger.props.onClick(e);
+          }
+        },
+        'aria-haspopup': 'true',
+        'aria-expanded': isOpen,
+      })
+    : (
+        <button
+          ref={triggerRef}
+          type="button"
+          onClick={e => {
+            e.stopPropagation();
+            setIsOpen(!isOpen);
+          }}
+          className="inline-flex items-center justify-center"
+          aria-haspopup="true"
+          aria-expanded={isOpen}
+        >
+          {trigger}
+        </button>
+      );
+
+  return (
+    <div className={`relative inline-block ${className}`} style={{ overflow: 'visible' }}>
+      {triggerElement}
 
       {mounted && typeof document !== 'undefined' && document.body
         ? createPortal(dropdownMenu, document.body)

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "@/lib/motion";
 import { Button } from "./Button";
 import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";

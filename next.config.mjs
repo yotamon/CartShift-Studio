@@ -28,6 +28,16 @@ const nextConfig = {
       // SPECIFIC REWRITES - Handle detail pages with static fallbacks
       // ============================================================
 
+      // New Pricing - MUST come BEFORE the generic :pricingId rewrite
+      {
+        source: '/:locale/portal/org/:orgId/pricing/new/',
+        destination: '/:locale/portal/org/template/pricing/new/',
+      },
+      {
+        source: '/:locale/portal/org/:orgId/pricing/new',
+        destination: '/:locale/portal/org/template/pricing/new/',
+      },
+
       // Pricing Detail - ANY pricingId → /pricing/pricing/
       {
         source: '/:locale/portal/org/:orgId/pricing/:pricingId/',
@@ -46,6 +56,26 @@ const nextConfig = {
       {
         source: '/:locale/portal/org/:orgId/pricing/:pricingId/edit',
         destination: '/:locale/portal/org/template/pricing/pricing/edit/',
+      },
+
+      // Consultations - ANY orgId → /consultations/
+      {
+        source: '/:locale/portal/org/:orgId/consultations/',
+        destination: '/:locale/portal/org/template/consultations/',
+      },
+      {
+        source: '/:locale/portal/org/:orgId/consultations',
+        destination: '/:locale/portal/org/template/consultations/',
+      },
+
+      // New Request - MUST come BEFORE the generic :requestId rewrite
+      {
+        source: '/:locale/portal/org/:orgId/requests/new/',
+        destination: '/:locale/portal/org/template/requests/new/',
+      },
+      {
+        source: '/:locale/portal/org/:orgId/requests/new',
+        destination: '/:locale/portal/org/template/requests/new/',
       },
 
       // Request Detail - ANY requestId → /requests/request/

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { motion } from "@/lib/motion";
 import { Parallax } from '@/components/ui/Parallax';
 
 interface SectionProps {

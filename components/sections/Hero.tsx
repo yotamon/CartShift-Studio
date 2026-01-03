@@ -1,9 +1,19 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from '@/lib/motion';
 import { Button } from '@/components/ui/Button';
 import { ParallaxLayer } from '@/components/ui/Parallax';
+import { BackgroundShapes } from '@/components/ui/BackgroundShapes';
+import {
+  fadeInLeft,
+  fadeInRight,
+  heroTag,
+  heroContent,
+  heroImage,
+  staggerContainer,
+  platformIcon,
+} from '@/lib/animation-variants';
 import { useTranslations } from 'next-intl';
 import { useDirection } from '@/lib/i18n-utils';
 import { getScheduleUrl } from '@/lib/schedule';
@@ -66,217 +76,19 @@ export const Hero: React.FC = () => {
         ></div>
       </ParallaxLayer>
 
-      {/* Floating geometric shapes - Impressive spread across entire section */}
-
-      {/* TOP ROW - Left to Right */}
-      <motion.div
-        className="absolute top-[8%] start-[5%] w-2 h-2 bg-primary-500/20 rounded-full"
-        animate={{ scale: [1, 1.5, 1], opacity: [0.2, 0.5, 0.2] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute top-[12%] start-[15%] w-20 h-20 border-2 border-primary-500/20 rounded-xl"
-        animate={{ rotate: [0, 90, 180, 270, 360], y: [0, -15, 0, 15, 0] }}
-        transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-      />
-      <motion.div
-        className="absolute top-[5%] start-[28%] w-3 h-3 bg-accent-400/15 rounded-full"
-        animate={{ y: [0, -15, 0], x: [0, 8, 0], opacity: [0.15, 0.4, 0.15] }}
-        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute top-[15%] start-[42%] w-14 h-14 border border-primary-400/15 rounded-2xl"
-        animate={{ rotate: [0, -180, -360], scale: [1, 1.1, 1] }}
-        transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
-      />
-      <motion.div
-        className="absolute top-[8%] end-[35%] w-1.5 h-1.5 bg-primary-600/25 rounded-full"
-        animate={{ scale: [1, 1.8, 1], opacity: [0.25, 0.6, 0.25] }}
-        transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-      />
-      <motion.div
-        className="absolute top-[18%] end-[22%] w-10 h-10 border-2 border-accent-500/25 rounded-full"
-        animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.7, 0.3] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute top-[6%] end-[12%] w-16 h-16 border border-primary-500/10 rounded-xl"
-        animate={{ rotate: [0, 45, 0, -45, 0], y: [0, -10, 0] }}
-        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute top-[14%] end-[4%] w-2.5 h-2.5 bg-accent-500/20 rounded-full"
-        animate={{ scale: [1, 1.4, 1], y: [0, -12, 0], opacity: [0.2, 0.5, 0.2] }}
-        transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-      />
-
-      {/* UPPER-MID ROW */}
-      <motion.div
-        className="absolute top-[28%] start-[3%] w-24 h-24 border border-accent-400/10 rounded-3xl"
-        animate={{ rotate: [0, -30, 0, 30, 0] }}
-        transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute top-[32%] start-[18%] w-5 h-5 bg-primary-500/20 rounded-lg"
-        animate={{ rotate: [0, 180, 360], scale: [1, 1.2, 1] }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-      />
-      <motion.div
-        className="absolute top-[25%] start-[35%] w-8 h-8 border-2 border-accent-400/20 rounded-full"
-        animate={{ y: [0, -25, 0], rotate: [0, 360] }}
-        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute top-[30%] end-[30%] w-1.5 h-1.5 bg-accent-600/30 rounded-full"
-        animate={{ scale: [1, 2, 1], opacity: [0.3, 0.7, 0.3] }}
-        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute top-[22%] end-[15%] w-12 h-12 bg-primary-500/5 rounded-xl"
-        animate={{ y: [0, 20, 0], rotate: [0, 45, 0] }}
-        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute top-[35%] end-[6%] w-18 h-18 border border-accent-500/15 rounded-2xl"
-        animate={{ rotate: [0, 90, 0], scale: [1, 1.05, 1] }}
-        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
-      />
-
-      {/* MIDDLE ROW */}
-      <motion.div
-        className="absolute top-[45%] start-[6%] w-6 h-6 border-2 border-primary-500/25 rounded-lg"
-        animate={{ rotate: [0, -90, -180, -270, -360] }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
-      />
-      <motion.div
-        className="absolute top-[50%] start-[22%] w-2 h-2 bg-accent-500/15 rounded-full"
-        animate={{ scale: [1, 1.6, 1], y: [0, -8, 0], opacity: [0.15, 0.45, 0.15] }}
-        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
-      />
-      <motion.div
-        className="absolute top-[42%] start-[38%] w-16 h-16 border border-primary-400/10 rounded-full"
-        animate={{ scale: [1, 1.15, 1], opacity: [0.2, 0.5, 0.2] }}
-        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute top-[48%] end-[38%] w-2.5 h-2.5 bg-primary-400/12 rounded-full"
-        animate={{ y: [0, -20, 0], x: [0, 10, 0], opacity: [0.12, 0.35, 0.12] }}
-        transition={{ duration: 6.5, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute top-[52%] end-[25%] w-10 h-10 border-2 border-accent-400/20 rounded-xl"
-        animate={{ rotate: [0, 60, 0, -60, 0], y: [0, -15, 0] }}
-        transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute top-[44%] end-[8%] w-1.5 h-1.5 bg-accent-500/25 rounded-full"
-        animate={{ scale: [1, 1.7, 1], opacity: [0.25, 0.55, 0.25] }}
-        transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
-      />
-
-      {/* LOWER-MID ROW */}
-      <motion.div
-        className="absolute top-[62%] start-[4%] w-3 h-3 bg-primary-600/18 rounded-full"
-        animate={{ y: [0, -15, 0], scale: [1, 1.2, 1], opacity: [0.18, 0.4, 0.18] }}
-        transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute top-[58%] start-[15%] w-14 h-14 border border-accent-500/15 rounded-2xl"
-        animate={{ rotate: [0, -45, 0], y: [0, 15, 0] }}
-        transition={{ duration: 13, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute top-[65%] start-[30%] w-6 h-6 border-2 border-primary-400/20 rounded-full"
-        animate={{ scale: [1, 1.4, 1], rotate: [0, 180, 360] }}
-        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute top-[60%] end-[32%] w-20 h-20 border border-accent-400/10 rounded-3xl"
-        animate={{ rotate: [0, 30, 0, -30, 0], scale: [1, 1.08, 1] }}
-        transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute top-[68%] end-[18%] w-2 h-2 bg-primary-500/22 rounded-full"
-        animate={{ scale: [1, 1.6, 1], opacity: [0.22, 0.5, 0.22] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.6 }}
-      />
-      <motion.div
-        className="absolute top-[55%] end-[5%] w-8 h-8 bg-accent-500/8 rounded-lg"
-        animate={{ y: [0, 25, 0], rotate: [0, -45, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-      />
-
-      {/* BOTTOM ROW */}
-      <motion.div
-        className="absolute bottom-[22%] start-[8%] w-12 h-12 border-2 border-accent-500/20 rounded-xl"
-        animate={{ rotate: [0, 90, 180, 270, 360], scale: [1, 1.1, 1] }}
-        transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
-      />
-      <motion.div
-        className="absolute bottom-[28%] start-[25%] w-1.5 h-1.5 bg-primary-500/28 rounded-full"
-        animate={{ scale: [1, 1.8, 1], opacity: [0.28, 0.6, 0.28] }}
-        transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 0.2 }}
-      />
-      <motion.div
-        className="absolute bottom-[18%] start-[40%] w-18 h-18 border border-primary-400/10 rounded-2xl"
-        animate={{ rotate: [0, -60, 0], y: [0, -20, 0] }}
-        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute bottom-[25%] end-[35%] w-5 h-5 border-2 border-accent-400/25 rounded-full"
-        animate={{ y: [0, -15, 0], scale: [1, 1.3, 1] }}
-        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute bottom-[30%] end-[20%] w-2.5 h-2.5 bg-accent-600/15 rounded-full"
-        animate={{ rotate: [0, 180, 360], y: [0, -8, 0], opacity: [0.15, 0.38, 0.15] }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-      />
-      <motion.div
-        className="absolute bottom-[20%] end-[8%] w-16 h-16 border border-primary-500/15 rounded-3xl"
-        animate={{ rotate: [0, 45, 0, -45, 0], scale: [1, 1.12, 1] }}
-        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute bottom-[35%] end-[3%] w-2 h-2 bg-primary-400/20 rounded-full"
-        animate={{ scale: [1, 1.5, 1], opacity: [0.2, 0.48, 0.2] }}
-        transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut' }}
-      />
-
-      {/* EXTRA ACCENT DOTS - scattered subtle pulsing dots with varied opacity/size */}
-      <motion.div
-        className="absolute top-[38%] start-[48%] w-1.5 h-1.5 bg-accent-500/18 rounded-full"
-        animate={{ scale: [1, 1.6, 1], opacity: [0.18, 0.42, 0.18] }}
-        transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
-      />
-      <motion.div
-        className="absolute top-[72%] start-[12%] w-2.5 h-2.5 bg-primary-600/12 rounded-full"
-        animate={{ scale: [1, 1.4, 1], opacity: [0.12, 0.32, 0.12] }}
-        transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut', delay: 0.7 }}
-      />
-      <motion.div
-        className="absolute top-[20%] end-[42%] w-1.5 h-1.5 bg-accent-400/22 rounded-full"
-        animate={{ scale: [1, 1.7, 1], opacity: [0.22, 0.5, 0.22] }}
-        transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut', delay: 1.1 }}
-      />
-      <motion.div
-        className="absolute bottom-[40%] start-[52%] w-2 h-2 bg-primary-500/15 rounded-full"
-        animate={{ scale: [1, 1.5, 1], opacity: [0.15, 0.38, 0.15] }}
-        transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.9 }}
-      />
+      {/* Floating geometric shapes */}
+      <BackgroundShapes />
 
       <div className="max-w-7xl mx-auto relative z-10 w-full">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <motion.div
-            initial={{ opacity: 0, x: isRtl ? 50 : -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
+            initial="hidden"
+            animate="visible"
+            variants={isRtl ? fadeInRight : fadeInLeft}
             className="space-y-8 md:space-y-10"
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              variants={heroTag}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/90 dark:bg-white/5 border border-surface-300/50 dark:border-white/10 backdrop-blur-md shadow-premium"
             >
               <Sparkles className="w-4 h-4 text-accent-500" />
@@ -293,18 +105,16 @@ export const Hero: React.FC = () => {
 
             <motion.p
               className="text-lg md:text-xl text-surface-600 dark:text-surface-300 leading-relaxed max-w-xl"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
+              variants={heroContent}
+              custom={0.4}
             >
               {t('hero.description')}
             </motion.p>
 
             <motion.div
               className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
+              variants={heroContent}
+              custom={0.6}
             >
               <a
                 href={getScheduleUrl()}
@@ -343,9 +153,9 @@ export const Hero: React.FC = () => {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8, duration: 1 }}
+              initial="hidden"
+              animate="visible"
+              variants={staggerContainer}
               className="pt-8 md:pt-10 border-t border-surface-300/60 dark:border-white/5 flex flex-wrap gap-8 md:gap-12"
             >
               <div className="flex flex-col">
@@ -368,17 +178,14 @@ export const Hero: React.FC = () => {
                 <span className="text-xs uppercase tracking-wider text-surface-400 dark:text-surface-500 font-medium mb-4 block">
                   {t('hero.platforms.label')}
                 </span>
-                <div className="flex flex-wrap items-center gap-3 md:gap-4">
+                <motion.div
+                  variants={staggerContainer}
+                  className="flex flex-wrap items-center gap-3 md:gap-4"
+                >
                   {platformIcons.map((platform, index) => (
                     <motion.div
                       key={platform.name}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{
-                        delay: 1.1 + index * 0.08,
-                        duration: 0.4,
-                        ease: 'easeOut',
-                      }}
+                      variants={platformIcon}
                       whileHover={{
                         scale: 1.1,
                         transition: { duration: 0.2 },
@@ -398,15 +205,15 @@ export const Hero: React.FC = () => {
                       </div>
                     </motion.div>
                   ))}
-                </div>
+                </motion.div>
               </div>
             </motion.div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 50 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.4, type: 'spring', stiffness: 50 }}
+            initial="hidden"
+            animate="visible"
+            variants={heroImage}
             className="relative hidden lg:block"
           >
             <div className="absolute inset-0 bg-gradient-brand opacity-15 blur-3xl rounded-full"></div>
@@ -436,9 +243,7 @@ export const Hero: React.FC = () => {
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <span className="text-sm font-medium text-center">
-            {t('hero.scrollIndicator')}
-          </span>
+          <span className="text-sm font-medium text-center">{t('hero.scrollIndicator')}</span>
           <ArrowDown className="w-6 h-6" strokeWidth={2} />
         </motion.div>
       </motion.div>
@@ -448,4 +253,3 @@ export const Hero: React.FC = () => {
     </section>
   );
 };
-

@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { Smile, Reply } from 'lucide-react';
 import { addReaction, removeReaction } from '@/lib/services/portal-comments';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from "@/lib/motion";
 import { PortalAvatar } from '@/components/portal/ui/PortalAvatar';
 
 interface CommentItemProps {

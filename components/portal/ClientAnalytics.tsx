@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useMemo } from 'react';
-import { motion } from 'framer-motion';
+import React, { useMemo, useEffect, useState } from 'react';
+import { motion, useSpring, useTransform, useMotionValueEvent } from "@/lib/motion";
+import { analyticsCard, staggerContainer } from "@/lib/animation-variants";
+import { AnimatedNumber } from "@/components/portal/ui/AnimatedNumber";
 import { useLocale } from 'next-intl';
 import { FileText, Clock, CheckCircle2, DollarSign, TrendingUp, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -218,15 +220,18 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({ requests, clas
   return (
     <div className={cn('space-y-6', className)}>
       {/* Main Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={staggerContainer}
+        className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+      >
         {cards.slice(0, 4).map((card, index) => {
           const CardIcon = card.icon;
           return (
             <motion.div
               key={card.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
+              variants={analyticsCard}
               className="relative p-5 rounded-2xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 overflow-hidden group hover:shadow-lg transition-shadow hover-lift"
             >
               {/* Background gradient on hover */}
@@ -251,13 +256,13 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({ requests, clas
                       )}
                     >
                       <TrendingUp size={12} className={cn(!card.trend.positive && 'rotate-180')} />
-                      {card.trend.value}%
+                      <AnimatedNumber value={card.trend.value} duration={800} />%
                     </div>
                   )}
                 </div>
 
                 <div className="text-2xl font-bold text-surface-900 dark:text-white mb-1">
-                  {card.value}
+                  <AnimatedNumber value={card.value} duration={1200} />
                 </div>
 
                 <div className="text-xs text-surface-500 truncate">{card.title}</div>
@@ -269,7 +274,7 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({ requests, clas
             </motion.div>
           );
         })}
-      </div>
+      </motion.div>
 
       {/* Additional spend card if exists */}
       {cards.length > 4 && (

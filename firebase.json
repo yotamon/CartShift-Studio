@@ -153,6 +153,14 @@
         "destination": "/en/portal/org/template/settings/index.html"
       },
       {
+        "source": "/en/portal/org/*/consultations",
+        "destination": "/en/portal/org/template/consultations/index.html"
+      },
+      {
+        "source": "/en/portal/org/*/consultations/**",
+        "destination": "/en/portal/org/template/consultations/index.html"
+      },
+      {
         "source": "/en/portal/org/*/pricing/new",
         "destination": "/en/portal/org/template/pricing/new/index.html"
       },
@@ -235,6 +243,14 @@
       {
         "source": "/he/portal/org/*/settings/**",
         "destination": "/he/portal/org/template/settings/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/consultations",
+        "destination": "/he/portal/org/template/consultations/index.html"
+      },
+      {
+        "source": "/he/portal/org/*/consultations/**",
+        "destination": "/he/portal/org/template/consultations/index.html"
       },
       {
         "source": "/he/portal/org/*/pricing/new",

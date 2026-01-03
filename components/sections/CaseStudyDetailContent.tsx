@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from "@/lib/motion";
 import { Section } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';

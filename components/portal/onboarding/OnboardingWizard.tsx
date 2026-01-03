@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from "@/lib/motion";
 import { OnboardingStep } from './OnboardingStep';
 import { PortalButton } from '../ui/PortalButton';
 import { PortalInput } from '../ui/PortalInput';

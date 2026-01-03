@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from "@/lib/motion";
 import { SectionHeader } from '@/components/ui/Section';
 import { useTranslations } from 'next-intl';
 import { Parallax } from '@/components/ui/Parallax';

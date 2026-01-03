@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from "@/lib/motion";
 import { SectionHeader } from '@/components/ui/Section';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';

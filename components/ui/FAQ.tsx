@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from '@/lib/motion';
+import { faqItem } from '@/lib/animation-variants';
 import { ChevronDown, ChevronsUpDown } from 'lucide-react';
 
 export interface FAQItem {
@@ -69,10 +70,12 @@ export const FAQ: React.FC<FAQProps> = ({
         {items.map((item, index) => (
           <motion.div
             key={index}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: index * 0.1 }}
+            variants={faqItem}
+            custom={index * 0.1}
+            layout
             className="border border-surface-200 dark:border-surface-700 rounded-xl overflow-hidden bg-white dark:bg-surface-800 shadow-sm hover:shadow-md transition-shadow"
           >
             <button
@@ -94,14 +97,14 @@ export const FAQ: React.FC<FAQProps> = ({
                 />
               </motion.div>
             </button>
-            <AnimatePresence>
+            <AnimatePresence initial={false}>
               {isOpen(index) && (
                 <motion.div
                   id={`faq-answer-${index}`}
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
                   className="overflow-hidden"
                 >
                   <div className="px-6 py-5 pt-0 text-surface-600 dark:text-surface-300 leading-relaxed">

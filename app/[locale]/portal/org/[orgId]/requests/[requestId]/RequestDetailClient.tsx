@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion } from '@/lib/motion';
 import {
   ArrowLeft,
   Paperclip,
@@ -66,9 +67,10 @@ import {
   CLIENT_STATUS_MAP,
   CLIENT_STATUS_CONFIG,
 } from '@/lib/types/portal';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { format } from 'date-fns';
+import { enUS, he } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { PayPalProvider } from '@/components/providers/PayPalProvider';
 import { PayPalCheckoutButton } from '@/components/portal/PayPalCheckoutButton';
@@ -110,6 +112,7 @@ export default function RequestDetailClient() {
   const [isUploading, setIsUploading] = useState(false);
   const [activities, setActivities] = useState<ActivityLog[]>([]);
   const t = useTranslations('portal');
+  const locale = useLocale();
 
   // Line item handlers for pricing form
   const addLineItem = () => {
@@ -433,15 +436,30 @@ export default function RequestDetailClient() {
       <div className="space-y-6 animate-pulse" role="status" aria-live="polite">
         <span className="sr-only">Loading request details...</span>
         <div className="h-8 w-48 bg-surface-200 dark:bg-surface-800 rounded-lg" />
-        <div className="flex flex-col md:flex-row gap-6">
+        <motion.div
+          layoutId={requestId ? `request-container-${requestId}` : undefined}
+          className="flex flex-col md:flex-row gap-6 p-4 rounded-xl"
+        >
           <div className="flex-1 space-y-4">
             <div className="flex items-center gap-4">
-              <PortalSkeleton className="h-10 w-3/4" />
-              <PortalSkeleton className="h-8 w-24 rounded-full" />
+              {requestId ? (
+                <motion.div layoutId={`request-title-${requestId}`} className="w-3/4">
+                  <PortalSkeleton className="h-10 w-full" />
+                </motion.div>
+              ) : (
+                <PortalSkeleton className="h-10 w-3/4" />
+              )}
+              {requestId ? (
+                <motion.div layoutId={`request-status-${requestId}`}>
+                  <PortalSkeleton className="h-8 w-24 rounded-full" />
+                </motion.div>
+              ) : (
+                <PortalSkeleton className="h-8 w-24 rounded-full" />
+              )}
             </div>
             <PortalSkeleton className="h-6 w-1/3" />
           </div>
-        </div>
+        </motion.div>
         <div className="flex items-center gap-2">
           <PortalSkeleton className="h-10 w-24 rounded-xl" />
           <PortalSkeleton className="h-10 w-28 rounded-xl" />
@@ -493,7 +511,7 @@ export default function RequestDetailClient() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <Breadcrumb items={breadcrumbItems} />
 
-      <div className="flex flex-col md:flex-row md:items-center gap-6">
+      <motion.div layoutId={`request-container-${request.id}`} className="flex flex-col md:flex-row md:items-center gap-6 p-4 rounded-xl">
         <Link
           href={`/portal/org/${orgId}/requests/`}
           className="p-2.5 border border-surface-200 dark:border-surface-800 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-900 transition-colors shadow-sm bg-white dark:bg-surface-950"
@@ -502,23 +520,27 @@ export default function RequestDetailClient() {
         </Link>
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-white leading-tight font-outfit">
+            <motion.h1 layoutId={`request-title-${request.id}`} className="text-2xl font-bold text-surface-900 dark:text-white leading-tight font-outfit">
               {request.title}
-            </h1>
+            </motion.h1>
             {isAgency ? (
-              <PortalBadge variant={mapStatusColor(STATUS_CONFIG[request.status]?.color || 'gray')}>
-                {t(`requests.status.${request.status.toLowerCase()}` as any)}
-              </PortalBadge>
+              <motion.div layoutId={`request-status-${request.id}`}>
+                <PortalBadge variant={mapStatusColor(STATUS_CONFIG[request.status]?.color || 'gray')}>
+                  {t(`requests.status.${request.status.toLowerCase()}` as any)}
+                </PortalBadge>
+              </motion.div>
             ) : (
-              <PortalBadge
-                variant={mapStatusColor(
-                  CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[request.status]]?.color || 'gray'
-                )}
-              >
-                {t(
-                  `requests.clientStatus.${CLIENT_STATUS_MAP[request.status].toLowerCase()}` as any
-                )}
-              </PortalBadge>
+              <motion.div layoutId={`request-status-${request.id}`}>
+                <PortalBadge
+                  variant={mapStatusColor(
+                    CLIENT_STATUS_CONFIG[CLIENT_STATUS_MAP[request.status]]?.color || 'gray'
+                  )}
+                >
+                  {t(
+                    `requests.clientStatus.${CLIENT_STATUS_MAP[request.status].toLowerCase()}` as any
+                  )}
+                </PortalBadge>
+              </motion.div>
             )}
           </div>
           <div className="flex items-center gap-3 mt-1 underline-offset-4">
@@ -534,11 +556,11 @@ export default function RequestDetailClient() {
         <div className="flex items-center gap-2 self-start md:self-center">
           <FavoriteButton
             initialIsActive={false}
-            className="w-10 h-10 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm"
+            className="w-10 h-10 border border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-950 hover:border-surface-300 dark:hover:border-surface-700 shadow-sm"
             variant="star"
           />
         </div>
-      </div>
+      </motion.div>
 
       <div className="flex items-center gap-1 p-1 bg-surface-100 dark:bg-surface-900 rounded-2xl w-fit">
         <button
@@ -604,7 +626,9 @@ export default function RequestDetailClient() {
                       </p>
                       <p className="text-sm font-bold text-surface-900 dark:text-white font-outfit">
                         {request.createdAt?.toDate
-                          ? format(request.createdAt.toDate(), 'MMMM d, yyyy')
+                          ? format(request.createdAt.toDate(), 'MMMM d, yyyy', {
+                              locale: locale === 'he' ? he : enUS,
+                            })
                           : t('common.recently')}
                       </p>
                     </div>
@@ -784,7 +808,7 @@ export default function RequestDetailClient() {
                           <span className="text-surface-400 text-sm">×</span>
                           <div className="flex-1">
                             <div className="relative">
-                              <span className="absolute start-3 top-1/2 -translate-y-1/2 text-surface-400 text-sm">
+                              <span className="absolute start-3 top-1/2 -transurface-y-1/2 text-surface-400 text-sm">
                                 {CURRENCY_CONFIG[pricingCurrency].symbol}
                               </span>
                               <input
