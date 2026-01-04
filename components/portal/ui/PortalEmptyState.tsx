@@ -2,29 +2,28 @@ import React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { LucideIcon } from 'lucide-react';
+import { EmptyStateIllustration } from '@/components/portal/EmptyStateIllustration';
 
-const emptyStateVariants = cva(
-  "flex flex-col items-center justify-center text-center p-8",
-  {
-    variants: {
-      variant: {
-        default: "bg-slate-50/50 dark:bg-slate-900/20 border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl",
-        plain: "",
-      },
+const emptyStateVariants = cva('flex flex-col items-center justify-center text-center p-8', {
+  variants: {
+    variant: {
+      default:
+        'bg-slate-50/50 dark:bg-slate-900/20 border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl',
+      plain: '',
     },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-);
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
 
-interface PortalEmptyStateProps
-  extends VariantProps<typeof emptyStateVariants> {
+interface PortalEmptyStateProps extends VariantProps<typeof emptyStateVariants> {
   icon: LucideIcon;
   title: string;
   description: string;
   action?: React.ReactNode;
   className?: string;
+  illustration?: 'activity' | 'requests' | 'files';
 }
 
 export const PortalEmptyState = ({
@@ -34,21 +33,22 @@ export const PortalEmptyState = ({
   action,
   variant,
   className,
+  illustration,
 }: PortalEmptyStateProps) => {
   return (
-    <div
-      className={cn(emptyStateVariants({ variant }), className)}
-    >
-      <div className="relative group mb-6">
-        <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-purple-500/20 rounded-2xl blur-xl group-hover:scale-110 transition-transform duration-500" />
-        <div className="relative w-16 h-16 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm flex items-center justify-center group-hover:-translate-y-1 transition-transform duration-300">
-          <Icon className="w-8 h-8 text-slate-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors" />
+    <div className={cn(emptyStateVariants({ variant }), className)}>
+      {illustration ? (
+        <EmptyStateIllustration variant={illustration} className="mb-4" />
+      ) : (
+        <div className="relative group mb-6">
+          <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-purple-500/20 rounded-2xl blur-xl group-hover:scale-110 transition-transform duration-500" />
+          <div className="relative w-16 h-16 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm flex items-center justify-center group-hover:-translate-y-1 transition-transform duration-300">
+            <Icon className="w-8 h-8 text-slate-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors" />
+          </div>
         </div>
-      </div>
+      )}
 
-      <h3 className="text-xl font-bold text-slate-900 dark:text-white font-outfit mb-2">
-        {title}
-      </h3>
+      <h3 className="text-xl font-bold text-slate-900 dark:text-white font-outfit mb-2">{title}</h3>
 
       <p className="text-slate-500 dark:text-slate-400 text-sm font-medium max-w-sm leading-relaxed mb-6">
         {description}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
 import { getRequestsByOrg } from '@/lib/services/portal-requests';
@@ -12,6 +12,7 @@ import { Request, ActivityLog } from '@/lib/types/portal';
 export function useDashboardData() {
   const orgId = useResolvedOrgId();
   const { userData, loading: authLoading, isAuthenticated } = usePortalAuth();
+  const mountedRef = useRef(false);
 
   // State to track if we've verified/ensured membership for clients
   const [membershipChecked, setMembershipChecked] = useState(false);
@@ -22,11 +23,25 @@ export function useDashboardData() {
 
   // Effect to handle membership verification for clients
   useEffect(() => {
-    if (!orgId || typeof orgId !== 'string' || authLoading || !userData || isAgency || membershipChecked) {
+    mountedRef.current = true;
+
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (
+      !orgId ||
+      typeof orgId !== 'string' ||
+      authLoading ||
+      !userData ||
+      isAgency ||
+      membershipChecked ||
+      !mountedRef.current
+    ) {
       return;
     }
-
-    let mounted = true;
 
     const verifyMembership = async () => {
       try {
@@ -41,18 +56,18 @@ export function useDashboardData() {
           }
         }
 
-        if (mounted) {
-          if (member) {
-            await new Promise(resolve => setTimeout(resolve, 200));
-            setMembershipChecked(true);
-            setMembershipError(null);
-          } else {
-            console.warn(`Access denied - No membership found for orgId: ${orgId}`);
-            setMembershipError('access_denied');
-          }
+        // Check mounted state before updating
+        if (!mountedRef.current) return;
+
+        if (member) {
+          setMembershipChecked(true);
+          setMembershipError(null);
+        } else {
+          console.warn(`Access denied - No membership found for orgId: ${orgId}`);
+          setMembershipError('access_denied');
         }
       } catch (err) {
-        if (mounted) {
+        if (mountedRef.current) {
           console.error('Error checking membership:', err);
           setMembershipError('membership_check_failed');
         }
@@ -60,10 +75,6 @@ export function useDashboardData() {
     };
 
     verifyMembership();
-
-    return () => {
-      mounted = false;
-    };
   }, [orgId, userData, authLoading, isAgency, membershipChecked]);
 
   // 1. Requests Query
@@ -75,6 +86,7 @@ export function useDashboardData() {
     queryKey: ['org-requests', orgId],
     queryFn: () => getRequestsByOrg(orgId as string),
     enabled: Boolean(shouldFetchData),
+    staleTime: 30000, // Consider data fresh for 30 seconds
     refetchInterval: 30000, // Refresh every 30s
     retry: (failureCount, error) => {
       if (error instanceof Error && error.message.includes('Permission denied')) {
@@ -93,6 +105,7 @@ export function useDashboardData() {
     queryKey: ['org-activities', orgId],
     queryFn: () => getOrgActivities(orgId as string),
     enabled: Boolean(shouldFetchData),
+    staleTime: 30000, // Consider data fresh for 30 seconds
     refetchInterval: 30000, // Refresh every 30s
     retry: (failureCount, error) => {
       if (error instanceof Error && error.message.includes('Permission denied')) {
@@ -102,11 +115,15 @@ export function useDashboardData() {
     },
   });
 
-  const loading = authLoading || (shouldFetchData && (requestsLoading || activitiesLoading)) || (!isAgency && !membershipChecked && !membershipError);
+  const loading =
+    authLoading ||
+    (shouldFetchData && (requestsLoading || activitiesLoading)) ||
+    (!isAgency && !membershipChecked && !membershipError);
 
-  const error = membershipError ||
-                (requestsError instanceof Error ? requestsError.message : null) ||
-                (activitiesError instanceof Error ? activitiesError.message : null);
+  const error =
+    membershipError ||
+    (requestsError instanceof Error ? requestsError.message : null) ||
+    (activitiesError instanceof Error ? activitiesError.message : null);
 
   return {
     requests,

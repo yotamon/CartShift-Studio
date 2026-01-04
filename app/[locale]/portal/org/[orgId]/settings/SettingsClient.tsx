@@ -191,7 +191,7 @@ export default function SettingsClient() {
 
     fetchOrganization();
 
-    if (userData) {
+    if (userData && mounted) {
       setProfileFormData({
         name: userData.name || '',
         photoUrl: userData.photoUrl || '',
@@ -419,15 +419,15 @@ export default function SettingsClient() {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <aside className="lg:col-span-1">
-          <nav className="space-y-1.5 sticky top-24">
+          <nav className="flex lg:flex-col gap-2 lg:gap-1.5 lg:sticky lg:top-24 overflow-x-auto scrollbar-hide pb-2 lg:pb-0 -mx-2 px-2 lg:mx-0 lg:px-0">
             {tabs.map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  'w-full flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-2xl transition-all font-outfit',
+                  'flex items-center gap-3 px-4 py-3 min-h-[48px] text-sm font-bold rounded-2xl transition-all font-outfit whitespace-nowrap touch-manipulation shrink-0 lg:w-full',
                   activeTab === tab.id
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20 translate-x-1'
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20 lg:translate-x-1'
                     : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
                 )}
               >

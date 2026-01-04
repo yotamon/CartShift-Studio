@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { submitContactForm } from '@/lib/services/contact';
 import { logError, createErrorResponse } from '@/lib/error-handler';
 
+/**
+ * In-memory rate limiting map.
+ * NOTE: This approach works for single-instance deployments but will NOT persist
+ * across serverless function invocations (e.g., Vercel). For production serverless
+ * environments, consider using Vercel KV, Upstash Redis, or a similar external store.
+ */
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 5;

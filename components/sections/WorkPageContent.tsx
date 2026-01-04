@@ -69,12 +69,12 @@ export const WorkPageContent: React.FC<WorkPageContentProps> = ({ caseStudies = 
 
       <div className="sticky top-16 md:top-20 z-30 bg-white/95 dark:bg-surface-800/95 backdrop-blur-lg border-b border-surface-200 dark:border-surface-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-center gap-2 overflow-x-auto scrollbar-hide">
             {filters.map(filter => (
               <button
                 key={filter.key}
                 onClick={() => setActiveFilter(filter.key)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                className={`px-4 py-2.5 min-h-[40px] rounded-lg text-sm font-medium transition-all touch-manipulation active:scale-95 shrink-0 ${
                   activeFilter === filter.key
                     ? 'bg-accent-600 text-white'
                     : 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 hover:bg-surface-200 dark:hover:bg-surface-700'

@@ -7,18 +7,18 @@ import { cn } from '@/lib/utils';
 import { Check, X } from 'lucide-react';
 
 const buttonVariants = cva(
-  "font-semibold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-surface-950 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden touch-manipulation",
+  "font-semibold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-surface-950 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden touch-manipulation active:scale-[0.98]",
   {
     variants: {
       variant: {
-        primary: "fashion-gradient text-white hover:shadow-glow-primary focus:ring-primary-500 shadow-lg hover:scale-[1.02] active:scale-[0.98] shine-sweep text-center",
-        secondary: "bg-accent-600 text-white hover:bg-accent-500 focus:ring-accent-500 shadow-glow hover:shadow-glow active:scale-[0.98] shine-sweep text-center",
-        outline: "border-2 border-accent-600 dark:border-accent-500/50 text-accent-600 dark:text-accent-400 hover:border-accent-700 dark:hover:border-accent-500 hover:bg-accent-50 dark:hover:bg-accent-500/10 backdrop-blur-sm focus:ring-accent-500 active:scale-[0.98] text-center",
+        primary: "fashion-gradient text-white hover:shadow-glow-primary focus:ring-primary-500 shadow-lg hover:scale-[1.02] shine-sweep text-center",
+        secondary: "bg-accent-600 text-white hover:bg-accent-500 focus:ring-accent-500 shadow-glow hover:shadow-glow shine-sweep text-center",
+        outline: "border-2 border-accent-600 dark:border-accent-500/50 text-accent-600 dark:text-accent-400 hover:border-accent-700 dark:hover:border-accent-500 hover:bg-accent-50 dark:hover:bg-accent-500/10 backdrop-blur-sm focus:ring-accent-500 text-center",
       },
       size: {
-        sm: "px-5 py-2.5 text-sm",
-        md: "px-7 py-3.5 text-base",
-        lg: "px-9 py-4 text-lg",
+        sm: "px-5 py-2.5 text-sm min-h-[40px]",
+        md: "px-7 py-3.5 text-base min-h-[44px]",
+        lg: "px-9 py-4 text-lg min-h-[48px]",
       },
       btnState: {
         idle: "",

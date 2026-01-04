@@ -1,34 +1,67 @@
 'use client';
 
+import { Suspense, lazy, useMemo } from 'react';
 import { useDashboardData } from '@/lib/hooks/useDashboardData';
-import { Clock, Plus, Loader2, AlertCircle } from 'lucide-react';
+import { Clock, AlertCircle, Sparkles } from 'lucide-react';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { useTranslations, NextIntlClientProvider } from 'next-intl';
-import { Link } from '@/i18n/navigation';
 import { ClientAnalytics } from '@/components/portal/ClientAnalytics';
-import { ActivityTimeline } from '@/components/portal/ActivityTimeline';
+import { QuickActions } from '@/components/portal/QuickActions';
+import { TipsCard } from '@/components/portal/TipsCard';
+import { DashboardSkeleton } from '@/components/portal/DashboardSkeleton';
+import { PinnedRequests } from '@/components/portal/PinnedRequests';
+import { motion } from '@/lib/motion';
+import { useParams } from 'next/navigation';
+
+// Lazy load the ActivityTimeline for better initial load
+const ActivityTimeline = lazy(() =>
+  import('@/components/portal/ActivityTimeline').then(mod => ({
+    default: mod.ActivityTimeline,
+  }))
+);
+
+// Helper to get time-based greeting key
+function getGreetingKey(): 'morning' | 'afternoon' | 'evening' | 'default' {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return 'morning';
+  if (hour >= 12 && hour < 17) return 'afternoon';
+  if (hour >= 17 && hour < 22) return 'evening';
+  return 'default';
+}
 
 function DashboardClientContent() {
   const t = useTranslations();
+  const params = useParams();
+  const locale = typeof params.locale === 'string' ? params.locale : 'en';
 
   // Use the new TanStack Query hook
-  const {
-    requests,
-    activities,
-    loading,
-    error,
-    orgId
-  } = useDashboardData();
+  const { requests, activities, loading, error, orgId, userData } = useDashboardData();
+
+  // Memoize greeting to prevent recalculation
+  const greeting = useMemo(() => {
+    const key = getGreetingKey();
+    const firstName = userData?.name?.split(' ')[0] || '';
+    return t(`portal.dashboard.greeting.${key}`, { name: firstName });
+  }, [t, userData?.name]);
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-40 space-y-4">
-        <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-        <p className="text-slate-500 font-bold font-outfit uppercase tracking-widest text-xs">
-          {t('portal.dashboard.loading')}
-        </p>
-      </div>
+      <>
+        {/* Show QuickActions optimistically while loading */}
+        <div className="space-y-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="h-9 w-64 bg-slate-200 dark:bg-slate-800 rounded-lg animate-pulse" />
+              <div className="h-5 w-80 bg-slate-100 dark:bg-slate-800/50 rounded-lg animate-pulse" />
+            </div>
+          </div>
+          <QuickActions />
+        </div>
+        <div className="mt-8">
+          <DashboardSkeleton />
+        </div>
+      </>
     );
   }
 
@@ -40,7 +73,9 @@ function DashboardClientContent() {
           {t('portal.dashboard.error.title')}
         </h2>
         <p className="text-slate-500 max-w-sm">
-          {error === 'access_denied' ? t('portal.access.restrictedMessage') : t('portal.common.error')}
+          {error === 'access_denied'
+            ? t('portal.access.restrictedMessage')
+            : t('portal.common.error')}
         </p>
         <PortalButton onClick={() => window.location.reload()}>
           {t('portal.dashboard.error.retry')}
@@ -51,25 +86,31 @@ function DashboardClientContent() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Header with Personalized Greeting */}
+      <motion.div
+        className="flex flex-col md:flex-row md:items-center justify-between gap-4"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
-            {t('portal.dashboard.title')}
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit flex items-center gap-3">
+            {greeting}
+            <motion.span
+              animate={{ rotate: [0, 14, -8, 14, -4, 10, 0] }}
+              transition={{ duration: 2.5, ease: 'easeInOut', repeat: Infinity, repeatDelay: 5 }}
+            >
+              <Sparkles className="w-6 h-6 text-amber-500" />
+            </motion.span>
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">
             {t('portal.dashboard.subtitle')}
           </p>
         </div>
-        <div className="flex gap-3">
-          <Link href={`/portal/org/${orgId}/requests/new/`}>
-            <PortalButton className="flex items-center gap-2 font-outfit shadow-lg shadow-blue-500/20">
-              <Plus size={18} />
-              {t('portal.dashboard.actions.newRequest')}
-            </PortalButton>
-          </Link>
-        </div>
-      </div>
+      </motion.div>
+
+      {/* Quick Actions */}
+      <QuickActions />
 
       {/* Analytics Grid */}
       <ClientAnalytics requests={requests} />
@@ -88,12 +129,35 @@ function DashboardClientContent() {
             noPadding
             className="border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden bg-white dark:bg-slate-950"
           >
-            <ActivityTimeline activities={activities} orgId={orgId as string} />
+            <Suspense
+              fallback={
+                <div className="p-6 space-y-4">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="flex items-start gap-4 animate-pulse">
+                      <div className="w-10 h-10 rounded-xl bg-slate-200 dark:bg-slate-800" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 w-40 bg-slate-200 dark:bg-slate-800 rounded" />
+                        <div className="h-3 w-56 bg-slate-100 dark:bg-slate-800/50 rounded" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              }
+            >
+              <ActivityTimeline activities={activities} orgId={orgId ?? ''} showFilters />
+            </Suspense>
           </PortalCard>
         </div>
 
         {/* Sidebar Info */}
         <div className="space-y-6">
+          {/* Pinned Requests */}
+          <PinnedRequests requests={requests} orgId={orgId ?? ''} locale={locale} />
+
+          {/* Tips Card */}
+          <TipsCard />
+
+          {/* Service Status */}
           <PortalCard className="border-slate-100 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-950">
             <h4 className="text-[10px] font-black text-slate-400 dark:text-slate-500 mb-6 flex items-center gap-2 uppercase tracking-widest">
               <Clock size={14} className="text-blue-500" />
@@ -120,7 +184,12 @@ function DashboardClientContent() {
                   </span>
                 </div>
                 <div className="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                  <div className="h-full bg-amber-500 w-[92%]" />
+                  <motion.div
+                    className="h-full bg-amber-500"
+                    initial={{ width: 0 }}
+                    animate={{ width: '92%' }}
+                    transition={{ duration: 1, ease: 'easeOut', delay: 0.3 }}
+                  />
                 </div>
                 <p className="mt-3 text-[10px] text-slate-400 font-bold uppercase tracking-tight">
                   {t('portal.dashboard.serviceStatus.etaLabel')}: 4-6{' '}

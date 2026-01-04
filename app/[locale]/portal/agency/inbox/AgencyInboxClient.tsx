@@ -21,12 +21,7 @@ import {
 import { createPricingRequest, sendPricingRequest } from '@/lib/services/pricing-requests';
 import { useRequests } from '@/lib/hooks/useRequests';
 import { useAgencyClients } from '@/lib/hooks/useAgencyClients';
-import {
-  Organization,
-  Currency,
-  CURRENCY_CONFIG,
-  formatCurrency,
-} from '@/lib/types/portal';
+import { Organization, Currency, CURRENCY_CONFIG, formatCurrency } from '@/lib/types/portal';
 import { formatDistanceToNow } from 'date-fns';
 import { getDateLocale } from '@/lib/locale-config';
 import { Link } from '@/i18n/navigation';
@@ -42,8 +37,17 @@ export default function AgencyInboxClient() {
   const t = useTranslations('portal');
   const locale = useLocale();
   const { userData, loading: authLoading, isAuthenticated, user } = usePortalAuth();
-  const { requests, loading: requestsLoading, error: requestsError, refetch: refetchRequests } = useRequests();
-  const { organizations: organizationsList, loading: clientsLoading, error: clientsError } = useAgencyClients();
+  const {
+    requests,
+    loading: requestsLoading,
+    error: requestsError,
+    refetch: refetchRequests,
+  } = useRequests();
+  const {
+    organizations: organizationsList,
+    loading: clientsLoading,
+    error: clientsError,
+  } = useAgencyClients();
 
   const organizations = useMemo(() => {
     if (!organizationsList) return {};
@@ -78,7 +82,6 @@ export default function AgencyInboxClient() {
     totalAmount,
     validItems,
   } = usePricingForm('USD');
-
 
   // Prevent hydration mismatch for time-sensitive content
   useEffect(() => {
@@ -166,7 +169,9 @@ export default function AgencyInboxClient() {
     const uniqueOrgIds = [...new Set(selectedReqs.map(r => r.orgId))];
 
     if (uniqueOrgIds.length > 1) {
-      const orgNames = uniqueOrgIds.map(id => organizations[id]?.name || t('portal.common.unknown')).join(', ');
+      const orgNames = uniqueOrgIds
+        .map(id => organizations[id]?.name || t('portal.common.unknown'))
+        .join(', ');
       alert(
         `${t('agency.inbox.errors.sameOrgRequired')}\n\n` +
           `Selected requests are from: ${orgNames}\n\n` +
@@ -228,9 +233,9 @@ export default function AgencyInboxClient() {
         noPadding
         className="overflow-hidden border-surface-200 dark:border-surface-800 shadow-sm"
       >
-        <div className="p-4 border-b border-surface-100 dark:border-surface-800 flex items-center justify-between bg-white dark:bg-surface-950">
-          <div className="flex items-center gap-4">
-            <div className="relative">
+        <div className="p-4 border-b border-surface-100 dark:border-surface-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-surface-950">
+          <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
+            <div className="relative flex-1 sm:flex-none">
               <Search
                 size={16}
                 className="absolute start-3 top-1/2 -translate-y-1/2 text-surface-400"
@@ -238,7 +243,7 @@ export default function AgencyInboxClient() {
               <input
                 type="text"
                 placeholder={t('agency.inbox.searchPlaceholder')}
-                className="portal-input ps-10 w-64 md:w-80 h-10 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900/50"
+                className="portal-input ps-10 w-full sm:w-64 md:w-80 h-10 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900/50"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
               />
@@ -251,16 +256,19 @@ export default function AgencyInboxClient() {
               <Filter size={16} /> {t('common.filter')}
             </PortalButton>
           </div>
-          <div className="flex items-center gap-2 text-xs font-bold text-surface-400 uppercase tracking-widest px-2">
-            {filteredRequests.length} {t(filteredRequests.length === 1 ? 'agency.inbox.activeItem' : 'agency.inbox.activeItems')}
+          <div className="flex items-center gap-2 text-xs font-bold text-surface-400 uppercase tracking-widest px-2 shrink-0">
+            {filteredRequests.length}{' '}
+            {t(
+              filteredRequests.length === 1 ? 'agency.inbox.activeItem' : 'agency.inbox.activeItems'
+            )}
           </div>
         </div>
 
         {/* Selection Bar */}
         {selectedRequestIds.length > 0 && (
-          <div className="p-4 border-b border-surface-100 dark:border-surface-800 bg-blue-50 dark:bg-blue-900/20 flex items-center justify-between gap-4">
+          <div className="p-4 border-b border-surface-100 dark:border-surface-800 bg-blue-50 dark:bg-blue-900/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold shrink-0">
                 {selectedRequestIds.length}
               </div>
               <span className="text-sm font-bold text-blue-800 dark:text-blue-200">
@@ -272,7 +280,7 @@ export default function AgencyInboxClient() {
                 variant="outline"
                 size="sm"
                 onClick={clearSelection}
-                className="text-slate-600 dark:text-slate-300"
+                className="text-slate-600 dark:text-slate-300 min-h-[40px] touch-manipulation"
               >
                 <X size={14} className="me-1" />
                 {t('common.cancel')}
@@ -280,10 +288,11 @@ export default function AgencyInboxClient() {
               <PortalButton
                 size="sm"
                 onClick={() => setShowPricingModal(true)}
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="bg-green-600 hover:bg-green-700 text-white min-h-[40px] touch-manipulation"
               >
                 <DollarSign size={14} className="me-1" />
-                {t('requests.createPricingOffer')}
+                <span className="hidden sm:inline">{t('requests.createPricingOffer')}</span>
+                <span className="sm:hidden">Pricing</span>
               </PortalButton>
             </div>
           </div>
@@ -335,42 +344,41 @@ export default function AgencyInboxClient() {
                   <div
                     key={req.id}
                     className={cn(
-                      'flex items-center gap-4 p-5 hover:bg-surface-50/80 dark:hover:bg-surface-800/40 transition-all group',
+                      'flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 sm:p-5 hover:bg-surface-50/80 dark:hover:bg-surface-800/40 transition-all group',
                       isSelected && 'bg-blue-50 dark:bg-blue-900/10'
                     )}
                   >
-                    {/* Checkbox */}
-                    <div className="shrink-0">
-                      {canSelect ? (
-                        <button
-                          type="button"
-                          onClick={e => {
-                            e.stopPropagation();
-                            toggleRequestSelection(req.id);
-                          }}
-                          className={cn(
-                            'w-5 h-5 rounded flex items-center justify-center transition-all border-2',
-                            isSelected
-                              ? 'bg-blue-600 border-blue-600 text-white'
-                              : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
-                          )}
-                        >
-                          {isSelected && <Check size={12} />}
-                        </button>
-                      ) : req.pricingOfferId ? (
-                        <PortalBadge variant="green" className="text-[9px]">
-                          {t('requests.hasPricing')}
-                        </PortalBadge>
-                      ) : (
-                        <div className="w-5 h-5" />
-                      )}
-                    </div>
+                    {/* Mobile: Top row with checkbox, avatar, org name */}
+                    <div className="flex items-center gap-3">
+                      {/* Checkbox */}
+                      <div className="shrink-0">
+                        {canSelect ? (
+                          <button
+                            type="button"
+                            onClick={e => {
+                              e.stopPropagation();
+                              toggleRequestSelection(req.id);
+                            }}
+                            className={cn(
+                              'w-5 h-5 rounded flex items-center justify-center transition-all border-2 touch-manipulation',
+                              isSelected
+                                ? 'bg-blue-600 border-blue-600 text-white'
+                                : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
+                            )}
+                          >
+                            {isSelected && <Check size={14} />}
+                          </button>
+                        ) : req.pricingOfferId ? (
+                          <PortalBadge variant="green" className="text-[9px]">
+                            {t('requests.hasPricing')}
+                          </PortalBadge>
+                        ) : (
+                          <div className="w-5 h-5" />
+                        )}
+                      </div>
 
-                    <Link
-                      href={`/portal/org/${req.orgId}/requests/${req.id}/`}
-                      className="flex-1 flex items-center gap-4 min-w-0"
-                    >
-                      <div className="flex items-center gap-3 shrink-0">
+                      {/* Star and Avatar - hidden on mobile to save space */}
+                      <div className="hidden sm:flex items-center gap-3 shrink-0">
                         <button
                           type="button"
                           onClick={e => e.stopPropagation()}
@@ -385,8 +393,32 @@ export default function AgencyInboxClient() {
                         />
                       </div>
 
-                      <div className="min-w-0 flex-1 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-                        <div className="md:col-span-1">
+                      {/* Mobile: Show org name and time inline */}
+                      <div className="sm:hidden flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider truncate">
+                            {organizations[req.orgId]?.name || t('agency.inbox.clientOrg')}
+                          </p>
+                          <span className="text-[10px] font-bold text-surface-400 whitespace-nowrap">
+                            {isMounted && req.createdAt?.toDate
+                              ? formatDistanceToNow(req.createdAt.toDate(), {
+                                  addSuffix: false,
+                                  locale: getDateLocale(locale),
+                                })
+                              : '—'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Main content link */}
+                    <Link
+                      href={`/portal/org/${req.orgId}/requests/${req.id}/`}
+                      className="flex-1 min-w-0 touch-manipulation"
+                    >
+                      {/* Desktop layout */}
+                      <div className="hidden sm:grid grid-cols-4 gap-4 items-center">
+                        <div className="col-span-1">
                           <p className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider truncate mb-1">
                             {organizations[req.orgId]?.name || t('agency.inbox.clientOrg')}
                           </p>
@@ -394,14 +426,14 @@ export default function AgencyInboxClient() {
                             {req.createdByName || t('consultations.userFallback')}
                           </p>
                         </div>
-                        <div className="md:col-span-2">
-                          <div className="flex items-center gap-2">
+                        <div className="col-span-2">
+                          <div className="flex items-center gap-2 flex-wrap">
                             <p className="text-sm font-bold text-surface-900 dark:text-white truncate group-hover:text-blue-600 transition-colors font-outfit">
                               {req.title}
                             </p>
                             <PortalBadge
                               variant={getStatusBadgeVariant(req.status)}
-                              className="text-[9px] h-4"
+                              className="text-[9px] h-4 shrink-0"
                             >
                               {req.status}
                             </PortalBadge>
@@ -410,7 +442,7 @@ export default function AgencyInboxClient() {
                             {req.description?.slice(0, 100)}...
                           </p>
                         </div>
-                        <div className="md:col-span-1 text-end flex items-center justify-end gap-4">
+                        <div className="col-span-1 text-end flex items-center justify-end gap-4">
                           <div className="flex flex-col items-end">
                             <span className="text-[10px] font-bold text-surface-500 whitespace-nowrap uppercase tracking-widest leading-none mb-1">
                               {isMounted && req.createdAt?.toDate
@@ -429,6 +461,27 @@ export default function AgencyInboxClient() {
                             <MoreVertical size={16} />
                           </button>
                         </div>
+                      </div>
+
+                      {/* Mobile layout */}
+                      <div className="sm:hidden space-y-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <p className="text-sm font-bold text-surface-900 dark:text-white line-clamp-2 group-hover:text-blue-600 transition-colors font-outfit">
+                            {req.title}
+                          </p>
+                          <PortalBadge
+                            variant={getStatusBadgeVariant(req.status)}
+                            className="text-[9px] h-4 shrink-0"
+                          >
+                            {req.status}
+                          </PortalBadge>
+                        </div>
+                        <p className="text-xs text-surface-500 line-clamp-2">
+                          {req.description?.slice(0, 80)}...
+                        </p>
+                        <p className="text-xs font-medium text-surface-400">
+                          {req.createdByName || t('consultations.userFallback')}
+                        </p>
                       </div>
                     </Link>
                   </div>
@@ -459,8 +512,7 @@ export default function AgencyInboxClient() {
                   {t('requests.createPricingOffer')}
                 </h2>
                 <p className="text-sm text-slate-500 mt-1">
-                  {selectedRequests.length}{' '}
-                  {t('requests.requestsIncluded')}
+                  {selectedRequests.length} {t('requests.requestsIncluded')}
                 </p>
               </div>
               <button
@@ -503,9 +555,7 @@ export default function AgencyInboxClient() {
                   type="text"
                   value={pricingTitle}
                   onChange={e => setPricingTitle(e.target.value)}
-                  placeholder={
-                    t('pricing.form.titlePlaceholder')
-                  }
+                  placeholder={t('pricing.form.titlePlaceholder')}
                   className="portal-input w-full"
                 />
               </div>

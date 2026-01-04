@@ -3,30 +3,43 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import React, { useMemo } from 'react';
-import { motion } from "@/lib/motion";
-import { analyticsCard, staggerContainer } from "@/lib/animation-variants";
-import { AnimatedNumber } from "@/components/portal/ui/AnimatedNumber";
+import { motion } from '@/lib/motion';
+import { analyticsCard, staggerContainer } from '@/lib/animation-variants';
+import { AnimatedNumber } from '@/components/portal/ui/AnimatedNumber';
 import { useLocale, useTranslations } from 'next-intl';
-import { FileText, Clock, CheckCircle2, DollarSign, TrendingUp, Activity, LucideIcon } from 'lucide-react';
+import {
+  FileText,
+  Clock,
+  CheckCircle2,
+  DollarSign,
+  TrendingUp,
+  Activity,
+  LucideIcon,
+} from 'lucide-react';
 import { isRTLLocale } from '@/lib/locale-config';
 import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
+import { ProgressRing } from '@/components/portal/ProgressRing';
 import { Request, REQUEST_STATUS, RequestStatus } from '@/lib/types/portal';
 import { Timestamp } from 'firebase/firestore';
 
 const analyticCardVariants = cva(
-  "relative p-5 rounded-2xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 overflow-hidden group hover:shadow-lg transition-shadow hover-lift",
+  'relative p-5 rounded-2xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 overflow-hidden group hover:shadow-lg transition-shadow hover-lift',
   {
     variants: {
       intent: {
-        blue: "text-blue-600 dark:text-blue-400 [--icon-bg:from-blue-500_to-indigo-600] [--bg-hover:blue-500/5]",
-        amber: "text-amber-600 dark:text-amber-400 [--icon-bg:from-amber-500_to-orange-600] [--bg-hover:amber-500/5]",
-        green: "text-green-600 dark:text-green-400 [--icon-bg:from-green-500_to-emerald-600] [--bg-hover:green-500/5]",
-        purple: "text-purple-600 dark:text-purple-400 [--icon-bg:from-purple-500_to-pink-600] [--bg-hover:purple-500/5]",
-        emerald: "text-emerald-600 dark:text-emerald-400 [--icon-bg:from-emerald-500_to-teal-600] [--bg-hover:emerald-500/5]",
+        blue: 'text-blue-600 dark:text-blue-400 [--icon-bg:from-blue-500_to-indigo-600] [--bg-hover:blue-500/5]',
+        amber:
+          'text-amber-600 dark:text-amber-400 [--icon-bg:from-amber-500_to-orange-600] [--bg-hover:amber-500/5]',
+        green:
+          'text-green-600 dark:text-green-400 [--icon-bg:from-green-500_to-emerald-600] [--bg-hover:green-500/5]',
+        purple:
+          'text-purple-600 dark:text-purple-400 [--icon-bg:from-purple-500_to-pink-600] [--bg-hover:purple-500/5]',
+        emerald:
+          'text-emerald-600 dark:text-emerald-400 [--icon-bg:from-emerald-500_to-teal-600] [--bg-hover:emerald-500/5]',
       },
     },
     defaultVariants: {
-      intent: "blue",
+      intent: 'blue',
     },
   }
 );
@@ -162,6 +175,8 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({ requests, clas
       totalSpend,
       recent: recentCount,
       trend,
+      completionPercentage:
+        requests.length > 0 ? Math.round((completedCount / requests.length) * 100) : 0,
     };
   }, [requests]);
 
@@ -250,7 +265,12 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({ requests, clas
 
               <div className="relative z-10">
                 <div className="flex items-start justify-between mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br var(--icon-bg) flex items-center justify-center" style={{ backgroundImage: 'linear-gradient(to bottom right, var(--icon-bg))' } as any}>
+                  <div
+                    className="w-10 h-10 rounded-xl bg-gradient-to-br var(--icon-bg) flex items-center justify-center"
+                    style={
+                      { backgroundImage: 'linear-gradient(to bottom right, var(--icon-bg))' } as any
+                    }
+                  >
                     <CardIcon size={20} className="text-white" />
                   </div>
                   {card.trend && (
@@ -299,6 +319,48 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({ requests, clas
             </div>
             <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center">
               <DollarSign size={32} className="text-white" />
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Completion Progress Ring */}
+      {analytics.total > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.5 }}
+          className="p-6 rounded-2xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700"
+        >
+          <div className="flex items-center gap-6">
+            <ProgressRing
+              progress={analytics.completionPercentage}
+              size={80}
+              strokeWidth={8}
+              progressColor="stroke-emerald-500"
+            />
+            <div className="flex-1">
+              <div className="text-lg font-bold text-surface-900 dark:text-white">
+                {t('portal.analytics.completionRate')}
+              </div>
+              <div className="text-sm text-surface-500 mt-1">
+                {analytics.completed} {t('portal.analytics.of')} {analytics.total}{' '}
+                {t('portal.analytics.requestsCompleted')}
+              </div>
+              <div className="mt-3 flex items-center gap-4 text-xs">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-amber-500" />
+                  <span className="text-surface-500">
+                    {analytics.active} {t('portal.analytics.inProgress')}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-green-500" />
+                  <span className="text-surface-500">
+                    {analytics.completed} {t('portal.analytics.done')}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </motion.div>

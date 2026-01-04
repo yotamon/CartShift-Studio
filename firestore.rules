@@ -141,11 +141,21 @@ service cloud.firestore {
           ? get(/databases/$(database)/documents/portal_requests/$(request.resource.data.get('requestId', ''))).data.get('orgId', '')
           : '';
       }
+      function getRequestOrgIdFromResource() {
+        return resource != null && resource.data.get('requestId', '') != '' && exists(/databases/$(database)/documents/portal_requests/$(resource.data.get('requestId', '')))
+          ? get(/databases/$(database)/documents/portal_requests/$(resource.data.get('requestId', ''))).data.get('orgId', '')
+          : '';
+      }
+      function canAccessRequest() {
+        let requestOrgId = getRequestOrgIdFromResource();
+        return requestOrgId != '' && canAccessOrg(requestOrgId);
+      }
       allow read: if isAuthenticated() && (
         isAgencyUser() ||
         resource == null ||
         canAccessOrg(resource.data.get('orgId', '')) ||
-        resource.data.get('createdBy', '') == getUserId()
+        canAccessRequest() ||
+        resource.data.get('userId', '') == getUserId()
       );
       allow create: if isAuthenticated() && (
         isAgencyUser() ||
@@ -154,12 +164,12 @@ service cloud.firestore {
       );
       allow update: if isAuthenticated() && (
         resource == null ||
-        resource.data.get('createdBy', '') == getUserId() ||
+        resource.data.get('userId', '') == getUserId() ||
         isAgencyUser()
       );
       allow delete: if isAuthenticated() && (
         resource == null ||
-        resource.data.get('createdBy', '') == getUserId() ||
+        resource.data.get('userId', '') == getUserId() ||
         isAgencyUser()
       );
     }

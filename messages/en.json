@@ -290,7 +290,16 @@
         "completed_consultation": "Consultation completed",
         "canceled_consultation": "Consultation canceled",
         "marked_no_show": "Marked as no-show"
-      }
+      },
+      "filters": {
+        "all": "All Activity",
+        "requests": "Requests",
+        "comments": "Comments",
+        "payments": "Payments"
+      },
+      "noActivity": "No recent activity",
+      "noActivityDescription": "Activity from your requests will appear here",
+      "noFilteredActivity": "No activity matches this filter"
     },
     "milestones": {
       "noMilestones": "No milestones defined yet",
@@ -464,6 +473,15 @@
         "last30Days": "in last 30 days",
         "noData": "No Data Yet",
         "noDataDesc": "Create your first request to see analytics"
+      },
+      "tips": {
+        "title": "Pro Tips",
+        "items": [
+          "Be specific about the goals and expected outcomes of this request.",
+          "Include links to any design references, examples, or inspiration.",
+          "Break down complex tasks into smaller, focused requests for faster delivery.",
+          "Mention any deadlines or time-sensitive requirements upfront."
+        ]
       },
       "activity": {
         "title": "Recent Activity",
@@ -1074,7 +1092,8 @@
       "enterprise": "Enterprise",
       "level": "Level 2",
       "notifications": "Notifications",
-      "noNotifications": "No notifications"
+      "noNotifications": "No notifications",
+      "markAllRead": "Mark all as read"
     },
     "accountType": {
       "client": "Client",

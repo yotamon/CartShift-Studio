@@ -290,7 +290,16 @@
         "completed_consultation": "פגישת ייעוץ הושלמה",
         "canceled_consultation": "פגישת ייעוץ בוטלה",
         "marked_no_show": "סומן כלא הגיע"
-      }
+      },
+      "filters": {
+        "all": "כל הפעילות",
+        "requests": "בקשות",
+        "comments": "הערות",
+        "payments": "תשלומים"
+      },
+      "noActivity": "אין פעילות אחרונה",
+      "noActivityDescription": "פעילות מהבקשות שלך תופיע כאן",
+      "noFilteredActivity": "אין פעילות התואמת למסנן זה"
     },
     "milestones": {
       "noMilestones": "אין שלבי פרויקט מוגדרים",
@@ -399,6 +408,12 @@
     "dashboard": {
       "title": "לוח בקרה",
       "subtitle": "סקירה כללית של הפרויקטים הפעילים והפעילות האחרונה שלך.",
+      "greeting": {
+        "morning": "בוקר טוב, {name}!",
+        "afternoon": "צהריים טובים, {name}!",
+        "evening": "ערב טוב, {name}!",
+        "default": "שלום, {name}!"
+      },
       "loading": "מנתח את הנתונים שלך...",
       "error": {
         "title": "שגיאה בלוח הבקרה",
@@ -465,6 +480,15 @@
         "noData": "אין נתונים עדיין",
         "noDataDesc": "צרו את הבקשה הראשונה שלכם כדי להציג נתונים"
       },
+      "tips": {
+        "title": "טיפים מקצועיים",
+        "items": [
+          "היה ספציפי לגבי המטרות והתוצאות המצופות מבקשה זו.",
+          "כלול קישורים לרפרנסים עיצוביים, דוגמאות או השראה.",
+          "פורק משימות מורכבות לבקשות קטנות וממוקדות יותר למסירה מהירה יותר.",
+          "ציין דדליינים או דרישות רגישות לזמן מראש."
+        ]
+      },
       "activity": {
         "title": "פעילות אחרונה",
         "noActivity": "אין פעילות אחרונה",
@@ -500,7 +524,11 @@
       "active": "פעילות",
       "done": "הושלמו",
       "avgResolution": "זמן ממוצע לסיום",
-      "days": "ימים"
+      "days": "ימים",
+      "completionRate": "שיעור השלמה",
+      "of": "מתוך",
+      "requestsCompleted": "בקשות הושלמו",
+      "inProgress": "בטיפול כעת"
     },
     "requests": {
       "title": "בקשות פרויקט",
@@ -1087,7 +1115,8 @@
       "enterprise": "ארגון",
       "level": "Level 2",
       "notifications": "התראות",
-      "noNotifications": "אין התראות"
+      "noNotifications": "אין התראות",
+      "markAllRead": "סמן הכל כנקרא"
     },
     "accountType": {
       "client": "לקוח",

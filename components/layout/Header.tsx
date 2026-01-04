@@ -328,9 +328,12 @@ export const Header: React.FC = () => {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="md:hidden fixed top-[4.5rem] md:top-20 inset-x-0 bottom-0 z-50 backdrop-blur-lg border-t border-white/5 flex flex-col overflow-hidden"
+              className="md:hidden fixed top-[4.5rem] md:top-20 inset-x-0 bottom-0 z-50 backdrop-blur-xl border-t border-white/5 flex flex-col overflow-hidden bg-white/95 dark:bg-surface-950/95"
+              style={{
+                minHeight: 'calc(100dvh - 4.5rem)',
+              }}
             >
-              <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-4">
+              <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 portal-scrollbar no-overscroll-y">
                 <div className="space-y-2">
                   {navigation.map(item => {
                     if (item.submenu) {
@@ -389,7 +392,7 @@ export const Header: React.FC = () => {
                       <Link
                         key={item.name}
                         href={item.href}
-                        className="block px-4 py-2.5 text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-accent-500/10 hover:text-accent-600 dark:hover:text-accent-400 transition-colors font-medium text-start"
+                        className="block px-4 py-3.5 min-h-[48px] text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-accent-500/10 hover:text-accent-600 dark:hover:text-accent-400 transition-colors font-medium text-start rounded-xl active:scale-[0.98] touch-manipulation"
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         {item.name}
@@ -398,11 +401,11 @@ export const Header: React.FC = () => {
                   })}
                 </div>
               </div>
-              <div className="flex-shrink-0 px-4 sm:px-6 lg:px-8 py-4 border-t border-white/10 dark:border-surface-800/50 bg-white/50 dark:bg-surface-950/50 backdrop-blur-md">
+              <div className="flex-shrink-0 px-4 sm:px-6 py-4 pb-safe border-t border-white/10 dark:border-surface-800/50 bg-white/50 dark:bg-surface-950/50 backdrop-blur-md">
                 <div className="flex flex-col gap-4">
                   <Link
                     href={isLoggedIn ? '/portal/org' : '/portal/login'}
-                    className="block px-4 py-2.5 text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-accent-500/10 hover:text-accent-600 dark:hover:text-accent-400 transition-colors font-medium text-start"
+                    className="block px-4 py-3.5 min-h-[48px] text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-accent-500/10 hover:text-accent-600 dark:hover:text-accent-400 transition-colors font-medium text-start rounded-xl active:scale-[0.98] touch-manipulation"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {isLoggedIn ? t('nav.portal') : t('nav.login')}

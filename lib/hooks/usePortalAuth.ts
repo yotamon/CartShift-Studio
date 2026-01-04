@@ -40,23 +40,29 @@ export function usePortalAuth() {
     let unsubscribeAuth: (() => void) | undefined;
     let unsubscribeUserData: (() => void) | undefined;
 
-    // Load cached data
-    try {
-      const cached = localStorage.getItem('portal_user_data');
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        // Only use cache if it's less than 1 hour old to avoid very stale data
-        const cacheTime = parsed._cacheTime;
-        if (cacheTime && Date.now() - cacheTime < 1000 * 60 * 60) {
-          setUserData(parsed);
-          // Set loading to false temporarily to show cached data
-          // Real data will update this shortly
-          setLoading(false);
+    // Load cached data asynchronously to avoid state updates during render
+    const loadCache = () => {
+      if (!isMountedRef.current) return;
+      try {
+        const cached = localStorage.getItem('portal_user_data');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          // Only use cache if it's less than 1 hour old to avoid very stale data
+          const cacheTime = parsed._cacheTime;
+          if (cacheTime && Date.now() - cacheTime < 1000 * 60 * 60) {
+            setUserData(parsed);
+            // Set loading to false temporarily to show cached data
+            // Real data will update this shortly
+            setLoading(false);
+          }
         }
+      } catch (e) {
+        console.error('Error reading auth cache:', e);
       }
-    } catch (e) {
-      console.error('Error reading auth cache:', e);
-    }
+    };
+
+    // Use setTimeout to defer cache loading to next tick, avoiding render-phase updates
+    const cacheTimeout = setTimeout(loadCache, 0);
 
     try {
       const auth = getAuthInstance();
@@ -152,6 +158,7 @@ export function usePortalAuth() {
     // Cleanup subscriptions on unmount
     return () => {
       isMountedRef.current = false;
+      clearTimeout(cacheTimeout);
       if (unsubscribeAuth) {
         unsubscribeAuth();
       }

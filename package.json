@@ -6,6 +6,8 @@
     "prebuild": "node scripts/merge-translations.js",
     "predev": "node scripts/merge-translations.js",
     "dev": "next dev --turbo",
+    "dev:force": "powershell -ExecutionPolicy Bypass -File scripts/dev-force-simple.ps1",
+    "dev:force:win": "cmd /c scripts\\dev-force.bat",
     "build": "next build",
     "export": "next build",
     "start": "next start",

@@ -10,6 +10,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        'xs': '375px',      // iPhone SE / small phones
+        '3xl': '1920px',    // Large desktops
+      },
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
@@ -63,6 +67,18 @@ const config: Config = {
         mono: ['var(--font-jetbrains)', 'monospace'],
         outfit: ['var(--font-outfit)', 'system-ui', 'sans-serif'],
       },
+      fontSize: {
+        // Fluid typography with clamp() for responsive scaling
+        'fluid-xs': ['clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem)', { lineHeight: '1.5' }],
+        'fluid-sm': ['clamp(0.875rem, 0.8rem + 0.375vw, 1rem)', { lineHeight: '1.5' }],
+        'fluid-base': ['clamp(1rem, 0.9rem + 0.5vw, 1.125rem)', { lineHeight: '1.6' }],
+        'fluid-lg': ['clamp(1.125rem, 1rem + 0.625vw, 1.25rem)', { lineHeight: '1.5' }],
+        'fluid-xl': ['clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem)', { lineHeight: '1.4' }],
+        'fluid-2xl': ['clamp(1.5rem, 1.25rem + 1.25vw, 2rem)', { lineHeight: '1.3' }],
+        'fluid-3xl': ['clamp(1.875rem, 1.5rem + 1.875vw, 2.5rem)', { lineHeight: '1.2' }],
+        'fluid-4xl': ['clamp(2.25rem, 1.75rem + 2.5vw, 3rem)', { lineHeight: '1.1' }],
+        'fluid-5xl': ['clamp(3rem, 2rem + 5vw, 4rem)', { lineHeight: '1.1' }],
+      },
       spacing: {
         18: '4.5rem',
         88: '22rem',
@@ -70,6 +86,22 @@ const config: Config = {
         'section-y': '5rem',
         'section-y-md': '6rem',
         'section-y-lg': '8rem',
+        'tap': '44px',      // Minimum touch target size (WCAG)
+        'tap-sm': '40px',   // Compact touch target
+        'safe-top': 'env(safe-area-inset-top)',
+        'safe-bottom': 'env(safe-area-inset-bottom)',
+        'safe-left': 'env(safe-area-inset-left)',
+        'safe-right': 'env(safe-area-inset-right)',
+      },
+      minHeight: {
+        'tap': '44px',
+        'tap-sm': '40px',
+        'screen-safe': 'calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom))',
+        'screen-dvh': '100dvh',
+      },
+      minWidth: {
+        'tap': '44px',
+        'tap-sm': '40px',
       },
       borderRadius: {
         '4xl': '2rem',

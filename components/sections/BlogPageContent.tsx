@@ -197,10 +197,10 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
 
               {/* Category Filters */}
               {categories.length > 0 && (
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-2 md:gap-3">
                   <button
                     onClick={() => setSelectedCategory(null)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                    className={`px-4 py-2.5 min-h-[40px] rounded-full text-sm font-medium transition-all touch-manipulation active:scale-95 ${
                       selectedCategory === null
                         ? 'bg-accent-600 dark:bg-accent-500 text-white shadow-md'
                         : 'glass-effect text-surface-700 dark:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800'
@@ -212,7 +212,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                     <button
                       key={category}
                       onClick={() => setSelectedCategory(category)}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                      className={`px-4 py-2.5 min-h-[40px] rounded-full text-sm font-medium transition-all touch-manipulation active:scale-95 ${
                         selectedCategory === category
                           ? 'bg-accent-600 dark:bg-accent-500 text-white shadow-md'
                           : 'glass-effect text-surface-700 dark:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800'
@@ -318,11 +318,11 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-2">
+                  <div className="flex flex-wrap items-center justify-center gap-2">
                     <button
                       onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                       disabled={currentPage === 1}
-                      className="px-4 py-2 rounded-lg glass-effect text-sm font-medium text-surface-700 dark:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                      className="px-4 py-2.5 min-h-[44px] rounded-lg glass-effect text-sm font-medium text-surface-700 dark:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all touch-manipulation active:scale-95"
                     >
                       {t('blog.content.pagination.previous')}
                     </button>
@@ -331,7 +331,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
-                        className={`w-10 h-10 rounded-lg text-sm font-medium transition-all ${
+                        className={`w-10 h-10 min-w-[44px] min-h-[44px] rounded-lg text-sm font-medium transition-all touch-manipulation active:scale-95 ${
                           currentPage === page
                             ? 'bg-accent-600 dark:bg-accent-500 text-white shadow-md'
                             : 'glass-effect text-surface-700 dark:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800'
@@ -344,7 +344,7 @@ export const BlogPageContent: React.FC<BlogPageContentProps> = ({ posts, categor
                     <button
                       onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                       disabled={currentPage === totalPages}
-                      className="px-4 py-2 rounded-lg glass-effect text-sm font-medium text-surface-700 dark:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                      className="px-4 py-2.5 min-h-[44px] rounded-lg glass-effect text-sm font-medium text-surface-700 dark:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all touch-manipulation active:scale-95"
                     >
                       {t('blog.content.pagination.next')}
                     </button>

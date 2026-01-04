@@ -194,7 +194,7 @@ export default function PricingListClient() {
                 key={filter}
                 onClick={() => setActiveFilter(filter)}
                 className={cn(
-                  'px-3 py-1.5 text-sm font-bold rounded-lg whitespace-nowrap transition-all font-outfit',
+                  'px-3 py-2.5 min-h-[40px] text-sm font-bold rounded-lg whitespace-nowrap transition-all font-outfit shrink-0 touch-manipulation active:scale-95',
                   activeFilter === filter
                     ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
                     : 'text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800'

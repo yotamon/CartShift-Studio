@@ -22,7 +22,7 @@ const dropdownMenuVariants = cva(
 );
 
 const dropdownItemVariants = cva(
-  "w-full px-4 py-2.5 text-sm font-medium text-start flex items-center gap-3 transition-colors duration-150",
+  "w-full px-4 py-3 min-h-[44px] text-sm font-medium text-start flex items-center gap-3 transition-colors duration-150 touch-manipulation active:scale-[0.98]",
   {
     variants: {
       variant: {

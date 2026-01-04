@@ -167,7 +167,7 @@ export default function ConsultationsClient() {
                   transition={{ delay: index * 0.05 }}
                   className="p-5 bg-white dark:bg-surface-900 rounded-2xl border-2 border-blue-200 dark:border-blue-800 shadow-lg shadow-blue-500/5"
                 >
-                  <div className="flex items-start gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                     <div
                       className={cn(
                         'w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0',
@@ -176,7 +176,7 @@ export default function ConsultationsClient() {
                     >
                       <TypeIcon className={cn('w-6 h-6', typeConfig.color)} />
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <h3 className="text-lg font-bold text-surface-900 dark:text-white">
                         {consultation.title}
                       </h3>
@@ -216,13 +216,13 @@ export default function ConsultationsClient() {
                         </div>
                       )}
                     </div>
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-row sm:flex-col gap-2 mt-2 sm:mt-0 shrink-0">
                       {consultation.externalCalendarLink && (
                         <a
                           href={consultation.externalCalendarLink}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-colors justify-center"
+                          className="flex items-center gap-2 px-4 py-2.5 min-h-[44px] bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition-colors justify-center touch-manipulation active:scale-95"
                         >
                           <Video size={16} />
                           {t('consultations.join')}
@@ -231,7 +231,7 @@ export default function ConsultationsClient() {
                       <button
                             disabled={isCanceling && cancelMutation.variables?.consultationId === consultation.id}
                             onClick={() => handleCancel(consultation)}
-                            className="text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 px-3 py-2 rounded-xl transition-colors flex items-center gap-2 font-bold disabled:opacity-50"
+                            className="text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 px-3 py-2.5 min-h-[44px] rounded-xl transition-colors flex items-center gap-2 font-bold disabled:opacity-50 touch-manipulation active:scale-95"
                           >
                             {isCanceling && cancelMutation.variables?.consultationId === consultation.id ? (
                               <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />

@@ -301,11 +301,11 @@ export default function RequestDetailClient() {
       </motion.div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 p-1 bg-surface-100 dark:bg-surface-900 rounded-2xl w-fit">
+      <div className="flex items-center gap-1 p-1 bg-surface-100 dark:bg-surface-900 rounded-2xl w-full overflow-x-auto scrollbar-hide">
         <button
           onClick={() => setActiveTab('overview')}
           className={cn(
-            'px-6 py-2.5 rounded-xl text-sm font-bold transition-all font-outfit',
+            'px-4 sm:px-6 py-3 min-h-[44px] rounded-xl text-sm font-bold transition-all font-outfit touch-manipulation whitespace-nowrap',
             activeTab === 'overview'
               ? 'bg-white dark:bg-surface-800 text-blue-600 shadow-sm'
               : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
@@ -316,7 +316,7 @@ export default function RequestDetailClient() {
         <button
           onClick={() => setActiveTab('discussion')}
           className={cn(
-            'px-6 py-2.5 rounded-xl text-sm font-bold transition-all font-outfit flex items-center gap-2',
+            'px-4 sm:px-6 py-3 min-h-[44px] rounded-xl text-sm font-bold transition-all font-outfit touch-manipulation flex items-center gap-2 whitespace-nowrap',
             activeTab === 'discussion'
               ? 'bg-white dark:bg-surface-800 text-blue-600 shadow-sm'
               : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
@@ -332,7 +332,7 @@ export default function RequestDetailClient() {
         <button
           onClick={() => setActiveTab('history')}
           className={cn(
-            'px-6 py-2.5 rounded-xl text-sm font-bold transition-all font-outfit flex items-center gap-2',
+            'px-4 sm:px-6 py-3 min-h-[44px] rounded-xl text-sm font-bold transition-all font-outfit touch-manipulation flex items-center gap-2 whitespace-nowrap',
             activeTab === 'history'
               ? 'bg-white dark:bg-surface-800 text-blue-600 shadow-sm'
               : 'text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'

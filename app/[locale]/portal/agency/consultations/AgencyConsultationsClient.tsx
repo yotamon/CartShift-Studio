@@ -282,13 +282,13 @@ export default function AgencyConsultationsClient() {
             className="portal-input ps-12 w-full"
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
           {['all', 'scheduled', 'completed', 'canceled'].map(status => (
             <button
               key={status}
               onClick={() => setStatusFilter(status as ConsultationStatus | 'all')}
               className={cn(
-                'px-4 py-2 rounded-xl text-sm font-bold transition-all',
+                'px-4 py-2.5 min-h-[40px] rounded-xl text-sm font-bold transition-all touch-manipulation active:scale-95 shrink-0 whitespace-nowrap',
                 statusFilter === status
                   ? 'bg-blue-600 text-white'
                   : 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 hover:bg-surface-200 dark:hover:bg-surface-700'

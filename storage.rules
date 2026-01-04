@@ -62,9 +62,8 @@ service firebase.storage {
       // Public read access - essential for displaying logos
       allow read: if true;
 
-      // TEMPORARY DEBUG: Allow ANY authenticated user to upload
-      // TODO: Restore proper permissions after debugging
-      allow create, update: if isAuthenticated() &&
+      // Only org admins can upload logos
+      allow create, update: if canAdminOrg(orgId) &&
         request.resource.size < 2 * 1024 * 1024 &&
         request.resource.contentType.matches('image/.*');
 

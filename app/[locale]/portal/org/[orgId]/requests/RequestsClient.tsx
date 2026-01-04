@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from '@/lib/motion';
-import { skeletonToContent } from "@/lib/animation-variants";
+import { skeletonToContent } from '@/lib/animation-variants';
 import {
   Plus,
   Search,
@@ -42,20 +42,14 @@ import { usePricingForm } from '@/lib/hooks/usePricingForm';
 import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
 import { Link, useRouter } from '@/i18n/navigation';
 // Centralized utilities - no more duplicate mapStatusColor!
-import {
-  getStatusBadgeVariant,
-  getClientStatusBadgeVariant,
-} from '@/lib/utils/portal-helpers';
+import { getStatusBadgeVariant, getClientStatusBadgeVariant } from '@/lib/utils/portal-helpers';
+import { PinButton } from '@/components/portal/PinnedRequests';
 
 export default function RequestsClient() {
   const orgId = useResolvedOrgId();
   const router = useRouter();
   const { userData, loading: authLoading, isAgency } = usePortalAuth();
-  const {
-    requests,
-    loading: requestsLoading,
-    error: requestsError,
-  } = useRequests();
+  const { requests, loading: requestsLoading, error: requestsError } = useRequests();
 
   const [isMobile, setIsMobile] = useState(false);
   const [activeFilter, setActiveFilter] = useState<string>('All');
@@ -99,7 +93,6 @@ export default function RequestsClient() {
   const loading = authLoading || requestsLoading;
   const error = requestsError;
 
-
   // Reset to page 1 when filter or search changes
   useEffect(() => {
     setCurrentPage(1);
@@ -116,7 +109,8 @@ export default function RequestsClient() {
     }
 
     const query = searchQuery.trim().toLowerCase();
-    const matchesSearch = !query ||
+    const matchesSearch =
+      !query ||
       (req.title?.toLowerCase() || '').includes(query) ||
       (req.id?.toLowerCase() || '').includes(query) ||
       (req.description?.toLowerCase() || '').includes(query) ||
@@ -245,7 +239,7 @@ export default function RequestsClient() {
                 key={filter}
                 onClick={() => setActiveFilter(filter)}
                 className={cn(
-                  'px-3 py-1.5 text-sm font-bold rounded-lg whitespace-nowrap transition-all font-outfit shrink-0',
+                  'px-3 py-2.5 min-h-[40px] text-sm font-bold rounded-lg whitespace-nowrap transition-all font-outfit shrink-0 touch-manipulation active:scale-95',
                   activeFilter === filter
                     ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
                     : 'text-surface-500 hover:bg-surface-200 dark:hover:bg-surface-800'
@@ -299,7 +293,13 @@ export default function RequestsClient() {
         <div className="overflow-x-auto w-full min-w-0">
           <AnimatePresence mode="wait">
             {loading ? (
-              <motion.div key="skeleton" exit={{ opacity: 0 }} className="p-4" role="status" aria-live="polite">
+              <motion.div
+                key="skeleton"
+                exit={{ opacity: 0 }}
+                className="p-4"
+                role="status"
+                aria-live="polite"
+              >
                 <SkeletonTable rows={8} columns={6} />
                 <span className="sr-only">Loading requests...</span>
               </motion.div>
@@ -319,295 +319,309 @@ export default function RequestsClient() {
                       onClick={() => router.push(`/portal/org/${orgId}/requests/${req.id}/`)}
                       className="bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-xl p-4 shadow-sm active:scale-[0.98] transition-all cursor-pointer"
                     >
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex flex-col min-w-0 me-2">
-                        <motion.span layoutId={isMobile ? `request-title-${req.id}` : undefined} className="font-bold text-surface-900 dark:text-white font-outfit truncate text-sm">
-                          {req.title}
-                        </motion.span>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="font-mono bg-surface-100 dark:bg-surface-800 px-1.5 py-0.5 rounded text-[10px] tracking-tight text-surface-500">
-                            {req.id.slice(0, 8)}
-                          </span>
-                          <span className="text-[10px] font-black text-surface-400 uppercase tracking-widest truncate">
-                            {req.type || t('portal.common.general')}
-                          </span>
-                        </div>
-                      </div>
-                      <div
-                        className={cn(
-                          'w-2 h-2 rounded-full shrink-0 mt-1.5',
-                          req.priority === 'HIGH' || req.priority === 'URGENT'
-                            ? 'bg-rose-500'
-                            : req.priority === 'NORMAL'
-                              ? 'bg-amber-500'
-                              : 'bg-blue-500'
-                        )}
-                      />
-                    </div>
-
-                    {req.lastComment && (
-                      <div className="bg-surface-50 dark:bg-surface-800/50 rounded-lg p-2.5 mb-3 border border-surface-100 dark:border-surface-800">
-                        <div className="flex items-center gap-1.5 mb-1">
-                          <MessageSquare size={10} className="text-blue-500" />
-                          <span className="text-[10px] font-bold text-surface-700 dark:text-surface-300">
-                            {req.lastComment.userName}
-                          </span>
-                        </div>
-                        <p className="text-xs text-surface-500 dark:text-surface-400 line-clamp-2">
-                          {req.lastComment.content}
-                        </p>
-                      </div>
-                    )}
-
-                    <div className="flex items-center justify-between pt-3 border-t border-surface-100 dark:border-surface-800">
-                      <motion.div layoutId={isMobile ? `request-status-${req.id}` : undefined}>
-                        {isAgency ? (
-                          <PortalBadge
-                            variant={getStatusBadgeVariant(req.status)}
-                            className="text-[10px]"
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex flex-col min-w-0 me-2">
+                          <motion.span
+                            layoutId={isMobile ? `request-title-${req.id}` : undefined}
+                            className="font-bold text-surface-900 dark:text-white font-outfit truncate text-sm"
                           >
-                            {t(`portal.requests.status.${req.status?.toLowerCase() || 'new'}` as any)}
-                          </PortalBadge>
-                        ) : (
-                          <PortalBadge
-                            variant={getClientStatusBadgeVariant(req.status)}
-                            className="text-[10px]"
-                          >
-                            {t(
-                              `portal.requests.clientStatus.${CLIENT_STATUS_MAP[req.status]?.toLowerCase() || 'submitted'}` as any
+                            {req.title}
+                          </motion.span>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="font-mono bg-surface-100 dark:bg-surface-800 px-1.5 py-0.5 rounded text-[10px] tracking-tight text-surface-500">
+                              {req.id.slice(0, 8)}
+                            </span>
+                            <span className="text-[10px] font-black text-surface-400 uppercase tracking-widest truncate">
+                              {req.type || t('portal.common.general')}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <PinButton requestId={req.id} orgId={orgId as string} size="sm" />
+                          <div
+                            className={cn(
+                              'w-2 h-2 rounded-full mt-1.5',
+                              req.priority === 'HIGH' || req.priority === 'URGENT'
+                                ? 'bg-rose-500'
+                                : req.priority === 'NORMAL'
+                                  ? 'bg-amber-500'
+                                  : 'bg-blue-500'
                             )}
-                          </PortalBadge>
-                        )}
-                      </motion.div>
+                          />
+                        </div>
+                      </div>
 
-                      <span className="text-[10px] font-bold text-surface-400 font-outfit">
-                        {req.createdAt?.toDate
-                          ? format(req.createdAt.toDate(), 'MMM d', {
-                              locale: getDateLocale(locale),
-                            })
-                          : ''}
-                      </span>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+                      {req.lastComment && (
+                        <div className="bg-surface-50 dark:bg-surface-800/50 rounded-lg p-2.5 mb-3 border border-surface-100 dark:border-surface-800">
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <MessageSquare size={10} className="text-blue-500" />
+                            <span className="text-[10px] font-bold text-surface-700 dark:text-surface-300">
+                              {req.lastComment.userName}
+                            </span>
+                          </div>
+                          <p className="text-xs text-surface-500 dark:text-surface-400 line-clamp-2">
+                            {req.lastComment.content}
+                          </p>
+                        </div>
+                      )}
 
-              {/* Desktop Table View */}
-              <table className="hidden md:table w-full text-start border-collapse min-w-[600px]">
-                <thead>
-                  <tr className="bg-surface-50/50 dark:bg-surface-900/50 cursor-default">
-                    {isAgency && (
-                      <th className="px-3 py-4 w-12">{/* Select All - could add later */}</th>
-                    )}
-                    <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest min-w-[200px]">
-                      {t('portal.requests.table.title')}
-                    </th>
-                    <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-center whitespace-nowrap">
-                      {t('portal.requests.table.status')}
-                    </th>
-                    <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-center whitespace-nowrap">
-                      {t('portal.requests.table.priority')}
-                    </th>
-                    <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-center whitespace-nowrap hidden md:table-cell">
-                      {t('portal.requests.table.created')}
-                    </th>
-                    <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-end whitespace-nowrap">
-                      {t('portal.common.actions')}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
-                  {paginatedRequests.map(req => {
-                    const isSelected = selectedRequestIds.includes(req.id);
-                    const canSelect =
-                      isAgency &&
-                      !req.pricingOfferId &&
-                      req.status !== 'PAID' &&
-                      req.status !== 'CLOSED';
-                    return (
-                      <motion.tr
-                        layoutId={!isMobile ? `request-container-${req.id}` : undefined}
-                        key={req.id}
-                        onClick={() => router.push(`/portal/org/${orgId}/requests/${req.id}/`)}
-                        className={cn(
-                          'hover:bg-surface-50/50 dark:hover:bg-surface-800/30 transition-all group cursor-pointer',
-                          isSelected && 'bg-blue-50 dark:bg-blue-900/10'
-                        )}
-                      >
-                        {isAgency && (
-                          <td className="px-3 py-4">
-                            {canSelect && (
+                      <div className="flex items-center justify-between pt-3 border-t border-surface-100 dark:border-surface-800">
+                        <motion.div layoutId={isMobile ? `request-status-${req.id}` : undefined}>
+                          {isAgency ? (
+                            <PortalBadge
+                              variant={getStatusBadgeVariant(req.status)}
+                              className="text-[10px]"
+                            >
+                              {t(
+                                `portal.requests.status.${req.status?.toLowerCase() || 'new'}` as any
+                              )}
+                            </PortalBadge>
+                          ) : (
+                            <PortalBadge
+                              variant={getClientStatusBadgeVariant(req.status)}
+                              className="text-[10px]"
+                            >
+                              {t(
+                                `portal.requests.clientStatus.${CLIENT_STATUS_MAP[req.status]?.toLowerCase() || 'submitted'}` as any
+                              )}
+                            </PortalBadge>
+                          )}
+                        </motion.div>
+
+                        <span className="text-[10px] font-bold text-surface-400 font-outfit">
+                          {req.createdAt?.toDate
+                            ? format(req.createdAt.toDate(), 'MMM d', {
+                                locale: getDateLocale(locale),
+                              })
+                            : ''}
+                        </span>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Desktop Table View */}
+                <table className="hidden md:table w-full text-start border-collapse min-w-[600px]">
+                  <thead>
+                    <tr className="bg-surface-50/50 dark:bg-surface-900/50 cursor-default">
+                      {isAgency && (
+                        <th className="px-3 py-4 w-12">{/* Select All - could add later */}</th>
+                      )}
+                      <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest min-w-[200px]">
+                        {t('portal.requests.table.title')}
+                      </th>
+                      <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-center whitespace-nowrap">
+                        {t('portal.requests.table.status')}
+                      </th>
+                      <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-center whitespace-nowrap">
+                        {t('portal.requests.table.priority')}
+                      </th>
+                      <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-center whitespace-nowrap hidden md:table-cell">
+                        {t('portal.requests.table.created')}
+                      </th>
+                      <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-end whitespace-nowrap">
+                        {t('portal.common.actions')}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
+                    {paginatedRequests.map(req => {
+                      const isSelected = selectedRequestIds.includes(req.id);
+                      const canSelect =
+                        isAgency &&
+                        !req.pricingOfferId &&
+                        req.status !== 'PAID' &&
+                        req.status !== 'CLOSED';
+                      return (
+                        <motion.tr
+                          layoutId={!isMobile ? `request-container-${req.id}` : undefined}
+                          key={req.id}
+                          onClick={() => router.push(`/portal/org/${orgId}/requests/${req.id}/`)}
+                          className={cn(
+                            'hover:bg-surface-50/50 dark:hover:bg-surface-800/30 transition-all group cursor-pointer',
+                            isSelected && 'bg-blue-50 dark:bg-blue-900/10'
+                          )}
+                        >
+                          {isAgency && (
+                            <td className="px-3 py-4">
+                              {canSelect && (
+                                <button
+                                  type="button"
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    toggleRequestSelection(req.id);
+                                  }}
+                                  className={cn(
+                                    'w-5 h-5 rounded flex items-center justify-center transition-all border-2',
+                                    isSelected
+                                      ? 'bg-blue-600 border-blue-600 text-white'
+                                      : 'border-surface-300 dark:border-surface-600 hover:border-blue-400'
+                                  )}
+                                >
+                                  {isSelected && <Check size={12} />}
+                                </button>
+                              )}
+                              {req.pricingOfferId && (
+                                <PortalBadge variant="green" className="text-[9px]">
+                                  {t('portal.requests.hasPricing')}
+                                </PortalBadge>
+                              )}
+                            </td>
+                          )}
+                          <td className="px-3 md:px-6 py-4 min-w-0">
+                            <div className="flex flex-col min-w-0">
+                              <motion.span
+                                layoutId={!isMobile ? `request-title-${req.id}` : undefined}
+                                className="font-bold text-surface-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate font-outfit"
+                              >
+                                {req.title}
+                              </motion.span>
+                              {req.lastComment && (
+                                <span className="text-xs text-surface-500 dark:text-surface-400 font-medium truncate mt-0.5 max-w-full flex items-center gap-1 pe-4">
+                                  <span className="font-bold text-surface-700 dark:text-surface-300 shrink-0">
+                                    {req.lastComment.userName}:
+                                  </span>
+                                  <span className="truncate">{req.lastComment.content}</span>
+                                </span>
+                              )}
+                              <span className="text-xs font-bold text-surface-400 flex items-center gap-1.5 mt-1 font-outfit flex-wrap">
+                                {t('portal.requests.table.id')}:{' '}
+                                <span className="font-mono bg-surface-100 dark:bg-surface-800 px-1.5 py-0.5 rounded text-[10px] tracking-tight shrink-0">
+                                  {req.id.slice(0, 8)}
+                                </span>
+                                <span className="w-1 h-1 rounded-full bg-surface-300 shrink-0" />
+                                <span className="uppercase tracking-wider text-[10px] truncate">
+                                  {req.type || t('portal.common.general')}
+                                </span>
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-3 md:px-6 py-4">
+                            <div className="flex justify-center">
+                              <motion.div
+                                layoutId={!isMobile ? `request-status-${req.id}` : undefined}
+                              >
+                                {isAgency ? (
+                                  <PortalBadge variant={getStatusBadgeVariant(req.status)}>
+                                    {t(
+                                      `portal.requests.status.${req.status?.toLowerCase() || 'new'}` as any
+                                    )}
+                                  </PortalBadge>
+                                ) : (
+                                  <PortalBadge variant={getClientStatusBadgeVariant(req.status)}>
+                                    {t(
+                                      `portal.requests.clientStatus.${CLIENT_STATUS_MAP[req.status]?.toLowerCase() || 'submitted'}` as any
+                                    )}
+                                  </PortalBadge>
+                                )}
+                              </motion.div>
+                            </div>
+                          </td>
+                          <td className="px-3 md:px-6 py-4">
+                            <div className="flex items-center justify-center gap-2">
+                              <div
+                                className={cn(
+                                  'w-2 h-2 rounded-full shrink-0',
+                                  req.priority === 'HIGH' || req.priority === 'URGENT'
+                                    ? 'bg-rose-500 shadow-sm shadow-rose-500/50'
+                                    : req.priority === 'NORMAL'
+                                      ? 'bg-amber-500 shadow-sm shadow-amber-500/50'
+                                      : 'bg-blue-500 shadow-sm shadow-blue-500/50'
+                                )}
+                              />
+                              <span className="text-sm font-bold text-surface-600 dark:text-surface-300 font-outfit whitespace-nowrap">
+                                {t(
+                                  `portal.requests.priority.${req.priority?.toLowerCase() || 'normal'}` as any
+                                )}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-3 md:px-6 py-4 hidden md:table-cell">
+                            <div className="flex flex-col items-center">
+                              <span className="text-sm font-bold text-surface-800 dark:text-surface-200 font-outfit whitespace-nowrap">
+                                {req.createdAt?.toDate
+                                  ? format(req.createdAt.toDate(), 'MMM d, yyyy', {
+                                      locale: getDateLocale(locale),
+                                    })
+                                  : t('portal.common.recently')}
+                              </span>
+                              <span className="text-[10px] font-black text-surface-400 uppercase tracking-tighter">
+                                {t('portal.requests.table.created')}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-3 md:px-6 py-4 text-end">
+                            <div className="flex items-center justify-end gap-1">
+                              <PinButton requestId={req.id} orgId={orgId as string} />
                               <button
                                 type="button"
                                 onClick={e => {
                                   e.stopPropagation();
-                                  toggleRequestSelection(req.id);
+                                  router.push(`/portal/org/${orgId}/requests/${req.id}/`);
                                 }}
-                                className={cn(
-                                  'w-5 h-5 rounded flex items-center justify-center transition-all border-2',
-                                  isSelected
-                                    ? 'bg-blue-600 border-blue-600 text-white'
-                                    : 'border-surface-300 dark:border-surface-600 hover:border-blue-400'
-                                )}
+                                className="p-2 text-surface-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20"
                               >
-                                {isSelected && <Check size={12} />}
+                                <MessageSquare size={16} />
                               </button>
-                            )}
-                            {req.pricingOfferId && (
-                              <PortalBadge variant="green" className="text-[9px]">
-                                {t('portal.requests.hasPricing')}
-                              </PortalBadge>
-                            )}
-                          </td>
-                        )}
-                        <td className="px-3 md:px-6 py-4 min-w-0">
-                          <div className="flex flex-col min-w-0">
-                            <motion.span layoutId={!isMobile ? `request-title-${req.id}` : undefined} className="font-bold text-surface-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate font-outfit">
-                              {req.title}
-                            </motion.span>
-                            {req.lastComment && (
-                              <span className="text-xs text-surface-500 dark:text-surface-400 font-medium truncate mt-0.5 max-w-full flex items-center gap-1 pe-4">
-                                <span className="font-bold text-surface-700 dark:text-surface-300 shrink-0">
-                                  {req.lastComment.userName}:
-                                </span>
-                                <span className="truncate">{req.lastComment.content}</span>
-                              </span>
-                            )}
-                            <span className="text-xs font-bold text-surface-400 flex items-center gap-1.5 mt-1 font-outfit flex-wrap">
-                              {t('portal.requests.table.id')}:{' '}
-                              <span className="font-mono bg-surface-100 dark:bg-surface-800 px-1.5 py-0.5 rounded text-[10px] tracking-tight shrink-0">
-                                {req.id.slice(0, 8)}
-                              </span>
-                              <span className="w-1 h-1 rounded-full bg-surface-300 shrink-0" />
-                              <span className="uppercase tracking-wider text-[10px] truncate">
-                                {req.type || t('portal.common.general')}
-                              </span>
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-3 md:px-6 py-4">
-                          <div className="flex justify-center">
-                            <motion.div layoutId={!isMobile ? `request-status-${req.id}` : undefined}>
-                              {isAgency ? (
-                                <PortalBadge
-                                  variant={getStatusBadgeVariant(req.status)}
-                                >
-                                  {t(`portal.requests.status.${req.status?.toLowerCase() || 'new'}` as any)}
-                                </PortalBadge>
-                              ) : (
-                                <PortalBadge
-                                  variant={getClientStatusBadgeVariant(req.status)}
-                                >
-                                  {t(
-                                    `portal.requests.clientStatus.${CLIENT_STATUS_MAP[req.status]?.toLowerCase() || 'submitted'}` as any
-                                  )}
-                                </PortalBadge>
-                              )}
-                            </motion.div>
-                          </div>
-                        </td>
-                        <td className="px-3 md:px-6 py-4">
-                          <div className="flex items-center justify-center gap-2">
-                            <div
-                              className={cn(
-                                'w-2 h-2 rounded-full shrink-0',
-                                req.priority === 'HIGH' || req.priority === 'URGENT'
-                                  ? 'bg-rose-500 shadow-sm shadow-rose-500/50'
-                                  : req.priority === 'NORMAL'
-                                    ? 'bg-amber-500 shadow-sm shadow-amber-500/50'
-                                    : 'bg-blue-500 shadow-sm shadow-blue-500/50'
-                              )}
-                            />
-                            <span className="text-sm font-bold text-surface-600 dark:text-surface-300 font-outfit whitespace-nowrap">
-                              {t(`portal.requests.priority.${req.priority?.toLowerCase() || 'normal'}` as any)}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-3 md:px-6 py-4 hidden md:table-cell">
-                          <div className="flex flex-col items-center">
-                            <span className="text-sm font-bold text-surface-800 dark:text-surface-200 font-outfit whitespace-nowrap">
-                              {req.createdAt?.toDate
-                                ? format(req.createdAt.toDate(), 'MMM d, yyyy', {
-                                    locale: getDateLocale(locale),
-                                  })
-                                : t('portal.common.recently')}
-                            </span>
-                            <span className="text-[10px] font-black text-surface-400 uppercase tracking-tighter">
-                              {t('portal.requests.table.created')}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-3 md:px-6 py-4 text-end">
-                          <div className="flex items-center justify-end gap-1">
-                            <button
-                              type="button"
-                              onClick={e => {
-                                e.stopPropagation();
-                                router.push(`/portal/org/${orgId}/requests/${req.id}/`);
-                              }}
-                              className="p-2 text-surface-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                            >
-                              <MessageSquare size={16} />
-                            </button>
-                            <Dropdown
-                              trigger={
-                                <span className="p-2 text-surface-400 hover:text-surface-900 dark:hover:text-white transition-all rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 inline-flex">
-                                  <MoreVertical size={16} />
-                                </span>
-                              }
-                              items={[
-                                {
-                                  label: t('portal.common.edit'),
-                                  onClick: () => console.log('Edit request', req.id),
-                                  icon: <Edit size={16} />,
-                                },
-                                {
-                                  label: t('portal.common.archive'),
-                                  onClick: () => console.log('Archive request', req.id),
-                                  icon: <Archive size={16} />,
-                                },
-                                {
-                                  label: t('portal.common.delete'),
-                                  onClick: () => {
-                                    if (confirm(t('portal.common.deleteConfirm'))) {
-                                      console.log('Delete request', req.id);
-                                    }
+                              <Dropdown
+                                trigger={
+                                  <span className="p-2 text-surface-400 hover:text-surface-900 dark:hover:text-white transition-all rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 inline-flex">
+                                    <MoreVertical size={16} />
+                                  </span>
+                                }
+                                items={[
+                                  {
+                                    label: t('portal.common.edit'),
+                                    onClick: () => console.log('Edit request', req.id),
+                                    icon: <Edit size={16} />,
                                   },
-                                  icon: <Trash2 size={16} />,
-                                  variant: 'danger',
-                                },
-                              ]}
-                            />
-                          </div>
-                        </td>
-                      </motion.tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </motion.div>
+                                  {
+                                    label: t('portal.common.archive'),
+                                    onClick: () => console.log('Archive request', req.id),
+                                    icon: <Archive size={16} />,
+                                  },
+                                  {
+                                    label: t('portal.common.delete'),
+                                    onClick: () => {
+                                      if (confirm(t('portal.common.deleteConfirm'))) {
+                                        console.log('Delete request', req.id);
+                                      }
+                                    },
+                                    icon: <Trash2 size={16} />,
+                                    variant: 'danger',
+                                  },
+                                ]}
+                              />
+                            </div>
+                          </td>
+                        </motion.tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </motion.div>
             ) : (
               <PortalEmptyState
-              icon={Search}
-              title={t('portal.requests.emptyTitle')}
-              description={
-                searchQuery || activeFilter !== 'All'
-                  ? t('portal.requests.emptySearch')
-                  : t('portal.requests.emptyDescription')
-              }
-              action={
-                !searchQuery && activeFilter === 'All' ? (
-                  <Link href={`/portal/org/${orgId}/requests/new/`}>
-                    <PortalButton className="h-11 px-8 font-outfit shadow-lg shadow-blue-500/20">
-                      <Plus size={18} className="me-2" />
-                      {t('portal.requests.newRequest')}
-                    </PortalButton>
-                  </Link>
-                ) : undefined
-              }
-              className="py-20"
-            />
-          )}
+                icon={Search}
+                title={t('portal.requests.emptyTitle')}
+                description={
+                  searchQuery || activeFilter !== 'All'
+                    ? t('portal.requests.emptySearch')
+                    : t('portal.requests.emptyDescription')
+                }
+                action={
+                  !searchQuery && activeFilter === 'All' ? (
+                    <Link href={`/portal/org/${orgId}/requests/new/`}>
+                      <PortalButton className="h-11 px-8 font-outfit shadow-lg shadow-blue-500/20">
+                        <Plus size={18} className="me-2" />
+                        {t('portal.requests.newRequest')}
+                      </PortalButton>
+                    </Link>
+                  ) : undefined
+                }
+                className="py-20"
+              />
+            )}
           </AnimatePresence>
         </div>
 
@@ -654,8 +668,7 @@ export default function RequestsClient() {
                   {t('portal.requests.createPricingOffer')}
                 </h2>
                 <p className="text-sm text-surface-500 mt-1">
-                  {selectedRequests.length}{' '}
-                  {t('portal.requests.requestsIncluded')}
+                  {selectedRequests.length} {t('portal.requests.requestsIncluded')}
                 </p>
               </div>
               <button
@@ -737,9 +750,7 @@ export default function RequestsClient() {
                     >
                       <input
                         type="text"
-                        placeholder={
-                          t('portal.pricing.form.itemDescription')
-                        }
+                        placeholder={t('portal.pricing.form.itemDescription')}
                         value={item.description}
                         onChange={e => updateLineItem(item.id, 'description', e.target.value)}
                         className="portal-input w-full h-9 text-sm"

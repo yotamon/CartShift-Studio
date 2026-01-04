@@ -40,45 +40,49 @@ import {
 } from '@/lib/services/portal-notifications';
 import { Notification, ACCOUNT_TYPE } from '@/lib/types/portal';
 import { formatDistanceToNow } from 'date-fns';
-import { getDateLocale, getLocaleDirection, getLocaleFontFamily, isRTLLocale } from '@/lib/locale-config';
+import {
+  getDateLocale,
+  getLocaleDirection,
+  getLocaleFontFamily,
+  isRTLLocale,
+} from '@/lib/locale-config';
 import { OnboardingTour } from './OnboardingTour';
 import { OfflineIndicator } from './ui/OfflineIndicator';
 import { Breadcrumbs } from './ui/Breadcrumbs';
 import { MobileSearch, MobileSearchButton } from './ui/MobileSearch';
 import { GlobalSearch } from './ui/GlobalSearch';
 
-const navItemVariants = cva(
-  "portal-nav-item group relative transition-all duration-200",
-  {
-    variants: {
-      isActive: {
-        true: "portal-nav-item-active text-blue-600 dark:text-blue-400 font-bold bg-blue-50/50 dark:bg-blue-500/10",
-        false: "text-surface-600 dark:text-surface-400 hover:bg-surface-100/60 dark:hover:bg-surface-800/40 hover:text-surface-900 dark:hover:text-white",
-      },
-      isCollapsed: {
-        true: "md:justify-center md:px-0",
-        false: "",
-      }
+const navItemVariants = cva('portal-nav-item group relative transition-all duration-200', {
+  variants: {
+    isActive: {
+      true: 'portal-nav-item-active text-blue-600 dark:text-blue-400 font-bold bg-blue-50/50 dark:bg-blue-500/10',
+      false:
+        'text-surface-600 dark:text-surface-400 hover:bg-surface-100/60 dark:hover:bg-surface-800/40 hover:text-surface-900 dark:hover:text-white',
     },
-    defaultVariants: {
-      isActive: false,
-      isCollapsed: false,
-    }
-  }
-);
+    isCollapsed: {
+      true: 'md:justify-center md:px-0',
+      false: '',
+    },
+  },
+  defaultVariants: {
+    isActive: false,
+    isCollapsed: false,
+  },
+});
 
 const notificationButtonVariants = cva(
-  "relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300",
+  'relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300',
   {
     variants: {
       isOpen: {
-        true: "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rotate-12",
-        false: "text-surface-500 hover:text-surface-900 dark:hover:text-white hover:bg-surface-100/80 dark:hover:bg-surface-800/50",
-      }
+        true: 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rotate-12',
+        false:
+          'text-surface-500 hover:text-surface-900 dark:hover:text-white hover:bg-surface-100/80 dark:hover:bg-surface-800/50',
+      },
     },
     defaultVariants: {
       isOpen: false,
-    }
+    },
   }
 );
 
@@ -127,7 +131,7 @@ export const PortalShell = ({
     if (orgId && orgId !== 'template') {
       return orgId;
     }
-    
+
     if (pathname) {
       // Path format: /:locale/portal/org/:orgId/... or /portal/org/:orgId/...
       // Example: /en/portal/org/123/dashboard
@@ -140,11 +144,13 @@ export const PortalShell = ({
         }
       }
     }
-    
+
     return orgId;
   }, [orgId, pathname]);
 
   useEffect(() => {
+    let mounted = true;
+
     if (!loading) {
       if (!isAuthenticated) {
         router.push('/portal/login/');
@@ -155,7 +161,7 @@ export const PortalShell = ({
         try {
           if (effectiveOrgId && userData) {
             if (userData.isAgency || userData.accountType === 'AGENCY') {
-              setIsAuthorized(true);
+              if (mounted) setIsAuthorized(true);
               return;
             }
 
@@ -164,7 +170,7 @@ export const PortalShell = ({
               console.warn(
                 '[PortalShell] effectiveOrgId is "template". Skipping access check and allowing render.'
               );
-              setIsAuthorized(true);
+              if (mounted) setIsAuthorized(true);
               return;
             }
 
@@ -189,7 +195,7 @@ export const PortalShell = ({
               console.log(`[PortalShell] After ensureMembership:`, member ? 'found' : 'not found');
             }
 
-            setIsAuthorized(member !== null);
+            if (mounted) setIsAuthorized(member !== null);
 
             if (!member) {
               console.warn(
@@ -197,27 +203,56 @@ export const PortalShell = ({
               );
             }
           } else if (isAgencyPage && userData) {
-            setIsAuthorized(Boolean(userData.isAgency) || userData.accountType === 'AGENCY');
+            if (mounted)
+              setIsAuthorized(Boolean(userData.isAgency) || userData.accountType === 'AGENCY');
           } else {
-            setIsAuthorized(true);
+            if (mounted) setIsAuthorized(true);
           }
         } catch (error) {
           console.error('[PortalShell] Error checking access:', error);
-          setIsAuthorized(false);
+          if (mounted) setIsAuthorized(false);
         }
       };
 
       checkAccess();
     }
 
-    if (userData && !userData.isAgency && !userData.onboardingComplete) {
+    if (userData && !userData.isAgency && !userData.onboardingComplete && mounted) {
       setShowOnboarding(true);
     }
+
+    return () => {
+      mounted = false;
+    };
   }, [loading, isAuthenticated, userData, effectiveOrgId, isAgencyPage, router]);
 
   useEffect(() => {
     setMounted(true);
+    // Set sidebar CSS variables for responsive layout
+    document.documentElement.style.setProperty('--sidebar-width-expanded', '280px');
+    document.documentElement.style.setProperty('--sidebar-width-collapsed', '80px');
   }, []);
+
+  // Touch swipe handler for mobile sidebar
+  const touchStartX = useRef<number | null>(null);
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!isMobileMenuOpen || touchStartX.current === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchEndX - touchStartX.current;
+    const isRTL = isRTLLocale(locale);
+    const swipeThreshold = 50;
+
+    // Close sidebar on swipe in the appropriate direction
+    const shouldClose = isRTL ? diff > swipeThreshold : diff < -swipeThreshold;
+    if (shouldClose) {
+      setIsMobileMenuOpen(false);
+    }
+    touchStartX.current = null;
+  };
 
   useEffect(() => {
     const updatePosition = () => {
@@ -368,19 +403,26 @@ export const PortalShell = ({
   useEffect(() => {
     if (!userId || !isAuthenticated || loading) return;
 
+    let mounted = true;
+
     const unsubscribeNotifications = subscribeToNotifications(
       userId,
       data => {
-        setNotifications(data);
+        if (mounted) {
+          setNotifications(data);
+        }
       },
       { limit: 10 }
     );
 
     const unsubscribeUnreadCount = subscribeToUnreadCount(userId, count => {
-      setUnreadCount(count);
+      if (mounted) {
+        setUnreadCount(count);
+      }
     });
 
     return () => {
+      mounted = false;
       unsubscribeNotifications();
       unsubscribeUnreadCount();
     };
@@ -704,7 +746,8 @@ export const PortalShell = ({
           'portal-sidebar fixed top-0 bottom-0 z-[70] flex flex-col transition-transform duration-300',
           'bg-white dark:bg-surface-950/80 backdrop-blur-xl',
           'border-e border-surface-200/50 dark:border-surface-800/30 shadow-2xl shadow-surface-950/20',
-          'w-[85vw] max-w-sm h-screen overflow-hidden',
+          'w-[85vw] max-w-[320px] min-h-screen-mobile overflow-hidden',
+          'pb-safe', // Safe area padding for iOS home indicator
           isRTLLocale(locale) ? 'right-0' : 'left-0',
           isMobileMenuOpen
             ? 'translate-x-0'
@@ -717,11 +760,13 @@ export const PortalShell = ({
             : 'md:w-[var(--sidebar-width-collapsed)]'
         )}
         aria-label="Navigation"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
         {/* Sidebar Header / Brand */}
         <div className="h-20 flex items-center px-4 border-b border-surface-200/50 dark:border-surface-800/30 flex-shrink-0">
           <Link
-            href={effectiveOrgId ? `/${locale}/portal/org/${effectiveOrgId}/dashboard` : `/${locale}/portal/org`}
+            href={effectiveOrgId ? `/portal/org/${effectiveOrgId}/dashboard` : `/portal/org`}
             className="flex items-center gap-3 group w-full min-w-0"
           >
             <div className="w-9 h-9 flex-shrink-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-blue-500/25 group-hover:scale-110 transition-transform duration-300">
@@ -841,7 +886,7 @@ export const PortalShell = ({
           <div className="flex items-center gap-6">
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className="md:hidden p-2 text-surface-500 hover:text-surface-900 dark:hover:text-white transition-colors"
+              className="md:hidden p-3 min-w-[44px] min-h-[44px] flex items-center justify-center text-surface-500 hover:text-surface-900 dark:hover:text-white transition-colors touch-manipulation active:scale-95 rounded-xl"
               aria-label="Open menu"
             >
               <Menu size={24} />
@@ -893,7 +938,9 @@ export const PortalShell = ({
               </div>
               <Link
                 href={
-                  userData?.isAgency ? '/portal/agency/settings/' : `/portal/org/${effectiveOrgId}/settings/`
+                  userData?.isAgency
+                    ? '/portal/agency/settings/'
+                    : `/portal/org/${effectiveOrgId}/settings/`
                 }
                 className="portal-avatar group cursor-pointer hover:border-blue-500/50 transition-all active:scale-95 shadow-lg shadow-blue-500/10"
               >
