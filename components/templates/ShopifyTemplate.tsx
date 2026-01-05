@@ -4,13 +4,10 @@ import React from "react";
 import { PageHero } from "@/components/sections/PageHero";
 import { ShopifyPageContent } from "@/components/sections/ShopifyPageContent";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
-import { useTranslations, useLocale } from "next-intl";
-import { isRTLLocale } from '@/lib/locale-config';
+import { useTranslations } from "next-intl";
 
 export const ShopifyTemplate: React.FC = () => {
   const t = useTranslations();
-  const locale = useLocale();
-  const isHe = isRTLLocale(locale);
 
   const breadcrumbItems = [
     { name: t("navigation.home"), url: "/" },

@@ -4,7 +4,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const skeletonVariants = cva(
-  "bg-surface-200 dark:bg-surface-800",
+  "bg-gradient-to-r from-surface-200 via-surface-100 to-surface-200 dark:from-surface-800 dark:via-surface-700 dark:to-surface-800",
   {
     variants: {
       variant: {
@@ -12,16 +12,31 @@ const skeletonVariants = cva(
         circular: "rounded-full",
         rounded: "rounded-2xl",
         text: "rounded-md h-4",
+        button: "rounded-xl",
+        badge: "rounded-lg",
       },
       animation: {
         pulse: "animate-pulse",
-        shimmer: "skeleton-shimmer",
+        shimmer: [
+          "bg-[length:400%_100%]",
+          "animate-[shimmer_2s_ease-in-out_infinite]",
+        ],
+        wave: [
+          "bg-[length:200%_100%]",
+          "animate-[shimmer_1.5s_ease-in-out_infinite]",
+        ],
         none: "",
+      },
+      intensity: {
+        light: "opacity-60",
+        normal: "opacity-80",
+        strong: "opacity-100",
       },
     },
     defaultVariants: {
       variant: "default",
-      animation: "pulse",
+      animation: "shimmer",
+      intensity: "normal",
     },
   }
 );
@@ -37,13 +52,14 @@ export function Skeleton({
   className,
   variant,
   animation,
+  intensity,
   width,
   height,
   ...props
 }: SkeletonProps) {
   return (
     <div
-      className={cn(skeletonVariants({ variant, animation }), className)}
+      className={cn(skeletonVariants({ variant, animation, intensity }), className)}
       style={{
         width: typeof width === 'number' ? `${width}px` : width,
         height: typeof height === 'number' ? `${height}px` : height,
@@ -58,15 +74,16 @@ export function Skeleton({
 // Pre-built skeleton variants for common patterns
 export function SkeletonText({ lines = 3, className }: { lines?: number; className?: string }) {
   return (
-    <div className={cn('space-y-2', className)}>
+    <div className={cn('space-y-2.5', className)}>
       {Array.from({ length: lines }).map((_, i) => (
         <Skeleton
           key={i}
           variant="text"
           className={cn(
             'h-4',
-            i === lines - 1 ? 'w-3/4' : 'w-full'
+            i === lines - 1 ? 'w-2/3' : i === lines - 2 ? 'w-5/6' : 'w-full'
           )}
+          style={{ animationDelay: `${i * 100}ms` }}
         />
       ))}
     </div>
@@ -78,9 +95,11 @@ const avatarSizeVariants = cva(
   {
     variants: {
       size: {
+        xs: "w-6 h-6",
         sm: "w-8 h-8",
         md: "w-10 h-10",
         lg: "w-12 h-12",
+        xl: "w-16 h-16",
       },
     },
     defaultVariants: {
@@ -97,35 +116,43 @@ export function SkeletonCard({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'p-6 rounded-2xl border border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-950',
+        'p-5 rounded-2xl border border-surface-200/50 dark:border-surface-800/50 bg-white/50 dark:bg-surface-900/50',
         className
       )}
     >
-      <div className="flex items-start gap-4 mb-4">
+      <div className="flex items-start gap-4 mb-5">
         <SkeletonAvatar size="md" />
         <div className="flex-1 space-y-2">
           <Skeleton className="h-4 w-1/3" />
           <Skeleton className="h-3 w-1/2" />
         </div>
+        <Skeleton variant="badge" className="h-6 w-16" />
       </div>
       <SkeletonText lines={2} />
-      <div className="flex items-center gap-3 mt-4 pt-4 border-t border-surface-100 dark:border-surface-800">
-        <Skeleton className="h-6 w-16 rounded-full" />
-        <Skeleton className="h-6 w-20 rounded-full" />
+      <div className="flex items-center gap-3 mt-5 pt-4 border-t border-surface-100/50 dark:border-surface-800/50">
+        <Skeleton variant="badge" className="h-6 w-16 rounded-full" />
+        <Skeleton variant="badge" className="h-6 w-20 rounded-full" />
+        <div className="flex-1" />
+        <Skeleton variant="circular" className="h-8 w-8" />
       </div>
     </div>
   );
 }
 
-export function SkeletonButton({ className }: { className?: string }) {
-  return <Skeleton className={cn('h-10 w-24 rounded-xl', className)} />;
+export function SkeletonButton({ className, size = "md" }: { className?: string; size?: "sm" | "md" | "lg" }) {
+  const sizeClasses = {
+    sm: "h-8 w-20",
+    md: "h-10 w-24",
+    lg: "h-12 w-32",
+  };
+  return <Skeleton variant="button" className={cn(sizeClasses[size], className)} />;
 }
 
 export function SkeletonTable({ rows = 5 }: { rows?: number }) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 rounded-2xl border border-surface-200/50 dark:border-surface-800/50 bg-white/30 dark:bg-surface-900/30 p-4">
       {/* Header */}
-      <div className="flex gap-4 pb-3 border-b border-surface-200 dark:border-surface-800">
+      <div className="flex gap-4 pb-3 border-b border-surface-200/50 dark:border-surface-800/50">
         <Skeleton className="h-4 w-1/4" />
         <Skeleton className="h-4 w-1/4" />
         <Skeleton className="h-4 w-1/4" />
@@ -133,11 +160,50 @@ export function SkeletonTable({ rows = 5 }: { rows?: number }) {
       </div>
       {/* Rows */}
       {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="flex gap-4 py-3">
+        <div key={i} className="flex gap-4 py-3" style={{ animationDelay: `${i * 50}ms` }}>
           <Skeleton className="h-4 w-1/4" />
           <Skeleton className="h-4 w-1/4" />
           <Skeleton className="h-4 w-1/4" />
           <Skeleton className="h-4 w-1/4" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// New skeleton variants for specific use cases
+export function SkeletonList({ items = 4, className }: { items?: number; className?: string }) {
+  return (
+    <div className={cn("space-y-3", className)}>
+      {Array.from({ length: items }).map((_, i) => (
+        <div
+          key={i}
+          className="flex items-center gap-3 p-3 rounded-xl bg-surface-50/50 dark:bg-surface-800/30"
+          style={{ animationDelay: `${i * 75}ms` }}
+        >
+          <Skeleton variant="circular" className="h-10 w-10 flex-shrink-0" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-3 w-1/2" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function SkeletonStats({ className }: { className?: string }) {
+  return (
+    <div className={cn("grid grid-cols-2 md:grid-cols-4 gap-4", className)}>
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div
+          key={i}
+          className="p-4 rounded-xl border border-surface-200/50 dark:border-surface-800/50 bg-white/30 dark:bg-surface-900/30"
+          style={{ animationDelay: `${i * 100}ms` }}
+        >
+          <Skeleton className="h-3 w-1/2 mb-3" />
+          <Skeleton className="h-8 w-2/3 mb-2" />
+          <Skeleton className="h-2 w-1/3" />
         </div>
       ))}
     </div>

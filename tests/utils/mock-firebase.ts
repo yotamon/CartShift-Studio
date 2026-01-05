@@ -49,7 +49,7 @@ export const mockFirestore = {
   setDoc: vi.fn(),
   updateDoc: vi.fn(),
   deleteDoc: vi.fn(),
-  onSnapshot: vi.fn((ref, callback) => {
+  onSnapshot: vi.fn((_ref, callback) => {
     callback({
       exists: () => true,
       data: () => ({
@@ -83,7 +83,7 @@ export function setupFirebaseMocks() {
     const actual = await vi.importActual('firebase/auth');
     return {
       ...actual,
-      onAuthStateChanged: vi.fn((auth, callback) => {
+      onAuthStateChanged: vi.fn((_auth, callback) => {
         callback(mockUser);
         return vi.fn();
       }),
@@ -99,7 +99,7 @@ export function setupFirebaseMocks() {
     return {
       ...actual,
       doc: vi.fn((db, collection, id) => ({ id, collection, db })),
-      onSnapshot: vi.fn((ref, callback) => {
+      onSnapshot: vi.fn((_ref, callback) => {
         const mockSnapshot = {
           exists: () => true,
           data: () => ({

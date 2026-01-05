@@ -577,7 +577,7 @@ export default function CreatePricingForm() {
             <textarea
               {...register('agencyNotes')}
               rows={4}
-              placeholder={t('portal.pricing.agencyNotesPlaceholder')}
+              placeholder={t('portal.pricing.agencyNotesPlaceholder' as any)}
               className="portal-input w-full resize-none text-sm"
             />
           </PortalCard>

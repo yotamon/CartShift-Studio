@@ -25,7 +25,6 @@ import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
 import {
   cancelInvite,
 } from '@/lib/services/portal-organizations';
-import { OrganizationMember, Invite } from '@/lib/types/portal';
 import { format } from 'date-fns';
 import { getDateLocale } from '@/lib/locale-config';
 import { InviteTeamMemberForm } from '@/components/portal/forms/InviteTeamMemberForm';
@@ -109,7 +108,7 @@ export default function TeamClient() {
         <h2 className="text-xl font-bold text-surface-900 dark:text-white font-outfit">
           {t('portal.common.error')}
         </h2>
-        <p className="text-surface-500 max-w-sm font-medium">{error}</p>
+        <p className="text-surface-500 max-w-sm font-medium">{error instanceof Error ? error.message : error || 'Unknown error'}</p>
         <PortalButton onClick={() => window.location.reload()}>
           {t('portal.common.retry')}
         </PortalButton>

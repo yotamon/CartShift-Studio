@@ -36,7 +36,6 @@ describe('Login Page', () => {
   });
 
   it('shows validation errors for invalid email', async () => {
-    const user = userEvent.setup();
 
     render(<LoginClient />);
 

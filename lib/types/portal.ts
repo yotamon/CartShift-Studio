@@ -272,6 +272,9 @@ export interface Request {
   updatedAt: Timestamp;
   closedAt?: Timestamp;
 
+  // Pinned by users (array of user IDs who pinned this request)
+  pinnedBy?: string[];
+
   // Latest activity
   lastComment?: {
     content: string;

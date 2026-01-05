@@ -72,8 +72,12 @@ export function useRequestDetail(): UseRequestDetailResult {
   const {
     data: comments = []
   } = useQuery({
-    queryKey: ['request-comments', requestId],
-    queryFn: () => getCommentsByRequest(requestId as string, Boolean(userData?.isAgency)),
+    queryKey: ['request-comments', requestId, orgId],
+    queryFn: () => getCommentsByRequest(
+      requestId as string,
+      Boolean(userData?.isAgency),
+      typeof orgId === 'string' ? orgId : undefined
+    ),
     enabled: enabled && Boolean(orgId),
     refetchInterval: 5000, // Poll every 5s for new comments (simulating real-time lite)
   });

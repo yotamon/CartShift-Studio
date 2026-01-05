@@ -44,7 +44,7 @@ const typeIcons: Record<ConsultationType, React.ElementType> = {
 
 
 export default function ConsultationsClient() {
-  const t = useTranslations();
+  const t = useTranslations('portal');
   const locale = useLocale();
   const { userData } = usePortalAuth();
   const {
@@ -239,7 +239,7 @@ export default function ConsultationsClient() {
                               <XCircle size={16} />
                             )}
                             {isCanceling && cancelMutation.variables?.consultationId === consultation.id
-                              ? t('portal.common.loading')
+                              ? t('common.loading')
                               : t('consultations.cancel')}
                           </button>
                     </div>

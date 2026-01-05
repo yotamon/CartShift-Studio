@@ -33,7 +33,7 @@ function getGreetingKey(): 'morning' | 'afternoon' | 'evening' | 'default' {
 function DashboardClientContent() {
   const t = useTranslations();
   const params = useParams();
-  const locale = typeof params.locale === 'string' ? params.locale : 'en';
+  const locale = (typeof params.locale === 'string' ? params.locale : 'en') as 'en' | 'he';
 
   // Use the new TanStack Query hook
   const { requests, activities, loading, error, orgId, userData } = useDashboardData();
@@ -52,8 +52,8 @@ function DashboardClientContent() {
         <div className="space-y-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1">
-              <div className="h-9 w-64 bg-slate-200 dark:bg-slate-800 rounded-lg animate-pulse" />
-              <div className="h-5 w-80 bg-slate-100 dark:bg-slate-800/50 rounded-lg animate-pulse" />
+              <div className="h-9 w-64 bg-surface-200 dark:bg-surface-800 rounded-lg animate-pulse" />
+              <div className="h-5 w-80 bg-surface-100 dark:bg-surface-800/50 rounded-lg animate-pulse" />
             </div>
           </div>
           <QuickActions />
@@ -69,10 +69,10 @@ function DashboardClientContent() {
     return (
       <div className="py-20 flex flex-col items-center justify-center text-center space-y-4">
         <AlertCircle className="w-12 h-12 text-rose-500" />
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">
+        <h2 className="text-xl font-bold text-surface-900 dark:text-white font-outfit">
           {t('portal.dashboard.error.title')}
         </h2>
-        <p className="text-slate-500 max-w-sm">
+        <p className="text-surface-500 max-w-sm">
           {error === 'access_denied'
             ? t('portal.access.restrictedMessage')
             : t('portal.common.error')}
@@ -94,8 +94,8 @@ function DashboardClientContent() {
         transition={{ duration: 0.4 }}
       >
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit flex items-center gap-3">
-            {greeting}
+          <h1 className="text-3xl font-bold tracking-tight text-surface-900 dark:text-white font-outfit flex items-center gap-3">
+            <span className="text-gradient-brand">{greeting}</span>
             <motion.span
               animate={{ rotate: [0, 14, -8, 14, -4, 10, 0] }}
               transition={{ duration: 2.5, ease: 'easeInOut', repeat: Infinity, repeatDelay: 5 }}
@@ -103,7 +103,7 @@ function DashboardClientContent() {
               <Sparkles className="w-6 h-6 text-amber-500" />
             </motion.span>
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">
+          <p className="text-surface-500 dark:text-surface-400 mt-1 font-medium">
             {t('portal.dashboard.subtitle')}
           </p>
         </div>
@@ -120,24 +120,25 @@ function DashboardClientContent() {
         {/* Recent Activity */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between px-2">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">
+            <h2 className="text-xl font-bold text-surface-900 dark:text-white font-outfit">
               {t('portal.activity.title')}
             </h2>
           </div>
 
           <PortalCard
+            variant="glass"
             noPadding
-            className="border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden bg-white dark:bg-slate-950"
+            className="overflow-hidden"
           >
             <Suspense
               fallback={
                 <div className="p-6 space-y-4">
                   {[1, 2, 3].map(i => (
                     <div key={i} className="flex items-start gap-4 animate-pulse">
-                      <div className="w-10 h-10 rounded-xl bg-slate-200 dark:bg-slate-800" />
+                      <div className="w-10 h-10 rounded-xl bg-surface-200 dark:bg-surface-800" />
                       <div className="flex-1 space-y-2">
-                        <div className="h-4 w-40 bg-slate-200 dark:bg-slate-800 rounded" />
-                        <div className="h-3 w-56 bg-slate-100 dark:bg-slate-800/50 rounded" />
+                        <div className="h-4 w-40 bg-surface-200 dark:bg-surface-800 rounded" />
+                        <div className="h-3 w-56 bg-surface-100 dark:bg-surface-800/50 rounded" />
                       </div>
                     </div>
                   ))}
@@ -158,14 +159,14 @@ function DashboardClientContent() {
           <TipsCard />
 
           {/* Service Status */}
-          <PortalCard className="border-slate-100 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-950">
-            <h4 className="text-[10px] font-black text-slate-400 dark:text-slate-500 mb-6 flex items-center gap-2 uppercase tracking-widest">
+          <PortalCard variant="elevated" accent="primary" className="shadow-lg">
+            <h4 className="text-[10px] font-black text-surface-400 dark:text-surface-500 mb-6 flex items-center gap-2 uppercase tracking-widest">
               <Clock size={14} className="text-blue-500" />
               {t('portal.dashboard.serviceStatus.title')}
             </h4>
             <div className="space-y-5">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-600 dark:text-slate-400 font-bold font-outfit">
+                <span className="text-surface-600 dark:text-surface-400 font-bold font-outfit">
                   {t('portal.dashboard.serviceStatus.design')}
                 </span>
                 <span className="text-emerald-500 font-black flex items-center gap-2 text-[10px] uppercase tracking-widest">
@@ -173,9 +174,9 @@ function DashboardClientContent() {
                   {t('portal.dashboard.serviceStatus.active')}
                 </span>
               </div>
-              <PortalCard className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl border-slate-200 dark:border-slate-800 p-6">
+              <PortalCard variant="glass" padding="lg">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-slate-600 dark:text-slate-400 font-bold font-outfit">
+                  <span className="text-surface-600 dark:text-surface-400 font-bold font-outfit">
                     {t('portal.dashboard.serviceStatus.dev')}
                   </span>
                   <span className="text-amber-500 font-black flex items-center gap-2 text-[10px] uppercase tracking-widest">
@@ -183,7 +184,7 @@ function DashboardClientContent() {
                     {t('portal.dashboard.serviceStatus.peak')}
                   </span>
                 </div>
-                <div className="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-surface-100 dark:bg-surface-800 rounded-full overflow-hidden">
                   <motion.div
                     className="h-full bg-amber-500"
                     initial={{ width: 0 }}
@@ -191,16 +192,16 @@ function DashboardClientContent() {
                     transition={{ duration: 1, ease: 'easeOut', delay: 0.3 }}
                   />
                 </div>
-                <p className="mt-3 text-[10px] text-slate-400 font-bold uppercase tracking-tight">
+                <p className="mt-3 text-[10px] text-surface-400 font-bold uppercase tracking-tight">
                   {t('portal.dashboard.serviceStatus.etaLabel')}: 4-6{' '}
                   {t('portal.dashboard.serviceStatus.days')}
                 </p>
               </PortalCard>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-600 dark:text-slate-400 font-bold font-outfit">
+                <span className="text-surface-600 dark:text-surface-400 font-bold font-outfit">
                   {t('portal.dashboard.serviceStatus.avgResponse')}
                 </span>
-                <span className="text-slate-900 dark:text-white font-black text-[10px] uppercase tracking-widest">
+                <span className="text-surface-900 dark:text-white font-black text-[10px] uppercase tracking-widest">
                   {t('portal.dashboard.serviceStatus.responseTime')}
                 </span>
               </div>
@@ -224,7 +225,7 @@ export default function DashboardClient({
   }
 
   return (
-    <NextIntlClientProvider messages={messages} locale={locale}>
+    <NextIntlClientProvider messages={messages} locale={locale as 'en' | 'he'}>
       <DashboardClientContent />
     </NextIntlClientProvider>
   );

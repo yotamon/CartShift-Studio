@@ -9,9 +9,8 @@ import { Icon } from '@/components/ui/Icon';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { PageHero } from '@/components/sections/PageHero';
 import { Link } from '@/i18n/navigation';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import type { CaseStudyMeta } from '@/lib/case-studies';
-import { isRTLLocale } from '@/lib/locale-config';
 
 interface WorkPageContentProps {
   caseStudies?: CaseStudyMeta[];
@@ -19,8 +18,6 @@ interface WorkPageContentProps {
 
 export const WorkPageContent: React.FC<WorkPageContentProps> = ({ caseStudies = [] }) => {
   const t = useTranslations();
-  const locale = useLocale();
-  const isHe = isRTLLocale(locale);
   const [activeFilter, setActiveFilter] = useState<'all' | 'shopify' | 'wordpress'>('all');
 
   const work = t.raw('work' as never) as {
@@ -216,10 +213,10 @@ export const WorkPageContent: React.FC<WorkPageContentProps> = ({ caseStudies = 
               <Icon name="search" size={32} className="text-surface-400" />
             </div>
             <h3 className="text-xl font-bold text-surface-900 dark:text-white mb-2">
-              {work.empty.title}
+              {(work as any).empty?.title || 'No Projects Found'}
             </h3>
             <p className="text-surface-500 dark:text-surface-400">
-              {work.empty.description}
+              {(work as any).empty?.description || 'Try changing the filter to see more projects.'}
             </p>
           </div>
         )}

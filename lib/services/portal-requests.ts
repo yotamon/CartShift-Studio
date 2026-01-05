@@ -14,6 +14,8 @@ import {
   onSnapshot,
   increment,
   serverTimestamp,
+  arrayUnion,
+  arrayRemove,
 } from 'firebase/firestore';
 import { getFirestoreDb, getFirebaseAuth, waitForAuth } from '@/lib/firebase';
 import { getPortalUser } from './portal-users';
@@ -114,7 +116,7 @@ export async function getRequestsByOrg(
   await waitForAuth();
   const auth = getFirebaseAuth();
   const currentUser = auth.currentUser;
-  
+
   if (!currentUser) {
     throw new Error('User must be authenticated to access requests');
   }
@@ -747,3 +749,53 @@ export async function requestRevision(
     details: { notes: revisionNotes },
   });
 }
+
+// ============================================
+// PIN/UNPIN REQUESTS
+// ============================================
+
+/**
+ * Toggle pin status for a request (per user)
+ * Returns the new pinned state
+ */
+export async function togglePinRequest(
+  requestId: string,
+  userId: string
+): Promise<boolean> {
+  await waitForAuth();
+  const db = getFirestoreDb();
+  const docRef = doc(db, REQUESTS_COLLECTION, requestId);
+
+  // Get current request to check if user has pinned it
+  const docSnap = await getDoc(docRef);
+  if (!docSnap.exists()) {
+    throw new Error('Request not found');
+  }
+
+  const request = docSnap.data() as Request;
+  const isPinned = request.pinnedBy?.includes(userId) ?? false;
+
+  if (isPinned) {
+    // Unpin: remove userId from pinnedBy array
+    await updateDoc(docRef, {
+      pinnedBy: arrayRemove(userId),
+      updatedAt: serverTimestamp(),
+    });
+    return false;
+  } else {
+    // Pin: add userId to pinnedBy array
+    await updateDoc(docRef, {
+      pinnedBy: arrayUnion(userId),
+      updatedAt: serverTimestamp(),
+    });
+    return true;
+  }
+}
+
+/**
+ * Check if a request is pinned by a specific user
+ */
+export function isRequestPinnedByUser(request: Request, userId: string): boolean {
+  return request.pinnedBy?.includes(userId) ?? false;
+}
+

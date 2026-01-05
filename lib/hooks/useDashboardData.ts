@@ -7,7 +7,6 @@ import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
 import { getRequestsByOrg } from '@/lib/services/portal-requests';
 import { getOrgActivities } from '@/lib/services/portal-activities';
 import { getMemberByUserId, ensureMembership } from '@/lib/services/portal-organizations';
-import { Request, ActivityLog } from '@/lib/types/portal';
 
 export function useDashboardData() {
   const orgId = useResolvedOrgId();

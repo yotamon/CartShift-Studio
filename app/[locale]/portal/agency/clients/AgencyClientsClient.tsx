@@ -64,7 +64,7 @@ export default function AgencyClientsClient() {
         await setDoc(userRef, {
           ...updateData,
           email: user.email,
-          name: user.displayName || t('portal.common.agencyAdmin'),
+          name: user.displayName || t('portal.common.agencyAdmin' as any),
           createdAt: new Date(),
         });
       }

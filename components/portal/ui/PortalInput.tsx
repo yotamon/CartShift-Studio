@@ -4,29 +4,61 @@ import { cn } from '@/lib/utils';
 import { Check, AlertCircle } from 'lucide-react';
 
 const inputVariants = cva(
-  "w-full px-4 py-2 rounded-xl border transition-all duration-200 bg-white dark:bg-surface-900 text-surface-900 dark:text-white placeholder:text-surface-400 focus:outline-none h-10 text-sm font-medium",
+  [
+    "w-full rounded-xl border transition-all duration-200",
+    "bg-white dark:bg-surface-900/80",
+    "text-surface-900 dark:text-white",
+    "placeholder:text-surface-400 dark:placeholder:text-surface-500",
+    "focus:outline-none",
+    "h-10 text-sm font-medium",
+    "shadow-[0_1px_2px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)]",
+    "dark:shadow-[0_1px_2px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.02)]",
+  ],
   {
     variants: {
       state: {
-        default: "border-surface-200 dark:border-surface-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500",
-        error: "border-red-300 dark:border-red-900/50 focus:border-red-500 focus:ring-red-500/20 bg-red-50/10",
-        success: "border-emerald-300 dark:border-emerald-900/50 focus:border-emerald-500 focus:ring-emerald-500/20 bg-emerald-50/10",
+        default: [
+          "border-surface-200/80 dark:border-white/[0.08]",
+          "hover:border-surface-300 dark:hover:border-white/[0.12]",
+          "focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500",
+          "dark:focus:ring-primary-400/20 dark:focus:border-primary-400",
+        ],
+        error: [
+          "border-rose-300 dark:border-rose-500/30",
+          "focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20",
+          "bg-rose-50/50 dark:bg-rose-500/5",
+        ],
+        success: [
+          "border-emerald-300 dark:border-emerald-500/30",
+          "focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20",
+          "bg-emerald-50/50 dark:bg-emerald-500/5",
+        ],
+      },
+      inputSize: {
+        sm: "h-8 text-xs px-3",
+        md: "h-10 text-sm px-4",
+        lg: "h-12 text-base px-4",
       },
       isDisabled: {
-        true: "disabled:bg-surface-50 dark:disabled:bg-surface-800 disabled:text-surface-400 disabled:cursor-not-allowed",
+        true: [
+          "disabled:bg-surface-100 dark:disabled:bg-surface-800/50",
+          "disabled:text-surface-400 disabled:cursor-not-allowed",
+          "disabled:border-surface-200 dark:disabled:border-surface-700",
+        ],
         false: "",
       },
       hasLeftIcon: {
         true: "ps-10",
-        false: "ps-4",
+        false: "",
       },
       hasRightIcon: {
         true: "pe-10",
-        false: "pe-4",
+        false: "",
       },
     },
     defaultVariants: {
       state: "default",
+      inputSize: "md",
       isDisabled: false,
       hasLeftIcon: false,
       hasRightIcon: false,

@@ -9,10 +9,9 @@ import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { PageHero } from '@/components/sections/PageHero';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { trackPricingView, trackPackageClick } from '@/lib/analytics';
-import { isRTLLocale } from '@/lib/locale-config';
 
 interface PackageCardProps {
   name: string;
@@ -113,8 +112,6 @@ const PackageCard: React.FC<PackageCardProps> = ({
 
 export const PricingPageContent: React.FC = () => {
   const t = useTranslations();
-  const locale = useLocale();
-  const isHe = isRTLLocale(locale);
 
   // Track pricing page view
   useEffect(() => {
@@ -170,7 +167,7 @@ export const PricingPageContent: React.FC = () => {
     cta: { title: string; titleSpan: string; description: string; button: string };
   };
 
-  const popularBadgeText = pricing.popularBadge;
+  const popularBadgeText = (pricing as any).popularBadge || '';
   const packages = [
     { ...pricing.packages.storeAudit, index: 0 },
     { ...pricing.packages.quickLaunch, index: 1 },

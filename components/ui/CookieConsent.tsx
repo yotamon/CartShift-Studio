@@ -3,16 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from '@/lib/motion';
 import { Button } from './Button';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { isRTLLocale } from '@/lib/locale-config';
 
 const COOKIE_CONSENT_KEY = 'cookie_consent';
 
 export const CookieConsent: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const locale = useLocale();
-  const isHe = isRTLLocale(locale);
   const t = useTranslations();
 
   useEffect(() => {

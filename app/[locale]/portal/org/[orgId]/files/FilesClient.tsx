@@ -236,7 +236,7 @@ export default function FilesClient() {
                         variant="gray"
                         className="text-[9px] font-black border-slate-200 dark:border-slate-800"
                       >
-                        {file.mimeType.split('/').pop()?.toUpperCase() || t('portal.common.file')}
+                        {file.mimeType.split('/').pop()?.toUpperCase() || t('portal.common.file' as any)}
                       </PortalBadge>
                     </td>
                     <td className="px-6 py-5">

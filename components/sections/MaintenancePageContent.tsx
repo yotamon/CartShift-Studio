@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { PageHero } from '@/components/sections/PageHero';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 
 interface PlanCardProps {
@@ -102,7 +102,6 @@ const PlanCard: React.FC<PlanCardProps> = ({
 
 export const MaintenancePageContent: React.FC = () => {
   const t = useTranslations();
-  const locale = useLocale();
 
   const maintenance = t.raw('maintenance' as any) as {
     hero: { title: string; subtitle: string; description: string; badge: string };

@@ -1,6 +1,6 @@
 "use client";
 
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import React, { useState, useEffect } from "react";
 import { motion } from "@/lib/motion";

@@ -2,12 +2,11 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from "@/lib/motion";
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import {
   X,
   Calendar,
   Clock,
-  Users,
   FileText,
   ExternalLink,
   UserPlus,
@@ -64,7 +63,6 @@ export default function ScheduleConsultationForm({
   onSuccess,
 }: ScheduleConsultationFormProps) {
   const t = useTranslations();
-  const locale = useLocale();
   const { userData } = usePortalAuth();
 
   const [title, setTitle] = useState('');
@@ -126,7 +124,7 @@ export default function ScheduleConsultationForm({
     e.preventDefault();
     if (!userData || !title || !scheduledDate || !scheduledTime) return;
 
-    if (hasConflict && !window.confirm(t('portal.consultations.calendarConflict'))) {
+    if (hasConflict && !window.confirm(t('portal.consultations.calendarConflict' as any))) {
         return;
     }
 

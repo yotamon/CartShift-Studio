@@ -261,6 +261,7 @@ export function Dropdown({ trigger, items, align = 'right', className = '' }: Dr
         resizeObserver.disconnect();
       };
     }
+    return undefined;
   }, [isOpen, coords, align, items.length]);
 
   useEffect(() => {
@@ -279,6 +280,7 @@ export function Dropdown({ trigger, items, align = 'right', className = '' }: Dr
         window.removeEventListener('scroll', handleScroll, true);
       };
     }
+    return undefined;
   }, [isOpen, updateCoords]);
 
   useEffect(() => {
@@ -322,6 +324,7 @@ export function Dropdown({ trigger, items, align = 'right', className = '' }: Dr
         clearTimeout(timeoutId2);
       };
     }
+    return undefined;
   }, [isOpen]);
 
   useEffect(() => {
@@ -419,8 +422,9 @@ export function Dropdown({ trigger, items, align = 'right', className = '' }: Dr
         onClick: (e: React.MouseEvent) => {
           e.stopPropagation();
           setIsOpen(!isOpen);
-          if (trigger.props?.onClick) {
-            trigger.props.onClick(e);
+          const triggerElement = trigger as React.ReactElement;
+          if (triggerElement?.props && typeof triggerElement.props === 'object' && triggerElement.props !== null && 'onClick' in triggerElement.props && typeof triggerElement.props.onClick === 'function') {
+            triggerElement.props.onClick(e);
           }
         },
         'aria-haspopup': 'true',

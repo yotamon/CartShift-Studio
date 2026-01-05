@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { Request } from '@/lib/types/portal';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
+import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { getStatusBadgeVariant } from '@/lib/utils/portal-helpers';
 import { usePinnedRequests } from '@/lib/hooks/usePinnedRequests';
 
@@ -35,13 +36,20 @@ export const PinnedRequests: React.FC<PinnedRequestsProps> = ({
   }
 
   return (
-    <div className={cn('space-y-3', className)}>
-      <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-        <Pin size={12} className="text-amber-500" />
+    <PortalCard
+      variant="glass"
+      accent="warning"
+      padding="sm"
+      className={cn('overflow-hidden', className)}
+    >
+      <div className="flex items-center gap-2 text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider mb-3">
+        <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+          <Pin size={12} className="text-white" />
+        </div>
         {t('portal.dashboard.pinned.title')}
-        <span className="ml-auto bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded-full text-[10px]">
+        <PortalBadge variant="yellow" size="xs" className="ms-auto" glow>
           {pinnedRequests.length}
-        </span>
+        </PortalBadge>
       </div>
 
       <AnimatePresence mode="popLayout">
@@ -61,22 +69,23 @@ export const PinnedRequests: React.FC<PinnedRequestsProps> = ({
                   href={`/${locale}/portal/org/${orgId}/requests/${request.id}`}
                   className="group/link flex items-center gap-2"
                 >
-                  <span className="text-sm font-medium text-slate-900 dark:text-white truncate group-hover/link:text-blue-600 dark:group-hover/link:text-blue-400 transition-colors">
+                  <span className="text-sm font-medium text-surface-900 dark:text-white truncate group-hover/link:text-primary-600 dark:group-hover/link:text-primary-400 transition-colors">
                     {request.title}
                   </span>
                   <ExternalLink
                     size={12}
-                    className="flex-shrink-0 opacity-0 group-hover/link:opacity-100 text-blue-500 transition-opacity"
+                    className="flex-shrink-0 opacity-0 group-hover/link:opacity-100 text-primary-500 transition-opacity"
                   />
                 </Link>
                 <div className="mt-1 flex items-center gap-2">
                   <PortalBadge
                     variant={getStatusBadgeVariant(request.status)}
-                    className="text-[9px]"
+                    size="xs"
+                    dot
                   >
                     {request.status}
                   </PortalBadge>
-                  <span className="text-[10px] text-slate-400">
+                  <span className="text-[10px] text-surface-400 font-mono">
                     #{request.id.slice(-6).toUpperCase()}
                   </span>
                 </div>
@@ -93,7 +102,7 @@ export const PinnedRequests: React.FC<PinnedRequestsProps> = ({
           </motion.div>
         ))}
       </AnimatePresence>
-    </div>
+    </PortalCard>
   );
 };
 
@@ -125,17 +134,18 @@ export const PinButton: React.FC<PinButtonProps> = ({
         togglePin(requestId);
       }}
       className={cn(
-        'rounded-lg transition-all',
-        size === 'sm' ? 'p-1.5' : 'p-2',
+        'transition-all',
+        size === 'sm' ? 'p-1.5 rounded-lg' : 'p-2.5 rounded-xl',
         pinned
           ? 'text-amber-500 bg-amber-100 dark:bg-amber-500/20 hover:bg-amber-200 dark:hover:bg-amber-500/30'
-          : 'text-slate-400 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800',
+          : 'text-surface-400 hover:text-amber-500 hover:bg-surface-100 dark:hover:bg-surface-800',
         className
       )}
       aria-label={pinned ? t('portal.dashboard.pinned.unpin') : t('portal.dashboard.pinned.pin')}
       title={pinned ? t('portal.dashboard.pinned.unpin') : t('portal.dashboard.pinned.pin')}
     >
-      <Pin size={size === 'sm' ? 14 : 16} className={cn(pinned && 'fill-current')} />
+      <Pin size={size === 'sm' ? 14 : 18} className={cn(pinned && 'fill-current')} />
     </button>
   );
 };
+

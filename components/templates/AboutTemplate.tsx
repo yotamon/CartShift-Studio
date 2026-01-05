@@ -4,13 +4,10 @@ import React from "react";
 import { PageHero } from "@/components/sections/PageHero";
 import { AboutPageContent } from "@/components/sections/AboutPageContent";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
-import { useTranslations, useLocale } from "next-intl";
-import { isRTLLocale } from '@/lib/locale-config';
+import { useTranslations } from "next-intl";
 
 export const AboutTemplate: React.FC = () => {
   const t = useTranslations();
-  const locale = useLocale();
-  const isHe = isRTLLocale(locale);
 
   const breadcrumbItems = [
     { name: t("navigation.home"), url: "/" },

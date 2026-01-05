@@ -4,20 +4,17 @@ import React, { useState } from 'react';
 import { Logo } from '@/components/ui/Logo';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
-import { useTranslations, useLocale } from 'next-intl';
-import { isRTLLocale } from '@/lib/locale-config';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { trackNewsletterSignup } from '@/lib/analytics';
 import { subscribeNewsletterClient } from '@/lib/services/newsletter-client';
 
 export const Footer: React.FC = () => {
   const t = useTranslations();
-  const locale = useLocale();
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const isHe = isRTLLocale(locale);
 
   const footerLinks = {
     solutions: [

@@ -1,49 +1,59 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-
-const STORAGE_KEY = 'cartshift_pinned_requests';
+import { useCallback, useMemo } from 'react';
+import { togglePinRequest, isRequestPinnedByUser } from '@/lib/services/portal-requests';
+import { usePortalAuth } from './usePortalAuth';
+import { useRequests } from './useRequests';
+import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
 
 /**
- * Hook for managing locally pinned/starred requests per organization.
- * Uses localStorage for persistence without requiring database changes.
+ * Hook for managing pinned requests per user.
+ * Uses Firestore for persistence - consistent across devices.
+ *
+ * The pinnedBy field is stored on each Request document as an array of user IDs.
  */
-export function usePinnedRequests(orgId: string) {
-  const [pinnedIds, setPinnedIds] = useState<string[]>([]);
+export function usePinnedRequests(_orgId?: string) {
+  const { userData, isAgency } = usePortalAuth();
+  const { requests } = useRequests();
+  const userId = userData?.id;
+  const queryClient = useQueryClient();
 
-  // Load pinned requests from localStorage on mount
-  useEffect(() => {
-    if (typeof window === 'undefined' || !orgId) return;
+  // Derive pinned IDs from requests data (real-time via Firestore subscription)
+  const pinnedIds = useMemo(() => {
+    if (!userId || !requests) return [];
+    return requests
+      .filter(req => req.pinnedBy?.includes(userId))
+      .map(req => req.id);
+  }, [requests, userId]);
+
+  const togglePin = useCallback(async (requestId: string) => {
+    if (!userId) {
+      console.warn('[usePinnedRequests] Cannot toggle pin: user not authenticated');
+      return;
+    }
 
     try {
-      const stored = localStorage.getItem(`${STORAGE_KEY}_${orgId}`);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          setPinnedIds(parsed);
-        }
+      const newPinnedState = await togglePinRequest(requestId, userId);
+
+      // Invalidate queries to trigger re-fetch and UI update
+      if (isAgency) {
+        queryClient.invalidateQueries({ queryKey: ['all-requests'] });
+      } else {
+        queryClient.invalidateQueries({ queryKey: ['org-requests'] });
       }
-    } catch {
-      // Silently fail if localStorage is not available
+
+      // Toast feedback
+      if (newPinnedState) {
+        toast.success('Request pinned');
+      } else {
+        toast.success('Request unpinned');
+      }
+    } catch (error) {
+      console.error('[usePinnedRequests] Failed to toggle pin:', error);
+      toast.error('Failed to update pin status');
     }
-  }, [orgId]);
-
-  // Persist to localStorage whenever pinnedIds changes
-  useEffect(() => {
-    if (typeof window === 'undefined' || !orgId) return;
-
-    try {
-      localStorage.setItem(`${STORAGE_KEY}_${orgId}`, JSON.stringify(pinnedIds));
-    } catch {
-      // Silently fail if localStorage is not available
-    }
-  }, [pinnedIds, orgId]);
-
-  const togglePin = useCallback((requestId: string) => {
-    setPinnedIds(prev =>
-      prev.includes(requestId) ? prev.filter(id => id !== requestId) : [...prev, requestId]
-    );
-  }, []);
+  }, [userId, isAgency, queryClient]);
 
   const isPinned = useCallback(
     (requestId: string) => {
@@ -52,20 +62,30 @@ export function usePinnedRequests(orgId: string) {
     [pinnedIds]
   );
 
-  const pinRequest = useCallback((requestId: string) => {
-    setPinnedIds(prev => (prev.includes(requestId) ? prev : [...prev, requestId]));
-  }, []);
+  const pinRequest = useCallback(async (requestId: string) => {
+    if (!userId) return;
+    // Only pin if not already pinned
+    const request = requests?.find(r => r.id === requestId);
+    if (request && !isRequestPinnedByUser(request, userId)) {
+      await togglePin(requestId);
+    }
+  }, [userId, requests, togglePin]);
 
-  const unpinRequest = useCallback((requestId: string) => {
-    setPinnedIds(prev => prev.filter(id => id !== requestId));
-  }, []);
+  const unpinRequest = useCallback(async (requestId: string) => {
+    if (!userId) return;
+    // Only unpin if currently pinned
+    const request = requests?.find(r => r.id === requestId);
+    if (request && isRequestPinnedByUser(request, userId)) {
+      await togglePin(requestId);
+    }
+  }, [userId, requests, togglePin]);
 
-  return {
+  return useMemo(() => ({
     pinnedIds,
     togglePin,
     isPinned,
     pinRequest,
     unpinRequest,
     pinnedCount: pinnedIds.length,
-  };
+  }), [pinnedIds, togglePin, isPinned, pinRequest, unpinRequest]);
 }

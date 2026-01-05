@@ -4,9 +4,8 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import React, { useMemo } from 'react';
 import { motion } from '@/lib/motion';
-import { analyticsCard, staggerContainer } from '@/lib/animation-variants';
 import { AnimatedNumber } from '@/components/portal/ui/AnimatedNumber';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import {
   FileText,
   Clock,
@@ -16,26 +15,24 @@ import {
   Activity,
   LucideIcon,
 } from 'lucide-react';
-import { isRTLLocale } from '@/lib/locale-config';
 import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
-import { ProgressRing } from '@/components/portal/ProgressRing';
 import { Request, REQUEST_STATUS, RequestStatus } from '@/lib/types/portal';
 import { Timestamp } from 'firebase/firestore';
 
 const analyticCardVariants = cva(
-  'relative p-5 rounded-2xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 overflow-hidden group hover:shadow-lg transition-shadow hover-lift',
+  'relative p-5 rounded-2xl bg-white dark:bg-surface-900/80 border border-surface-200/50 dark:border-white/[0.06] overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-300',
   {
     variants: {
       intent: {
-        blue: 'text-blue-600 dark:text-blue-400 [--icon-bg:from-blue-500_to-indigo-600] [--bg-hover:blue-500/5]',
+        blue: 'text-blue-600 dark:text-blue-400 [--icon-bg:linear-gradient(135deg,#3b82f6,#6366f1)] [--glow-color:rgba(59,130,246,0.2)]',
         amber:
-          'text-amber-600 dark:text-amber-400 [--icon-bg:from-amber-500_to-orange-600] [--bg-hover:amber-500/5]',
+          'text-amber-600 dark:text-amber-400 [--icon-bg:linear-gradient(135deg,#f59e0b,#ea580c)] [--glow-color:rgba(245,158,11,0.2)]',
         green:
-          'text-green-600 dark:text-green-400 [--icon-bg:from-green-500_to-emerald-600] [--bg-hover:green-500/5]',
+          'text-green-600 dark:text-green-400 [--icon-bg:linear-gradient(135deg,#22c55e,#10b981)] [--glow-color:rgba(34,197,94,0.2)]',
         purple:
-          'text-purple-600 dark:text-purple-400 [--icon-bg:from-purple-500_to-pink-600] [--bg-hover:purple-500/5]',
+          'text-purple-600 dark:text-purple-400 [--icon-bg:linear-gradient(135deg,#a855f7,#ec4899)] [--glow-color:rgba(168,85,247,0.2)]',
         emerald:
-          'text-emerald-600 dark:text-emerald-400 [--icon-bg:from-emerald-500_to-teal-600] [--bg-hover:emerald-500/5]',
+          'text-emerald-600 dark:text-emerald-400 [--icon-bg:linear-gradient(135deg,#10b981,#14b8a6)] [--glow-color:rgba(16,185,129,0.2)]',
       },
     },
     defaultVariants: {
@@ -137,9 +134,7 @@ const getRecentRequests = (requests: Request[]): Request[] => {
 };
 
 export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({ requests, className }) => {
-  const locale = useLocale();
   const t = useTranslations();
-  const isHe = isRTLLocale(locale);
 
   const analytics = useMemo(() => {
     const recentRequests = getRecentRequests(requests);
@@ -241,130 +236,148 @@ export const ClientAnalytics: React.FC<ClientAnalyticsProps> = ({ requests, clas
   }
 
   return (
-    <div className={cn('space-y-6', className)}>
-      {/* Main Stats Grid */}
+    <div className={cn('', className)}>
+      {/* Compact Stats Bar */}
       <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={staggerContainer}
-        className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="p-4 rounded-2xl bg-surface-50/80 dark:bg-surface-900/50 border border-surface-200/50 dark:border-white/[0.04]"
       >
-        {cards.slice(0, 4).map((card, index) => {
-          const CardIcon = card.icon;
-          return (
-            <motion.div
-              key={card.title}
-              variants={analyticsCard}
-              className={cn(analyticCardVariants({ intent: card.intent }))}
-            >
-              {/* Background gradient overlay on hover using CSS Variable from CVA */}
-              <div
-                className="absolute inset-0 opacity-0 group-hover:opacity-1 transition-opacity"
-                style={{ backgroundColor: 'var(--bg-hover)' } as any}
-              />
-
-              <div className="relative z-10">
-                <div className="flex items-start justify-between mb-3">
-                  <div
-                    className="w-10 h-10 rounded-xl bg-gradient-to-br var(--icon-bg) flex items-center justify-center"
-                    style={
-                      { backgroundImage: 'linear-gradient(to bottom right, var(--icon-bg))' } as any
-                    }
-                  >
-                    <CardIcon size={20} className="text-white" />
-                  </div>
-                  {card.trend && (
-                    <div
-                      className={cn(
-                        'flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full',
-                        card.trend.positive
-                          ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
-                          : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400'
-                      )}
-                    >
-                      <TrendingUp size={12} className={cn(!card.trend.positive && 'rotate-180')} />
-                      <AnimatedNumber value={card.trend.value} duration={800} />%
-                    </div>
-                  )}
-                </div>
-
-                <div className="text-2xl font-bold text-surface-900 dark:text-white mb-1">
-                  <AnimatedNumber value={card.value} duration={1200} />
-                </div>
-
-                <div className="text-xs text-surface-500 truncate">{card.title}</div>
-
-                {card.subtitle && (
-                  <div className="text-xs text-surface-400 mt-1 truncate">{card.subtitle}</div>
-                )}
+        <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+          {/* Stats Row */}
+          <div className="flex flex-wrap items-center gap-3 flex-1">
+            {/* Total */}
+            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white dark:bg-surface-800/80 border border-surface-200/50 dark:border-white/[0.06]">
+              <div className="w-8 h-8 rounded-lg bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center">
+                <FileText size={16} className="text-blue-500" />
               </div>
-            </motion.div>
-          );
-        })}
-      </motion.div>
+              <div>
+                <div className="text-lg font-bold text-surface-900 dark:text-white leading-none">
+                  <AnimatedNumber value={analytics.total} duration={800} />
+                </div>
+                <div className="text-[10px] text-surface-400 uppercase tracking-wider font-semibold">
+                  {t('portal.analytics.total')}
+                </div>
+              </div>
+            </div>
 
-      {/* Additional spend card if exists */}
-      {cards.length > 4 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.4 }}
-          className="p-6 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-xl shadow-emerald-500/20"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-emerald-100 text-sm mb-1">{cards[4].title}</div>
-              <div className="text-2xl md:text-3xl font-bold">{cards[4].value}</div>
-              <div className="text-emerald-100 text-sm mt-1">{cards[4].subtitle}</div>
+            {/* Active */}
+            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white dark:bg-surface-800/80 border border-surface-200/50 dark:border-white/[0.06]">
+              <div className="w-8 h-8 rounded-lg bg-amber-500/10 dark:bg-amber-500/20 flex items-center justify-center">
+                <Activity size={16} className="text-amber-500" />
+              </div>
+              <div>
+                <div className="text-lg font-bold text-surface-900 dark:text-white leading-none">
+                  <AnimatedNumber value={analytics.active} duration={800} />
+                </div>
+                <div className="text-[10px] text-surface-400 uppercase tracking-wider font-semibold">
+                  {t('portal.analytics.active')}
+                </div>
+              </div>
             </div>
-            <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center">
-              <DollarSign size={32} className="text-white" />
+
+            {/* Completed */}
+            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white dark:bg-surface-800/80 border border-surface-200/50 dark:border-white/[0.06]">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center">
+                <CheckCircle2 size={16} className="text-emerald-500" />
+              </div>
+              <div>
+                <div className="text-lg font-bold text-surface-900 dark:text-white leading-none">
+                  <AnimatedNumber value={analytics.completed} duration={800} />
+                </div>
+                <div className="text-[10px] text-surface-400 uppercase tracking-wider font-semibold">
+                  {t('portal.analytics.done')}
+                </div>
+              </div>
             </div>
+
+            {/* Avg Resolution */}
+            {analytics.avgResolution > 0 && (
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white dark:bg-surface-800/80 border border-surface-200/50 dark:border-white/[0.06]">
+                <div className="w-8 h-8 rounded-lg bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center">
+                  <Clock size={16} className="text-purple-500" />
+                </div>
+                <div>
+                  <div className="text-lg font-bold text-surface-900 dark:text-white leading-none">
+                    {analytics.avgResolution}d
+                  </div>
+                  <div className="text-[10px] text-surface-400 uppercase tracking-wider font-semibold">
+                    {t('portal.analytics.avgResolution')}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Trend Badge */}
+            {analytics.trend !== 0 && (
+              <div
+                className={cn(
+                  'flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold',
+                  analytics.trend > 0
+                    ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+                    : 'bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400'
+                )}
+              >
+                <TrendingUp size={12} className={cn(analytics.trend < 0 && 'rotate-180')} />
+                {Math.abs(analytics.trend)}% {t('portal.analytics.inLast30Days')}
+              </div>
+            )}
           </div>
-        </motion.div>
-      )}
 
-      {/* Completion Progress Ring */}
-      {analytics.total > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.5 }}
-          className="p-6 rounded-2xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700"
-        >
-          <div className="flex items-center gap-6">
-            <ProgressRing
-              progress={analytics.completionPercentage}
-              size={80}
-              strokeWidth={8}
-              progressColor="stroke-emerald-500"
-            />
-            <div className="flex-1">
-              <div className="text-lg font-bold text-surface-900 dark:text-white">
+          {/* Mini Progress */}
+          {analytics.total > 0 && (
+            <div className="flex items-center gap-3 ps-3 lg:border-s border-surface-200/50 dark:border-white/[0.06]">
+              <div className="relative w-10 h-10">
+                <svg className="w-10 h-10 -rotate-90">
+                  <circle
+                    cx="20"
+                    cy="20"
+                    r="16"
+                    fill="none"
+                    strokeWidth="4"
+                    className="stroke-surface-200 dark:stroke-surface-700"
+                  />
+                  <motion.circle
+                    cx="20"
+                    cy="20"
+                    r="16"
+                    fill="none"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    className="stroke-emerald-500"
+                    initial={{ strokeDasharray: '0 100' }}
+                    animate={{
+                      strokeDasharray: `${analytics.completionPercentage} ${100 - analytics.completionPercentage}`,
+                    }}
+                    transition={{ duration: 1, ease: 'easeOut' }}
+                    style={{ strokeDashoffset: 0 }}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-surface-600 dark:text-surface-300">
+                  {analytics.completionPercentage}%
+                </div>
+              </div>
+              <div className="text-xs text-surface-500 hidden sm:block">
                 {t('portal.analytics.completionRate')}
               </div>
-              <div className="text-sm text-surface-500 mt-1">
-                {analytics.completed} {t('portal.analytics.of')} {analytics.total}{' '}
-                {t('portal.analytics.requestsCompleted')}
-              </div>
-              <div className="mt-3 flex items-center gap-4 text-xs">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2 h-2 rounded-full bg-amber-500" />
-                  <span className="text-surface-500">
-                    {analytics.active} {t('portal.analytics.inProgress')}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2 h-2 rounded-full bg-green-500" />
-                  <span className="text-surface-500">
-                    {analytics.completed} {t('portal.analytics.done')}
-                  </span>
-                </div>
-              </div>
             </div>
+          )}
+        </div>
+
+        {/* Spend Banner - only if there's spend data */}
+        {analytics.totalSpend > 0 && (
+          <div className="mt-3 pt-3 border-t border-surface-200/50 dark:border-white/[0.04] flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <DollarSign size={14} className="text-emerald-500" />
+              <span className="text-sm text-surface-500">{t('portal.analytics.totalSpend')}</span>
+            </div>
+            <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
+              {formatCurrency(analytics.totalSpend)}
+            </span>
           </div>
-        </motion.div>
-      )}
+        )}
+      </motion.div>
     </div>
   );
 };

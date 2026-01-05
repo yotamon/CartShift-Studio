@@ -165,7 +165,7 @@ export default function AgencyWorkboardClient() {
         await setDoc(userRef, {
           ...updateData,
           email: user.email,
-          name: user.displayName || t('portal.common.agencyAdmin'),
+          name: user.displayName || t('portal.common.agencyAdmin' as any),
           createdAt: new Date(),
         });
       }
@@ -389,7 +389,6 @@ function RequestCard({
   locale: string;
   isMounted: boolean;
 }) {
-  const t = useTranslations('portal');
   return (
     <PortalCard className="p-3 md:p-4 border-surface-200 dark:border-surface-800 shadow-sm hover:shadow-md hover:border-blue-200 dark:hover:border-blue-900 transition-all group">
       <div className="flex items-start justify-between gap-3 mb-3">

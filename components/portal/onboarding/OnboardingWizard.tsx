@@ -12,7 +12,6 @@ import {
   Building2,
   Sparkles,
   Check,
-  Loader2,
   Users,
   Briefcase,
 } from 'lucide-react';
@@ -80,7 +79,7 @@ export function OnboardingWizard() {
     } catch (err) {
       console.error('Failed to create organization:', err);
       setError(
-        t('onboarding.error')
+        t('onboarding.error' as any)
       );
     } finally {
       setIsSubmitting(false);
@@ -98,7 +97,7 @@ export function OnboardingWizard() {
       <div className="w-full max-w-2xl">
         {/* Progress Dots */}
         <div className="flex justify-center gap-2 mb-12">
-          {['welcome', 'info', 'completion'].map((s, i) => {
+          {['welcome', 'info', 'completion'].map((s) => {
             const steps: Step[] = ['welcome', 'info', 'completion'];
             const currentIndex = steps.indexOf(step);
             const sIndex = steps.indexOf(s as Step);
@@ -124,8 +123,8 @@ export function OnboardingWizard() {
             <OnboardingStep
               key="welcome"
               isActive={step === 'welcome'}
-              title={t('onboarding.welcome.title')}
-              description={t('onboarding.welcome.subtitle')}
+              title={t('onboarding.welcome.title' as any)}
+              description={t('onboarding.welcome.subtitle' as any)}
             >
               <div className="flex flex-col items-center text-center space-y-6">
                 <motion.div
@@ -139,7 +138,7 @@ export function OnboardingWizard() {
 
                 <div className="max-w-md mx-auto">
                   <p className="text-lg text-surface-600 dark:text-surface-300 leading-relaxed">
-                    {t('onboarding.welcome.description')}
+                    {t('onboarding.welcome.description' as any)}
                   </p>
                 </div>
 
@@ -148,7 +147,7 @@ export function OnboardingWizard() {
                   size="lg"
                   className="w-full md:w-auto min-w-[200px] h-14 text-lg font-bold shadow-lg shadow-blue-500/20"
                 >
-                  {t('onboarding.welcome.cta')}
+                  {t('onboarding.welcome.cta' as any)}
                   <ArrowRight className="ms-2" size={20} />
                 </PortalButton>
               </div>
@@ -160,16 +159,16 @@ export function OnboardingWizard() {
             <OnboardingStep
               key="info"
               isActive={step === 'info'}
-              title={t('onboarding.info.title')}
+              title={t('onboarding.info.title' as any)}
               description={
-                t('onboarding.info.subtitle')
+                t('onboarding.info.subtitle' as any)
               }
             >
               <div className="space-y-6">
                 <div>
                   <PortalInput
-                    label={t('onboarding.form.orgNameLabel')}
-                    placeholder={t('onboarding.form.orgNamePlaceholder')}
+                    label={t('onboarding.form.orgNameLabel' as any)}
+                    placeholder={t('onboarding.form.orgNamePlaceholder' as any)}
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
                     leftIcon={<Building2 size={18} />}
@@ -177,14 +176,14 @@ export function OnboardingWizard() {
                     autoFocus
                   />
                   <p className="text-xs text-surface-500 mt-2">
-                    {t('onboarding.form.orgNameHint')}
+                    {t('onboarding.form.orgNameHint' as any)}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-sm font-bold text-surface-700 dark:text-surface-300">
-                      {t('onboarding.form.industryLabel')}
+                      {t('onboarding.form.industryLabel' as any)}
                     </label>
                     <div className="relative">
                       <Briefcase
@@ -197,11 +196,11 @@ export function OnboardingWizard() {
                         className="portal-input w-full ps-10 h-11 bg-white dark:bg-surface-900 appearance-none cursor-pointer"
                       >
                         <option value="">
-                          {t('onboarding.form.industrySelectPlaceholder')}
+                          {t('onboarding.form.industrySelectPlaceholder' as any)}
                         </option>
                         {industries.map(ind => (
                           <option key={ind} value={ind}>
-                            {t(`industries.${ind}`)}
+                            {t(`industries.${ind}` as any)}
                           </option>
                         ))}
                       </select>
@@ -210,7 +209,7 @@ export function OnboardingWizard() {
 
                   <div className="space-y-1.5">
                     <label className="text-sm font-bold text-surface-700 dark:text-surface-300">
-                      {t('onboarding.form.sizeLabel')}
+                      {t('onboarding.form.sizeLabel' as any)}
                     </label>
                     <div className="relative">
                       <Users
@@ -223,11 +222,11 @@ export function OnboardingWizard() {
                         className="portal-input w-full ps-10 h-11 bg-white dark:bg-surface-900 appearance-none cursor-pointer"
                       >
                         <option value="">
-                          {t('onboarding.form.sizeSelectPlaceholder')}
+                          {t('onboarding.form.sizeSelectPlaceholder' as any)}
                         </option>
                         {sizes.map(s => (
                           <option key={s} value={s}>
-                            {s} {t('onboarding.form.employeesLabel')}
+                            {s} {t('onboarding.form.employeesLabel' as any)}
                           </option>
                         ))}
                       </select>
@@ -248,7 +247,7 @@ export function OnboardingWizard() {
                     className="text-surface-500 hover:text-surface-900 dark:text-surface-400 dark:hover:text-white"
                   >
                     <ArrowLeft className="me-2" size={18} />
-                    {t('onboarding.back')}
+                    {t('onboarding.back' as any)}
                   </PortalButton>
 
                   <PortalButton
@@ -257,7 +256,7 @@ export function OnboardingWizard() {
                     disabled={!formData.name.trim()}
                     className="min-w-[140px] shadow-lg shadow-blue-500/20"
                   >
-                    <span>{t('onboarding.form.createButton')}</span>
+                    <span>{t('onboarding.form.createButton' as any)}</span>
                     {!isSubmitting && <ArrowRight className="ms-2" size={18} />}
                   </PortalButton>
                 </div>
@@ -270,21 +269,21 @@ export function OnboardingWizard() {
             <OnboardingStep
               key="completion"
               isActive={step === 'completion'}
-              title={t('onboarding.completion.title')}
-              description={t('onboarding.completion.subtitle')}
+              title={t('onboarding.completion.title' as any)}
+              description={t('onboarding.completion.subtitle' as any)}
             >
               <div className="flex flex-col items-center text-center space-y-6">
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  type="spring"
+                  transition={{ type: 'spring' }}
                   className="w-24 h-24 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mb-4"
                 >
                   <Check size={48} className="text-emerald-600 dark:text-emerald-400" />
                 </motion.div>
 
                 <p className="text-surface-600 dark:text-surface-300 max-w-sm mx-auto">
-                  {t('onboarding.completion.description')}
+                  {t('onboarding.completion.description' as any)}
                 </p>
 
                 <PortalButton
@@ -292,7 +291,7 @@ export function OnboardingWizard() {
                   size="lg"
                   className="w-full md:w-auto min-w-[200px] h-14 text-lg font-bold bg-emerald-600 hover:bg-emerald-700 shadow-xl shadow-emerald-500/20 border-transparent text-white"
                 >
-                  {t('onboarding.completion.cta')}
+                  {t('onboarding.completion.cta' as any)}
                   <ArrowRight className="ms-2" size={20} />
                 </PortalButton>
               </div>

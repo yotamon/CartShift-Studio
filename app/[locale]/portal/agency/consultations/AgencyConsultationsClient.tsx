@@ -296,7 +296,7 @@ export default function AgencyConsultationsClient() {
             >
               {status === 'all'
                 ? t('common.all')
-                : t(`consultations.status.${status}`)}
+                : t(`consultations.status.${status}` as any)}
             </button>
           ))}
         </div>

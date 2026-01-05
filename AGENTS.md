@@ -35,6 +35,12 @@
 - **Toast Notifications:** Always use `sonner` for feedback on all async operations.
 - **Accessibility:** Ensure ARIA compliance and keyboard navigability.
 
+### D. Translation Files (CRITICAL)
+- **Source Files Only:** **NEVER** edit `messages/en.json` or `messages/he.json` directly. These are **generated files**.
+- **Edit Source Files:** Always edit files in `messages/src/{locale}/` directory (e.g., `messages/src/en/portal.json`).
+- **Merge After Changes:** Run `npm run i18n:merge` or `node scripts/merge-translations.js` after editing source files.
+- **File Structure:** See `messages/README.md` for organization details.
+
 ## 3. OPERATIONAL MODES
 
 ### Standard Mode

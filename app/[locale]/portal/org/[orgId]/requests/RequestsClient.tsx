@@ -44,12 +44,14 @@ import { Link, useRouter } from '@/i18n/navigation';
 // Centralized utilities - no more duplicate mapStatusColor!
 import { getStatusBadgeVariant, getClientStatusBadgeVariant } from '@/lib/utils/portal-helpers';
 import { PinButton } from '@/components/portal/PinnedRequests';
+import { usePinnedRequests } from '@/lib/hooks/usePinnedRequests';
 
 export default function RequestsClient() {
   const orgId = useResolvedOrgId();
   const router = useRouter();
   const { userData, loading: authLoading, isAgency } = usePortalAuth();
   const { requests, loading: requestsLoading, error: requestsError } = useRequests();
+  const { pinnedIds } = usePinnedRequests(orgId as string);
 
   const [isMobile, setIsMobile] = useState(false);
   const [activeFilter, setActiveFilter] = useState<string>('All');
@@ -98,26 +100,36 @@ export default function RequestsClient() {
     setCurrentPage(1);
   }, [activeFilter, searchQuery]);
 
-  const filteredRequests = requests.filter(req => {
-    let matchesFilter = activeFilter === 'All';
-    if (!matchesFilter) {
-      if (isAgency) {
-        matchesFilter = req.status === activeFilter;
-      } else {
-        matchesFilter = CLIENT_STATUS_MAP[req.status] === activeFilter;
+  // Filter and sort requests - pinned items appear at the top
+  const filteredRequests = requests
+    .filter(req => {
+      let matchesFilter = activeFilter === 'All';
+      if (!matchesFilter) {
+        if (isAgency) {
+          matchesFilter = req.status === activeFilter;
+        } else {
+          matchesFilter = CLIENT_STATUS_MAP[req.status] === activeFilter;
+        }
       }
-    }
 
-    const query = searchQuery.trim().toLowerCase();
-    const matchesSearch =
-      !query ||
-      (req.title?.toLowerCase() || '').includes(query) ||
-      (req.id?.toLowerCase() || '').includes(query) ||
-      (req.description?.toLowerCase() || '').includes(query) ||
-      (req.type?.toLowerCase() || '').includes(query) ||
-      (req.createdByName?.toLowerCase() || '').includes(query);
-    return matchesFilter && matchesSearch;
-  });
+      const query = searchQuery.trim().toLowerCase();
+      const matchesSearch =
+        !query ||
+        (req.title?.toLowerCase() || '').includes(query) ||
+        (req.id?.toLowerCase() || '').includes(query) ||
+        (req.description?.toLowerCase() || '').includes(query) ||
+        (req.type?.toLowerCase() || '').includes(query) ||
+        (req.createdByName?.toLowerCase() || '').includes(query);
+      return matchesFilter && matchesSearch;
+    })
+    .sort((a, b) => {
+      // Sort pinned requests to the top
+      const aPinned = pinnedIds.includes(a.id);
+      const bPinned = pinnedIds.includes(b.id);
+      if (aPinned && !bPinned) return -1;
+      if (!aPinned && bPinned) return 1;
+      return 0; // Maintain original order within pinned/unpinned groups
+    });
 
   const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
   const paginatedRequests = filteredRequests.slice(
@@ -204,16 +216,20 @@ export default function RequestsClient() {
           </p>
         </div>
         <Link href={`/portal/org/${orgId}/requests/new/`} className="flex-shrink-0">
-          <PortalButton className="flex items-center gap-2 shadow-lg shadow-blue-500/20 font-outfit whitespace-nowrap">
-            <Plus size={18} />
+          <PortalButton
+            variant="primary"
+            leftIcon={<Plus size={18} />}
+            className="font-outfit whitespace-nowrap"
+          >
             {t('portal.requests.newRequest')}
           </PortalButton>
         </Link>
       </div>
 
       <PortalCard
+        variant="glass"
         noPadding
-        className="overflow-hidden border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950 w-full min-w-0"
+        className="overflow-hidden w-full min-w-0"
       >
         {/* Toolbar */}
         <div className="p-4 border-b border-surface-100 dark:border-surface-800 flex flex-col lg:flex-row lg:items-center gap-4 bg-surface-50/50 dark:bg-surface-900/50 min-w-0">

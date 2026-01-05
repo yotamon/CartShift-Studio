@@ -13,7 +13,7 @@ export default async function ConsultationsPage({
 }: {
   params: Promise<{ locale: string; orgId: string }>;
 }) {
-  const { locale, orgId } = await params;
+  const { locale } = await params;
   setRequestLocale(locale as 'en' | 'he');
-  return <ConsultationsClient orgId={orgId} />;
+  return <ConsultationsClient />;
 }

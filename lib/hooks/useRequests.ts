@@ -15,6 +15,7 @@ export function useRequests() {
     data: requests = [],
     isLoading,
     error,
+    refetch,
   } = useQuery({
     queryKey: isAgency ? ['all-requests'] : ['org-requests', orgId],
     queryFn: async () => {
@@ -36,5 +37,6 @@ export function useRequests() {
     requests,
     loading,
     error: errorMsg,
+    refetch,
   };
 }

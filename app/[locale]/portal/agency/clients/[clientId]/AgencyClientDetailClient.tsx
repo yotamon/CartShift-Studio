@@ -56,7 +56,7 @@ export default function AgencyClientDetailClient({
 
   useEffect(() => {
     if (!clientId) {
-      setError(t('clients.noClientId'));
+      setError(t('clients.noClientId' as any));
       setLoading(false);
       return undefined;
     }
@@ -143,7 +143,7 @@ export default function AgencyClientDetailClient({
     } catch (err) {
       console.error('[AgencyClientDetail] Critical error in useEffect:', err);
       if (mounted) {
-        setError(err instanceof Error ? err.message : t('clients.unexpectedError'));
+        setError(err instanceof Error ? err.message : t('clients.unexpectedError' as any));
         setLoading(false);
       }
       return () => {
@@ -712,7 +712,7 @@ export default function AgencyClientDetailClient({
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-bold text-surface-900 dark:text-white truncate">
-                          {member.name || t('portal.common.anonymous')}
+                          {member.name || t('portal.common.anonymous' as any)}
                         </p>
                         <p className="text-xs text-surface-500 truncate">{member.email}</p>
                       </div>

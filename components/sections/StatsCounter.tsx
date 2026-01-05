@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useSpring, useTransform, useMotionValueEvent } from '@/lib/motion';
+import { motion, useInView, useSpring, useMotionValueEvent } from '@/lib/motion';
 import { ParallaxLayer } from '@/components/ui/Parallax';
 import { statCard, staggerContainer } from '@/lib/animation-variants';
 import { useTranslations } from 'next-intl';

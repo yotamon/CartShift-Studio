@@ -15,7 +15,7 @@ export function useTeamMutations() {
   const cancelInviteMutation = useMutation({
     mutationFn: cancelInvite,
     onSuccess: () => {
-      toast.success(t('success.cancelInvite'));
+      toast.success(t('success.cancelInvite' as any));
       queryClient.invalidateQueries({ queryKey: ['org-invites'] });
     },
     onError: (error) => {
@@ -28,7 +28,7 @@ export function useTeamMutations() {
     mutationFn: ({ memberId, orgId, userId }: { memberId: string; orgId: string; userId: string }) =>
       removeMember(memberId, orgId, userId),
     onSuccess: () => {
-      toast.success(t('success.removeMember'));
+      toast.success(t('success.removeMember' as any));
       queryClient.invalidateQueries({ queryKey: ['org-members'] });
     },
     onError: (error) => {
@@ -41,7 +41,7 @@ export function useTeamMutations() {
     mutationFn: ({ memberId, role }: { memberId: string; role: UserRole }) =>
       updateMemberRole(memberId, role),
     onSuccess: () => {
-      toast.success(t('success.updateRole'));
+      toast.success(t('success.updateRole' as any));
       queryClient.invalidateQueries({ queryKey: ['org-members'] });
     },
     onError: (error) => {

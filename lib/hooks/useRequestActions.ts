@@ -89,7 +89,7 @@ interface UseRequestActionsResult {
  * ```
  */
 export function useRequestActions({
-  request,
+  request: _request,
   userData,
   orgId,
   requestId,

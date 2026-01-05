@@ -15,14 +15,14 @@ import { PortalCard } from './ui/PortalCard';
 import { Link } from '@/i18n/navigation';
 import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
 
-const quickActionVariants = cva(
-  "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200",
+const quickActionIconVariants = cva(
+  "w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110",
   {
     variants: {
       intent: {
-        blue: "bg-blue-50 dark:bg-blue-500/10 text-blue-500",
-        purple: "bg-purple-50 dark:bg-purple-500/10 text-purple-500",
-        emerald: "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500",
+        blue: "bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/30",
+        purple: "bg-gradient-to-br from-purple-500 to-pink-600 text-white shadow-lg shadow-purple-500/30",
+        emerald: "bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/30",
       },
     },
     defaultVariants: {
@@ -31,24 +31,12 @@ const quickActionVariants = cva(
   }
 );
 
-const quickCardVariants = cva(
-  "h-full transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 border-surface-100 dark:border-surface-800",
-  {
-    variants: {
-      intent: {
-        blue: "group-hover:border-blue-200 dark:group-hover:border-blue-800",
-        purple: "group-hover:border-purple-200 dark:group-hover:border-purple-800",
-        emerald: "group-hover:border-emerald-200 dark:group-hover:border-emerald-800",
-      }
-    }
-  }
-);
-
 interface Action {
   icon: LucideIcon;
   label: string;
+  description: string;
   href: string;
-  intent: VariantProps<typeof quickActionVariants>['intent'];
+  intent: VariantProps<typeof quickActionIconVariants>['intent'];
 }
 
 export function QuickActions() {
@@ -61,18 +49,21 @@ export function QuickActions() {
     {
       icon: Plus,
       label: t('portal.quickActions.newRequest'),
+      description: t('portal.quickActions.newRequestDesc' as never) || 'Submit a new design request',
       href: `/portal/org/${orgId}/requests/new/`,
       intent: 'blue',
     },
     {
       icon: Calendar,
       label: t('portal.quickActions.schedule'),
+      description: t('portal.quickActions.scheduleDesc' as never) || 'Book a consultation call',
       href: `/portal/org/${orgId}/consultations?action=schedule`,
       intent: 'purple',
     },
     {
       icon: Upload,
       label: t('portal.quickActions.upload'),
+      description: t('portal.quickActions.uploadDesc' as never) || 'Share files and assets',
       href: `/portal/org/${orgId}/requests?action=upload`,
       intent: 'emerald',
     }
@@ -83,8 +74,10 @@ export function QuickActions() {
       <div className="md:col-span-1 flex items-center">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Zap size={20} className="text-amber-500 fill-amber-500" />
-            <h2 className="text-lg font-bold text-surface-900 dark:text-white">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md shadow-amber-500/30">
+              <Zap size={16} className="text-white fill-white" />
+            </div>
+            <h2 className="text-lg font-bold text-surface-900 dark:text-white font-outfit">
               {t('portal.quickActions.title')}
             </h2>
           </div>
@@ -98,19 +91,27 @@ export function QuickActions() {
         {actions.map((action, idx) => (
           <Link key={idx} href={action.href} className="group">
             <PortalCard
-              className={cn(quickCardVariants({ intent: action.intent }))}
+              variant="interactive"
+              hoverEffect="lift"
+              className="h-full border-glow"
               noPadding
             >
-              <div className="p-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className={cn(quickActionVariants({ intent: action.intent }))}>
+              <div className="p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div className={cn(quickActionIconVariants({ intent: action.intent }))}>
                     <action.icon size={20} className="stroke-[2.5]" />
                   </div>
-                  <span className="font-bold text-sm text-surface-700 dark:text-surface-200 group-hover:text-surface-900 dark:group-hover:text-white transition-colors">
-                    {action.label}
-                  </span>
+                  <ArrowRight
+                    size={16}
+                    className="text-surface-300 dark:text-surface-600 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0 mt-1"
+                  />
                 </div>
-                <ArrowRight size={16} className="text-surface-300 dark:text-surface-600 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
+                <span className="font-bold text-sm text-surface-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors block">
+                  {action.label}
+                </span>
+                <span className="text-xs text-surface-500 dark:text-surface-400 mt-1 block">
+                  {action.description}
+                </span>
               </div>
             </PortalCard>
           </Link>
@@ -119,3 +120,4 @@ export function QuickActions() {
     </div>
   );
 }
+

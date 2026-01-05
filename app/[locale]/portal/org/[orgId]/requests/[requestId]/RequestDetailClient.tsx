@@ -23,7 +23,7 @@ import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
 import { Breadcrumb } from '@/components/portal/ui/Breadcrumb';
-import { FavoriteButton } from '@/components/portal/ui/FavoriteButton';
+import { PinButton } from '@/components/portal/PinnedRequests';
 import { PortalSkeleton } from '@/components/portal/ui/PortalSkeleton';
 import { RequestMilestones } from '@/components/portal/requests/RequestMilestones';
 import { RequestAttachments } from '@/components/portal/requests/RequestAttachments';
@@ -292,10 +292,11 @@ export default function RequestDetailClient() {
           </div>
         </div>
         <div className="flex items-center gap-2 self-start md:self-center">
-          <FavoriteButton
-            initialIsActive={false}
+          <PinButton
+            requestId={request.id}
+            orgId={orgId as string}
+            size="md"
             className="w-10 h-10 border border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-950 hover:border-surface-300 dark:hover:border-surface-700 shadow-sm"
-            variant="star"
           />
         </div>
       </motion.div>

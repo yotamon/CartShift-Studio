@@ -85,7 +85,7 @@ export const IndustryPageContent: React.FC<IndustryPageContentProps> = ({ indust
   const IndustryIcon = config.icon;
 
   // Industry content from translations
-  const industriesContent = t.raw('industriesContent') as any;
+  const industriesContent = t.raw('industriesContent' as any) as any;
 
   const content = industriesContent[industry];
 
@@ -138,7 +138,7 @@ export const IndustryPageContent: React.FC<IndustryPageContentProps> = ({ indust
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {genericBenefits.map((benefit, index) => {
+          {genericBenefits.map((benefit: { icon: any; title: string; description: string }, index: number) => {
             const BenefitIcon = benefit.icon;
             return (
               <motion.div

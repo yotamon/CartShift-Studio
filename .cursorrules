@@ -1,0 +1,47 @@
+# Cursor Rules for CartShift Studio
+
+## Translation Files - CRITICAL
+
+⚠️ **NEVER EDIT GENERATED TRANSLATION FILES DIRECTLY**
+
+### Generated Files (DO NOT EDIT)
+- `messages/en.json` - Auto-generated, contains `_meta._generated: true`
+- `messages/he.json` - Auto-generated, contains `_meta._generated: true`
+
+### Source Files (EDIT THESE)
+Always edit translation source files in `messages/src/{locale}/`:
+- `messages/src/en/common.json`
+- `messages/src/en/portal.json`
+- `messages/src/en/website.json`
+- `messages/src/en/legal.json`
+- `messages/src/he/common.json`
+- `messages/src/he/portal.json`
+- `messages/src/he/website.json`
+- `messages/src/he/legal.json`
+
+### Workflow
+1. Edit source files in `messages/src/{locale}/`
+2. Run `npm run i18n:merge` to regenerate `messages/en.json` and `messages/he.json`
+3. The merge script runs automatically on `prebuild` and `predev`
+
+### How to Identify Generated Files
+- Check for `_meta._generated: true` at the top of the JSON file
+- Generated files have a `_meta._warning` field with instructions
+- See `messages/README.md` for full documentation
+
+## Code Style
+
+- Use TypeScript strict mode
+- Prefer functional components with hooks
+- Use TanStack Query for all server state
+- Use CVA (class-variance-authority) for component variants
+- Use logical CSS properties for RTL support (ms-*, me-*, ps-*, pe-*)
+- Always use `sonner` for toast notifications
+
+## Project Structure
+
+- `app/` - Next.js App Router pages
+- `components/` - React components
+- `lib/` - Utilities, hooks, services
+- `messages/src/` - Translation source files (EDIT THESE)
+- `messages/*.json` - Generated translation files (DO NOT EDIT)

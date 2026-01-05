@@ -158,7 +158,7 @@ export default function GoogleCalendarIntegration({
             {isConnected && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800">
                 <Check size={10} />
-                {t('connected')}
+                {t('connected' as any)}
               </span>
             )}
           </div>

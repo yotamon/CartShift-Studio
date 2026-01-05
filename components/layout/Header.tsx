@@ -412,7 +412,7 @@ export const Header: React.FC = () => {
                   </Link>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-surface-600 dark:text-surface-400">
-                      {t('nav.settings')}
+                      {t('nav.settings' as any)}
                     </span>
                     <div className="flex items-center gap-3">
                       <LanguageSwitcher />

@@ -182,7 +182,7 @@ export const Hero: React.FC = () => {
                   variants={staggerContainer}
                   className="flex flex-wrap items-center gap-3 md:gap-4"
                 >
-                  {platformIcons.map((platform, index) => (
+                  {platformIcons.map((platform) => (
                     <motion.div
                       key={platform.name}
                       variants={platformIcon}

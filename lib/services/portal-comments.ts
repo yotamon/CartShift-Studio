@@ -157,7 +157,8 @@ export async function createComment(
 
 export async function getCommentsByRequest(
   requestId: string,
-  includeInternal = false
+  includeInternal = false,
+  orgId?: string
 ): Promise<Comment[]> {
   await waitForAuth();
   const db = getFirestoreDb();
@@ -167,6 +168,10 @@ export async function getCommentsByRequest(
       where('requestId', '==', requestId),
       orderBy('createdAt', 'asc')
     );
+
+    if (orgId) {
+      q = query(q, where('orgId', '==', orgId));
+    }
 
     if (!includeInternal) {
       q = query(q, where('isInternal', '==', false));

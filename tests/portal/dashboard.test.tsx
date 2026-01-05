@@ -8,14 +8,14 @@ vi.mock('@/lib/hooks/useResolvedOrgId', () => ({
 }));
 
 vi.mock('@/lib/services/portal-requests', () => ({
-  subscribeToOrgRequests: vi.fn((orgId, callback) => {
+  subscribeToOrgRequests: vi.fn((_orgId, callback) => {
     callback([]);
     return vi.fn();
   }),
 }));
 
 vi.mock('@/lib/services/portal-activities', () => ({
-  subscribeToOrgActivities: vi.fn((orgId, callback) => {
+  subscribeToOrgActivities: vi.fn((_orgId, callback) => {
     callback([]);
     return vi.fn();
   }),

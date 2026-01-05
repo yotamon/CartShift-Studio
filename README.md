@@ -54,6 +54,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
   - `utils/` - Formatting, validation, and styling helpers.
 - `functions/` - Firebase Cloud Functions (Backend logic, Emails, Integrations).
 - `messages/` - Localization files for `next-intl`.
+  - `messages/src/` - **Source translation files (EDIT THESE)**
+  - `messages/*.json` - **Generated files (DO NOT EDIT - see messages/README.md)**
 
 ## Tech Stack
 
@@ -85,8 +87,17 @@ Quick deploy:
 npm run deploy
 ```
 
+## Translations
+
+⚠️ **Important**: Never edit `messages/en.json` or `messages/he.json` directly. These are auto-generated files.
+
+- Edit source files in `messages/src/{locale}/` (e.g., `messages/src/en/portal.json`)
+- Run `npm run i18n:merge` to regenerate output files
+- See [messages/README.md](./messages/README.md) for complete documentation
+
 ## Documentation
 
+- [messages/README.md](./messages/README.md) - Translation files structure and workflow
 - [DEPLOYMENT.md](./docs/DEPLOYMENT.md) - Firebase deployment guide
 - [TESTING.md](./docs/TESTING.md) - Testing checklist
 - [PROJECT_SUMMARY.md](./docs/PROJECT_SUMMARY.md) - Implementation summary

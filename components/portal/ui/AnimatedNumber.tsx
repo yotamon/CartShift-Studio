@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSpring, useTransform, useMotionValueEvent } from '@/lib/motion';
+import { useSpring, useMotionValueEvent } from '@/lib/motion';
 
 interface AnimatedNumberProps {
   value: number | string;

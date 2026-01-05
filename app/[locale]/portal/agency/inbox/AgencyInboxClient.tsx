@@ -59,7 +59,7 @@ export default function AgencyInboxClient() {
   }, [organizationsList]);
 
   const loading = requestsLoading || clientsLoading;
-  const error = (requestsError as Error)?.message || (clientsError as Error)?.message || null;
+  const error = (typeof requestsError === 'string' ? requestsError : null) || (typeof clientsError === 'string' ? clientsError : null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isRepairing, setIsRepairing] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -109,7 +109,7 @@ export default function AgencyInboxClient() {
         await setDoc(userRef, {
           ...updateData,
           email: user.email,
-          name: user.displayName || t('portal.common.agencyAdmin'),
+          name: user.displayName || t('portal.common.agencyAdmin' as any),
           createdAt: new Date(),
         });
       }
@@ -136,8 +136,8 @@ export default function AgencyInboxClient() {
         const selectedOrgId = selectedReqs[0]?.orgId;
         if (selectedOrgId && newReq.orgId !== selectedOrgId) {
           // Show which organizations are involved
-          const selectedOrgName = organizations[selectedOrgId]?.name || t('portal.common.unknown');
-          const newOrgName = organizations[newReq.orgId]?.name || t('portal.common.unknown');
+          const selectedOrgName = organizations[selectedOrgId]?.name || t('portal.common.unknown' as any);
+          const newOrgName = organizations[newReq.orgId]?.name || t('portal.common.unknown' as any);
           alert(
             `${t('agency.inbox.errors.sameOrgRequired')}\n\n` +
               `Currently selected: ${selectedOrgName}\n` +
@@ -170,7 +170,7 @@ export default function AgencyInboxClient() {
 
     if (uniqueOrgIds.length > 1) {
       const orgNames = uniqueOrgIds
-        .map(id => organizations[id]?.name || t('portal.common.unknown'))
+        .map(id => organizations[id]?.name || t('portal.common.unknown' as any))
         .join(', ');
       alert(
         `${t('agency.inbox.errors.sameOrgRequired')}\n\n` +
@@ -188,7 +188,7 @@ export default function AgencyInboxClient() {
       const pricingOffer = await createPricingRequest(
         orgId,
         userData.id,
-        userData.name || t('portal.common.unknown'),
+        userData.name || t('portal.common.unknown' as any),
         {
           title: pricingTitle.trim(),
           lineItems: validItems,
@@ -259,7 +259,7 @@ export default function AgencyInboxClient() {
           <div className="flex items-center gap-2 text-xs font-bold text-surface-400 uppercase tracking-widest px-2 shrink-0">
             {filteredRequests.length}{' '}
             {t(
-              filteredRequests.length === 1 ? 'agency.inbox.activeItem' : 'agency.inbox.activeItems'
+              (filteredRequests.length === 1 ? 'agency.inbox.activeItem' : 'agency.inbox.activeItems') as any
             )}
           </div>
         </div>

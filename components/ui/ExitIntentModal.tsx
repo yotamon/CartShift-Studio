@@ -4,10 +4,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from '@/lib/motion';
 import { Button } from './Button';
 import { Icon } from './Icon';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { trackExitIntentShown, trackExitIntentClosed, trackBookCallClick } from '@/lib/analytics';
-import { isRTLLocale } from '@/lib/locale-config';
 
 interface ExitIntentModalProps {
   delay?: number;
@@ -19,9 +18,7 @@ export const ExitIntentModal: React.FC<ExitIntentModalProps> = ({
   storageKey = 'exitIntentShown',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const locale = useLocale();
   const t = useTranslations();
-  const isHe = isRTLLocale(locale);
 
   const content = {
     title: t('common.exitIntent.title'),

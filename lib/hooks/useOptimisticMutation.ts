@@ -18,7 +18,7 @@ export function useOptimisticMutation<T>() {
     mutationFn: () => Promise<void>,
     options: OptimisticMutationOptions<T>
   ) => {
-    const { onMutate, onError, onSuccess, rollbackData } = options;
+    const { onError, onSuccess, rollbackData } = options;
 
     setIsMutating(true);
 
@@ -44,8 +44,8 @@ export function useOptimisticMutation<T>() {
 
       addToast({
         type: 'error',
-        title: t('actionFailed'),
-        message: t('changesReverted'),
+        title: t('actionFailed' as any),
+        message: t('changesReverted' as any),
       });
     } finally {
       setIsMutating(false);
@@ -81,11 +81,11 @@ export function useOptimisticAction<TData, TVariables>(
       console.error('Optimistic action failed:', error);
       options.onRollback(error, variables);
 
-      const message = error instanceof Error ? error.message : t('operationFailed');
+      const message = error instanceof Error ? error.message : t('operationFailed' as any);
       addToast({
         type: 'error',
-        title: t('error'),
-        message: options.onError ? message : t('errorReverted'),
+        title: t('error' as any),
+        message: options.onError ? message : t('errorReverted' as any),
       });
       options.onError?.(error);
       throw error;

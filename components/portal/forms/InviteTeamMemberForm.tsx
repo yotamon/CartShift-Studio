@@ -1,6 +1,6 @@
 'use client';
 
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';

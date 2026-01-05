@@ -156,7 +156,7 @@ export const ImageUpload = ({
           <>
             <img
               src={currentImageUrl}
-              alt={placeholder || t('portal.files.imageLabels.uploadedImage')}
+              alt={placeholder || t('portal.files.imageLabels.uploadedImage' as any)}
               className="w-full h-full object-cover"
             />
             {/* Hover overlay */}
@@ -221,12 +221,12 @@ export const ImageUpload = ({
           {isUploading ? (
             <>
               <Loader2 className="w-3 h-3 animate-spin me-1.5" />
-              {labels.uploading || t('portal.files.imageLabels.uploading')}
+              {labels.uploading || t('portal.files.imageLabels.uploading' as any)}
             </>
           ) : (
             <>
               <Camera className="w-3 h-3 me-1.5" />
-              {currentImageUrl ? labels.change || t('portal.files.imageLabels.change') : labels.upload || t('portal.files.imageLabels.upload')}
+              {currentImageUrl ? labels.change || t('portal.files.imageLabels.change' as any) : labels.upload || t('portal.files.imageLabels.upload' as any)}
             </>
           )}
         </PortalButton>
@@ -240,7 +240,7 @@ export const ImageUpload = ({
             className="text-xs font-bold text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-900/20"
           >
             <Trash2 className="w-3 h-3 me-1.5" />
-            {labels.remove || t('portal.files.imageLabels.remove')}
+            {labels.remove || t('portal.files.imageLabels.remove' as any)}
           </PortalButton>
         )}
       </div>
@@ -248,7 +248,7 @@ export const ImageUpload = ({
       {/* Hint text */}
       {!error && !currentImageUrl && (
         <p className="text-[10px] font-medium text-slate-400 text-center uppercase tracking-wider">
-          {labels.dropHint || t('portal.files.imageLabels.dropHint')}
+          {labels.dropHint || t('portal.files.imageLabels.dropHint' as any)}
         </p>
       )}
 

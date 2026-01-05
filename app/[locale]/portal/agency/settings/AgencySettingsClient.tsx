@@ -189,7 +189,7 @@ export default function AgencySettingsClient() {
   }, [activeTab]);
 
   const handleCancelInvite = async (inviteId: string) => {
-    if (!confirm(t('portal.common.confirm'))) return;
+    if (!confirm(t('portal.common.confirm' as any))) return;
     setCancellingInvite(inviteId);
     try {
       await cancelInvite(inviteId);
@@ -209,7 +209,7 @@ export default function AgencySettingsClient() {
       const currentUser = auth.currentUser;
 
       if (!currentUser || !currentUser.uid) {
-        throw new Error(t('portal.common.userNotAuthenticated'));
+        throw new Error(t('portal.common.userNotAuthenticated' as any));
       }
 
       const userId = currentUser.uid;
@@ -220,7 +220,7 @@ export default function AgencySettingsClient() {
 
       const token = await currentUser.getIdToken(true);
       if (!token) {
-        throw new Error(t('portal.common.failedToGetAuthToken'));
+        throw new Error(t('portal.common.failedToGetAuthToken' as any));
       }
 
       console.log('Saving agency profile:', { userId, agencyId: userId });
@@ -248,7 +248,7 @@ export default function AgencySettingsClient() {
       alert(t('agency.settings.profile.success'));
     } catch (error) {
       console.error('Error saving agency profile:', error);
-      const errorMessage = error instanceof Error ? error.message : t('portal.common.unknownError');
+      const errorMessage = error instanceof Error ? error.message : t('portal.common.unknownError' as any);
       alert(`Failed to save settings: ${errorMessage}`);
     } finally {
       setSaving(false);
@@ -261,7 +261,7 @@ export default function AgencySettingsClient() {
   };
 
   const handleDeleteService = async (serviceId: string) => {
-    if (!confirm(t('portal.common.confirm'))) return;
+    if (!confirm(t('portal.common.confirm' as any))) return;
     try {
       await deleteService(serviceId);
     } catch (error) {
@@ -643,7 +643,7 @@ export default function AgencySettingsClient() {
                           )}
                         </h4>
                         <p className="text-xs text-surface-500 line-clamp-2 min-h-[2rem]">
-                          {service.description || t('portal.common.noDescription')}
+                          {service.description || t('portal.common.noDescription' as any)}
                         </p>
                       </div>
 
@@ -736,13 +736,13 @@ export default function AgencySettingsClient() {
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
                               <PortalAvatar
-                                name={member.name || t('portal.consultations.userFallback')}
+                                name={member.name || t('portal.consultations.userFallback' as any)}
                                 size="sm"
                                 className="ring-2 ring-white dark:ring-surface-900 shadow-sm"
                               />
                               <div>
                                 <p className="text-sm font-bold text-surface-900 dark:text-white font-outfit">
-                                  {member.name || t('portal.common.unnamedUser')}
+                                  {member.name || t('portal.common.unnamedUser' as any)}
                                 </p>
                                 <p className="text-[10px] font-bold text-surface-400 uppercase tracking-tight">
                                   {member.email}
@@ -818,7 +818,7 @@ export default function AgencySettingsClient() {
                           <span className="text-[10px] font-bold text-surface-400 uppercase tracking-tighter">
                             {invite.createdAt?.toDate
                               ? invite.createdAt.toDate().toLocaleDateString()
-                              : t('portal.common.sentRecently')}
+                              : t('portal.common.sentRecently' as any)}
                           </span>
                           <button
                             onClick={() => handleCancelInvite(invite.id)}
