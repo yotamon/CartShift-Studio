@@ -170,11 +170,11 @@ export const ImageUpload = ({
           <div
             className={cn(
               'w-full h-full flex items-center justify-center',
-              'bg-slate-100 dark:bg-slate-800 border-2 border-dashed',
+              'bg-surface-100 dark:bg-surface-800 border-2 border-dashed',
               type === 'avatar' ? 'rounded-full' : 'rounded-2xl',
               isDragging
                 ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                : 'border-slate-300 dark:border-slate-700',
+                : 'border-surface-300 dark:border-surface-700',
               !disabled &&
                 !isUploading &&
                 'group-hover:border-blue-500 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20'
@@ -184,7 +184,7 @@ export const ImageUpload = ({
               <Loader2 className="animate-spin text-blue-600" size={iconSizes[size]} />
             ) : (
               <PlaceholderIcon
-                className="text-slate-400 dark:text-slate-600 group-hover:text-blue-500 transition-colors"
+                className="text-surface-400 dark:text-surface-600 group-hover:text-blue-500 transition-colors"
                 size={iconSizes[size]}
               />
             )}
@@ -247,7 +247,7 @@ export const ImageUpload = ({
 
       {/* Hint text */}
       {!error && !currentImageUrl && (
-        <p className="text-[10px] font-medium text-slate-400 text-center uppercase tracking-wider">
+        <p className="text-[10px] font-medium text-surface-400 text-center uppercase tracking-wider">
           {labels.dropHint || t('portal.files.imageLabels.dropHint' as any)}
         </p>
       )}

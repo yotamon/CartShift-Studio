@@ -173,7 +173,7 @@ export default function InviteClient() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 dark:bg-slate-950">
+      <div className="min-h-screen flex items-center justify-center p-6 bg-surface-50 dark:bg-surface-950">
         <PortalCard className="max-w-md w-full">
           <div className="text-center space-y-4">
             <Mail className="w-12 h-12 text-primary mx-auto" />
@@ -229,7 +229,7 @@ export default function InviteClient() {
   const emailMatch = user?.email?.toLowerCase() === invite.email?.toLowerCase();
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-surface-50 dark:bg-surface-950">
       <PortalCard className="max-w-md w-full">
         <div className="space-y-6">
           <div className="text-center space-y-2">
@@ -297,7 +297,7 @@ export default function InviteClient() {
 
               {!isAuthenticated ? (
                 <div className="space-y-3">
-                  <p className="text-sm text-slate-600 dark:text-slate-400 text-center font-medium">
+                  <p className="text-sm text-surface-600 dark:text-surface-400 text-center font-medium">
                     {t('portal.invite.guestIntro')}
                   </p>
                   <div className="space-y-2">
@@ -318,7 +318,7 @@ export default function InviteClient() {
                       </PortalButton>
                     </Link>
                   </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
+                  <p className="text-xs text-surface-500 dark:text-surface-400 text-center">
                     {t('portal.invite.alreadyHasAccount')}
                   </p>
                 </div>

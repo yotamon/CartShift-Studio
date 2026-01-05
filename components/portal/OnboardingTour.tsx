@@ -179,7 +179,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ userId, onComple
       >
         {/* Backdrop */}
         <motion.div
-          className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
+          className="absolute inset-0 bg-surface-950/80 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -192,10 +192,10 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ userId, onComple
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: -20 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden"
+          className="relative w-full max-w-lg bg-white dark:bg-surface-900 rounded-3xl shadow-2xl overflow-hidden"
         >
           {/* Progress Bar */}
-          <div className="absolute top-0 start-0 end-0 h-1 bg-slate-100 dark:bg-slate-800">
+          <div className="absolute top-0 start-0 end-0 h-1 bg-surface-100 dark:bg-surface-800">
             <motion.div
               className="h-full bg-gradient-to-r from-blue-500 to-indigo-500"
               initial={{ width: 0 }}
@@ -208,7 +208,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ userId, onComple
           {!isLastStep && (
             <button
               onClick={handleSkip}
-              className="absolute top-4 end-4 rtl:end-auto rtl:start-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="absolute top-4 end-4 rtl:end-auto rtl:start-4 p-2 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800"
               aria-label={t('portal.onboarding.skip')}
             >
               <X size={20} />
@@ -222,7 +222,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ userId, onComple
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.1, type: 'spring' }}
-              className="w-20 h-20 mx-auto mb-6 rounded-3xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 border border-slate-100 dark:border-slate-700"
+              className="w-20 h-20 mx-auto mb-6 rounded-3xl bg-surface-50 dark:bg-surface-800 flex items-center justify-center shadow-lg shadow-surface-200/50 dark:shadow-surface-900/50 border border-surface-100 dark:border-surface-700"
             >
               {step.icon}
             </motion.div>
@@ -243,7 +243,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ userId, onComple
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-2xl font-bold text-slate-900 dark:text-white mb-3 font-outfit"
+              className="text-2xl font-bold text-surface-900 dark:text-white mb-3 font-outfit"
             >
               {step.title}
             </motion.h2>
@@ -253,7 +253,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ userId, onComple
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
-              className="text-slate-500 dark:text-slate-400 text-base leading-relaxed max-w-sm mx-auto"
+              className="text-surface-500 dark:text-surface-400 text-base leading-relaxed max-w-sm mx-auto"
             >
               {step.description}
             </motion.p>
@@ -267,7 +267,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ userId, onComple
                 <PortalButton
                   variant="outline"
                   onClick={handlePrev}
-                  className="flex items-center gap-2 border-slate-200 dark:border-slate-700"
+                  className="flex items-center gap-2 border-surface-200 dark:border-surface-700"
                 >
                   <ChevronLeft size={18} className={cn(isRTL && 'rotate-180')} />
                   {t('portal.onboarding.prev')}
@@ -288,7 +288,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ userId, onComple
                         ? 'w-6 bg-blue-500'
                         : index < currentStep
                           ? 'bg-blue-300 dark:bg-blue-700'
-                          : 'bg-slate-200 dark:bg-slate-700'
+                          : 'bg-surface-200 dark:bg-surface-700'
                     )}
                     aria-label={`${t('portal.onboarding.goToStep')} ${index + 1}`}
                   />
@@ -317,7 +317,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ userId, onComple
 
           {/* Keyboard Hint */}
           <div className="px-8 pb-6 text-center">
-            <p className="text-xs text-slate-400 font-medium">
+            <p className="text-xs text-surface-400 font-medium">
               {t('portal.onboarding.keyboardHint')}
             </p>
           </div>

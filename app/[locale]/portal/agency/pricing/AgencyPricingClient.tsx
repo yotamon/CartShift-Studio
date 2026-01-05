@@ -140,10 +140,10 @@ export default function AgencyPricingClient() {
     return (
       <div className="py-20 flex flex-col items-center justify-center text-center space-y-4">
         <AlertCircle className="w-12 h-12 text-rose-500" />
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">
+        <h2 className="text-xl font-bold text-surface-900 dark:text-white font-outfit">
           {t('portal.common.error')}
         </h2>
-        <p className="text-slate-500 dark:text-slate-400 max-w-sm">{error}</p>
+        <p className="text-surface-500 dark:text-surface-400 max-w-sm">{error}</p>
         <PortalButton onClick={() => window.location.reload()}>
           {t('portal.common.retry')}
         </PortalButton>
@@ -156,10 +156,10 @@ export default function AgencyPricingClient() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
+          <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white font-outfit">
             {t('portal.pricing.title')}
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">
+          <p className="text-surface-500 dark:text-surface-400 mt-1 font-medium">
             {t('portal.agency.pricing.subtitle' as never) ||
               'Manage pricing offers across all clients'}
           </p>
@@ -236,25 +236,25 @@ export default function AgencyPricingClient() {
       {/* Main Table Card */}
       <PortalCard
         noPadding
-        className="overflow-visible border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-950"
+        className="overflow-visible border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950"
       >
         {/* Toolbar */}
-        <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col lg:flex-row lg:items-center gap-4 bg-slate-50/50 dark:bg-slate-900/50">
+        <div className="p-4 border-b border-surface-100 dark:border-surface-800 flex flex-col lg:flex-row lg:items-center gap-4 bg-surface-50/50 dark:bg-surface-900/50">
           <div className="relative w-full lg:w-96">
             <Search
-              className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400"
+              className="absolute start-3 top-1/2 -translate-y-1/2 text-surface-400"
               size={16}
             />
             <input
               type="text"
               placeholder={t('portal.header.searchPlaceholder')}
-              className="portal-input ps-10 h-10 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 font-medium w-full font-outfit"
+              className="portal-input ps-10 h-10 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-950 font-medium w-full font-outfit"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
           </div>
           <div className="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 scrollbar-hide">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-black text-slate-400 uppercase tracking-widest shrink-0">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-black text-surface-400 uppercase tracking-widest shrink-0">
               <Filter size={12} /> {t('portal.common.filter')}:
             </div>
             {filters.map(filter => (
@@ -265,7 +265,7 @@ export default function AgencyPricingClient() {
                   'px-3 py-2 min-h-[40px] text-sm font-bold rounded-lg whitespace-nowrap transition-all font-outfit touch-manipulation active:scale-95 shrink-0',
                   activeFilter === filter
                     ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-                    : 'text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800'
+                    : 'text-surface-500 hover:bg-surface-200 dark:hover:bg-surface-800'
                 )}
               >
                 {filter === 'All'
@@ -281,55 +281,55 @@ export default function AgencyPricingClient() {
           {loading ? (
             <div className="py-20 flex flex-col items-center justify-center space-y-3">
               <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-              <p className="text-sm font-bold text-slate-400 font-outfit">
+              <p className="text-sm font-bold text-surface-400 font-outfit">
                 {t('portal.common.loading')}
               </p>
             </div>
           ) : filteredRequests.length > 0 ? (
             <table className="w-full text-start border-collapse">
               <thead>
-                <tr className="bg-slate-50/50 dark:bg-slate-900/50 cursor-default">
-                  <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest">
+                <tr className="bg-surface-50/50 dark:bg-surface-900/50 cursor-default">
+                  <th className="px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest">
                     {t('portal.pricing.form.titleLabel')}
                   </th>
-                  <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest">
+                  <th className="px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest">
                     {t('portal.agency.inbox.clientOrg')}
                   </th>
-                  <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">
+                  <th className="px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-center">
                     {t('portal.common.status')}
                   </th>
-                  <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">
+                  <th className="px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-center">
                     {t('portal.pricing.form.total')}
                   </th>
-                  <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">
+                  <th className="px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-center">
                     {t('portal.common.date')}
                   </th>
-                  <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest text-end">
+                  <th className="px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-end">
                     {t('portal.common.actions')}
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
                 {paginatedRequests.map(req => (
                   <tr
                     key={req.id}
-                    className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all group"
+                    className="hover:bg-surface-50/50 dark:hover:bg-surface-800/30 transition-all group"
                   >
                     <td className="px-6 py-4">
                       <Link
                         href={`/portal/org/${req.orgId}/pricing/${req.id}/`}
                         className="flex flex-col max-w-md"
                       >
-                        <span className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate font-outfit">
+                        <span className="font-bold text-surface-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate font-outfit">
                           {req.title}
                         </span>
-                        <span className="text-xs font-bold text-slate-400 flex items-center gap-1.5 mt-1 font-outfit">
-                          <span className="font-mono bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-[10px] tracking-tight">
+                        <span className="text-xs font-bold text-surface-400 flex items-center gap-1.5 mt-1 font-outfit">
+                          <span className="font-mono bg-surface-100 dark:bg-surface-800 px-1.5 py-0.5 rounded text-[10px] tracking-tight">
                             {req.id.slice(0, 8)}
                           </span>
                           {req.requestIds && req.requestIds.length > 0 && (
                             <>
-                              <span className="w-1 h-1 rounded-full bg-slate-300" />
+                              <span className="w-1 h-1 rounded-full bg-surface-300" />
                               <span>{req.requestIds.length} requests</span>
                             </>
                           )}
@@ -341,7 +341,7 @@ export default function AgencyPricingClient() {
                         <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center text-white text-xs font-bold">
                           {(organizations[req.orgId]?.name || '?')[0].toUpperCase()}
                         </div>
-                        <span className="text-sm font-bold text-slate-700 dark:text-slate-300 truncate max-w-[150px]">
+                        <span className="text-sm font-bold text-surface-700 dark:text-surface-300 truncate max-w-[150px]">
                           {organizations[req.orgId]?.name || t('portal.common.unknown')}
                         </span>
                       </div>
@@ -360,21 +360,21 @@ export default function AgencyPricingClient() {
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-center gap-2">
                         <DollarSign size={14} className="text-green-500 opacity-70" />
-                        <span className="text-sm font-bold text-slate-800 dark:text-slate-200 font-outfit">
+                        <span className="text-sm font-bold text-surface-800 dark:text-surface-200 font-outfit">
                           {formatCurrency(req.totalAmount, req.currency)}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col items-center">
-                        <span className="text-sm font-bold text-slate-800 dark:text-slate-200 font-outfit whitespace-nowrap">
+                        <span className="text-sm font-bold text-surface-800 dark:text-surface-200 font-outfit whitespace-nowrap">
                           {req.createdAt?.toDate
                             ? format(req.createdAt.toDate(), 'MMM d, yyyy', {
                                 locale: getDateLocale(locale),
                               })
                             : t('portal.common.recently')}
                         </span>
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">
+                        <span className="text-[10px] font-black text-surface-400 uppercase tracking-tighter">
                           {req.status === PRICING_STATUS.DRAFT
                             ? t('portal.pricing.status.draft')
                             : req.sentAt?.toDate
@@ -388,19 +388,19 @@ export default function AgencyPricingClient() {
                     <td className="px-6 py-4 text-end">
                       <div className="flex items-center justify-end gap-1">
                         <Link href={`/portal/org/${req.orgId}/pricing/${req.id}/`}>
-                          <button className="p-2 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20">
+                          <button className="p-2 text-surface-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20">
                             <Eye size={16} />
                           </button>
                         </Link>
                         {req.status === PRICING_STATUS.DRAFT && (
                           <button
                             onClick={() => handleSend(req.id)}
-                            className="p-2 text-slate-400 hover:text-green-600 dark:hover:text-green-400 transition-all rounded-xl hover:bg-green-50 dark:hover:bg-green-900/20"
+                            className="p-2 text-surface-400 hover:text-green-600 dark:hover:text-green-400 transition-all rounded-xl hover:bg-green-50 dark:hover:bg-green-900/20"
                           >
                             <Send size={16} />
                           </button>
                         )}
-                        <button className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <button className="p-2 text-surface-400 hover:text-surface-900 dark:hover:text-white transition-all rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800">
                           <MoreVertical size={16} />
                         </button>
                       </div>
@@ -411,14 +411,14 @@ export default function AgencyPricingClient() {
             </table>
           ) : (
             <div className="py-20 flex flex-col items-center justify-center text-center px-4 space-y-4">
-              <div className="w-20 h-20 bg-slate-50 dark:bg-slate-900 rounded-3xl flex items-center justify-center mb-2 border border-slate-100 dark:border-slate-800 shadow-inner">
-                <DollarSign className="text-slate-200 dark:text-slate-800" size={36} />
+              <div className="w-20 h-20 bg-surface-50 dark:bg-surface-900 rounded-3xl flex items-center justify-center mb-2 border border-surface-100 dark:border-surface-800 shadow-inner">
+                <DollarSign className="text-surface-200 dark:text-surface-800" size={36} />
               </div>
               <div className="space-y-1">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">
+                <h3 className="text-xl font-bold text-surface-900 dark:text-white font-outfit">
                   {t('portal.common.noData')}
                 </h3>
-                <p className="text-slate-500 dark:text-slate-400 text-sm max-w-sm font-medium">
+                <p className="text-surface-500 dark:text-surface-400 text-sm max-w-sm font-medium">
                   {t('portal.pricing.noOffersAgency')}
                 </p>
               </div>
@@ -428,8 +428,8 @@ export default function AgencyPricingClient() {
 
         {/* Footer info */}
         {!loading && filteredRequests.length > 0 && (
-          <div className="p-5 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/30 dark:bg-slate-900/30">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+          <div className="p-5 border-t border-surface-100 dark:border-surface-800 flex flex-col sm:flex-row items-center justify-between gap-4 bg-surface-50/30 dark:bg-surface-900/30">
+            <span className="text-[10px] font-black text-surface-400 uppercase tracking-widest">
               {t('portal.common.showing', {
                 count: paginatedRequests.length,
                 total: filteredRequests.length,

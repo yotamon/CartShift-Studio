@@ -397,7 +397,7 @@ export default function SettingsClient() {
     return (
       <div className="flex flex-col items-center justify-center py-40 space-y-4">
         <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-        <p className="text-slate-500 font-bold font-outfit uppercase tracking-widest text-xs">
+        <p className="text-surface-500 font-bold font-outfit uppercase tracking-widest text-xs">
           {t('portal.common.loading')}
         </p>
       </div>
@@ -408,10 +408,10 @@ export default function SettingsClient() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
+          <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white font-outfit">
             {t('portal.settings.title')}
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">
+          <p className="text-surface-500 dark:text-surface-400 mt-1 font-medium">
             {t('portal.settings.subtitle')}
           </p>
         </div>
@@ -428,7 +428,7 @@ export default function SettingsClient() {
                   'flex items-center gap-3 px-4 py-3 min-h-[48px] text-sm font-bold rounded-2xl transition-all font-outfit whitespace-nowrap touch-manipulation shrink-0 lg:w-full',
                   activeTab === tab.id
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20 lg:translate-x-1'
-                    : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    : 'text-surface-500 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800'
                 )}
               >
                 <tab.icon size={18} />
@@ -455,16 +455,16 @@ export default function SettingsClient() {
 
           {activeTab === 'general' && (
             <div className="space-y-6">
-              <PortalCard className="border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-950">
+              <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950">
                 <div className="flex items-center gap-3 mb-8">
-                  <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-400">
+                  <div className="p-2.5 rounded-xl bg-surface-50 dark:bg-surface-900 border border-surface-100 dark:border-surface-800 text-surface-400">
                     <Building2 size={20} />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit">
+                    <h3 className="text-lg font-bold text-surface-900 dark:text-white font-outfit">
                       {t('portal.settings.general.title')}
                     </h3>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+                    <p className="text-xs font-bold text-surface-400 uppercase tracking-widest mt-0.5">
                       {t('portal.settings.general.subtitle')}
                     </p>
                   </div>
@@ -472,13 +472,13 @@ export default function SettingsClient() {
 
                 <div className="space-y-6">
                   {/* Organization Logo Upload */}
-                  <div className="pb-6 border-b border-slate-100 dark:border-slate-800">
-                    <label className="block text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-4">
+                  <div className="pb-6 border-b border-surface-100 dark:border-surface-800">
+                    <label className="block text-xs font-black uppercase tracking-widest text-surface-500 dark:text-surface-400 mb-4">
                       {t('portal.settings.general.logoLabel')}
                     </label>
                     <div className="flex items-center gap-6">
                       <div className="relative group">
-                        <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:border-blue-400 dark:group-hover:border-blue-500">
+                        <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-surface-800 dark:to-surface-900 border-2 border-dashed border-surface-200 dark:border-surface-700 flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:border-blue-400 dark:group-hover:border-blue-500">
                           {organization?.logoUrl ? (
                             <img
                               src={organization.logoUrl}
@@ -487,11 +487,11 @@ export default function SettingsClient() {
                               onError={handleLogoError}
                             />
                           ) : (
-                            <Building2 size={32} className="text-slate-300 dark:text-slate-600" />
+                            <Building2 size={32} className="text-surface-300 dark:text-surface-600" />
                           )}
                         </div>
                         {uploadingOrgLogo && (
-                          <div className="absolute inset-0 bg-white/80 dark:bg-slate-900/80 rounded-2xl flex items-center justify-center z-10">
+                          <div className="absolute inset-0 bg-white/80 dark:bg-surface-900/80 rounded-2xl flex items-center justify-center z-10">
                             <Loader2 size={24} className="animate-spin text-blue-500" />
                           </div>
                         )}
@@ -517,7 +517,7 @@ export default function SettingsClient() {
                             {t('portal.settings.general.logoRemove')}
                           </button>
                         )}
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
+                        <p className="text-[10px] text-surface-400 dark:text-surface-500 mt-1">
                           {t('portal.settings.general.logoHint')}
                         </p>
                       </div>
@@ -546,19 +546,19 @@ export default function SettingsClient() {
                     placeholder={t('portal.settings.general.websitePlaceholder')}
                   />
                   <div>
-                    <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2.5">
+                    <label className="block text-xs font-black text-surface-400 uppercase tracking-widest mb-2.5">
                       {t('portal.settings.general.bio')}
                     </label>
                     <textarea
                       value={formData.bio}
                       onChange={e => setFormData({ ...formData, bio: e.target.value })}
                       rows={4}
-                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-950 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none text-slate-900 dark:text-white text-sm font-medium leading-relaxed"
+                      className="w-full px-4 py-3 rounded-2xl bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 focus:bg-white dark:focus:bg-surface-950 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none text-surface-900 dark:text-white text-sm font-medium leading-relaxed"
                       placeholder={t('portal.settings.general.bioPlaceholder')}
                     />
                   </div>
                 </div>
-                <div className="mt-10 pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                <div className="mt-10 pt-6 border-t border-surface-100 dark:border-surface-800 flex justify-end">
                   <PortalButton
                     onClick={handleSave}
                     isLoading={saving}
@@ -578,7 +578,7 @@ export default function SettingsClient() {
                     <Plus size={20} />
                     {t('portal.settings.general.newWorkspace.title')}
                   </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 font-medium leading-relaxed">
+                  <p className="text-xs text-surface-500 dark:text-surface-400 mb-6 font-medium leading-relaxed">
                     {t('portal.settings.general.newWorkspace.description')}
                   </p>
                   <PortalButton
@@ -595,7 +595,7 @@ export default function SettingsClient() {
                     <RefreshCw size={20} />
                     {t('portal.settings.general.onboarding.title')}
                   </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 font-medium leading-relaxed">
+                  <p className="text-xs text-surface-500 dark:text-surface-400 mb-6 font-medium leading-relaxed">
                     {t('portal.settings.general.onboarding.description')}
                   </p>
                   <PortalButton
@@ -613,7 +613,7 @@ export default function SettingsClient() {
               {/* Shopify Store Integration */}
               {organization && (
                 <div className="mt-8">
-                  <h3 className="text-sm font-black text-slate-500 uppercase tracking-widest mb-4 px-1">
+                  <h3 className="text-sm font-black text-surface-500 uppercase tracking-widest mb-4 px-1">
                     {t('portal.settings.general.storeIntegrations')}
                   </h3>
                   <ShopifyStoreIntegration
@@ -634,7 +634,7 @@ export default function SettingsClient() {
                   <Trash2 size={20} />
                   {t('portal.settings.general.dangerZone.title')}
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 font-medium leading-relaxed">
+                <p className="text-xs text-surface-500 dark:text-surface-400 mb-6 font-medium leading-relaxed">
                   {t('portal.settings.general.dangerZone.description')}
                 </p>
                 <PortalButton
@@ -650,16 +650,16 @@ export default function SettingsClient() {
 
           {activeTab === 'profile' && (
             <div className="space-y-6">
-              <PortalCard className="border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-950">
+              <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950">
                 <div className="flex items-center gap-3 mb-10">
                   <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 border border-blue-100 dark:border-blue-900/30">
                     <UserIcon size={20} />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit">
+                    <h3 className="text-lg font-bold text-surface-900 dark:text-white font-outfit">
                       {t('portal.settings.profile.title')}
                     </h3>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
+                    <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mt-0.5">
                       {t('portal.settings.profile.subtitle')}
                     </p>
                   </div>
@@ -667,13 +667,13 @@ export default function SettingsClient() {
 
                 <div className="space-y-6">
                   {/* Avatar Section */}
-                  <div className="flex flex-col md:flex-row items-center gap-6 p-6 rounded-3xl bg-slate-50/50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800/50">
+                  <div className="flex flex-col md:flex-row items-center gap-6 p-6 rounded-3xl bg-surface-50/50 dark:bg-surface-900/30 border border-surface-100 dark:border-surface-800/50">
                     <div className="relative group">
                       <PortalAvatar
                         src={profileFormData.photoUrl}
                         name={profileFormData.name}
                         size="lg"
-                        className="w-24 h-24 ring-4 ring-white dark:ring-slate-900 shadow-2xl"
+                        className="w-24 h-24 ring-4 ring-white dark:ring-surface-900 shadow-2xl"
                       />
                       {uploadingAvatar && (
                         <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center backdrop-blur-sm">
@@ -693,17 +693,17 @@ export default function SettingsClient() {
                     </div>
 
                     <div className="flex-1 text-center md:text-start">
-                      <h4 className="font-bold text-slate-900 dark:text-white mb-1 font-outfit">
+                      <h4 className="font-bold text-surface-900 dark:text-white mb-1 font-outfit">
                         {t('portal.settings.profile.avatar.title')}
                       </h4>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 font-medium max-w-xs">
+                      <p className="text-xs text-surface-500 dark:text-surface-400 mb-4 font-medium max-w-xs">
                         {t('portal.settings.profile.avatar.desc')}
                       </p>
                       <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
                         <PortalButton
                           variant="outline"
                           size="sm"
-                          className="h-9 px-4 text-xs font-bold border-slate-200 dark:border-slate-800"
+                          className="h-9 px-4 text-xs font-bold border-surface-200 dark:border-surface-800"
                           onClick={() =>
                             document.querySelector<HTMLInputElement>('input[type="file"]')?.click()
                           }
@@ -746,7 +746,7 @@ export default function SettingsClient() {
                   </div>
                 </div>
 
-                <div className="mt-10 pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                <div className="mt-10 pt-6 border-t border-surface-100 dark:border-surface-800 flex justify-end">
                   <PortalButton
                     onClick={handleProfileSave}
                     isLoading={profileSaving}
@@ -764,16 +764,16 @@ export default function SettingsClient() {
 
           {activeTab === 'notifications' && (
             <div className="space-y-6">
-              <PortalCard className="border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-950">
+              <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950">
                 <div className="flex items-center gap-3 mb-10">
                   <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 border border-blue-100 dark:border-blue-900/30">
                     <Bell size={20} />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit">
+                    <h3 className="text-lg font-bold text-surface-900 dark:text-white font-outfit">
                       {t('portal.settings.notifications.title')}
                     </h3>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
+                    <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mt-0.5">
                       {t('portal.settings.notifications.subtitle')}
                     </p>
                   </div>
@@ -791,7 +791,7 @@ export default function SettingsClient() {
                       })
                     }
                   />
-                  <div className="h-px bg-slate-50 dark:bg-slate-900" />
+                  <div className="h-px bg-surface-50 dark:bg-surface-900" />
                   <PortalSwitch
                     label={t('portal.settings.notifications.commentAlerts.label')}
                     description={t('portal.settings.notifications.commentAlerts.desc')}
@@ -803,7 +803,7 @@ export default function SettingsClient() {
                       })
                     }
                   />
-                  <div className="h-px bg-slate-50 dark:bg-slate-900" />
+                  <div className="h-px bg-surface-50 dark:bg-surface-900" />
                   <PortalSwitch
                     label={t('portal.settings.notifications.statusChange.label')}
                     description={t('portal.settings.notifications.statusChange.desc')}
@@ -815,7 +815,7 @@ export default function SettingsClient() {
                       })
                     }
                   />
-                  <div className="h-px bg-slate-50 dark:bg-slate-900" />
+                  <div className="h-px bg-surface-50 dark:bg-surface-900" />
                   <PortalSwitch
                     label={t('portal.settings.notifications.marketing.label')}
                     description={t('portal.settings.notifications.marketing.desc')}
@@ -829,14 +829,14 @@ export default function SettingsClient() {
                   />
                 </div>
 
-                <div className="mt-10 pt-6 border-t border-slate-100 dark:border-slate-800">
+                <div className="mt-10 pt-6 border-t border-surface-100 dark:border-surface-800">
                   {notifSaving ? (
                     <div className="flex items-center gap-2 text-[10px] font-black text-blue-600 animate-pulse tracking-widest uppercase">
                       <Loader2 size={12} className="animate-spin" />
                       {t('portal.settings.notifications.syncing')}
                     </div>
                   ) : (
-                    <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 tracking-widest uppercase">
+                    <div className="flex items-center gap-2 text-[10px] font-black text-surface-400 tracking-widest uppercase">
                       <CheckCircle2 size={12} className="text-emerald-500" />
                       {t('portal.settings.notifications.saved')}
                     </div>
@@ -844,8 +844,8 @@ export default function SettingsClient() {
                 </div>
               </PortalCard>
 
-              <PortalCard className="bg-slate-50/50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 text-center py-10 rounded-3xl">
-                <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 max-w-sm mx-auto uppercase tracking-widest leading-relaxed">
+              <PortalCard className="bg-surface-50/50 dark:bg-surface-900/30 border-surface-200 dark:border-surface-800 text-center py-10 rounded-3xl">
+                <p className="text-[11px] font-bold text-surface-500 dark:text-surface-400 max-w-sm mx-auto uppercase tracking-widest leading-relaxed">
                   {t('portal.settings.notifications.pushBeta')} <br />
                   <span className="text-blue-500 mt-2 block">
                     {t('portal.settings.notifications.pushBetaSub')}
@@ -857,28 +857,28 @@ export default function SettingsClient() {
 
           {activeTab === 'security' && (
             <div className="space-y-6">
-              <PortalCard className="border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-950">
+              <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950">
                 <div className="flex items-center gap-3 mb-10">
                   <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-900/20 text-amber-600 border border-amber-100 dark:border-amber-900/30">
                     <Shield size={20} />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit">
+                    <h3 className="text-lg font-bold text-surface-900 dark:text-white font-outfit">
                       {t('portal.settings.security.title')}
                     </h3>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
+                    <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest mt-0.5">
                       {t('portal.settings.security.subtitle')}
                     </p>
                   </div>
                 </div>
 
                 <div className="space-y-6">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 rounded-3xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 group hover:border-blue-200 dark:hover:border-blue-900/30 transition-colors">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 rounded-3xl bg-surface-50 dark:bg-surface-900/50 border border-surface-100 dark:border-surface-800 group hover:border-blue-200 dark:hover:border-blue-900/30 transition-colors">
                     <div className="space-y-1">
-                      <h4 className="font-bold text-slate-900 dark:text-white text-base font-outfit">
+                      <h4 className="font-bold text-surface-900 dark:text-white text-base font-outfit">
                         {t('portal.settings.security.changePassword.title')}
                       </h4>
-                      <p className="text-xs font-medium text-slate-500 leading-relaxed">
+                      <p className="text-xs font-medium text-surface-500 leading-relaxed">
                         {t('portal.settings.security.changePassword.desc')}
                       </p>
                     </div>
@@ -904,12 +904,12 @@ export default function SettingsClient() {
                     </PortalButton>
                   </div>
 
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 rounded-3xl bg-slate-50/50 dark:bg-slate-900/20 border border-slate-100/50 dark:border-slate-800/50 opacity-60">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 rounded-3xl bg-surface-50/50 dark:bg-surface-900/20 border border-surface-100/50 dark:border-surface-800/50 opacity-60">
                     <div className="space-y-1">
-                      <h4 className="font-bold text-slate-900 dark:text-white text-base font-outfit">
+                      <h4 className="font-bold text-surface-900 dark:text-white text-base font-outfit">
                         {t('portal.settings.security.mfa.title')}
                       </h4>
-                      <p className="text-xs font-medium text-slate-500 leading-relaxed">
+                      <p className="text-xs font-medium text-surface-500 leading-relaxed">
                         {t('portal.settings.security.mfa.desc')}
                       </p>
                     </div>
@@ -923,24 +923,24 @@ export default function SettingsClient() {
                 </div>
               </PortalCard>
 
-              <PortalCard className="border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-950">
-                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 px-1">
+              <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950">
+                <h4 className="text-[10px] font-black text-surface-400 uppercase tracking-widest mb-6 px-1">
                   {t('portal.settings.security.session.title')}
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-1">
                   <div>
-                    <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2.5">
+                    <p className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest mb-2.5">
                       {t('portal.settings.security.session.email')}
                     </p>
-                    <p className="text-sm font-bold text-slate-900 dark:text-white font-outfit">
+                    <p className="text-sm font-bold text-surface-900 dark:text-white font-outfit">
                       {user?.email}
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2.5">
+                    <p className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest mb-2.5">
                       {t('portal.settings.security.session.provider')}
                     </p>
-                    <p className="text-sm font-bold text-slate-900 dark:text-white capitalize font-outfit flex items-center gap-2">
+                    <p className="text-sm font-bold text-surface-900 dark:text-white capitalize font-outfit flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
                       {user?.providerData[0]?.providerId.split('.')[0] ||
                         t('portal.settings.security.session.mailService')}
@@ -955,7 +955,7 @@ export default function SettingsClient() {
             <div className="space-y-6">
               <PortalCard
                 noPadding
-                className="border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden bg-white dark:bg-slate-950"
+                className="border-surface-200 dark:border-surface-800 shadow-xl overflow-hidden bg-white dark:bg-surface-950"
               >
                 <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 p-8 text-white relative">
                   <div className="absolute end-0 top-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
@@ -988,10 +988,10 @@ export default function SettingsClient() {
                 <div className="p-6 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-1.5">
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest">
                         {t('portal.settings.billing.investment')}
                       </p>
-                      <p className="text-2xl font-bold text-slate-900 dark:text-white font-outfit tracking-tight">
+                      <p className="text-2xl font-bold text-surface-900 dark:text-white font-outfit tracking-tight">
                         {organization?.plan === 'pro'
                           ? '$2,499'
                           : organization?.plan === 'enterprise'
@@ -1005,7 +1005,7 @@ export default function SettingsClient() {
                       </p>
                     </div>
                     <div className="space-y-1.5">
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest">
                         {t('portal.settings.billing.workflowLimit')}
                       </p>
                       <p className="text-2xl font-bold text-emerald-500 font-outfit flex items-center gap-2">
@@ -1015,10 +1015,10 @@ export default function SettingsClient() {
                       </p>
                     </div>
                     <div className="space-y-1.5">
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      <p className="text-[10px] font-black text-surface-400 uppercase tracking-widest">
                         {t('portal.settings.billing.teamAvailability')}
                       </p>
-                      <p className="text-2xl font-bold text-slate-900 dark:text-white font-outfit tracking-tight">
+                      <p className="text-2xl font-bold text-surface-900 dark:text-white font-outfit tracking-tight">
                         {organization?.plan === 'free'
                           ? '2 Seats'
                           : organization?.plan === 'pro'
@@ -1028,13 +1028,13 @@ export default function SettingsClient() {
                     </div>
                   </div>
 
-                  <div className="pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-4">
+                  <div className="pt-8 border-t border-surface-100 dark:border-surface-800 flex flex-wrap gap-4">
                     <PortalButton className="flex items-center gap-2 font-outfit px-8 shadow-xl shadow-blue-500/10 h-11">
                       <CreditCard size={18} /> {t('portal.settings.billing.stripeDashboard')}
                     </PortalButton>
                     <PortalButton
                       variant="outline"
-                      className="flex items-center gap-2 font-outfit px-8 border-slate-200 dark:border-slate-800 h-11"
+                      className="flex items-center gap-2 font-outfit px-8 border-surface-200 dark:border-surface-800 h-11"
                     >
                       {t('portal.settings.billing.invoicingHistory')}
                     </PortalButton>
@@ -1048,10 +1048,10 @@ export default function SettingsClient() {
                     <ShieldCheck size={20} />
                   </div>
                   <div>
-                    <h4 className="font-bold text-slate-900 dark:text-white mb-1.5 font-outfit">
+                    <h4 className="font-bold text-surface-900 dark:text-white mb-1.5 font-outfit">
                       {t('portal.settings.billing.encrypted.title')}
                     </h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+                    <p className="text-xs text-surface-500 dark:text-surface-400 leading-relaxed font-medium">
                       {t('portal.settings.billing.encrypted.desc')}
                     </p>
                   </div>

@@ -286,7 +286,7 @@ export default function EditPricingForm() {
     return (
       <div className="py-20 flex flex-col items-center justify-center space-y-3">
         <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-        <p className="text-sm font-bold text-slate-400 font-outfit">
+        <p className="text-sm font-bold text-surface-400 font-outfit">
           {t('portal.common.loading' as any)}
         </p>
       </div>
@@ -297,10 +297,10 @@ export default function EditPricingForm() {
     return (
       <div className="py-20 flex flex-col items-center justify-center text-center space-y-4">
         <AlertCircle className="w-12 h-12 text-rose-500" />
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+        <h2 className="text-xl font-bold text-surface-900 dark:text-white">
           {t('portal.common.error' as any)}
         </h2>
-        <p className="text-slate-500 dark:text-slate-400 max-w-sm">{errorMessage}</p>
+        <p className="text-surface-500 dark:text-surface-400 max-w-sm">{errorMessage}</p>
         <Link href={`/portal/org/${orgId}/pricing/`}>
           <PortalButton>{t('portal.common.back' as any)}</PortalButton>
         </Link>
@@ -312,8 +312,8 @@ export default function EditPricingForm() {
     return (
       <div className="py-20 flex flex-col items-center justify-center text-center space-y-4">
         <AlertCircle className="w-12 h-12 text-rose-500" />
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white">Access Denied</h2>
-        <p className="text-slate-500 dark:text-slate-400 max-w-sm">
+        <h2 className="text-xl font-bold text-surface-900 dark:text-white">Access Denied</h2>
+        <p className="text-surface-500 dark:text-surface-400 max-w-sm">
           Only agency members can edit pricing offers.
         </p>
         <Link href={`/portal/org/${orgId}/pricing/`}>
@@ -330,10 +330,10 @@ export default function EditPricingForm() {
           <div className="w-20 h-20 rounded-3xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-6">
             <CheckCircle2 className="w-10 h-10 text-green-600 dark:text-green-400" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-outfit mb-2">
+          <h2 className="text-2xl font-bold text-surface-900 dark:text-white font-outfit mb-2">
             {isSending ? 'Offer Sent!' : 'Changes Saved!'}
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 max-w-sm">
+          <p className="text-surface-500 dark:text-surface-400 max-w-sm">
             {isSending
               ? 'Your pricing offer has been sent to the client.'
               : 'Your changes have been saved successfully.'}
@@ -356,10 +356,10 @@ export default function EditPricingForm() {
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
+          <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white font-outfit">
             {t('portal.pricing.editOffer')}
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">
+          <p className="text-surface-500 dark:text-surface-400 mt-1 font-medium">
             {t('portal.pricing.editOfferDescription')}
           </p>
         </div>
@@ -374,14 +374,14 @@ export default function EditPricingForm() {
         {/* Main form */}
         <div className="lg:col-span-2 space-y-6">
           <PortalCard className="p-6">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit mb-4">
+            <h3 className="text-lg font-bold text-surface-900 dark:text-white font-outfit mb-4">
               {t('portal.pricing.form.offerDetails')}
             </h3>
 
             <div className="space-y-4">
               {/* Title */}
               <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                <label className="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-2">
                   {t('portal.pricing.form.titleLabel')} *
                 </label>
                 <input
@@ -403,7 +403,7 @@ export default function EditPricingForm() {
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                <label className="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-2">
                   {t('portal.pricing.form.descriptionLabel')}
                 </label>
                 <textarea
@@ -421,11 +421,11 @@ export default function EditPricingForm() {
             <PortalCard className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit">
+                  <h3 className="text-lg font-bold text-surface-900 dark:text-white font-outfit">
                     <FileText className="inline w-5 h-5 me-2" />
                     {t('portal.pricing.includedRequests')}
                   </h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                  <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
                     {t('portal.pricing.form.linkedRequestsNote' as never) ||
                       t('portal.pricing.form.linkedRequestsLabel')}
                   </p>
@@ -444,7 +444,7 @@ export default function EditPricingForm() {
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <h4 className="font-bold text-slate-900 dark:text-white truncate">
+                          <h4 className="font-bold text-surface-900 dark:text-white truncate">
                             {request.title}
                           </h4>
                           <PortalBadge variant="gray" className="text-xs">
@@ -452,7 +452,7 @@ export default function EditPricingForm() {
                           </PortalBadge>
                         </div>
                         {request.description && (
-                          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">
+                          <p className="text-sm text-surface-500 dark:text-surface-400 mt-1 line-clamp-2">
                             {request.description}
                           </p>
                         )}
@@ -470,7 +470,7 @@ export default function EditPricingForm() {
           {/* Line Items */}
           <PortalCard className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit">
+              <h3 className="text-lg font-bold text-surface-900 dark:text-white font-outfit">
                 {t('portal.pricing.form.lineItems')}
               </h3>
               <button
@@ -487,7 +487,7 @@ export default function EditPricingForm() {
 
             <div className="space-y-4">
               {/* Header */}
-              <div className="grid grid-cols-12 gap-3 px-1 text-xs font-black text-slate-400 uppercase tracking-wider">
+              <div className="grid grid-cols-12 gap-3 px-1 text-xs font-black text-surface-400 uppercase tracking-wider">
                 <div className="col-span-5">{t('portal.pricing.form.itemDescription')}</div>
                 <div className="col-span-2 text-center">{t('portal.pricing.form.quantity')}</div>
                 <div className="col-span-3">{t('portal.pricing.form.unitPrice')}</div>
@@ -498,7 +498,7 @@ export default function EditPricingForm() {
                 (field: FieldArrayWithId<PricingFormData, 'lineItems', 'id'>, index: number) => (
                   <div
                     key={field.id}
-                    className="grid grid-cols-12 gap-3 items-start p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl"
+                    className="grid grid-cols-12 gap-3 items-start p-4 bg-surface-50 dark:bg-surface-900/50 rounded-xl"
                   >
                     <input type="hidden" {...register(`lineItems.${index}.id`)} />
                     <div className="col-span-5">
@@ -524,7 +524,7 @@ export default function EditPricingForm() {
                     </div>
                     <div className="col-span-3">
                       <div className="relative">
-                        <span className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
+                        <span className="absolute start-3 top-1/2 -translate-y-1/2 text-surface-400 text-sm">
                           {CURRENCY_CONFIG[watchedCurrency]?.symbol || '$'}
                         </span>
                         <input
@@ -565,11 +565,11 @@ export default function EditPricingForm() {
             </div>
 
             {/* Total */}
-            <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-              <span className="text-lg font-bold text-slate-700 dark:text-slate-300">
+            <div className="mt-6 pt-6 border-t border-surface-200 dark:border-surface-800 flex items-center justify-between">
+              <span className="text-lg font-bold text-surface-700 dark:text-surface-300">
                 {t('portal.pricing.form.total')}
               </span>
-              <span className="text-2xl font-black text-slate-900 dark:text-white font-outfit">
+              <span className="text-2xl font-black text-surface-900 dark:text-white font-outfit">
                 {formatCurrency(totalAmount, watchedCurrency)}
               </span>
             </div>
@@ -580,13 +580,13 @@ export default function EditPricingForm() {
         <div className="space-y-6">
           {/* Currency & Validity */}
           <PortalCard className="p-6">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit mb-4">
+            <h3 className="text-lg font-bold text-surface-900 dark:text-white font-outfit mb-4">
               {t('portal.pricing.form.settings')}
             </h3>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                <label className="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-2">
                   {t('portal.pricing.form.currency')}
                 </label>
                 <select {...register('currency')} className="portal-input w-full">
@@ -599,13 +599,13 @@ export default function EditPricingForm() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                <label className="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-2">
                   {t('portal.pricing.form.validUntil')}
                 </label>
                 <div className="relative">
                   <CalendarIcon
                     size={16}
-                    className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400"
+                    className="absolute start-3 top-1/2 -translate-y-1/2 text-surface-400"
                   />
                   <input
                     {...register('validUntil')}
@@ -619,13 +619,13 @@ export default function EditPricingForm() {
 
           {/* Client Info */}
           <PortalCard className="p-6">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit mb-4">
+            <h3 className="text-lg font-bold text-surface-900 dark:text-white font-outfit mb-4">
               {t('portal.pricing.form.clientInfo')}
             </h3>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                <label className="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-2">
                   {t('portal.pricing.form.clientName')}
                 </label>
                 <input
@@ -637,7 +637,7 @@ export default function EditPricingForm() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                <label className="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-2">
                   {t('portal.pricing.form.clientEmail')}
                 </label>
                 <input
@@ -652,7 +652,7 @@ export default function EditPricingForm() {
 
           {/* Agency Notes */}
           <PortalCard className="p-6">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit mb-4">
+            <h3 className="text-lg font-bold text-surface-900 dark:text-white font-outfit mb-4">
               {t('portal.pricing.form.agencyNotes')}
             </h3>
             <textarea
@@ -707,7 +707,7 @@ export default function EditPricingForm() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="w-full h-10 text-sm font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+              className="w-full h-10 text-sm font-bold text-surface-500 hover:text-surface-700 dark:hover:text-surface-300 transition-colors"
             >
               {t('portal.common.cancel')}
             </button>
@@ -717,3 +717,4 @@ export default function EditPricingForm() {
     </div>
   );
 }
+

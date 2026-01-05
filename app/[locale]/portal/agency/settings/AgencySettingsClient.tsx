@@ -620,13 +620,13 @@ export default function AgencySettingsClient() {
                               setEditingService(service);
                               setIsServiceModalOpen(true);
                             }}
-                            className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all"
+                            className="p-2 rounded-lg text-surface-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all"
                           >
                             <Edit2 size={14} />
                           </button>
                           <button
                             onClick={() => handleDeleteService(service.id)}
-                            className="p-2 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-all"
+                            className="p-2 rounded-lg text-surface-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-all"
                           >
                             <Trash2 size={14} />
                           </button>
@@ -755,7 +755,7 @@ export default function AgencySettingsClient() {
                               className={cn(
                                 'inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border',
                                 member.status === 'inactive'
-                                  ? 'bg-slate-50 dark:bg-slate-900/20 text-slate-600 dark:text-slate-400 border-slate-100 dark:border-slate-800'
+                                  ? 'bg-surface-50 dark:bg-surface-900/20 text-surface-600 dark:text-surface-400 border-surface-100 dark:border-surface-800'
                                   : member.status === 'suspended'
                                     ? 'bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-900/30'
                                     : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/30'

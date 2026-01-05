@@ -338,7 +338,7 @@ export const CreateRequestForm = ({ orgId }: CreateRequestFormProps) => {
                 <span>{t('portal.files.uploadForm.uploading')}</span>
                 <span>{uploadProgress}%</span>
               </div>
-              <div className="h-1 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+              <div className="h-1 w-full bg-surface-100 dark:bg-surface-800 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-blue-500 transition-all duration-500"
                   style={{ width: `${uploadProgress}%` }}

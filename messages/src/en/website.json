@@ -1,11 +1,11 @@
 {
   "hero": {
-    "tag": "Shopify & WordPress experts, built to convert",
-    "titleLine1": "Websites & Stores",
-    "titleLine2": "Built to Convert",
-    "description": "No tech drama. We design and build fast, beautiful websites that guide visitors to buy, book, or reach out. And we keep improving after launch.",
-    "primaryCta": "Get a Free Consultation",
-    "secondaryCta": "See Our Work",
+    "tag": "Trusted by 50+ brands to boost conversions",
+    "titleLine1": "E-commerce Sites That",
+    "titleLine2": "Actually Convert",
+    "description": "Stop losing sales to slow, outdated stores. We build lightning-fast Shopify & WordPress sites that turn browsers into buyers—and keep optimizing after launch.",
+    "primaryCta": "Get Your Free Growth Roadmap →",
+    "secondaryCta": "See Real Results →",
     "scrollIndicator": "Scroll to explore",
     "intro": {
       "title": "Your E-commerce Development Partner",
@@ -17,12 +17,12 @@
     },
     "stats": {
       "clients": {
-        "value": "50+",
-        "label": "Projects Delivered"
+        "value": "$2.5M+",
+        "label": "Revenue Generated"
       },
       "dedication": {
-        "value": "100%",
-        "label": "Hands-on"
+        "value": "3.2x",
+        "label": "Avg. Conversion Lift"
       }
     },
     "platforms": {
@@ -30,10 +30,10 @@
     }
   },
   "heroForm": {
-    "title": "Get a Free Consultation",
-    "subtitle": "Share a few details about your project and we'll get back to you within 24 hours.",
-    "successTitle": "Thanks!",
-    "successText": "We'll be in touch within 24 hours.",
+    "title": "Get Your Custom Growth Plan",
+    "subtitle": "Tell us about your store. We'll send your personalized roadmap within 24 hours.",
+    "successTitle": "You're All Set!",
+    "successText": "Check your inbox—your growth roadmap is on its way.",
     "fields": {
       "name": "Name",
       "namePlaceholder": "Your name",
@@ -46,12 +46,12 @@
       "interestRequired": "Please select an option",
       "selectOption": "Select an option",
       "options": {
-        "shopify": "Shopify Store (new or growth)",
-        "wordpress": "WordPress Website (content sites, news, custom)",
-        "consultation": "Not sure yet, need advice"
+        "shopify": "Shopify Store (new or scaling)",
+        "wordpress": "WordPress Website (content, news, custom)",
+        "consultation": "Not sure yet—I need expert advice"
       }
     },
-    "submit": "Request a Free Consult",
+    "submit": "Send My Plan Request →",
     "submitting": "Sending...",
     "error": "Something went wrong. Please try again or contact us directly."
   },
@@ -93,20 +93,20 @@
       "subtitle": "What drives everything we do",
       "items": [
         {
-          "title": "Clear Communication",
-          "description": "You'll always know what's happening and why. Simple language, honest recommendations, and zero surprises."
+          "title": "Zero-BS Communication",
+          "description": "You'll always know what's happening and why. Plain language, honest advice, no surprises."
         },
         {
-          "title": "Design That Converts",
-          "description": "We sweat the details that move numbers: hierarchy, clarity, speed, and a buying journey that feels effortless."
+          "title": "Design That Pays for Itself",
+          "description": "We obsess over the details that move revenue: hierarchy, clarity, speed, and frictionless checkout."
         },
         {
-          "title": "Partners After Launch",
-          "description": "Launch isn't the finish line. We stay close for improvements, experiments, fixes, and new features."
+          "title": "We Don't Disappear After Launch",
+          "description": "Launch is day one, not the finish line. We stay close for optimization, testing, and new features."
         },
         {
-          "title": "Honesty First",
-          "description": "If you don't need something, we'll tell you. If something is out of scope, we'll plan it properly."
+          "title": "Brutal Honesty (Even When It Hurts)",
+          "description": "If you don't need something, we'll say so. If it's out of scope, we'll plan it properly."
         }
       ]
     },
@@ -120,46 +120,46 @@
       ]
     },
     "cta": {
-      "title": "Let's build something",
-      "titleSpan": "great",
-      "description": "Have an idea (or a mess of notes)? We'll help turn it into a site that sells.",
-      "button": "Get in Touch"
+      "title": "Ready to build something",
+      "titleSpan": "that actually sells?",
+      "description": "Have an idea (or a mess of notes)? We'll turn it into a revenue-generating machine.",
+      "button": "Let's Talk →"
     }
   },
   "shopify": {
     "hero": {
       "title": "Shopify Experts",
-      "subtitle": "Sell more. Stress less.",
-      "description": "Launch, rebuild, or optimize your Shopify store with a partner who cares about conversion and performance.",
-      "badge": "Shopify Growth Partners"
+      "subtitle": "Every day your store underperforms, you lose sales.",
+      "description": "We build, optimize, and scale Shopify stores that convert. Stop leaving money on the table.",
+      "badge": "Certified Shopify Partners"
     },
     "services": {
-      "title": "Our Shopify Services",
-      "subtitle": "From first build to ongoing growth",
+      "title": "How We Grow Your Store",
+      "subtitle": "From first sale to $1M+",
       "items": [
         {
           "title": "Strategy & Roadmap",
-          "description": "Clear priorities, the right plan, and the right apps based on your goals, not hype."
+          "description": "We map your fastest path to more sales. Clear priorities, right apps, zero bloat."
         },
         {
-          "title": "Store Design",
-          "description": "A premium look that fits your brand and makes it easy for customers to buy."
+          "title": "Conversion-First Design",
+          "description": "Premium look that builds trust and makes checkout feel effortless."
         },
         {
-          "title": "Custom Features",
-          "description": "Bundles, subscriptions, upsells, custom sections, automations. Built clean and maintainable."
+          "title": "Revenue-Boosting Features",
+          "description": "Bundles, upsells, subscriptions, automations—built to increase AOV."
         },
         {
-          "title": "Speed & SEO",
-          "description": "Faster load times, better Core Web Vitals, clean structure, and SEO fundamentals that compound."
+          "title": "Speed & SEO That Compounds",
+          "description": "Cut load times 50%+, climb Google rankings, watch organic traffic grow."
         },
         {
-          "title": "Ongoing Support",
-          "description": "Fixes, improvements, experiments, and new features without the agency chaos."
+          "title": "Ongoing Optimization",
+          "description": "Monthly improvements and A/B tests that keep your conversion rate climbing."
         },
         {
-          "title": "Store Tune-Up",
-          "description": "Already live? We'll audit your store and ship the highest-impact improvements first."
+          "title": "Quick-Win Audit",
+          "description": "Already live? We find the 20% of fixes that drive 80% of your results."
         }
       ]
     },
@@ -214,9 +214,9 @@
     },
     "cta": {
       "title": "Ready to",
-      "titleSpan": "grow sales?",
-      "description": "Tell us where you are today and we'll map the fastest path forward.",
-      "button": "Talk Shopify"
+      "titleSpan": "boost your sales?",
+      "description": "Tell us where you are today. We'll map your fastest path to more revenue.",
+      "button": "Get My Growth Plan →"
     },
     "faq": {
       "title": "Frequently Asked Questions",
@@ -267,10 +267,10 @@
   },
   "wordpress": {
     "hero": {
-      "title": "WordPress Made Easy",
-      "subtitle": "Fast, secure websites you can manage",
-      "description": "We design and develop WordPress sites that load quickly, rank well, and stay easy to update.",
-      "badge": "Web Development Experts"
+      "title": "WordPress That Works",
+      "subtitle": "Fast sites that rank, convert, and stay easy to update",
+      "description": "We build WordPress sites that load in under 2 seconds, rank on page one, and let you update anything without calling a developer.",
+      "badge": "WordPress Specialists"
     },
     "services": {
       "title": "Our WordPress Services",
@@ -348,9 +348,9 @@
     },
     "cta": {
       "title": "Need a website that",
-      "titleSpan": "just works?",
-      "description": "Beautiful, functional, and easy to manage. Let's make it happen.",
-      "button": "Let's Build It"
+      "titleSpan": "actually drives results?",
+      "description": "Beautiful, blazing fast, and dead simple to manage. Let's build it.",
+      "button": "Start My Project →"
     },
     "learnMore": {
       "title": "Complete Guide to E-commerce Migration: How to Move Your Store Without Losing Sales",
@@ -511,10 +511,10 @@
   },
   "contact": {
     "hero": {
-      "title": "Get in Touch",
-      "subtitle": "Have a project in mind? Let's make it real.",
-      "description": "Tell us what you're building and we'll reply within 24 hours.",
-      "badge": "Let's Talk"
+      "title": "Let's Grow Your Revenue",
+      "subtitle": "Have a project in mind? Let's make it profitable.",
+      "description": "Tell us what you're building. Your custom growth plan will be in your inbox within 24 hours.",
+      "badge": "Free Consultation"
     },
     "title": "Contact Information",
     "emailLabel": "Email",
@@ -551,7 +551,7 @@
       },
       "messageLabel": "Tell us about your project",
       "messagePlaceholder": "Share a few details about your project...",
-      "submitButton": "Send Message",
+      "submitButton": "Get My Free Quote →",
       "submitting": "Sending...",
       "privacy": "We'll only use your information to respond to your inquiry.",
       "successTitle": "Thank you!",
@@ -561,9 +561,9 @@
   },
   "pricing": {
     "hero": {
-      "title": "Simple, Transparent Pricing",
-      "subtitle": "No hidden fees. No surprises.",
-      "description": "Choose a package that fits your needs, or let's build something custom.",
+      "title": "Investment That Pays for Itself",
+      "subtitle": "Most clients see ROI within 60 days.",
+      "description": "Transparent pricing, no hidden fees. Choose your path to more revenue.",
       "badge": "Pricing"
     },
     "popularBadge": "Most Popular",
@@ -581,7 +581,7 @@
           "Basic SEO setup",
           "Training session"
         ],
-        "cta": "Get Started"
+        "cta": "Launch My Store →"
       },
       "growthUpgrade": {
         "name": "Growth Upgrade",
@@ -597,7 +597,7 @@
           "Mobile experience tuning",
           "30 days post-launch support"
         ],
-        "cta": "Upgrade Now"
+        "cta": "Boost My Store →"
       },
       "customBuild": {
         "name": "Custom Build",
@@ -612,7 +612,7 @@
           "SEO foundation",
           "60 days post-launch support"
         ],
-        "cta": "Let's Talk"
+        "cta": "Get My Custom Quote →"
       },
       "storeAudit": {
         "name": "Store Audit",
@@ -627,7 +627,7 @@
           "Prioritized action plan",
           "Follow-up Q&A call"
         ],
-        "cta": "Book an Audit"
+        "cta": "Book My Audit →"
       }
     },
     "included": {
@@ -673,17 +673,17 @@
     },
     "cta": {
       "title": "Not sure which package",
-      "titleSpan": "is right for you?",
-      "description": "Book a free 30-minute call. We'll learn about your project and recommend the best path forward.",
-      "button": "Book a Free Call"
+      "titleSpan": "will grow your revenue fastest?",
+      "description": "Book a free 30-minute strategy call. We'll analyze your store and recommend the highest-ROI path forward.",
+      "button": "Claim Your Free Strategy Call →"
     }
   },
   "maintenance": {
     "hero": {
-      "title": "Maintenance & Support",
-      "subtitle": "Keep your store running smooth",
-      "description": "Monthly plans that handle updates, monitoring, and improvements so you can focus on your business.",
-      "badge": "Support Plans"
+      "title": "Keep Your Revenue Machine Running",
+      "subtitle": "Monthly care that pays for itself",
+      "description": "Updates, monitoring, and optimizations handled—so you can focus on selling, not troubleshooting.",
+      "badge": "Maintenance Plans"
     },
     "plans": {
       "essential": {
@@ -698,7 +698,7 @@
           "Email support (48hr response)",
           "1 hour of support/fixes per month"
         ],
-        "cta": "Get Essential"
+        "cta": "Start Essential →"
       },
       "growth": {
         "name": "Growth Care",
@@ -713,7 +713,7 @@
           "Conversion monitoring",
           "Quarterly performance review"
         ],
-        "cta": "Get Growth"
+        "cta": "Start Growth →"
       },
       "premium": {
         "name": "Premium Care",
@@ -727,7 +727,7 @@
           "A/B testing and optimization",
           "Dedicated account manager"
         ],
-        "cta": "Get Premium"
+        "cta": "Start Premium →"
       }
     },
     "coverage": {
@@ -798,10 +798,10 @@
   },
   "work": {
     "hero": {
-      "title": "Our Work",
-      "subtitle": "Real projects. Real results.",
-      "description": "See how we've helped businesses launch, grow, and optimize their online presence.",
-      "badge": "Portfolio"
+      "title": "Real Results, Real Revenue",
+      "subtitle": "See the numbers behind our work",
+      "description": "3.2x average conversion lift. $2.5M+ in revenue generated. Here's how we did it.",
+      "badge": "Case Studies"
     },
     "filters": {
       "all": "All Projects",
@@ -809,10 +809,10 @@
       "wordpress": "WordPress"
     },
     "cta": {
-      "title": "Ready to join our",
-      "titleSpan": "success stories?",
-      "description": "Let's talk about your project and see how we can help.",
-      "button": "Start Your Project"
+      "title": "Ready to be our next",
+      "titleSpan": "success story?",
+      "description": "Let's talk about how we can grow your revenue.",
+      "button": "Get My Growth Plan →"
     },
     "viewProject": "View Project",
     "comingSoon": "Case studies coming soon. We're documenting our recent projects.",
@@ -851,8 +851,8 @@
     }
   },
   "testimonials": {
-    "title": "Success Stories",
-    "subtitle": "Real results from real clients",
+    "title": "$2.5M+ Revenue Generated",
+    "subtitle": "Here's what our clients say about working with us",
     "items": [
       {
         "quote": "CartShift Studio rebuilt our store experience end-to-end. Our conversion rate jumped from 1.2% to 3.8% in just two months. The site finally feels premium and matches our brand.",
@@ -936,10 +936,10 @@
     }
   },
   "ctaBanner": {
-    "titlePart1": "Ready to take your business to the",
-    "titlePart2": "next level?",
-    "description": "Bring the vision and we'll build the engine. Clear process, clean code, measurable results.",
-    "button": "Start the Conversation"
+    "titlePart1": "Every day you wait, your competitors",
+    "titlePart2": "steal your customers.",
+    "description": "Stop losing sales to slow, outdated stores. Let's build your revenue machine.",
+    "button": "Get Your Free Growth Roadmap →"
   },
   "footer": {
     "description": "Bold e-commerce builds for artists, makers, and brands. Shopify and WordPress websites that look great, load fast, and sell more.",

@@ -18,7 +18,7 @@ import {
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
-import { SkeletonTable } from '@/components/portal/ui/PortalSkeleton';
+import { SkeletonTable } from '@/components/portal/ui/Skeleton';
 import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
 import { getFilesByOrg, formatFileSize, deleteFile } from '@/lib/services/portal-files';
 import { FileAttachment } from '@/lib/types/portal';
@@ -126,10 +126,10 @@ export default function FilesClient() {
     return (
       <div className="py-20 flex flex-col items-center justify-center text-center space-y-4">
         <AlertCircle className="w-12 h-12 text-rose-500" />
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">
+        <h2 className="text-xl font-bold text-surface-900 dark:text-white font-outfit">
           {t('portal.files.error.title')}
         </h2>
-        <p className="text-slate-500 max-w-sm font-medium">{error}</p>
+        <p className="text-surface-500 max-w-sm font-medium">{error}</p>
         <PortalButton onClick={() => window.location.reload()}>
           {t('portal.files.error.retry')}
         </PortalButton>
@@ -141,10 +141,10 @@ export default function FilesClient() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit">
+          <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white font-outfit">
             {t('portal.files.title')}
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">
+          <p className="text-surface-500 dark:text-surface-400 mt-1 font-medium">
             {t('portal.files.subtitle')}
           </p>
         </div>
@@ -159,24 +159,24 @@ export default function FilesClient() {
 
       <PortalCard
         noPadding
-        className="border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden bg-white dark:bg-slate-950"
+        className="border-surface-200 dark:border-surface-800 shadow-sm overflow-hidden bg-white dark:bg-surface-950"
       >
-        <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/30 dark:bg-slate-900/30">
+        <div className="p-5 border-b border-surface-100 dark:border-surface-800 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-50/30 dark:bg-surface-900/30">
           <div className="relative w-full md:w-96">
             <Search
               size={18}
-              className="absolute start-4 top-1/2 -translate-y-1/2 text-slate-400"
+              className="absolute start-4 top-1/2 -translate-y-1/2 text-surface-400"
             />
             <input
               type="text"
               placeholder={t('portal.files.searchPlaceholder')}
-              className="w-full ps-11 pe-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-900 dark:text-white"
+              className="w-full ps-11 pe-4 py-2.5 rounded-2xl border border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-900 text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-surface-900 dark:text-white"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
           </div>
           <div className="flex items-center gap-3">
-            <div className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[10px] font-black text-slate-500 uppercase tracking-widest">
+            <div className="px-3 py-1.5 rounded-xl bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-800 text-[10px] font-black text-surface-500 uppercase tracking-widest">
               {files.length} {t('portal.files.totalFiles')}
             </div>
           </div>
@@ -186,40 +186,40 @@ export default function FilesClient() {
           {filteredFiles.length > 0 ? (
             <table className="w-full text-start">
               <thead>
-                <tr className="bg-slate-50/50 dark:bg-slate-900/50">
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit">
+                <tr className="bg-surface-50/50 dark:bg-surface-900/50">
+                  <th className="px-6 py-4 text-[10px] font-black text-surface-400 uppercase tracking-widest font-outfit">
                     {t('portal.files.table.identity')}
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit">
+                  <th className="px-6 py-4 text-[10px] font-black text-surface-400 uppercase tracking-widest font-outfit">
                     {t('portal.files.table.metadata')}
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit">
+                  <th className="px-6 py-4 text-[10px] font-black text-surface-400 uppercase tracking-widest font-outfit">
                     {t('portal.files.table.format')}
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit">
+                  <th className="px-6 py-4 text-[10px] font-black text-surface-400 uppercase tracking-widest font-outfit">
                     {t('portal.files.table.transmission')}
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest font-outfit text-end">
+                  <th className="px-6 py-4 text-[10px] font-black text-surface-400 uppercase tracking-widest font-outfit text-end">
                     {t('portal.files.table.actions')}
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
                 {filteredFiles.map(file => (
                   <tr
                     key={file.id}
-                    className="hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-all group"
+                    className="hover:bg-surface-50/50 dark:hover:bg-surface-900/30 transition-all group"
                   >
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-400 group-hover:text-blue-500 transition-all shadow-sm">
+                        <div className="w-12 h-12 rounded-2xl bg-surface-100 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 flex items-center justify-center text-surface-400 group-hover:text-blue-500 transition-all shadow-sm">
                           {getIcon(file.mimeType)}
                         </div>
                         <div className="flex flex-col min-w-0">
-                          <span className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate max-w-[200px] md:max-w-xs font-outfit leading-tight">
+                          <span className="font-bold text-surface-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate max-w-[200px] md:max-w-xs font-outfit leading-tight">
                             {file.originalName}
                           </span>
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter mt-1">
+                          <span className="text-[10px] font-bold text-surface-400 uppercase tracking-tighter mt-1">
                             {t('portal.files.table.addedBy')}{' '}
                             {file.uploadedByName || t('portal.files.table.system')}
                           </span>
@@ -227,20 +227,20 @@ export default function FilesClient() {
                       </div>
                     </td>
                     <td className="px-6 py-5">
-                      <span className="text-sm font-bold text-slate-600 dark:text-slate-300 font-outfit">
+                      <span className="text-sm font-bold text-surface-600 dark:text-surface-300 font-outfit">
                         {formatFileSize(file.size)}
                       </span>
                     </td>
                     <td className="px-6 py-5">
                       <PortalBadge
                         variant="gray"
-                        className="text-[9px] font-black border-slate-200 dark:border-slate-800"
+                        className="text-[9px] font-black border-surface-200 dark:border-surface-800"
                       >
                         {file.mimeType.split('/').pop()?.toUpperCase() || t('portal.common.file' as any)}
                       </PortalBadge>
                     </td>
                     <td className="px-6 py-5">
-                      <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tight">
+                      <span className="text-[11px] font-bold text-surface-500 dark:text-surface-400 uppercase tracking-tight">
                         {file.uploadedAt?.toDate
                           ? format(file.uploadedAt.toDate(), 'MMM d, yyyy', {
                               locale: getDateLocale(locale),
@@ -254,13 +254,13 @@ export default function FilesClient() {
                           href={file.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 border border-transparent hover:border-blue-100 dark:hover:border-blue-900/30"
+                          className="w-9 h-9 flex items-center justify-center text-surface-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 border border-transparent hover:border-blue-100 dark:hover:border-blue-900/30"
                           title="Download"
                         >
                           <Download size={16} />
                         </a>
                         <button
-                          className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-emerald-500 transition-colors rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-900/20 border border-transparent hover:border-emerald-100 dark:hover:border-emerald-900/30"
+                          className="w-9 h-9 flex items-center justify-center text-surface-400 hover:text-emerald-500 transition-colors rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-900/20 border border-transparent hover:border-emerald-100 dark:hover:border-emerald-900/30"
                           title="Share"
                         >
                           <Share2 size={16} />
@@ -268,7 +268,7 @@ export default function FilesClient() {
                         <button
                           onClick={() => handleDeleteFile(file.id, file.storagePath)}
                           disabled={deletingFile === file.id}
-                          className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors rounded-xl hover:bg-rose-50 dark:hover:bg-rose-900/20 border border-transparent hover:border-rose-100 dark:hover:border-rose-900/30 disabled:opacity-50"
+                          className="w-9 h-9 flex items-center justify-center text-surface-400 hover:text-rose-500 transition-colors rounded-xl hover:bg-rose-50 dark:hover:bg-rose-900/20 border border-transparent hover:border-rose-100 dark:hover:border-rose-900/30 disabled:opacity-50"
                           title={t('portal.files.actions.delete')}
                         >
                           {deletingFile === file.id ? (
@@ -296,7 +296,7 @@ export default function FilesClient() {
                     onClick={() => setShowUploadModal(true)}
                     variant="outline"
                     size="sm"
-                    className="mt-6 font-outfit border-slate-200 dark:border-slate-800"
+                    className="mt-6 font-outfit border-surface-200 dark:border-surface-800"
                   >
                     {t('portal.files.empty.uploadFirst')}
                   </PortalButton>

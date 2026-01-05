@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { usePathname } from '@/i18n/navigation';
 import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
-import { ChevronRight, Home } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { isRTLLocale } from '@/lib/locale-config';
@@ -134,24 +134,19 @@ export function Breadcrumbs({
       aria-label="Breadcrumb"
       className={cn('flex items-center gap-1.5 text-sm overflow-x-auto scrollbar-hide', className)}
     >
-      {/* Home link */}
-      <Link
-        href="/portal/"
-        className="flex items-center gap-1.5 text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 transition-colors flex-shrink-0 group"
-        aria-label={homeLabel || t('portal.breadcrumbs.home')}
-      >
-        <Home size={14} className="group-hover:scale-110 transition-transform" />
-      </Link>
+
 
       {breadcrumbs.map((item, index) => (
         <div key={index} className="flex items-center gap-1.5 flex-shrink-0">
-          <ChevronRight
-            size={14}
-            className={cn(
-              'text-surface-300 dark:text-surface-700 flex-shrink-0',
-              isRTL && 'rotate-180'
-            )}
-          />
+          {index > 0 && (
+            <ChevronRight
+              size={14}
+              className={cn(
+                'text-surface-300 dark:text-surface-700 flex-shrink-0',
+                isRTL && 'rotate-180'
+              )}
+            />
+          )}
           {item.label === '...' ? (
             <span className={breadcrumbItemVariants({ truncated: true })}>...</span>
           ) : item.isLast ? (

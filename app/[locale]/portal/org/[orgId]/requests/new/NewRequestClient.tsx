@@ -12,7 +12,7 @@ export default function NewRequestClient() {
   const t = useTranslations();
 
   if (!orgId || typeof orgId !== 'string') {
-    return <div className="text-center py-20 text-slate-500">Invalid organization ID</div>;
+    return <div className="text-center py-20 text-surface-500">Invalid organization ID</div>;
   }
 
   return (
@@ -20,15 +20,15 @@ export default function NewRequestClient() {
       <div className="flex items-center gap-4">
         <Link
           href={`/portal/org/${orgId}/requests/`}
-          className="p-2.5 border border-slate-200 dark:border-slate-800 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors shadow-sm bg-white dark:bg-slate-950"
+          className="p-2.5 border border-surface-200 dark:border-surface-800 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-900 transition-colors shadow-sm bg-white dark:bg-surface-950"
         >
-          <ArrowLeft size={20} className="text-slate-500" />
+          <ArrowLeft size={20} className="text-surface-500" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
             {t('portal.requests.new.title')}
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-surface-500 dark:text-surface-400 mt-1">
             {t('portal.requests.new.subtitle')}
           </p>
         </div>
@@ -36,7 +36,7 @@ export default function NewRequestClient() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <PortalCard className="border-slate-200 dark:border-slate-800 shadow-sm">
+          <PortalCard className="border-surface-200 dark:border-surface-800 shadow-sm">
             <CreateRequestForm orgId={orgId} />
           </PortalCard>
         </div>

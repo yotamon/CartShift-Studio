@@ -12,7 +12,7 @@ const columnIndicatorVariants = cva(
   {
     variants: {
       color: {
-        slate: "bg-slate-500",
+        slate: "bg-surface-500",
         blue: "bg-blue-500",
         amber: "bg-amber-500",
         emerald: "bg-emerald-500",

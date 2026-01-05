@@ -29,7 +29,7 @@ function ActivityIllustration() {
         cx="100"
         cy="100"
         r="80"
-        className="fill-slate-100 dark:fill-slate-800/50"
+        className="fill-surface-100 dark:fill-surface-800/50"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -41,7 +41,7 @@ function ActivityIllustration() {
         y1="50"
         x2="70"
         y2="150"
-        className="stroke-slate-200 dark:stroke-slate-700"
+        className="stroke-surface-200 dark:stroke-surface-700"
         strokeWidth="2"
         strokeLinecap="round"
         initial={{ pathLength: 0 }}
@@ -68,7 +68,7 @@ function ActivityIllustration() {
             width="55"
             height="20"
             rx="4"
-            className="fill-white dark:fill-slate-800"
+            className="fill-white dark:fill-surface-800"
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.6 + i * 0.15 }}
@@ -79,7 +79,7 @@ function ActivityIllustration() {
             width="40"
             height="3"
             rx="1.5"
-            className="fill-slate-200 dark:fill-slate-700"
+            className="fill-surface-200 dark:fill-surface-700"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3, delay: 0.7 + i * 0.15 }}
@@ -90,7 +90,7 @@ function ActivityIllustration() {
             width="25"
             height="2"
             rx="1"
-            className="fill-slate-100 dark:fill-slate-800"
+            className="fill-surface-100 dark:fill-surface-800"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3, delay: 0.75 + i * 0.15 }}
@@ -117,7 +117,7 @@ function RequestsIllustration() {
         cx="100"
         cy="100"
         r="80"
-        className="fill-slate-100 dark:fill-slate-800/50"
+        className="fill-surface-100 dark:fill-surface-800/50"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -130,7 +130,7 @@ function RequestsIllustration() {
         width="80"
         height="110"
         rx="8"
-        className="fill-white dark:fill-slate-800"
+        className="fill-white dark:fill-surface-800"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
@@ -158,7 +158,7 @@ function RequestsIllustration() {
           width={60 - i * 10}
           height="4"
           rx="2"
-          className="fill-slate-100 dark:fill-slate-700"
+          className="fill-surface-100 dark:fill-surface-700"
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: 0.6 + i * 0.1 }}
@@ -186,7 +186,7 @@ function FilesIllustration() {
         cx="100"
         cy="100"
         r="80"
-        className="fill-slate-100 dark:fill-slate-800/50"
+        className="fill-surface-100 dark:fill-surface-800/50"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}

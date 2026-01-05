@@ -20,7 +20,7 @@ export function ProgressRing({
   size = 120,
   strokeWidth = 10,
   className,
-  trackColor = 'stroke-slate-100 dark:stroke-slate-800',
+  trackColor = 'stroke-surface-100 dark:stroke-surface-800',
   progressColor = 'stroke-blue-500',
   showPercentage = true,
   label,
@@ -68,7 +68,7 @@ export function ProgressRing({
           <>
             {showPercentage && (
               <motion.span
-                className="text-2xl font-black text-slate-900 dark:text-white font-outfit"
+                className="text-2xl font-black text-surface-900 dark:text-white font-outfit"
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3, duration: 0.4 }}
@@ -77,7 +77,7 @@ export function ProgressRing({
               </motion.span>
             )}
             {label && (
-              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+              <span className="text-[9px] font-bold text-surface-400 uppercase tracking-widest mt-1">
                 {label}
               </span>
             )}
@@ -108,7 +108,7 @@ export function MiniProgressRing({
           r={radius}
           fill="none"
           strokeWidth={strokeWidth}
-          className="stroke-slate-100 dark:stroke-slate-800"
+          className="stroke-surface-100 dark:stroke-surface-800"
         />
         <motion.circle
           cx={size / 2}

@@ -886,7 +886,7 @@
     },
     "sidebar": {
       "title": "CartShift",
-      "subtitle": "Studio Portal",
+      "subtitle": "פורטל סטודיו",
       "collapse": "כווץ",
       "close": "סגור",
       "signOut": "התנתק",
@@ -909,7 +909,7 @@
       "authorizedMember": "חבר מורשה",
       "agencyPartner": "שותף סוכנות",
       "enterprise": "ארגון",
-      "level": "Level 2",
+      "level": "רמה 2",
       "notifications": "התראות",
       "noNotifications": "אין התראות",
       "markAllRead": "סמן הכל כנקרא"

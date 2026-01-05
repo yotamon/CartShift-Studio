@@ -280,7 +280,7 @@ export default function AgencyInboxClient() {
                 variant="outline"
                 size="sm"
                 onClick={clearSelection}
-                className="text-slate-600 dark:text-slate-300 min-h-[40px] touch-manipulation"
+                className="text-surface-600 dark:text-surface-300 min-h-[40px] touch-manipulation"
               >
                 <X size={14} className="me-1" />
                 {t('common.cancel')}
@@ -298,7 +298,7 @@ export default function AgencyInboxClient() {
           </div>
         )}
 
-        <div className="divide-y divide-slate-100 dark:divide-slate-800">
+        <div className="divide-y divide-surface-100 dark:divide-surface-800">
           {loading || (authLoading && !error) ? (
             <div className="py-20 flex flex-col items-center justify-center space-y-3">
               <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
@@ -363,7 +363,7 @@ export default function AgencyInboxClient() {
                               'w-5 h-5 rounded flex items-center justify-center transition-all border-2 touch-manipulation',
                               isSelected
                                 ? 'bg-blue-600 border-blue-600 text-white'
-                                : 'border-slate-300 dark:border-slate-600 hover:border-blue-400'
+                                : 'border-surface-300 dark:border-surface-600 hover:border-blue-400'
                             )}
                           >
                             {isSelected && <Check size={14} />}
@@ -505,37 +505,37 @@ export default function AgencyInboxClient() {
       {/* Pricing Modal */}
       {showPricingModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+          <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-surface-200 dark:border-surface-800 flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white font-outfit">
+                <h2 className="text-xl font-bold text-surface-900 dark:text-white font-outfit">
                   {t('requests.createPricingOffer')}
                 </h2>
-                <p className="text-sm text-slate-500 mt-1">
+                <p className="text-sm text-surface-500 mt-1">
                   {selectedRequests.length} {t('requests.requestsIncluded')}
                 </p>
               </div>
               <button
                 onClick={clearSelection}
-                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
+                className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-xl transition-colors"
               >
-                <X size={20} className="text-slate-500" />
+                <X size={20} className="text-surface-500" />
               </button>
             </div>
 
             <div className="p-6 space-y-6">
               {/* Selected Requests Preview */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">
+                <label className="block text-xs font-bold text-surface-500 mb-2 uppercase tracking-widest">
                   {t('requests.selectedRequests')}
                 </label>
                 <div className="space-y-2 max-h-32 overflow-y-auto">
                   {selectedRequests.map(req => (
                     <div
                       key={req.id}
-                      className="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-800 rounded-lg"
+                      className="flex items-center gap-2 p-2 bg-surface-50 dark:bg-surface-800 rounded-lg"
                     >
-                      <span className="font-medium text-slate-900 dark:text-white text-sm truncate">
+                      <span className="font-medium text-surface-900 dark:text-white text-sm truncate">
                         {req.title}
                       </span>
                       <PortalBadge variant="gray" className="text-[9px] ms-auto shrink-0">
@@ -548,7 +548,7 @@ export default function AgencyInboxClient() {
 
               {/* Pricing Title */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">
+                <label className="block text-xs font-bold text-surface-500 mb-2 uppercase tracking-widest">
                   {t('pricing.form.titleLabel')} *
                 </label>
                 <input
@@ -562,7 +562,7 @@ export default function AgencyInboxClient() {
 
               {/* Currency */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">
+                <label className="block text-xs font-bold text-surface-500 mb-2 uppercase tracking-widest">
                   {t('pricing.form.currency')}
                 </label>
                 <select
@@ -580,14 +580,14 @@ export default function AgencyInboxClient() {
 
               {/* Line Items */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">
+                <label className="block text-xs font-bold text-surface-500 mb-2 uppercase tracking-widest">
                   {t('pricing.form.lineItems')} *
                 </label>
                 <div className="space-y-3">
                   {pricingLineItems.map(item => (
                     <div
                       key={item.id}
-                      className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl space-y-2"
+                      className="p-3 bg-surface-50 dark:bg-surface-800 rounded-xl space-y-2"
                     >
                       <input
                         type="text"
@@ -607,9 +607,9 @@ export default function AgencyInboxClient() {
                           }
                           className="portal-input h-9 text-sm w-20"
                         />
-                        <span className="text-slate-400">×</span>
+                        <span className="text-surface-400">×</span>
                         <div className="relative flex-1">
-                          <span className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
+                          <span className="absolute start-3 top-1/2 -translate-y-1/2 text-surface-400 text-sm">
                             $
                           </span>
                           <input
@@ -638,7 +638,7 @@ export default function AgencyInboxClient() {
                         )}
                       </div>
                       {item.quantity > 0 && item.unitPrice > 0 && (
-                        <div className="text-end text-xs font-bold text-slate-500">
+                        <div className="text-end text-xs font-bold text-surface-500">
                           = {formatCurrency(item.unitPrice * item.quantity, pricingCurrency)}
                         </div>
                       )}
@@ -648,7 +648,7 @@ export default function AgencyInboxClient() {
                 <button
                   type="button"
                   onClick={addLineItem}
-                  className="mt-3 w-full p-2 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl text-slate-500 hover:border-blue-400 hover:text-blue-600 transition-colors text-sm font-medium"
+                  className="mt-3 w-full p-2 border-2 border-dashed border-surface-200 dark:border-surface-700 rounded-xl text-surface-500 hover:border-blue-400 hover:text-blue-600 transition-colors text-sm font-medium"
                 >
                   <Plus size={16} className="inline me-1" />
                   {t('pricing.form.addItem')}
@@ -657,7 +657,7 @@ export default function AgencyInboxClient() {
 
               {/* Total */}
               <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl flex items-center justify-between">
-                <span className="text-sm font-bold text-slate-600 dark:text-slate-300">
+                <span className="text-sm font-bold text-surface-600 dark:text-surface-300">
                   {t('pricing.form.total')}
                 </span>
                 <span className="text-2xl font-black text-green-600 font-outfit">
@@ -666,7 +666,7 @@ export default function AgencyInboxClient() {
               </div>
             </div>
 
-            <div className="p-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end gap-3">
+            <div className="p-6 border-t border-surface-200 dark:border-surface-800 flex items-center justify-end gap-3">
               <PortalButton variant="outline" onClick={clearSelection}>
                 {t('common.cancel')}
               </PortalButton>

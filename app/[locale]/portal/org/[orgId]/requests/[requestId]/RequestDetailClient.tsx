@@ -22,9 +22,9 @@ import {
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
-import { Breadcrumb } from '@/components/portal/ui/Breadcrumb';
+
 import { PinButton } from '@/components/portal/PinnedRequests';
-import { PortalSkeleton } from '@/components/portal/ui/PortalSkeleton';
+import { PortalSkeleton } from '@/components/portal/ui/Skeleton';
 import { RequestMilestones } from '@/components/portal/requests/RequestMilestones';
 import { RequestAttachments } from '@/components/portal/requests/RequestAttachments';
 import { RequestDiscussion } from '@/components/portal/requests/RequestDiscussion';
@@ -223,10 +223,7 @@ export default function RequestDetailClient() {
     return <ErrorState error={error} orgId={orgId} t={t} />;
   }
 
-  const breadcrumbItems = [
-    { label: t('requests.title'), href: `/portal/org/${orgId}/requests/` },
-    { label: request.title },
-  ];
+
 
   const handlePricingSubmit = async () => {
     const success = await handleAddPricing(pricingLineItems, pricingCurrency);
@@ -252,7 +249,7 @@ export default function RequestDetailClient() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <Breadcrumb items={breadcrumbItems} />
+
 
       {/* Header */}
       <motion.div layoutId={`request-container-${request.id}`} className="flex flex-col md:flex-row md:items-center gap-6 p-4 rounded-xl">
@@ -497,7 +494,7 @@ export default function RequestDetailClient() {
                           <span className="text-surface-400 text-sm">×</span>
                           <div className="flex-1">
                             <div className="relative">
-                              <span className="absolute start-3 top-1/2 -transurface-y-1/2 text-surface-400 text-sm">
+                              <span className="absolute start-3 top-1/2 -translate-y-1/2 text-surface-400 text-sm">
                                 {CURRENCY_CONFIG[pricingCurrency].symbol}
                               </span>
                               <input

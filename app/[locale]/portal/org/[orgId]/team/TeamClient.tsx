@@ -20,7 +20,7 @@ import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
 import { PortalAvatar } from '@/components/portal/ui/PortalAvatar';
 import { Dropdown } from '@/components/ui/Dropdown';
-import { SkeletonMemberCard, PortalSkeleton } from '@/components/portal/ui/PortalSkeleton';
+import { SkeletonMemberCard, PortalSkeleton } from '@/components/portal/ui/Skeleton';
 import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
 import {
   cancelInvite,
@@ -223,19 +223,19 @@ export default function TeamClient() {
         </div>
 
         <div className="space-y-6">
-          <h3 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest px-1">
+          <h3 className="text-[10px] font-black text-surface-400 dark:text-surface-500 uppercase tracking-widest px-1">
             {t('portal.team.pending')}
           </h3>
-          <PortalCard className="space-y-6 border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-950">
+          <PortalCard className="space-y-6 border-surface-200 dark:border-surface-800 shadow-sm bg-white dark:bg-surface-950">
             {invites.length > 0 ? (
               invites.map(invite => (
                 <div key={invite.id} className="space-y-4">
                   <div className="flex items-start justify-between">
                     <div className="space-y-1">
-                      <p className="text-sm font-bold text-slate-900 dark:text-white font-outfit">
+                      <p className="text-sm font-bold text-surface-900 dark:text-white font-outfit">
                         {invite.email}
                       </p>
-                      <p className="text-[9px] font-black text-slate-400 flex items-center gap-1.5 uppercase tracking-widest">
+                      <p className="text-[9px] font-black text-surface-400 flex items-center gap-1.5 uppercase tracking-widest">
                         <Shield size={12} className="text-blue-500" /> {invite.role}
                       </p>
                     </div>
@@ -251,9 +251,9 @@ export default function TeamClient() {
                       )}
                     </button>
                   </div>
-                  <div className="flex items-center justify-between text-[10px] font-bold text-slate-400">
+                  <div className="flex items-center justify-between text-[10px] font-bold text-surface-400">
                     <span className="flex items-center gap-1.5 uppercase tracking-tighter">
-                      <Clock size={12} className="text-slate-300" />
+                      <Clock size={12} className="text-surface-300" />
                       {invite.createdAt?.toDate
                         ? `${t('portal.team.sent')} ${format(invite.createdAt.toDate(), 'MMM d', { locale: getDateLocale(locale) })}`
                         : t('portal.common.recently')}
@@ -278,7 +278,7 @@ export default function TeamClient() {
                       )}
                     </button>
                   </div>
-                  <div className="h-px bg-slate-100 dark:bg-slate-800 last:hidden" />
+                  <div className="h-px bg-surface-100 dark:bg-surface-800 last:hidden" />
                 </div>
               ))
             ) : (
@@ -291,7 +291,7 @@ export default function TeamClient() {
               />
             )}
 
-            <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+            <div className="pt-4 border-t border-surface-100 dark:border-surface-800">
               <div className="p-4 bg-blue-50/50 dark:bg-blue-900/10 rounded-2xl border border-blue-100/50 dark:border-blue-900/20 mb-6">
                 <p className="text-[11px] text-blue-600 dark:text-blue-400 leading-relaxed font-bold uppercase tracking-tight">
                   {t('portal.team.guideNote')}
@@ -300,14 +300,14 @@ export default function TeamClient() {
               <PortalButton
                 variant="outline"
                 size="sm"
-                className="w-full h-11 text-xs font-bold uppercase tracking-widest border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 font-outfit"
+                className="w-full h-11 text-xs font-bold uppercase tracking-widest border-surface-200 dark:border-surface-800 text-surface-600 dark:text-surface-400 hover:bg-surface-50 dark:hover:bg-surface-900 font-outfit"
               >
                 {t('portal.team.workspaceGuide')}
               </PortalButton>
             </div>
           </PortalCard>
 
-          <PortalCard className="bg-slate-900 border-none shadow-2xl relative overflow-hidden group">
+          <PortalCard className="bg-surface-900 border-none shadow-2xl relative overflow-hidden group">
             <div className="absolute -end-8 -bottom-8 w-32 h-32 bg-blue-600/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000" />
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
@@ -316,14 +316,14 @@ export default function TeamClient() {
                 </h4>
                 <ShieldAlert size={16} className="text-amber-500" />
               </div>
-              <div className="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden mb-4 p-0.5">
+              <div className="w-full bg-surface-800 h-2.5 rounded-full overflow-hidden mb-4 p-0.5">
                 <div
                   className="bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)] transition-all duration-1000"
                   style={{ width: `${(members.length / 10) * 100}%` }}
                 />
               </div>
               <div className="flex items-center justify-between">
-                <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">
+                <p className="text-[10px] text-surface-400 font-black uppercase tracking-widest">
                   <span className="text-white">{members.length}</span> / 10{' '}
                   {t('portal.team.activeSeats')}
                 </p>

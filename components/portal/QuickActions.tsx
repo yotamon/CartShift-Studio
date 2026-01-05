@@ -34,7 +34,6 @@ const quickActionIconVariants = cva(
 interface Action {
   icon: LucideIcon;
   label: string;
-  description: string;
   href: string;
   intent: VariantProps<typeof quickActionIconVariants>['intent'];
 }
@@ -49,21 +48,18 @@ export function QuickActions() {
     {
       icon: Plus,
       label: t('portal.quickActions.newRequest'),
-      description: t('portal.quickActions.newRequestDesc' as never) || 'Submit a new design request',
       href: `/portal/org/${orgId}/requests/new/`,
       intent: 'blue',
     },
     {
       icon: Calendar,
       label: t('portal.quickActions.schedule'),
-      description: t('portal.quickActions.scheduleDesc' as never) || 'Book a consultation call',
       href: `/portal/org/${orgId}/consultations?action=schedule`,
       intent: 'purple',
     },
     {
       icon: Upload,
       label: t('portal.quickActions.upload'),
-      description: t('portal.quickActions.uploadDesc' as never) || 'Share files and assets',
       href: `/portal/org/${orgId}/requests?action=upload`,
       intent: 'emerald',
     }
@@ -87,7 +83,7 @@ export function QuickActions() {
         </div>
       </div>
 
-      <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-3">
         {actions.map((action, idx) => (
           <Link key={idx} href={action.href} className="group">
             <PortalCard
@@ -96,22 +92,19 @@ export function QuickActions() {
               className="h-full border-glow"
               noPadding
             >
-              <div className="p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className={cn(quickActionIconVariants({ intent: action.intent }))}>
-                    <action.icon size={20} className="stroke-[2.5]" />
-                  </div>
-                  <ArrowRight
-                    size={16}
-                    className="text-surface-300 dark:text-surface-600 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0 mt-1"
-                  />
+              <div className="p-3 flex items-center gap-3">
+                <div className={cn(quickActionIconVariants({ intent: action.intent }), "w-10 h-10 rounded-lg shrink-0")}>
+                  <action.icon size={18} className="stroke-[2.5]" />
                 </div>
-                <span className="font-bold text-sm text-surface-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors block">
-                  {action.label}
-                </span>
-                <span className="text-xs text-surface-500 dark:text-surface-400 mt-1 block">
-                  {action.description}
-                </span>
+                <div className="min-w-0 flex-1">
+                  <span className="font-bold text-sm text-surface-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors block truncate">
+                    {action.label}
+                  </span>
+                </div>
+                <ArrowRight
+                  size={14}
+                  className="text-surface-300 dark:text-surface-600 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0 shrink-0"
+                />
               </div>
             </PortalCard>
           </Link>

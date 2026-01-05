@@ -603,6 +603,24 @@ export const PortalShell = ({
     );
   }
 
+  const showBreadcrumbs = (() => {
+    if (!pathname) return false;
+    const normalizePath = (p: string) => (p.endsWith('/') ? p.slice(0, -1) : p);
+    const currentPath = normalizePath(pathname);
+
+    const mainPagePaths = new Set(
+      navGroups.flatMap(group =>
+        group.items.map(item => normalizePath(item.href))
+      )
+    );
+
+    if (effectiveOrgId) {
+      mainPagePaths.add(normalizePath(`/portal/org/${effectiveOrgId}`));
+    }
+
+    return !mainPagePaths.has(currentPath);
+  })();
+
   const portalElements = mounted
     ? createPortal(
         <AnimatePresence>
@@ -957,8 +975,8 @@ export const PortalShell = ({
 
         {/* Page Content Container */}
         <main id="main-content" className="portal-content">
-          {/* Breadcrumbs - Skip for request detail pages that have their own breadcrumbs */}
-          {!pathname?.includes('/requests/') && (
+          {/* Breadcrumbs - Show only on subpages */}
+          {showBreadcrumbs && (
             <div>
               <Breadcrumbs />
             </div>

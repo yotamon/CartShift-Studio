@@ -21,7 +21,7 @@ import {
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
-import { SkeletonTable } from '@/components/portal/ui/PortalSkeleton';
+import { SkeletonTable } from '@/components/portal/ui/Skeleton';
 import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
 import { Dropdown } from '@/components/ui/Dropdown';
 import { createPricingRequest, sendPricingRequest } from '@/lib/services/pricing-requests';
@@ -235,7 +235,7 @@ export default function RequestsClient() {
         <div className="p-4 border-b border-surface-100 dark:border-surface-800 flex flex-col lg:flex-row lg:items-center gap-4 bg-surface-50/50 dark:bg-surface-900/50 min-w-0">
           <div className="relative w-full lg:w-96 min-w-0 flex-shrink-0">
             <Search
-              className="absolute start-3 top-1/2 -transurface-y-1/2 text-surface-400"
+              className="absolute start-3 top-1/2 -translate-y-1/2 text-surface-400"
               size={16}
             />
             <input
@@ -784,7 +784,7 @@ export default function RequestsClient() {
                         />
                         <span className="text-surface-400">×</span>
                         <div className="relative flex-1">
-                          <span className="absolute start-3 top-1/2 -transurface-y-1/2 text-surface-400 text-sm">
+                          <span className="absolute start-3 top-1/2 -translate-y-1/2 text-surface-400 text-sm">
                             $
                           </span>
                           <input

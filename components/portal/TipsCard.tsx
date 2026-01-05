@@ -53,7 +53,7 @@ export function TipsCard() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
-                className="text-sm text-slate-700 dark:text-slate-300 font-medium leading-relaxed"
+                className="text-sm text-surface-700 dark:text-surface-300 font-medium leading-relaxed"
               >
                 {tips[currentTipIndex]}
               </motion.p>
@@ -70,7 +70,7 @@ export function TipsCard() {
                   className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
                     index === currentTipIndex
                       ? 'bg-blue-600 dark:bg-blue-400 w-4'
-                      : 'bg-slate-300 dark:bg-slate-600 hover:bg-blue-400 dark:hover:bg-blue-500'
+                      : 'bg-surface-300 dark:bg-surface-600 hover:bg-blue-400 dark:hover:bg-blue-500'
                   }`}
                   aria-label={`Tip ${index + 1}`}
                 />
@@ -82,14 +82,14 @@ export function TipsCard() {
                 className="p-1 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
                 aria-label="Previous tip"
               >
-                <PrevIcon className="w-4 h-4 text-slate-400" />
+                <PrevIcon className="w-4 h-4 text-surface-400" />
               </button>
               <button
                 onClick={goToNextTip}
                 className="p-1 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
                 aria-label="Next tip"
               >
-                <NextIcon className="w-4 h-4 text-slate-400" />
+                <NextIcon className="w-4 h-4 text-surface-400" />
               </button>
             </div>
           </div>

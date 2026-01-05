@@ -74,7 +74,7 @@ export default function PricingDetailClient() {
     return (
       <div className="py-20 flex flex-col items-center justify-center space-y-3">
         <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-        <p className="text-sm font-bold text-slate-400 font-outfit">
+        <p className="text-sm font-bold text-surface-400 font-outfit">
           {t('portal.common.loading' as any)}
         </p>
       </div>
@@ -85,10 +85,10 @@ export default function PricingDetailClient() {
     return (
       <div className="py-20 flex flex-col items-center justify-center text-center space-y-4">
         <AlertCircle className="w-12 h-12 text-rose-500" />
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+        <h2 className="text-xl font-bold text-surface-900 dark:text-white">
           {t('portal.common.error' as any)}
         </h2>
-        <p className="text-slate-500 dark:text-slate-400 max-w-sm">{error}</p>
+        <p className="text-surface-500 dark:text-surface-400 max-w-sm">{error}</p>
         <Link href={`/portal/org/${orgId}/pricing/`}>
           <PortalButton>{t('portal.common.back' as any)}</PortalButton>
         </Link>
@@ -124,11 +124,11 @@ export default function PricingDetailClient() {
         <PortalCard className="p-6">
           <div className="flex items-start justify-between mb-6">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white font-outfit mb-2">
+              <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white font-outfit mb-2">
                 {pricingRequest.title}
               </h1>
               {pricingRequest.description && (
-                <p className="text-slate-600 dark:text-slate-400">{pricingRequest.description}</p>
+                <p className="text-surface-600 dark:text-surface-400">{pricingRequest.description}</p>
               )}
             </div>
             <PortalBadge variant={statusColor}>{statusConfig.label}</PortalBadge>
@@ -137,15 +137,15 @@ export default function PricingDetailClient() {
           <div className="space-y-4 mb-6">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">
+                <p className="text-xs font-black text-surface-400 uppercase tracking-widest mb-1">
                   {t('portal.pricing.form.total' as any)}
                 </p>
-                <p className="text-2xl font-black text-slate-900 dark:text-white font-outfit">
+                <p className="text-2xl font-black text-surface-900 dark:text-white font-outfit">
                   {formatCurrency(pricingRequest.totalAmount, pricingRequest.currency)}
                 </p>
               </div>
               <div>
-                <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">
+                <p className="text-xs font-black text-surface-400 uppercase tracking-widest mb-1">
                   {t('portal.common.status' as any)}
                 </p>
                 <PortalBadge variant={statusColor}>{statusConfig.label}</PortalBadge>
@@ -155,30 +155,30 @@ export default function PricingDetailClient() {
 
           {pricingRequest.lineItems && pricingRequest.lineItems.length > 0 && (
             <div className="mb-6">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit mb-4">
+              <h3 className="text-lg font-bold text-surface-900 dark:text-white font-outfit mb-4">
                 {t('portal.pricing.form.lineItems' as never)}
               </h3>
               <div className="space-y-2">
                 {pricingRequest.lineItems.map(item => (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-surface-50 dark:bg-surface-900 rounded-lg"
                   >
                     <div className="flex-1">
-                      <p className="font-medium text-slate-900 dark:text-white">
+                      <p className="font-medium text-surface-900 dark:text-white">
                         {item.description}
                       </p>
                       {item.notes && (
-                        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                        <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
                           {item.notes}
                         </p>
                       )}
                     </div>
                     <div className="text-end ms-4">
-                      <p className="font-bold text-slate-900 dark:text-white">
+                      <p className="font-bold text-surface-900 dark:text-white">
                         {formatCurrency(item.unitPrice * item.quantity, pricingRequest.currency)}
                       </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                      <p className="text-xs text-surface-500 dark:text-surface-400">
                         {item.quantity} × {formatCurrency(item.unitPrice, pricingRequest.currency)}
                       </p>
                     </div>
@@ -191,7 +191,7 @@ export default function PricingDetailClient() {
           {/* Linked Requests Section */}
           {linkedRequests.length > 0 && (
             <div className="mb-6">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white font-outfit mb-4">
+              <h3 className="text-lg font-bold text-surface-900 dark:text-white font-outfit mb-4">
                 <FileText className="inline w-5 h-5 me-2" />
                 {t('portal.pricing.includedRequests')}
               </h3>
@@ -201,11 +201,11 @@ export default function PricingDetailClient() {
                     <Link
                       key={request.id}
                       href={`/portal/org/${orgId}/requests/${request.id}`}
-                      className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+                      className="flex items-center justify-between p-4 bg-surface-50 dark:bg-surface-900 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors group"
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <h4 className="font-bold text-slate-900 dark:text-white truncate">
+                          <h4 className="font-bold text-surface-900 dark:text-white truncate">
                             {request.title}
                           </h4>
                           <PortalBadge variant="gray" className="text-xs">
@@ -219,12 +219,12 @@ export default function PricingDetailClient() {
                           </PortalBadge>
                         </div>
                         {request.description && (
-                          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">
+                          <p className="text-sm text-surface-500 dark:text-surface-400 mt-1 line-clamp-1">
                             {request.description}
                           </p>
                         )}
                       </div>
-                      <ExternalLink className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity ms-2" />
+                      <ExternalLink className="w-4 h-4 text-surface-400 opacity-0 group-hover:opacity-100 transition-opacity ms-2" />
                     </Link>
                   );
                 })}
@@ -233,7 +233,7 @@ export default function PricingDetailClient() {
           )}
 
           {!isAgency && pricingRequest.status === 'ACCEPTED' && (
-            <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+            <div className="mt-6 pt-6 border-t border-surface-200 dark:border-surface-800">
               <PayPalCheckoutButton
                 pricingRequest={pricingRequest}
                 onSuccess={result => {

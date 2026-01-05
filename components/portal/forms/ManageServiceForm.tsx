@@ -64,21 +64,21 @@ export function ManageServiceForm({ service, onSuccess, onCancel }: ManageServic
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-surface-900/60 backdrop-blur-sm animate-in fade-in duration-300">
       <div className="w-full max-w-lg animate-in zoom-in-95 duration-300">
-        <PortalCard className="relative p-8 shadow-2xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+        <PortalCard className="relative p-8 shadow-2xl border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-950">
           <button
             onClick={onCancel}
-            className="absolute end-6 top-6 p-2 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all font-outfit"
+            className="absolute end-6 top-6 p-2 rounded-xl text-surface-400 hover:text-surface-900 dark:hover:text-white hover:bg-surface-100 dark:hover:bg-surface-800 transition-all font-outfit"
           >
             <X size={20} />
           </button>
 
           <header className="mb-8">
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-outfit">
+            <h2 className="text-2xl font-bold text-surface-900 dark:text-white font-outfit">
               {service ? t('editTitle') : t('addTitle')}
             </h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium font-outfit">
+            <p className="text-sm text-surface-500 dark:text-surface-400 mt-1 font-medium font-outfit">
               {service ? t('editSubtitle') : t('addSubtitle')}
             </p>
           </header>
@@ -110,13 +110,13 @@ export function ManageServiceForm({ service, onSuccess, onCancel }: ManageServic
                 required
               />
               <div>
-                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2.5 font-outfit">
+                <label className="block text-xs font-black text-surface-400 uppercase tracking-widest mb-2.5 font-outfit">
                   {t('fields.currency')}
                 </label>
                 <select
                   value={formData.currency}
                   onChange={e => setFormData({ ...formData, currency: e.target.value as Currency })}
-                  className="w-full h-11 px-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-950 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-900 dark:text-white text-sm font-bold font-outfit"
+                  className="w-full h-11 px-4 rounded-xl bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 focus:bg-white dark:focus:bg-surface-950 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-surface-900 dark:text-white text-sm font-bold font-outfit"
                 >
                   {Object.entries(CURRENCY_CONFIG).map(([code, config]) => (
                     <option key={code} value={code}>
@@ -135,14 +135,14 @@ export function ManageServiceForm({ service, onSuccess, onCancel }: ManageServic
             />
 
             <div>
-              <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2.5 font-outfit">
+              <label className="block text-xs font-black text-surface-400 uppercase tracking-widest mb-2.5 font-outfit">
                 {t('fields.description')}
               </label>
               <textarea
                 value={formData.description}
                 onChange={e => setFormData({ ...formData, description: e.target.value })}
                 rows={3}
-                className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:bg-white dark:focus:bg-slate-950 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none text-slate-900 dark:text-white text-sm font-medium leading-relaxed font-outfit"
+                className="w-full px-4 py-3 rounded-2xl bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 focus:bg-white dark:focus:bg-surface-950 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none text-surface-900 dark:text-white text-sm font-medium leading-relaxed font-outfit"
                 placeholder={t('fields.descriptionPlaceholder')}
               />
             </div>
@@ -153,11 +153,11 @@ export function ManageServiceForm({ service, onSuccess, onCancel }: ManageServic
                 id="isActive"
                 checked={formData.isActive}
                 onChange={e => setFormData({ ...formData, isActive: e.target.checked })}
-                className="w-5 h-5 rounded-lg border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                className="w-5 h-5 rounded-lg border-surface-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
               />
               <label
                 htmlFor="isActive"
-                className="text-sm font-bold text-slate-700 dark:text-slate-300 font-outfit cursor-pointer"
+                className="text-sm font-bold text-surface-700 dark:text-surface-300 font-outfit cursor-pointer"
               >
                 {t('fields.active')}
               </label>

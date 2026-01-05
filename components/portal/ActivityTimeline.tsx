@@ -85,8 +85,8 @@ const activityIconVariants = cva(
         DECLINED_QUOTE: 'text-rose-600 dark:text-rose-400 bg-rose-100 dark:bg-rose-900/30',
         STARTED_WORK: 'text-blue-500 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20',
         PAID_REQUEST: 'text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30',
-        ADDED_COMMENT: 'text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-900/30',
-        DEFAULT: 'text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-900/30',
+        ADDED_COMMENT: 'text-surface-600 dark:text-surface-400 bg-surface-100 dark:bg-surface-900/30',
+        DEFAULT: 'text-surface-400 dark:text-surface-500 bg-surface-100 dark:bg-surface-900/30',
       },
     },
     defaultVariants: {

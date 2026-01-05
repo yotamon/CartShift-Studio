@@ -9,7 +9,7 @@ import { useTranslations, NextIntlClientProvider } from 'next-intl';
 import { ClientAnalytics } from '@/components/portal/ClientAnalytics';
 import { QuickActions } from '@/components/portal/QuickActions';
 import { TipsCard } from '@/components/portal/TipsCard';
-import { DashboardSkeleton } from '@/components/portal/DashboardSkeleton';
+import { DashboardSkeleton } from '@/components/portal/skeletons';
 import { PinnedRequests } from '@/components/portal/PinnedRequests';
 import { motion } from '@/lib/motion';
 import { useParams } from 'next/navigation';

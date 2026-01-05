@@ -210,4 +210,49 @@ export function SkeletonStats({ className }: { className?: string }) {
   );
 }
 
+// Portal-specific skeleton components
+export function SkeletonRequestRow() {
+  return (
+    <div className="flex items-center gap-4 p-4 border-b border-surface-50 dark:border-surface-900 last:border-b-0">
+      <Skeleton className="w-16 h-5" />
+      <div className="flex-1 space-y-2">
+        <Skeleton className="h-5 w-3/4" />
+        <Skeleton className="h-3 w-1/2" />
+      </div>
+      <Skeleton className="w-20 h-6 rounded-full" />
+      <Skeleton className="w-24 h-4" />
+    </div>
+  );
+}
+
+export function SkeletonMemberCard() {
+  return (
+    <div className="flex items-center gap-4 p-4 border border-surface-100 dark:border-surface-800 rounded-2xl">
+      <SkeletonAvatar />
+      <div className="flex-1 space-y-2">
+        <Skeleton className="h-5 w-32" />
+        <Skeleton className="h-3 w-48" />
+      </div>
+      <Skeleton className="w-16 h-6 rounded-full" />
+    </div>
+  );
+}
+
+export function SkeletonFileRow() {
+  return (
+    <div className="flex items-center gap-4 p-4 border-b border-surface-50 dark:border-surface-900 last:border-b-0">
+      <Skeleton className="w-10 h-10 rounded-lg" />
+      <div className="flex-1 space-y-2">
+        <Skeleton className="h-5 w-48" />
+        <Skeleton className="h-3 w-24" />
+      </div>
+      <Skeleton className="w-16 h-4" />
+      <Skeleton className="w-8 h-8 rounded-lg" />
+    </div>
+  );
+}
+
+// Backward compatibility alias
+export { Skeleton as PortalSkeleton };
+
 export { skeletonVariants, avatarSizeVariants };
