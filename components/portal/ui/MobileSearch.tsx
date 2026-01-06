@@ -89,15 +89,15 @@ export function MobileSearch({ isOpen, onClose, className }: MobileSearchProps) 
     const normalizedQuery = searchQuery.toLowerCase().trim();
 
     if (normalizedQuery.includes('dashboard')) {
-      router.push('/portal/');
+      router.push('/portal/dashboard/');
     } else if (normalizedQuery.includes('request')) {
-      router.push('/portal/org/template/requests/');
+      router.push('/portal/requests/');
     } else if (normalizedQuery.includes('setting')) {
-      router.push('/portal/org/template/settings/');
+      router.push('/portal/settings/');
     } else if (normalizedQuery.includes('file')) {
-      router.push('/portal/org/template/files/');
+      router.push('/portal/files/');
     } else if (normalizedQuery.includes('team')) {
-      router.push('/portal/org/template/team/');
+      router.push('/portal/team/');
     }
 
     onClose();
@@ -105,9 +105,9 @@ export function MobileSearch({ isOpen, onClose, className }: MobileSearchProps) 
   };
 
   const quickLinks = [
-    { label: t('portal.sidebar.nav.dashboard' as any), href: '/portal/', icon: '📊' },
-    { label: t('portal.sidebar.nav.requests' as any), href: '/portal/org/template/requests/', icon: '📋' },
-    { label: t('portal.sidebar.nav.settings' as any), href: '/portal/org/template/settings/', icon: '⚙️' },
+    { label: t('portal.sidebar.nav.dashboard' as any), href: '/portal/dashboard/', icon: '📊' },
+    { label: t('portal.sidebar.nav.requests' as any), href: '/portal/requests/', icon: '📋' },
+    { label: t('portal.sidebar.nav.settings' as any), href: '/portal/settings/', icon: '⚙️' },
   ];
 
   return (
@@ -261,26 +261,4 @@ export function MobileSearch({ isOpen, onClose, className }: MobileSearchProps) 
   );
 }
 
-// Mobile search trigger button (for header)
-export function MobileSearchButton({
-  onClick,
-  className,
-}: {
-  onClick: () => void;
-  className?: string;
-}) {
-  const t = useTranslations();
 
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        'p-3 rounded-2xl text-surface-400 hover:text-surface-900 dark:hover:text-white hover:bg-surface-50 dark:hover:bg-surface-900 transition-all md:hidden',
-        className
-      )}
-      aria-label={t('portal.accessibility.search')}
-    >
-      <Search size={20} />
-    </button>
-  );
-}

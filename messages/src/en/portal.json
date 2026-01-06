@@ -421,7 +421,9 @@
         "noComments": "No messages yet",
         "replyingTo": "Replying to",
         "mentionMember": "Mention Member",
-        "unknownUser": "Unknown"
+        "unknownUser": "Unknown",
+        "unassigned": "Unassigned",
+        "waitingForAssignment": "Waiting for Assignment"
       },
       "types": {
         "audit": "Strategic Audit",
@@ -1444,7 +1446,8 @@
         "deleteConfirm": "Are you sure you want to delete this pricing offer?",
         "deleteFailed": "Failed to delete. Please try again.",
         "itemDescriptionPlaceholder": "Service or product...",
-        "agencyNotesPlaceholder": "Internal notes (not visible to client)..."
+        "agencyNotesPlaceholder": "Internal notes (not visible to client)...",
+        "createOffer": "Create Offer"
       },
       "detail": {
         "breakdown": "Pricing Breakdown",

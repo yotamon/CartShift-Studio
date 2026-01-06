@@ -8,7 +8,6 @@ import {
   getDoc,
   query,
   where,
-  orderBy,
   onSnapshot,
   serverTimestamp,
   Timestamp,
@@ -163,22 +162,25 @@ export async function getCommentsByRequest(
   await waitForAuth();
   const db = getFirestoreDb();
   try {
-    let q = query(
-      collection(db, COMMENTS_COLLECTION),
+    // Build query constraints array
+    // Note: We are removing orderBy('createdAt') to avoid needing a composite index for every combination of filters.
+    // We will sort in memory instead, which is performant enough for comment threads.
+    const constraints: Parameters<typeof query>[1][] = [
       where('requestId', '==', requestId),
-      orderBy('createdAt', 'asc')
-    );
+    ];
 
     if (orgId) {
-      q = query(q, where('orgId', '==', orgId));
+      constraints.push(where('orgId', '==', orgId));
     }
 
     if (!includeInternal) {
-      q = query(q, where('isInternal', '==', false));
+      constraints.push(where('isInternal', '==', false));
     }
 
+    const q = query(collection(db, COMMENTS_COLLECTION), ...constraints);
+
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => {
+    const comments = snapshot.docs.map(doc => {
       const data = doc.data();
       return {
         id: doc.id,
@@ -197,6 +199,14 @@ export async function getCommentsByRequest(
         updatedAt: data.updatedAt,
       } as Comment;
     });
+
+    // Sort in memory by createdAt (oldest first)
+    return comments.sort((a, b) => {
+      const timeA = a.createdAt?.seconds ?? 0;
+      const timeB = b.createdAt?.seconds ?? 0;
+      return timeA - timeB;
+    });
+
   } catch (error: unknown) {
     const firestoreError = error as { code?: string; message?: string };
     if (firestoreError.code === 'permission-denied') {
@@ -301,14 +311,12 @@ export function subscribeToRequestComments(
         q = query(
           collection(db, COMMENTS_COLLECTION),
           where('requestId', '==', requestId),
-          where('orgId', '==', orgId),
-          orderBy('createdAt', 'asc')
+          where('orgId', '==', orgId)
         );
       } else {
         q = query(
           collection(db, COMMENTS_COLLECTION),
-          where('requestId', '==', requestId),
-          orderBy('createdAt', 'asc')
+          where('requestId', '==', requestId)
         );
       }
 
@@ -340,17 +348,19 @@ export function subscribeToRequestComments(
         comments = comments.filter(c => !c.isInternal);
       }
 
+      // Sort in memory by createdAt (oldest first)
+      comments.sort((a, b) => {
+        const timeA = a.createdAt?.seconds ?? 0;
+        const timeB = b.createdAt?.seconds ?? 0;
+        return timeA - timeB;
+      });
+
       callback(comments);
     },
     error => {
       console.error('Error in comments snapshot:', error);
       const firestoreError = error as { code?: string };
-      if (firestoreError.code === 'failed-precondition') {
-        console.error('Missing Firestore index. Please create a composite index for:', {
-          collection: COMMENTS_COLLECTION,
-          fields: orgId ? ['requestId', 'orgId', 'createdAt'] : ['requestId', 'createdAt'],
-        });
-      } else if (firestoreError.code === 'permission-denied') {
+       if (firestoreError.code === 'permission-denied') {
         console.error(
           'Permission denied accessing comments. User may not have access to this request.'
         );

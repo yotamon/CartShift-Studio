@@ -82,7 +82,8 @@ export const CreateOrganizationForm = ({ onSuccess, onCancel }: CreateOrganizati
       }
 
       onSuccess(org.id);
-      router.push(`/portal/org/${org.id}/dashboard`);
+      // Redirect to clean URL - org is stored in context/session
+      router.push('/portal/dashboard/');
     } catch (error: unknown) {
       console.error('Create organization error:', error);
       setError(

@@ -28,7 +28,8 @@ import { format } from 'date-fns';
 import { getDateLocale } from '@/lib/locale-config';
 import { cn } from '@/lib/utils';
 import { useTranslations, useLocale } from 'next-intl';
-import { Link } from '@/i18n/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
+import { useOrg } from '@/lib/context/OrgContext';
 // Centralized utilities
 import { getPricingStatusBadgeVariant } from '@/lib/utils/portal-helpers';
 
@@ -45,6 +46,8 @@ export default function AgencyPricingClient() {
   const itemsPerPage = 10;
   const t = useTranslations();
   const locale = useLocale();
+  const router = useRouter();
+  const { switchOrg } = useOrg();
 
   const filters = [
     'All',
@@ -316,9 +319,12 @@ export default function AgencyPricingClient() {
                     className="hover:bg-surface-50/50 dark:hover:bg-surface-800/30 transition-all group"
                   >
                     <td className="px-6 py-4">
-                      <Link
-                        href={`/portal/org/${req.orgId}/pricing/${req.id}/`}
-                        className="flex flex-col max-w-md"
+                      <button
+                        onClick={() => {
+                          switchOrg(req.orgId);
+                          router.push(`/portal/pricing/${req.id}/`);
+                        }}
+                        className="flex flex-col max-w-md text-start"
                       >
                         <span className="font-bold text-surface-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate font-outfit">
                           {req.title}
@@ -334,7 +340,7 @@ export default function AgencyPricingClient() {
                             </>
                           )}
                         </span>
-                      </Link>
+                      </button>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
@@ -387,11 +393,15 @@ export default function AgencyPricingClient() {
                     </td>
                     <td className="px-6 py-4 text-end">
                       <div className="flex items-center justify-end gap-1">
-                        <Link href={`/portal/org/${req.orgId}/pricing/${req.id}/`}>
-                          <button className="p-2 text-surface-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20">
-                            <Eye size={16} />
-                          </button>
-                        </Link>
+                        <button
+                          onClick={() => {
+                            switchOrg(req.orgId);
+                            router.push(`/portal/pricing/${req.id}/`);
+                          }}
+                          className="p-2 text-surface-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                        >
+                          <Eye size={16} />
+                        </button>
                         {req.status === PRICING_STATUS.DRAFT && (
                           <button
                             onClick={() => handleSend(req.id)}

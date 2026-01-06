@@ -424,7 +424,9 @@
         "noComments": "אין הודעות עדיין",
         "replyingTo": "מגיב ל",
         "mentionMember": "תיוג חבר צוות",
-        "unknownUser": "משתמש לא ידוע"
+        "unknownUser": "משתמש לא ידוע",
+        "unassigned": "טרם הוקצה",
+        "waitingForAssignment": "ממתין להקצאה"
       },
       "milestones": {
         "title": "שלבי הפרויקט",
@@ -1456,7 +1458,8 @@
         "deleteConfirm": "האם אתם בטוחים שברצונכם למחוק את הצעת המחיר הזו?",
         "deleteFailed": "המחיקה נכשלה. אנא נסו שוב.",
         "itemDescriptionPlaceholder": "שירות או מוצר...",
-        "agencyNotesPlaceholder": "הערות פנימיות (לא נראות ללקוח)..."
+        "agencyNotesPlaceholder": "הערות פנימיות (לא נראות ללקוח)...",
+        "createOffer": "צרו הצעה"
       },
       "detail": {
         "breakdown": "פירוט המחיר",

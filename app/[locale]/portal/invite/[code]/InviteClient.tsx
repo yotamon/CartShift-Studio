@@ -14,6 +14,7 @@ import { format } from 'date-fns';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useRouter } from '@/i18n/navigation';
+import { useOrg } from '@/lib/context/OrgContext';
 
 const INVITES_COLLECTION = 'portal_invites';
 const MEMBERS_COLLECTION = 'portal_members';
@@ -23,6 +24,7 @@ export default function InviteClient() {
   const { code } = useParams();
   const router = useRouter();
   const { user, userData, loading: authLoading, isAuthenticated } = usePortalAuth();
+  const { switchOrg } = useOrg();
   const [invite, setInvite] = useState<Invite | null>(null);
   const [loading, setLoading] = useState(true);
   const [accepting, setAccepting] = useState(false);
@@ -153,7 +155,10 @@ export default function InviteClient() {
 
       setSuccess(true);
       setTimeout(() => {
-        router.push(`/portal/org/${invite.orgId}/dashboard`);
+        if (invite.orgId) {
+          switchOrg(invite.orgId);
+        }
+        router.push('/portal/dashboard');
       }, 2000);
     } catch (error: unknown) {
       console.error('Error accepting invite:', error);

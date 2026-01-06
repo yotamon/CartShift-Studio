@@ -28,75 +28,51 @@ const nextConfig = {
       // SPECIFIC REWRITES - Handle detail pages with static fallbacks
       // ============================================================
 
-      // New Pricing - MUST come BEFORE the generic :pricingId rewrite
+      // New Pricing - ANY org context
       {
-        source: '/:locale/portal/org/:orgId/pricing/new/',
-        destination: '/:locale/portal/org/template/pricing/new/',
-      },
-      {
-        source: '/:locale/portal/org/:orgId/pricing/new',
-        destination: '/:locale/portal/org/template/pricing/new/',
+        source: '/:locale/portal/pricing/new/',
+        destination: '/:locale/portal/pricing/new/',
       },
 
       // Pricing Detail - ANY pricingId → /pricing/pricing/
       {
-        source: '/:locale/portal/org/:orgId/pricing/:pricingId/',
-        destination: '/:locale/portal/org/template/pricing/pricing/',
+        source: '/:locale/portal/pricing/:pricingId/',
+        destination: '/:locale/portal/pricing/pricing/',
       },
       {
-        source: '/:locale/portal/org/:orgId/pricing/:pricingId',
-        destination: '/:locale/portal/org/template/pricing/pricing/',
+        source: '/:locale/portal/pricing/:pricingId',
+        destination: '/:locale/portal/pricing/pricing/',
       },
 
       // Pricing Edit - ANY pricingId → /pricing/pricing/edit/
       {
-        source: '/:locale/portal/org/:orgId/pricing/:pricingId/edit/',
-        destination: '/:locale/portal/org/template/pricing/pricing/edit/',
+        source: '/:locale/portal/pricing/:pricingId/edit/',
+        destination: '/:locale/portal/pricing/pricing/edit/',
       },
       {
-        source: '/:locale/portal/org/:orgId/pricing/:pricingId/edit',
-        destination: '/:locale/portal/org/template/pricing/pricing/edit/',
-      },
-
-      // Consultations - ANY orgId → /consultations/
-      {
-        source: '/:locale/portal/org/:orgId/consultations/',
-        destination: '/:locale/portal/org/template/consultations/',
-      },
-      {
-        source: '/:locale/portal/org/:orgId/consultations',
-        destination: '/:locale/portal/org/template/consultations/',
+        source: '/:locale/portal/pricing/:pricingId/edit',
+        destination: '/:locale/portal/pricing/pricing/edit/',
       },
 
-      // New Request - MUST come BEFORE the generic :requestId rewrite
+      // New Request
       {
-        source: '/:locale/portal/org/:orgId/requests/new/',
-        destination: '/:locale/portal/org/template/requests/new/',
-      },
-      {
-        source: '/:locale/portal/org/:orgId/requests/new',
-        destination: '/:locale/portal/org/template/requests/new/',
+        source: '/:locale/portal/requests/new/',
+        destination: '/:locale/portal/requests/new/',
       },
 
       // Request Detail - ANY requestId → /requests/request/
       {
-        source: '/:locale/portal/org/:orgId/requests/:requestId/',
-        destination: '/:locale/portal/org/template/requests/request/',
+        source: '/:locale/portal/requests/:requestId/',
+        destination: '/:locale/portal/requests/request/',
       },
       {
-        source: '/:locale/portal/org/:orgId/requests/:requestId',
-        destination: '/:locale/portal/org/template/requests/request/',
+        source: '/:locale/portal/requests/:requestId',
+        destination: '/:locale/portal/requests/request/',
       },
 
       // ============================================================
       // WILDCARD REWRITES - Automatically handles remaining nested routes
       // ============================================================
-
-      // Portal org routes - ANY path under /portal/org/[realId]/ → /portal/org/template/
-      {
-        source: '/:locale/portal/org/:orgId/:path*',
-        destination: '/:locale/portal/org/template/:path*',
-      },
 
       // Portal invite routes - ANY invite code → template
       {
@@ -110,11 +86,6 @@ const nextConfig = {
         destination: '/:locale/portal/agency/clients/template/:path*',
       },
 
-      // Catch base paths without trailing path (e.g., /portal/org/abc123)
-      {
-        source: '/:locale/portal/org/:orgId',
-        destination: '/:locale/portal/org/template',
-      },
       {
         source: '/:locale/portal/agency/clients/:clientId',
         destination: '/:locale/portal/agency/clients/template',

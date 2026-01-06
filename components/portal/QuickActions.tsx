@@ -48,19 +48,19 @@ export function QuickActions() {
     {
       icon: Plus,
       label: t('portal.quickActions.newRequest'),
-      href: `/portal/org/${orgId}/requests/new/`,
+      href: '/portal/requests/new/',
       intent: 'blue',
     },
     {
       icon: Calendar,
       label: t('portal.quickActions.schedule'),
-      href: `/portal/org/${orgId}/consultations?action=schedule`,
+      href: '/portal/consultations?action=schedule',
       intent: 'purple',
     },
     {
       icon: Upload,
       label: t('portal.quickActions.upload'),
-      href: `/portal/org/${orgId}/requests?action=upload`,
+      href: '/portal/requests?action=upload',
       intent: 'emerald',
     }
   ];

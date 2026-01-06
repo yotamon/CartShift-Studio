@@ -26,7 +26,8 @@ import { getDateLocale, isRTLLocale } from '@/lib/locale-config';
 
 interface ActivityTimelineProps {
   activities: ActivityLog[];
-  orgId: string;
+  /** @deprecated No longer needed - URLs use context-based org */
+  orgId?: string;
   maxItems?: number;
   className?: string;
   showFilters?: boolean;
@@ -109,7 +110,8 @@ const ACTION_ICONS: Record<string, typeof Plus> = {
 
 export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
   activities,
-  orgId,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  orgId: _orgId, // Deprecated - kept for backwards compatibility
   maxItems = 10,
   className,
   showFilters = false,
@@ -205,7 +207,7 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({
 
               <Link
                 href={
-                  activity.requestId ? `/portal/org/${orgId}/requests/${activity.requestId}` : '#'
+                  activity.requestId ? `/portal/requests/${activity.requestId}` : '#'
                 }
                 className={cn(
                   'flex items-start gap-4 p-4 rounded-2xl hover:bg-surface-50 dark:hover:bg-surface-900/50 transition-all cursor-pointer group hover-lift-sm',

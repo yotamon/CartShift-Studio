@@ -1,9 +1,9 @@
 {
   "hero": {
-    "tag": "Trusted by 50+ brands to boost conversions",
+    "tag": "Trusted by 50+ brands to drive growth",
     "titleLine1": "E-commerce Sites That",
-    "titleLine2": "Actually Convert",
-    "description": "Stop losing sales to slow, outdated stores. We build lightning-fast Shopify & WordPress sites that turn browsers into buyers—and keep optimizing after launch.",
+    "titleLine2": "Drive Real Growth",
+    "description": "Stop losing sales to slow, outdated stores. We build lightning-fast Shopify & WordPress sites designed to turn browsers into buyers—and keep optimizing after launch.",
     "primaryCta": "Get Your Free Growth Roadmap →",
     "secondaryCta": "See Real Results →",
     "scrollIndicator": "Scroll to explore",
@@ -18,11 +18,11 @@
     "stats": {
       "clients": {
         "value": "$2.5M+",
-        "label": "Revenue Generated"
+        "label": "Client Revenue Supported"
       },
       "dedication": {
-        "value": "3.2x",
-        "label": "Avg. Conversion Lift"
+        "value": "Top 1%",
+        "label": "Performance Scores"
       }
     },
     "platforms": {
@@ -798,9 +798,9 @@
   },
   "work": {
     "hero": {
-      "title": "Real Results, Real Revenue",
-      "subtitle": "See the numbers behind our work",
-      "description": "3.2x average conversion lift. $2.5M+ in revenue generated. Here's how we did it.",
+      "title": "Real Results, Real Growth",
+      "subtitle": "See the impact behind our work",
+      "description": "From launch to scale, we help businesses build their digital foundation. Here's how we did it.",
       "badge": "Case Studies"
     },
     "filters": {

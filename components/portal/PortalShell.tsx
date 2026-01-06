@@ -26,6 +26,7 @@ import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from '@/lib/motion';
 import { createPortal } from 'react-dom';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
+import { useOrg } from '@/lib/context/OrgContext';
 import { logout } from '@/lib/services/auth';
 import { PortalButton } from './ui/PortalButton';
 import { PortalAvatar } from './ui/PortalAvatar';
@@ -49,7 +50,8 @@ import {
 import { OnboardingTour } from './OnboardingTour';
 import { OfflineIndicator } from './ui/OfflineIndicator';
 import { Breadcrumbs } from './ui/Breadcrumbs';
-import { MobileSearch, MobileSearchButton } from './ui/MobileSearch';
+import { MobileSearch } from './ui/MobileSearch';
+import { MobileSearchButton } from './ui/MobileSearchButton';
 import { GlobalSearch } from './ui/GlobalSearch';
 
 const navItemVariants = cva('portal-nav-item group relative transition-all duration-200', {
@@ -88,6 +90,7 @@ const notificationButtonVariants = cva(
 
 interface PortalShellProps {
   children: React.ReactNode;
+  /** @deprecated orgId is now managed via OrgContext */
   orgId?: string;
   isAgency?: boolean;
 }
@@ -126,27 +129,11 @@ export const PortalShell = ({
 
   const userId = userData?.id ?? null;
 
-  // Resolve real orgId if we are in the template route or if orgId is undefined
-  const effectiveOrgId = React.useMemo(() => {
-    if (orgId && orgId !== 'template') {
-      return orgId;
-    }
+  // Get orgId from context instead of URL
+  const { orgId: contextOrgId, hasMultipleOrgs, organizations, switchOrg } = useOrg();
 
-    if (pathname) {
-      // Path format: /:locale/portal/org/:orgId/... or /portal/org/:orgId/...
-      // Example: /en/portal/org/123/dashboard
-      const parts = pathname.split('/');
-      const orgIndex = parts.indexOf('org');
-      if (orgIndex !== -1 && parts.length > orgIndex + 1) {
-        const realId = parts[orgIndex + 1];
-        if (realId && realId !== 'template') {
-          return realId;
-        }
-      }
-    }
-
-    return orgId;
-  }, [orgId, pathname]);
+  // Use context orgId, fallback to prop for backwards compatibility
+  const effectiveOrgId = contextOrgId ?? orgId;
 
   useEffect(() => {
     let mounted = true;
@@ -479,7 +466,7 @@ export const PortalShell = ({
               {
                 label: t('portal.sidebar.nav.requests'),
                 icon: ClipboardList,
-                href: '/portal/org/template/requests/', // Fallback or specific agency view
+                href: '/portal/requests/',
               },
               {
                 label: t('portal.sidebar.nav.consultations' as any),
@@ -509,12 +496,12 @@ export const PortalShell = ({
               {
                 label: t('portal.sidebar.nav.dashboard'),
                 icon: LayoutDashboard,
-                href: `/portal/org/${effectiveOrgId}/dashboard/`,
+                href: '/portal/dashboard/',
               },
               {
                 label: t('portal.sidebar.nav.requests'),
                 icon: ClipboardList,
-                href: `/portal/org/${effectiveOrgId}/requests/`,
+                href: '/portal/requests/',
               },
             ],
           },
@@ -523,17 +510,17 @@ export const PortalShell = ({
               {
                 label: t('portal.sidebar.nav.team'),
                 icon: Users,
-                href: `/portal/org/${effectiveOrgId}/team/`,
+                href: '/portal/team/',
               },
               {
                 label: t('portal.sidebar.nav.files'),
                 icon: FolderOpen,
-                href: `/portal/org/${effectiveOrgId}/files/`,
+                href: '/portal/files/',
               },
               {
                 label: t('portal.sidebar.nav.consultations' as any),
                 icon: Calendar,
-                href: `/portal/org/${effectiveOrgId}/consultations/`,
+                href: '/portal/consultations/',
               },
             ],
           },
@@ -542,12 +529,12 @@ export const PortalShell = ({
               {
                 label: t('portal.sidebar.nav.pricing' as any),
                 icon: DollarSign,
-                href: `/portal/org/${effectiveOrgId}/pricing/`,
+                href: '/portal/pricing/',
               },
               {
                 label: t('portal.sidebar.nav.settings'),
                 icon: Settings,
-                href: `/portal/org/${effectiveOrgId}/settings/`,
+                href: '/portal/settings/',
               },
             ],
           },
@@ -614,9 +601,8 @@ export const PortalShell = ({
       )
     );
 
-    if (effectiveOrgId) {
-      mainPagePaths.add(normalizePath(`/portal/org/${effectiveOrgId}`));
-    }
+    // Add portal root path
+    mainPagePaths.add('/portal');
 
     return !mainPagePaths.has(currentPath);
   })();
@@ -784,7 +770,7 @@ export const PortalShell = ({
         {/* Sidebar Header / Brand */}
         <div className="h-20 flex items-center px-4 border-b border-surface-200/50 dark:border-surface-800/30 flex-shrink-0">
           <Link
-            href={effectiveOrgId ? `/portal/org/${effectiveOrgId}/dashboard` : `/portal/org`}
+            href="/portal/dashboard/"
             className="flex items-center gap-3 group w-full min-w-0"
           >
             <div className="w-9 h-9 flex-shrink-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-blue-500/25 group-hover:scale-110 transition-transform duration-300">
@@ -807,6 +793,31 @@ export const PortalShell = ({
           </Link>
         </div>
 
+        {/* Organization Switcher - only show if user has multiple orgs */}
+        {hasMultipleOrgs && isExpanded && (
+          <div className="px-3 py-2 border-b border-surface-200/50 dark:border-surface-800/30">
+            <div className="relative">
+              <select
+                value={effectiveOrgId || ''}
+                onChange={(e) => {
+                  switchOrg(e.target.value);
+                  // Optionally navigate to dashboard after switching
+                  router.push('/portal/dashboard/');
+                }}
+                className="w-full px-3 py-2 text-sm font-medium bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-lg appearance-none cursor-pointer hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-surface-900 dark:text-white"
+              >
+                {organizations.map((org) => (
+                  <option key={org} value={org}>
+                    {org.slice(0, 8)}... {/* Show truncated ID - you can fetch org names */}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute inset-y-0 end-0 flex items-center pe-2 pointer-events-none">
+                <ChevronLeft size={16} className="rotate-[-90deg] text-surface-400" />
+              </div>
+            </div>
+          </div>
+        )}
         {/* Sidebar Nav */}
         <nav className="flex-1 overflow-y-auto overflow-x-hidden portal-scrollbar p-3 space-y-0.5 min-h-0">
           {navGroups.map((group, groupIndex) => (
@@ -909,7 +920,7 @@ export const PortalShell = ({
             >
               <Menu size={24} />
             </button>
-            <MobileSearchButton onClick={() => setIsMobileSearchOpen(true)} />
+            <MobileSearchButton onClickAction={() => setIsMobileSearchOpen(true)} />
             <GlobalSearch
               orgId={effectiveOrgId}
               isAgency={accountType === ACCOUNT_TYPE.AGENCY}
@@ -958,7 +969,7 @@ export const PortalShell = ({
                 href={
                   userData?.isAgency
                     ? '/portal/agency/settings/'
-                    : `/portal/org/${effectiveOrgId}/settings/`
+                    : '/portal/settings/'
                 }
                 className="portal-avatar group cursor-pointer hover:border-blue-500/50 transition-all active:scale-95 shadow-lg shadow-blue-500/10"
               >

@@ -24,11 +24,12 @@ import { useAgencyClients } from '@/lib/hooks/useAgencyClients';
 import { Organization, Currency, CURRENCY_CONFIG, formatCurrency } from '@/lib/types/portal';
 import { formatDistanceToNow } from 'date-fns';
 import { getDateLocale } from '@/lib/locale-config';
-import { Link } from '@/i18n/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { PortalAvatar } from '@/components/portal/ui/PortalAvatar';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { usePricingForm } from '@/lib/hooks/usePricingForm';
+import { useOrg } from '@/lib/context/OrgContext';
 import { cn } from '@/lib/utils';
 // Centralized utilities
 import { getStatusBadgeVariant } from '@/lib/utils/portal-helpers';
@@ -43,6 +44,8 @@ export default function AgencyInboxClient() {
     error: requestsError,
     refetch: refetchRequests,
   } = useRequests();
+  const { switchOrg } = useOrg();
+  const router = useRouter();
   const {
     organizations: organizationsList,
     loading: clientsLoading,
@@ -412,9 +415,12 @@ export default function AgencyInboxClient() {
                     </div>
 
                     {/* Main content link */}
-                    <Link
-                      href={`/portal/org/${req.orgId}/requests/${req.id}/`}
-                      className="flex-1 min-w-0 touch-manipulation"
+                    <button
+                      onClick={() => {
+                        switchOrg(req.orgId);
+                        router.push(`/portal/requests/${req.id}/`);
+                      }}
+                      className="flex-1 min-w-0 touch-manipulation text-start"
                     >
                       {/* Desktop layout */}
                       <div className="hidden sm:grid grid-cols-4 gap-4 items-center">
@@ -483,7 +489,7 @@ export default function AgencyInboxClient() {
                           {req.createdByName || t('consultations.userFallback')}
                         </p>
                       </div>
-                    </Link>
+                    </button>
                   </div>
                 );
               })

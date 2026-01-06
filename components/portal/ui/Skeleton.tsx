@@ -148,23 +148,21 @@ export function SkeletonButton({ className, size = "md" }: { className?: string;
   return <Skeleton variant="button" className={cn(sizeClasses[size], className)} />;
 }
 
-export function SkeletonTable({ rows = 5 }: { rows?: number }) {
+export function SkeletonTable({ rows = 5, columns = 4 }: { rows?: number; columns?: number }) {
   return (
     <div className="space-y-3 rounded-2xl border border-surface-200/50 dark:border-surface-800/50 bg-white/30 dark:bg-surface-900/30 p-4">
       {/* Header */}
       <div className="flex gap-4 pb-3 border-b border-surface-200/50 dark:border-surface-800/50">
-        <Skeleton className="h-4 w-1/4" />
-        <Skeleton className="h-4 w-1/4" />
-        <Skeleton className="h-4 w-1/4" />
-        <Skeleton className="h-4 w-1/4" />
+        {Array.from({ length: columns }).map((_, i) => (
+          <Skeleton key={`header-${i}`} className="h-4 flex-1" />
+        ))}
       </div>
       {/* Rows */}
-      {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="flex gap-4 py-3" style={{ animationDelay: `${i * 50}ms` }}>
-          <Skeleton className="h-4 w-1/4" />
-          <Skeleton className="h-4 w-1/4" />
-          <Skeleton className="h-4 w-1/4" />
-          <Skeleton className="h-4 w-1/4" />
+      {Array.from({ length: rows }).map((_, rowIndex) => (
+        <div key={rowIndex} className="flex gap-4 py-3" style={{ animationDelay: `${rowIndex * 50}ms` }}>
+          {Array.from({ length: columns }).map((_, colIndex) => (
+            <Skeleton key={`row-${rowIndex}-col-${colIndex}`} className="h-4 flex-1" />
+          ))}
         </div>
       ))}
     </div>

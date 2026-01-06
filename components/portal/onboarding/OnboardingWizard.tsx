@@ -88,7 +88,8 @@ export function OnboardingWizard() {
 
   const handleComplete = () => {
     if (createdOrgId) {
-      router.push(`/portal/org/${createdOrgId}/dashboard/`);
+      // Redirect to clean URL - the org is now stored in context/session
+      router.push('/portal/dashboard/');
     }
   };
 

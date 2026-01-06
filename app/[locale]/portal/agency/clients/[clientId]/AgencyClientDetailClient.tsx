@@ -27,7 +27,8 @@ import {
 import { subscribeToOrgRequests } from '@/lib/services/portal-requests';
 import { subscribeToOrgActivities } from '@/lib/services/portal-activities';
 import { Organization, Request, ActivityLog, OrganizationMember } from '@/lib/types/portal';
-import { Link } from '@/i18n/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
+import { useOrg } from '@/lib/context/OrgContext';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { useResolvedClientId } from '@/lib/hooks/useResolvedClientId';
 import { useTranslations, useLocale } from 'next-intl';
@@ -45,6 +46,8 @@ export default function AgencyClientDetailClient({
   const locale = useLocale();
   const clientId = useResolvedClientId() || initialClientId;
   const { userData, loading: authLoading } = usePortalAuth();
+  const { switchOrg } = useOrg();
+  const router = useRouter();
 
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [requests, setRequests] = useState<Request[]>([]);
@@ -321,21 +324,27 @@ export default function AgencyClientDetailClient({
 
               {/* Actions */}
               <div className="flex flex-wrap gap-3">
-                <Link href={`/portal/org/${clientId}/dashboard/`}>
-                  <PortalButton
-                    variant="outline"
-                    className="border-blue-200 dark:border-blue-900 hover:bg-blue-50 dark:hover:bg-blue-950"
-                  >
-                    <ExternalLink size={16} />
-                    {t('agency.clients.detail.viewDashboard')}
-                  </PortalButton>
-                </Link>
-                <Link href={`/portal/org/${clientId}/requests/`}>
-                  <PortalButton className="shadow-lg shadow-blue-500/20">
-                    <FileText size={16} />
-                    {t('agency.clients.detail.actions.viewAllRequests')}
-                  </PortalButton>
-                </Link>
+                <PortalButton
+                  variant="outline"
+                  className="border-blue-200 dark:border-blue-900 hover:bg-blue-50 dark:hover:bg-blue-950"
+                  onClick={() => {
+                    switchOrg(clientId);
+                    router.push('/portal/dashboard/');
+                  }}
+                >
+                  <ExternalLink size={16} />
+                  {t('agency.clients.detail.viewDashboard')}
+                </PortalButton>
+                <PortalButton
+                  className="shadow-lg shadow-blue-500/20"
+                  onClick={() => {
+                    switchOrg(clientId);
+                    router.push('/portal/requests/');
+                  }}
+                >
+                  <FileText size={16} />
+                  {t('agency.clients.detail.actions.viewAllRequests')}
+                </PortalButton>
               </div>
             </div>
           </div>
@@ -431,8 +440,11 @@ export default function AgencyClientDetailClient({
               <h2 className="text-xl font-black text-surface-900 dark:text-white uppercase tracking-tight">
                 {t('agency.clients.detail.sections.requests')}
               </h2>
-              <Link
-                href={`/portal/org/${clientId}/requests/`}
+              <button
+                onClick={() => {
+                  switchOrg(clientId);
+                  router.push('/portal/requests/');
+                }}
                 className="text-xs font-black text-blue-600 hover:text-blue-700 dark:text-blue-400 uppercase tracking-widest flex items-center gap-2 group"
               >
                 <span>{t('agency.clients.detail.requests.viewAll')}</span>
@@ -440,7 +452,7 @@ export default function AgencyClientDetailClient({
                   size={12}
                   className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
                 />
-              </Link>
+              </button>
             </div>
 
             <PortalCard
@@ -450,10 +462,13 @@ export default function AgencyClientDetailClient({
               {recentRequests.length > 0 ? (
                 <div className="divide-y divide-surface-50 dark:divide-surface-800">
                   {recentRequests.map(request => (
-                    <Link
+                    <button
                       key={request.id}
-                      href={`/portal/org/${clientId}/requests/${request.id}/`}
-                      className="block p-6 hover:bg-blue-50/30 dark:hover:bg-blue-950/20 transition-colors group"
+                      onClick={() => {
+                        switchOrg(clientId);
+                        router.push(`/portal/requests/${request.id}/`);
+                      }}
+                      className="w-full text-start block p-6 hover:bg-blue-50/30 dark:hover:bg-blue-950/20 transition-colors group"
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
@@ -498,7 +513,7 @@ export default function AgencyClientDetailClient({
                           </div>
                         )}
                       </div>
-                    </Link>
+                    </button>
                   ))}
                 </div>
               ) : (
@@ -725,12 +740,15 @@ export default function AgencyClientDetailClient({
                     </div>
                   ))}
                   {members.length > 5 && (
-                    <Link
-                      href={`/portal/org/${clientId}/team/`}
-                      className="block text-center text-xs font-black text-blue-600 hover:text-blue-700 dark:text-blue-400 uppercase tracking-widest pt-2"
+                    <button
+                      onClick={() => {
+                        switchOrg(clientId);
+                        router.push('/portal/team/');
+                      }}
+                      className="w-full text-center block text-xs font-black text-blue-600 hover:text-blue-700 dark:text-blue-400 uppercase tracking-widest pt-2"
                     >
                       {t('agency.clients.detail.team.viewAll')}
-                    </Link>
+                    </button>
                   )}
                 </div>
               ) : (

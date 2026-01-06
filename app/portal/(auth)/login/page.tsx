@@ -53,7 +53,7 @@ function LoginForm() {
     setError(null);
     try {
       await loginWithEmail(data.email, data.password);
-      router.push(redirectPath || '/portal/org/');
+      router.push(redirectPath || '/portal/');
     } catch (error: unknown) {
       console.error('Login error:', error);
       const firebaseError = error as { code?: string; message?: string };

@@ -147,7 +147,7 @@ export function GlobalSearch({ orgId, isAgency = false, className }: GlobalSearc
   const handleSelect = (req: Request) => {
     setIsOpen(false);
     setQuery('');
-    router.push(`/portal/org/${req.orgId}/requests/${req.id}`);
+    router.push(`/portal/requests/${req.id}`);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

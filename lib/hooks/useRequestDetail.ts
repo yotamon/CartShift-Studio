@@ -78,9 +78,10 @@ export function useRequestDetail(): UseRequestDetailResult {
       Boolean(userData?.isAgency),
       typeof orgId === 'string' ? orgId : undefined
     ),
-    enabled: enabled && Boolean(orgId),
+    enabled, // orgId is optional - comments are already linked to requestId
     refetchInterval: 5000, // Poll every 5s for new comments (simulating real-time lite)
   });
+
 
   // 3. Activities
   const {
@@ -115,7 +116,8 @@ export function useRequestDetail(): UseRequestDetailResult {
   // Helper to update comments optimistically or manually
   // This bridges the gap for components expecting setComments
   const setComments = (action: React.SetStateAction<Comment[]>) => {
-    queryClient.setQueryData<Comment[]>(['request-comments', requestId], (oldData) => {
+    // We need to match the key used in useQuery above: ['request-comments', requestId, orgId]
+    queryClient.setQueryData<Comment[]>(['request-comments', requestId, orgId], (oldData) => {
       const current = oldData || [];
       if (typeof action === 'function') {
         return action(current);

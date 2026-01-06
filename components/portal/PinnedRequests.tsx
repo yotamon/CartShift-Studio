@@ -66,7 +66,7 @@ export const PinnedRequests: React.FC<PinnedRequestsProps> = ({
             <div className="flex items-start gap-3">
               <div className="flex-1 min-w-0">
                 <Link
-                  href={`/${locale}/portal/org/${orgId}/requests/${request.id}`}
+                  href={`/${locale}/portal/requests/${request.id}`}
                   className="group/link flex items-center gap-2"
                 >
                   <span className="text-sm font-medium text-surface-900 dark:text-white truncate group-hover/link:text-primary-600 dark:group-hover/link:text-primary-400 transition-colors">

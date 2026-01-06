@@ -30,6 +30,7 @@ import { useRouter } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { formatDistanceToNow } from 'date-fns';
 import { getDateLocale } from '@/lib/locale-config';
+import { useOrg } from '@/lib/context/OrgContext';
 import { WorkboardSkeleton } from '@/components/portal/skeletons/WorkboardSkeleton';
 import { useOptimisticAction } from '@/lib/hooks/useOptimisticMutation';
 import { useToast } from '@/components/portal/ui';
@@ -47,6 +48,7 @@ export default function AgencyWorkboardClient() {
   const locale = useLocale();
   const router = useRouter();
   const { userData, loading: authLoading, isAuthenticated, user } = usePortalAuth();
+  const { switchOrg } = useOrg();
   const [requests, setRequests] = useState<Request[]>([]);
   const [loading, setLoading] = useState(true);
   const [isRepairing, setIsRepairing] = useState(false);
@@ -335,13 +337,18 @@ export default function AgencyWorkboardClient() {
                 {columnRequests.map(req => (
                   <DraggableCard key={req.id} id={req.id}>
                     <div
-                      onClick={() => router.push(`/portal/org/${req.orgId}/requests/${req.id}/`)}
+                      onClick={() => {
+                        switchOrg(req.orgId);
+                        router.push(`/portal/requests/${req.id}/`);
+                      }}
                       role="button"
                       tabIndex={0}
-                      onKeyDown={e =>
-                        e.key === 'Enter' &&
-                        router.push(`/portal/org/${req.orgId}/requests/${req.id}/`)
-                      }
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') {
+                          switchOrg(req.orgId);
+                          router.push(`/portal/requests/${req.id}/`);
+                        }
+                      }}
                       aria-label={`${t('agency.workboard.viewRequest')}: ${req.title}`}
                     >
                       <RequestCard request={req} locale={locale} isMounted={isMounted} />

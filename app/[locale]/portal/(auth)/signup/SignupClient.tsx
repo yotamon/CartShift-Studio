@@ -91,7 +91,7 @@ function SignupForm() {
     setError(null);
     try {
       await signUpWithEmail(data.email, data.password, data.name);
-      router.push(redirectPath || '/portal/org/');
+      router.push(redirectPath || '/portal/');
     } catch (error: unknown) {
       console.error('Signup error:', error);
       const firebaseError = error as { code?: string; message?: string };

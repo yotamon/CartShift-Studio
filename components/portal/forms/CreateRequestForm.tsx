@@ -125,7 +125,7 @@ export const CreateRequestForm = ({ orgId }: CreateRequestFormProps) => {
 
       // Short delay before redirecting for better UX
       setTimeout(() => {
-        router.push(`/portal/org/${orgId}/requests/${request.id}`);
+        router.push(`/portal/requests/${request.id}`);
       }, 1500);
     } catch (error: unknown) {
       console.error('Create request error:', error);

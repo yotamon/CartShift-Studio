@@ -27,7 +27,8 @@ export default function PortalRootClient() {
       }
 
       if (userData.organizations && userData.organizations.length > 0) {
-        router.replace(`/portal/org/${userData.organizations[0]}/dashboard/`);
+        // Redirect to clean URL - org is stored in context/session
+        router.replace('/portal/dashboard/');
         return;
       }
 
@@ -67,3 +68,4 @@ export default function PortalRootClient() {
     </div>
   );
 }
+

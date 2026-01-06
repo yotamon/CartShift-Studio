@@ -70,9 +70,9 @@ function SignupForm() {
     try {
       await signUpWithEmail(data.email, data.password, data.name);
       if (mounted && router) {
-        router.push(redirectPath || '/portal/org/');
+        router.push(redirectPath || '/portal/');
       } else {
-        window.location.href = redirectPath || '/portal/org/';
+        window.location.href = redirectPath || '/portal/';
       }
     } catch (error: unknown) {
       console.error('Signup error:', error);
