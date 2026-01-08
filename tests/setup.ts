@@ -11,7 +11,7 @@ vi.mock('next/navigation', () => ({
     refresh: vi.fn(),
     prefetch: vi.fn(),
   }),
-  usePathname: () => '/portal/org/org-1/dashboard',
+  usePathname: () => '/portal/dashboard',
   useSearchParams: () => ({
     get: vi.fn(() => null),
     toString: vi.fn(() => ''),

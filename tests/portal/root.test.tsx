@@ -80,7 +80,7 @@ describe('Portal Root', () => {
     render(<PortalRootClient />);
 
     await waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith('/portal/org/org-1/dashboard/');
+      expect(mockReplace).toHaveBeenCalledWith('/portal/dashboard/');
     });
   });
 

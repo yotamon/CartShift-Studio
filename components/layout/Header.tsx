@@ -286,7 +286,7 @@ export const Header: React.FC = () => {
             })}
             <div className="flex items-center gap-3">
               <Link
-                href={isLoggedIn ? '/portal/org' : '/portal/login'}
+                href={isLoggedIn ? '/portal/' : '/portal/login'}
                 className="text-surface-600 dark:text-surface-300 hover:text-surface-900 dark:hover:text-white font-medium transition-colors px-2 py-1"
               >
                 {isLoggedIn ? t('nav.portal') : t('nav.login')}
@@ -404,7 +404,7 @@ export const Header: React.FC = () => {
               <div className="flex-shrink-0 px-4 sm:px-6 py-4 pb-safe border-t border-white/10 dark:border-surface-800/50 bg-white/50 dark:bg-surface-950/50 backdrop-blur-md">
                 <div className="flex flex-col gap-4">
                   <Link
-                    href={isLoggedIn ? '/portal/org' : '/portal/login'}
+                    href={isLoggedIn ? '/portal/' : '/portal/login'}
                     className="block px-4 py-3.5 min-h-[48px] text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-accent-500/10 hover:text-accent-600 dark:hover:text-accent-400 transition-colors font-medium text-start rounded-xl active:scale-[0.98] touch-manipulation"
                     onClick={() => setMobileMenuOpen(false)}
                   >

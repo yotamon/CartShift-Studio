@@ -12,7 +12,7 @@ export function useRouter() {
 }
 
 export function usePathname() {
-  return '/portal/org/org-1/dashboard';
+  return '/portal/dashboard';
 }
 
 export function useSearchParams() {

@@ -11,6 +11,9 @@ import {
 } from 'react';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 
+import { Organization } from '@/lib/types/portal';
+import { getUserOrganizations } from '@/lib/services/portal-organizations';
+
 const STORAGE_KEY = 'cartshift_current_org_id';
 
 interface OrgContextValue {
@@ -22,6 +25,8 @@ interface OrgContextValue {
   switchOrg: (newOrgId: string) => void;
   /** List of organization IDs the user belongs to */
   organizations: string[];
+  /** Full organization objects including names */
+  fullOrganizations: Organization[];
   /** Whether the user has multiple organizations */
   hasMultipleOrgs: boolean;
 }
@@ -35,12 +40,38 @@ interface OrgProviderProps {
 export function OrgProvider({ children }: OrgProviderProps) {
   const { userData, loading: authLoading } = usePortalAuth();
   const [currentOrgId, setCurrentOrgId] = useState<string | null>(null);
+  const [fullOrganizations, setFullOrganizations] = useState<Organization[]>([]);
+  const [loadingOrgs, setLoadingOrgs] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Get organizations from user data
   const organizations = useMemo(() => {
     return userData?.organizations ?? [];
   }, [userData?.organizations]);
+
+  // Fetch full organization details when IDs change
+  useEffect(() => {
+    const fetchFullOrgs = async () => {
+      if (organizations.length === 0) {
+        setFullOrganizations([]);
+        return;
+      }
+
+      setLoadingOrgs(true);
+      try {
+        const orgs = await getUserOrganizations(userData?.id || '');
+        setFullOrganizations(orgs);
+      } catch (error) {
+        console.error('[OrgContext] Error fetching full organizations:', error);
+      } finally {
+        setLoadingOrgs(false);
+      }
+    };
+
+    if (userData?.id) {
+      fetchFullOrgs();
+    }
+  }, [organizations, userData?.id]);
 
   // Initialize org from storage or user's first org
   useEffect(() => {
@@ -88,11 +119,12 @@ export function OrgProvider({ children }: OrgProviderProps) {
 
   const value = useMemo<OrgContextValue>(() => ({
     orgId: currentOrgId,
-    loading: authLoading || !isInitialized,
+    loading: authLoading || !isInitialized || loadingOrgs,
     switchOrg,
     organizations,
+    fullOrganizations,
     hasMultipleOrgs: organizations.length > 1,
-  }), [currentOrgId, authLoading, isInitialized, switchOrg, organizations]);
+  }), [currentOrgId, authLoading, isInitialized, loadingOrgs, switchOrg, organizations, fullOrganizations]);
 
   return (
     <OrgContext.Provider value={value}>

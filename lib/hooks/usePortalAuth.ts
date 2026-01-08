@@ -111,6 +111,11 @@ export function usePortalAuth() {
                 onboardingComplete: data.onboardingComplete ?? false,
               };
 
+              console.log('[usePortalAuth] User data loaded from Firestore:', {
+                uid: currentUser.uid,
+                accountType: newUserData.accountType,
+                orgCount: newUserData.organizations?.length || 0,
+              });
               setUserData(newUserData);
 
               // Update cache
@@ -120,6 +125,7 @@ export function usePortalAuth() {
               }));
             } else {
               // Fallback to auth user data if no Firestore doc
+              console.warn('[usePortalAuth] No user document found in Firestore for UID:', currentUser.uid, '. Using fallback data.');
               const fallbackData = {
                 id: currentUser.uid,
                 email: currentUser.email || '',
@@ -128,6 +134,9 @@ export function usePortalAuth() {
                 accountType: ACCOUNT_TYPE.CLIENT,
                 isAgency: false,
                 organizations: [],
+                // Added for consistency with PortalUser type, though not directly from auth
+                createdAt: null as any,
+                updatedAt: null as any,
               };
               setUserData(fallbackData);
               // Clear cache if user exists in Auth but not Firestore (rare edge case or new user)

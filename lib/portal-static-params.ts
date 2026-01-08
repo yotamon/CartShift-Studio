@@ -10,27 +10,21 @@ export function getLocaleStaticParams() {
 }
 
 /**
- * For pages at /[locale]/portal/org/[orgId]/...
- * Only need to return orgId - locale is handled by parent layout
- */
-export function getPortalStaticOrgParams() {
-  return [{ orgId: PORTAL_STATIC_ORG_ID }];
-}
-
-/**
- * For pages at /[locale]/portal/org/[orgId]/requests/[requestId]
- * Only need to return orgId and requestId - locale is handled by parent layout
+ * For pages at /[locale]/portal/(workspace)/requests/[requestId]
+ * Only need to return requestId - locale is handled by parent layout
+ * Note: orgId is now stored in session/context, not in the URL
  */
 export function getPortalStaticRequestParams() {
-  return [{ orgId: PORTAL_STATIC_ORG_ID, requestId: PORTAL_STATIC_REQUEST_ID }];
+  return [{ requestId: PORTAL_STATIC_REQUEST_ID }];
 }
 
 /**
- * For pages at /[locale]/portal/org/[orgId]/pricing/[pricingId]
- * Only need to return orgId and pricingId - locale is handled by parent layout
+ * For pages at /[locale]/portal/(workspace)/pricing/[pricingId]
+ * Only need to return pricingId - locale is handled by parent layout
+ * Note: orgId is now stored in session/context, not in the URL
  */
 export function getPortalStaticPricingParams() {
-  return [{ orgId: PORTAL_STATIC_ORG_ID, pricingId: PORTAL_STATIC_PRICING_ID }];
+  return [{ pricingId: PORTAL_STATIC_PRICING_ID }];
 }
 
 /**

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '../utils/test-utils';
 import { setupFirebaseMocks, mockUserData } from '../utils/mock-firebase';
-import RequestsClient from '@/app/[locale]/portal/org/[orgId]/requests/RequestsClient';
+import RequestsClient from '@/app/[locale]/portal/(workspace)/requests/RequestsClient';
 
 vi.mock('@/lib/hooks/useResolvedOrgId', () => ({
   useResolvedOrgId: () => 'org-1',

@@ -152,14 +152,12 @@ export async function getRequestsByOrg(
   } catch (error: unknown) {
     const firestoreError = error as { code?: string; message?: string };
     if (firestoreError.code === 'permission-denied') {
-      console.error('[getRequestsByOrg] Permission denied:', {
+      console.error('[getRequestsByOrg] Permission denied. This usually means the user is not a member of the organization or the organization document is missing.', {
         orgId,
         userId: currentUser.uid,
         error: firestoreError.message,
       });
-      throw new Error(
-        `Permission denied accessing requests for organization ${orgId}. You may not be a member of this organization.`
-      );
+      throw new Error(`Permission denied accessing requests for organization ${orgId}. Please check your membership.`);
     }
     throw error;
   }
@@ -437,9 +435,11 @@ export function subscribeToAllRequests(
         },
         error => {
           console.error('[portal-requests] Error in all requests snapshot:', error);
-          if (error.code === 'permission-denied') {
-            console.error('[portal-requests] Permission denied accessing all requests');
-            console.error('[portal-requests] User may not have agency permissions');
+          const firestoreError = error as { code?: string; message?: string };
+          if (firestoreError.code === 'permission-denied') {
+            console.error('[portal-requests] Permission denied. This query requires agency permissions.', {
+              error: firestoreError.message,
+            });
           }
           callback([]);
         }

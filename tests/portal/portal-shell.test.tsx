@@ -4,7 +4,7 @@ import { setupFirebaseMocks, mockUserData } from '../utils/mock-firebase';
 import { PortalShell } from '@/components/portal/PortalShell';
 
 const mockPush = vi.fn();
-const mockPathname = '/portal/org/org-1/dashboard';
+const mockPathname = '/portal/dashboard';
 
 vi.mock('@/i18n/navigation', () => ({
   useRouter: () => ({

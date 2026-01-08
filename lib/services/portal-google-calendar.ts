@@ -557,8 +557,8 @@ export async function tryCreateCalendarEventForConsultation(params: {
     }
 
     // Add Portal Link
-    if (params.orgId && typeof window !== 'undefined') {
-        const portalUrl = `${window.location.origin}/portal/org/${params.orgId}/consultations`;
+    if (typeof window !== 'undefined') {
+        const portalUrl = `${window.location.origin}/portal/consultations`;
         descriptionParts.push(`🔗 View in Portal: ${portalUrl}`);
     }
 

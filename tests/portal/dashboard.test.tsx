@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '../utils/test-utils';
 import { setupFirebaseMocks, mockUserData } from '../utils/mock-firebase';
-import DashboardClient from '@/app/[locale]/portal/org/[orgId]/dashboard/DashboardClient';
+import DashboardClient from '@/app/[locale]/portal/(workspace)/dashboard/DashboardClient';
 
 vi.mock('@/lib/hooks/useResolvedOrgId', () => ({
   useResolvedOrgId: () => 'org-1',

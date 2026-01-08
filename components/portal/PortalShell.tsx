@@ -130,7 +130,7 @@ export const PortalShell = ({
   const userId = userData?.id ?? null;
 
   // Get orgId from context instead of URL
-  const { orgId: contextOrgId, hasMultipleOrgs, organizations, switchOrg } = useOrg();
+  const { orgId: contextOrgId, hasMultipleOrgs, fullOrganizations, switchOrg } = useOrg();
 
   // Use context orgId, fallback to prop for backwards compatibility
   const effectiveOrgId = contextOrgId ?? orgId;
@@ -806,9 +806,9 @@ export const PortalShell = ({
                 }}
                 className="w-full px-3 py-2 text-sm font-medium bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-lg appearance-none cursor-pointer hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-surface-900 dark:text-white"
               >
-                {organizations.map((org) => (
-                  <option key={org} value={org}>
-                    {org.slice(0, 8)}... {/* Show truncated ID - you can fetch org names */}
+                {fullOrganizations.map((org) => (
+                  <option key={org.id} value={org.id}>
+                    {org.name}
                   </option>
                 ))}
               </select>

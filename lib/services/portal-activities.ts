@@ -60,7 +60,7 @@ export async function getOrgActivities(
   await waitForAuth();
   const auth = getFirebaseAuth();
   const currentUser = auth.currentUser;
-  
+
   if (!currentUser) {
     throw new Error('User must be authenticated to access activities');
   }
@@ -88,13 +88,13 @@ export async function getOrgActivities(
   } catch (error: unknown) {
     const firestoreError = error as { code?: string; message?: string };
     if (firestoreError.code === 'permission-denied') {
-      console.error('[getOrgActivities] Permission denied:', {
+      console.error('[getOrgActivities] Permission denied. User may not be a member of the organization.', {
         orgId,
         userId: currentUser.uid,
         error: firestoreError.message,
       });
       throw new Error(
-        `Permission denied accessing activities for organization ${orgId}. You may not be a member of this organization.`
+        `Permission denied accessing activities for organization ${orgId}. Please check your membership.`
       );
     }
     throw error;
