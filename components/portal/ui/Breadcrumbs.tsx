@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { usePathname } from '@/i18n/navigation';
 import { Link } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
@@ -8,6 +8,7 @@ import { ChevronRight } from 'lucide-react';
 import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { isRTLLocale } from '@/lib/locale-config';
+import { getRequest } from '@/lib/services/portal-requests';
 
 const breadcrumbItemVariants = cva(
   "truncate max-w-[200px] transition-colors",
@@ -44,7 +45,6 @@ interface BreadcrumbItem {
 
 export function Breadcrumbs({
   className,
-  homeLabel,
   customLabels = {},
   maxItems = 4,
 }: BreadcrumbsProps) {
@@ -52,6 +52,43 @@ export function Breadcrumbs({
   const locale = useLocale();
   const t = useTranslations();
   const isRTL = isRTLLocale(locale);
+
+  // State for dynamically fetched labels (e.g., request title)
+  const [dynamicLabels, setDynamicLabels] = useState<Record<string, string>>({});
+
+  // Extract request ID from path if on a request detail page
+  const requestId = useMemo(() => {
+    if (!pathname) return null;
+    const match = pathname.match(/\/requests\/([^/]+)(?:\/|$)/);
+    return match ? match[1] : null;
+  }, [pathname]);
+
+  // Fetch request title when on a request detail page
+  useEffect(() => {
+    if (!requestId) {
+      setDynamicLabels({});
+      return;
+    }
+
+    let cancelled = false;
+
+    async function fetchRequestTitle() {
+      try {
+        const request = await getRequest(requestId!);
+        if (!cancelled && request?.title) {
+          setDynamicLabels({ [requestId!]: request.title });
+        }
+      } catch (error) {
+        console.error('[Breadcrumbs] Error fetching request title:', error);
+      }
+    }
+
+    fetchRequestTitle();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [requestId]);
 
   const breadcrumbs = useMemo((): BreadcrumbItem[] => {
     if (!pathname) return [];
@@ -99,8 +136,8 @@ export function Breadcrumbs({
 
       const isLast = i === segments.length - 1;
 
-      // Get label: custom > translation > formatted segment
-      let label = customLabels[segment] || segmentLabels[segment];
+      // Get label: dynamic (e.g., request title) > custom > translation > formatted segment
+      let label = dynamicLabels[segment] || customLabels[segment] || segmentLabels[segment];
 
       if (!label) {
         // Format segment: kebab-case to Title Case
@@ -125,7 +162,7 @@ export function Breadcrumbs({
     }
 
     return items;
-  }, [pathname, locale, t, customLabels, maxItems]);
+  }, [pathname, locale, t, customLabels, maxItems, dynamicLabels]);
 
   if (breadcrumbs.length === 0) return null;
 
