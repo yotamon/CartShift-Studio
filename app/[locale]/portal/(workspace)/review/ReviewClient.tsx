@@ -70,6 +70,8 @@ function WhyShareCard() {
 
 // Stats Card (Visual Appeal)
 function StatsCard() {
+  const t = useTranslations('portal');
+  
   return (
     <PortalCard variant="glass" className="overflow-hidden">
       <div className="text-center space-y-4 py-4">
@@ -106,7 +108,7 @@ function StatsCard() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.9 }}
           >
-            Average Client Rating
+            {t('testimonial.statsCard.avgRating')}
           </motion.p>
         </div>
 
@@ -118,7 +120,7 @@ function StatsCard() {
         >
           <Sparkles className="w-4 h-4 text-accent-500" />
           <span className="text-xs font-medium text-surface-500 dark:text-surface-400">
-            Join our community of happy clients
+            {t('testimonial.statsCard.joinCommunity')}
           </span>
         </motion.div>
       </div>

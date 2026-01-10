@@ -396,9 +396,13 @@ function RequestCard({
   locale: string;
   isMounted: boolean;
 }) {
+  const t = useTranslations('portal');
   return (
     <PortalCard className="p-3 md:p-4 border-surface-200 dark:border-surface-800 shadow-sm hover:shadow-md hover:border-blue-200 dark:hover:border-blue-900 transition-all group">
-      <div className="flex items-start justify-between gap-3 mb-3">
+      <div className="flex items-start justify-between gap-3 mb-2">
+        <h4 className="text-sm font-bold text-surface-900 dark:text-white leading-snug group-hover:text-blue-600 transition-colors flex-1 min-w-0">
+          {req.title}
+        </h4>
         <PortalBadge
           variant={
             req.priority === 'HIGH' || req.priority === 'URGENT'
@@ -407,18 +411,11 @@ function RequestCard({
                 ? 'yellow'
                 : 'blue'
           }
-          className="text-[9px] px-1.5 h-4 font-black uppercase tracking-tighter"
+          className="text-[9px] px-1.5 h-4 font-black uppercase tracking-tighter shrink-0"
         >
-          {req.priority || 'NORMAL'}
+          {t(`requests.priority.${(req.priority || 'NORMAL').toLowerCase()}` as any)}
         </PortalBadge>
-        <div className="text-[10px] font-bold text-surface-400 font-mono tracking-tighter">
-          #ID-{req.id.slice(0, 4).toUpperCase()}
-        </div>
       </div>
-
-      <h4 className="text-sm font-bold text-surface-900 dark:text-white mb-2 leading-snug group-hover:text-blue-600 transition-colors">
-        {req.title}
-      </h4>
 
       <p className="text-[11px] text-surface-500 line-clamp-2 mb-4 font-medium leading-relaxed">
         {req.description}

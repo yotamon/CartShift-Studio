@@ -19,6 +19,9 @@ import {
   Quote,
   X,
   Sparkles,
+  Download,
+  FileJson,
+  Code2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
@@ -521,17 +524,158 @@ export default function AgencyTestimonialsClient() {
     }
   };
 
+  // Export dropdown state
+  const [showExportMenu, setShowExportMenu] = useState(false);
+
+  // Close export menu when clicking outside
+  useEffect(() => {
+    if (!showExportMenu) return undefined;
+    
+    const handleClickOutside = () => setShowExportMenu(false);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [showExportMenu]);
+
+  // Get approved testimonials for export
+  const approvedTestimonials = useMemo(
+    () => testimonials.filter(t => t.status === 'approved'),
+    [testimonials]
+  );
+
+  // Export as JSON (for developers)
+  const handleExportJSON = () => {
+    const exportData = approvedTestimonials.map(t => ({
+      id: t.id,
+      author: {
+        name: t.userName,
+        role: t.role || null,
+        company: t.companyName,
+      },
+      rating: t.rating,
+      headline: t.headline,
+      content: t.content,
+      projectHighlight: t.projectHighlight || null,
+      wouldRecommend: t.wouldRecommend,
+      aspects: t.aspects || null,
+      createdAt: t.createdAt?.toDate?.()?.toISOString() || null,
+    }));
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `testimonials-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setShowExportMenu(false);
+    toast.success(t('agency.testimonials.export.success'));
+  };
+
+  // Export as React component code
+  const handleExportCode = () => {
+    const code = `// Testimonials data exported from CartShift Portal
+// Generated on ${new Date().toLocaleDateString()}
+
+export const testimonials = [
+${approvedTestimonials
+  .map(
+    t => `  {
+    id: "${t.id}",
+    author: {
+      name: "${t.userName}",
+      role: ${t.role ? `"${t.role}"` : 'null'},
+      company: "${t.companyName}",
+    },
+    rating: ${t.rating},
+    headline: "${t.headline.replace(/"/g, '\\"')}",
+    content: \`${t.content.replace(/`/g, '\\`')}\`,
+    wouldRecommend: ${t.wouldRecommend},
+  }`
+  )
+  .join(',\n')}
+] as const;
+
+export type Testimonial = typeof testimonials[number];
+`;
+
+    const blob = new Blob([code], { type: 'text/typescript' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `testimonials-${new Date().toISOString().split('T')[0]}.ts`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setShowExportMenu(false);
+    toast.success(t('agency.testimonials.export.success'));
+  };
+
   return (
     <div className="space-y-6" dir={dir}>
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-surface-900 dark:text-white flex items-center gap-3">
-          <MessageSquareHeart className="w-7 h-7 text-blue-500" />
-          {t('agency.testimonials.title')}
-        </h1>
-        <p className="text-surface-600 dark:text-surface-400 mt-1">
-          {t('agency.testimonials.subtitle')}
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-surface-900 dark:text-white flex items-center gap-3">
+            <MessageSquareHeart className="w-7 h-7 text-blue-500" />
+            {t('agency.testimonials.title')}
+          </h1>
+          <p className="text-surface-600 dark:text-surface-400 mt-1">
+            {t('agency.testimonials.subtitle')}
+          </p>
+        </div>
+
+        {/* Export Button */}
+        <div className="relative">
+          <button
+            onClick={() => setShowExportMenu(!showExportMenu)}
+            disabled={approvedTestimonials.length === 0}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300 font-medium transition-colors border border-surface-200 dark:border-surface-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Download className="w-4 h-4" />
+            {t('agency.testimonials.export.button')}
+            <span className="text-xs bg-green-500/20 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-full">
+              {approvedTestimonials.length}
+            </span>
+          </button>
+
+          {/* Export Dropdown */}
+          <AnimatePresence>
+            {showExportMenu && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="absolute end-0 top-full mt-2 w-56 bg-white dark:bg-surface-800 rounded-xl shadow-lg border border-surface-200 dark:border-surface-700 overflow-hidden z-50"
+              >
+                <div className="p-2 space-y-1">
+                  <button
+                    onClick={handleExportJSON}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300 transition-colors text-start"
+                  >
+                    <FileJson className="w-4 h-4 text-blue-500" />
+                    <div>
+                      <div className="font-medium">{t('agency.testimonials.export.json')}</div>
+                      <div className="text-xs text-surface-500">{t('agency.testimonials.export.jsonDesc')}</div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={handleExportCode}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300 transition-colors text-start"
+                  >
+                    <Code2 className="w-4 h-4 text-purple-500" />
+                    <div>
+                      <div className="font-medium">{t('agency.testimonials.export.code')}</div>
+                      <div className="text-xs text-surface-500">{t('agency.testimonials.export.codeDesc')}</div>
+                    </div>
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* Stats */}

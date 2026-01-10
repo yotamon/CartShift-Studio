@@ -134,7 +134,10 @@
       "normal": "רגיל",
       "archive": "ארכיון",
       "free": "חינם",
-      "defaultInitial": "ש"
+      "defaultInitial": "ש",
+      "viewDetails": "צפה בפרטים",
+      "pin": "הצמד",
+      "unpin": "בטל הצמדה"
     },
     "access": {
       "restrictedTitle": "הגישה מוגבלת",
@@ -1139,6 +1142,15 @@
           "pending": "ממתינים",
           "approved": "אושרו",
           "avgRating": "דירוג ממוצע"
+        },
+        "export": {
+          "button": "ייצוא",
+          "json": "ייצוא כ-JSON",
+          "jsonDesc": "למפתחים ואינטגרציות",
+          "code": "ייצוא כ-TypeScript",
+          "codeDesc": "קטע קוד מוכן לשימוש",
+          "success": "ההמלצות יוצאו בהצלחה",
+          "noApproved": "אין המלצות מאושרות לייצוא"
         }
       },
       "workboard": {
@@ -1653,6 +1665,10 @@
             "description": "המלצות מובילות עשויות להופיע באתר שלנו"
           }
         ]
+      },
+      "statsCard": {
+        "avgRating": "דירוג ממוצע של לקוחות",
+        "joinCommunity": "הצטרפו לקהילת הלקוחות המרוצים שלנו"
       }
     }
   }

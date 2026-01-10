@@ -139,7 +139,7 @@ interface ToastProviderProps {
 
 export function ToastProvider({
   children,
-  position = 'top-right',
+  position = 'bottom-right',
   maxToasts = 5,
 }: ToastProviderProps) {
   return (

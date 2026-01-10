@@ -658,7 +658,7 @@ export default function EditPricingForm() {
             <textarea
               {...register('agencyNotes')}
               rows={4}
-              placeholder={t('portal.pricing.agencyNotesPlaceholder' as any)}
+              placeholder={t('portal.pricing.form.agencyNotesPlaceholder')}
               className="portal-input w-full resize-none text-sm"
             />
           </PortalCard>

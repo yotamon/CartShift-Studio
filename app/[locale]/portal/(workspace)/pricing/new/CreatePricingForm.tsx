@@ -5,6 +5,7 @@ import { useForm, useFieldArray, FieldArrayWithId } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from '@/i18n/navigation';
+import { useSearchParams } from 'next/navigation';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
@@ -57,6 +58,7 @@ interface PricingFormData {
 export default function CreatePricingForm() {
   const orgId = useResolvedOrgId();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { userData } = usePortalAuth();
   const t = useTranslations();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -98,7 +100,22 @@ export default function CreatePricingForm() {
     }
 
     fetchRequests();
+    fetchRequests();
   }, [orgId]);
+
+  // Pre-select requests from URL params
+  useEffect(() => {
+    if (!loadingRequests && availableRequests.length > 0) {
+      const paramIds = searchParams.get('requestIds')?.split(',') || [];
+      if (paramIds.length > 0) {
+        // Only select valid IDs
+        const validIds = paramIds.filter(id => availableRequests.some(r => r.id === id));
+        if (validIds.length > 0) {
+          setSelectedRequestIds(validIds);
+        }
+      }
+    }
+  }, [searchParams, loadingRequests, availableRequests]);
 
   const toggleRequestSelection = (requestId: string) => {
     setSelectedRequestIds(prev =>
@@ -577,7 +594,7 @@ export default function CreatePricingForm() {
             <textarea
               {...register('agencyNotes')}
               rows={4}
-              placeholder={t('portal.pricing.agencyNotesPlaceholder' as any)}
+              placeholder={t('portal.pricing.form.agencyNotesPlaceholder')}
               className="portal-input w-full resize-none text-sm"
             />
           </PortalCard>

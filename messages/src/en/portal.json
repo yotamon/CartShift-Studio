@@ -134,7 +134,10 @@
       "normal": "NORMAL",
       "archive": "Archive",
       "free": "FREE",
-      "defaultInitial": "S"
+      "defaultInitial": "S",
+      "viewDetails": "View Details",
+      "pin": "Pin",
+      "unpin": "Unpin"
     },
     "access": {
       "restrictedTitle": "Access Restricted",
@@ -1126,6 +1129,15 @@
           "pending": "Pending",
           "approved": "Approved",
           "avgRating": "Avg Rating"
+        },
+        "export": {
+          "button": "Export",
+          "json": "Export as JSON",
+          "jsonDesc": "For developers & integrations",
+          "code": "Export as TypeScript",
+          "codeDesc": "Ready-to-use code snippet",
+          "success": "Testimonials exported successfully",
+          "noApproved": "No approved testimonials to export"
         }
       },
       "workboard": {
@@ -1642,6 +1654,10 @@
             "description": "Top testimonials may be featured on our website"
           }
         ]
+      },
+      "statsCard": {
+        "avgRating": "Average Client Rating",
+        "joinCommunity": "Join our community of happy clients"
       }
     }
   }

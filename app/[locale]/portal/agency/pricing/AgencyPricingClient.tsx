@@ -11,7 +11,11 @@ import {
   Send,
   Eye,
   Building2,
+  Plus,
+  X,
+  ChevronRight,
 } from 'lucide-react';
+import { PortalAvatar } from '@/components/portal/ui/PortalAvatar';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
@@ -30,6 +34,7 @@ import { cn } from '@/lib/utils';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { useOrg } from '@/lib/context/OrgContext';
+import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 // Centralized utilities
 import { getPricingStatusBadgeVariant } from '@/lib/utils/portal-helpers';
 
@@ -43,11 +48,14 @@ export default function AgencyPricingClient() {
   const [activeFilter, setActiveFilter] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [showNewOfferModal, setShowNewOfferModal] = useState(false);
+  const [orgSearchQuery, setOrgSearchQuery] = useState('');
   const itemsPerPage = 10;
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
   const { switchOrg } = useOrg();
+  const { isAuthenticated, loading: authLoading } = usePortalAuth();
 
   const filters = [
     'All',
@@ -59,6 +67,10 @@ export default function AgencyPricingClient() {
   ];
 
   useEffect(() => {
+    if (authLoading || !isAuthenticated) {
+      return;
+    }
+
     async function fetchOrganizations() {
       try {
         const orgs = await getAllOrganizations();
@@ -72,7 +84,7 @@ export default function AgencyPricingClient() {
       }
     }
     fetchOrganizations();
-  }, []);
+  }, [authLoading, isAuthenticated]);
 
   useEffect(() => {
     setLoading(true);
@@ -167,6 +179,10 @@ export default function AgencyPricingClient() {
               'Manage pricing offers across all clients'}
           </p>
         </div>
+        <PortalButton onClick={() => setShowNewOfferModal(true)}>
+          <Plus size={18} className="me-2" />
+          {t('portal.pricing.newOffer')}
+        </PortalButton>
       </div>
 
       {/* Stats Cards */}
@@ -431,6 +447,10 @@ export default function AgencyPricingClient() {
                 <p className="text-surface-500 dark:text-surface-400 text-sm max-w-sm font-medium">
                   {t('portal.pricing.noOffersAgency')}
                 </p>
+                <PortalButton onClick={() => setShowNewOfferModal(true)} className="mt-4">
+                  <Plus size={16} className="me-2" />
+                  {t('portal.pricing.newOffer')}
+                </PortalButton>
               </div>
             </div>
           )}
@@ -468,6 +488,83 @@ export default function AgencyPricingClient() {
           </div>
         )}
       </PortalCard>
+
+
+      {/* New Offer - Organization Selection Modal */}
+      {showNewOfferModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col">
+            <div className="p-6 border-b border-surface-200 dark:border-surface-800 flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-surface-900 dark:text-white font-outfit">
+                  {t('portal.pricing.selectClient')}
+                </h2>
+                <p className="text-sm text-surface-500 mt-1">
+                  {t('portal.pricing.selectClientDesc' as never) ||
+                    'Choose a client to create an offer for'}
+                </p>
+              </div>
+              <button
+                onClick={() => setShowNewOfferModal(false)}
+                className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-xl transition-colors"
+              >
+                <X size={20} className="text-surface-500" />
+              </button>
+            </div>
+
+            <div className="p-4 border-b border-surface-100 dark:border-surface-800 bg-surface-50/50 dark:bg-surface-900/50">
+              <div className="relative">
+                <Search
+                  className="absolute start-3 top-1/2 -translate-y-1/2 text-surface-400"
+                  size={16}
+                />
+                <input
+                  type="text"
+                  placeholder={t('portal.common.search') + '...'}
+                  className="portal-input ps-10 h-10 w-full"
+                  value={orgSearchQuery}
+                  onChange={e => setOrgSearchQuery(e.target.value)}
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4 space-y-2">
+              {Object.values(organizations)
+                .filter(org =>
+                  org.name.toLowerCase().includes(orgSearchQuery.toLowerCase())
+                )
+                .map(org => (
+                  <button
+                    key={org.id}
+                    onClick={() => {
+                      setShowNewOfferModal(false);
+                      switchOrg(org.id);
+                      router.push('/portal/pricing/new');
+                    }}
+                    className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors group text-start"
+                  >
+                    <PortalAvatar name={org.name} size="md" />
+                    <div className="flex-1">
+                      <p className="font-bold text-surface-900 dark:text-white font-outfit group-hover:text-blue-600 transition-colors">
+                        {org.name}
+                      </p>
+                      <p className="text-xs text-surface-500">
+                        {org.id.slice(0, 8)}...
+                      </p>
+                    </div>
+                    <ChevronRight size={16} className="text-surface-300 group-hover:text-blue-500" />
+                  </button>
+                ))}
+                {Object.values(organizations).length === 0 && (
+                   <div className="text-center py-8 text-surface-500">
+                      No organizations found.
+                   </div>
+                )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

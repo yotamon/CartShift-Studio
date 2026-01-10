@@ -9,26 +9,28 @@ import {
   Mail,
   Filter,
   MoreVertical,
-  Star,
+  Pin,
   Loader2,
   DollarSign,
   X,
   Check,
-  Plus,
-  Trash2,
   ShieldCheck,
+  MousePointer2,
+  Eye,
 } from 'lucide-react';
-import { createPricingRequest, sendPricingRequest } from '@/lib/services/pricing-requests';
+import { Dropdown } from '@/components/ui/Dropdown';
+
 import { useRequests } from '@/lib/hooks/useRequests';
 import { useAgencyClients } from '@/lib/hooks/useAgencyClients';
-import { Organization, Currency, CURRENCY_CONFIG, formatCurrency } from '@/lib/types/portal';
+import { Organization } from '@/lib/types/portal';
 import { formatDistanceToNow } from 'date-fns';
 import { getDateLocale } from '@/lib/locale-config';
 import { useRouter } from '@/i18n/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { PortalAvatar } from '@/components/portal/ui/PortalAvatar';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
-import { usePricingForm } from '@/lib/hooks/usePricingForm';
+import { usePinnedRequests } from '@/lib/hooks/usePinnedRequests';
+
 import { useOrg } from '@/lib/context/OrgContext';
 import { cn } from '@/lib/utils';
 // Centralized utilities
@@ -66,25 +68,13 @@ export default function AgencyInboxClient() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isRepairing, setIsRepairing] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+
+  // Pinning
+  const { togglePin, isPinned } = usePinnedRequests();
 
   // Multi-select for pricing offers
   const [selectedRequestIds, setSelectedRequestIds] = useState<string[]>([]);
-  const [showPricingModal, setShowPricingModal] = useState(false);
-  const [pricingTitle, setPricingTitle] = useState('');
-  const [isCreatingPricing, setIsCreatingPricing] = useState(false);
-
-  // Use centralized pricing form hook
-  const {
-    lineItems: pricingLineItems,
-    currency: pricingCurrency,
-    setCurrency: setPricingCurrency,
-    addLineItem,
-    removeLineItem,
-    updateLineItem,
-    resetForm: resetPricingForm,
-    totalAmount,
-    validItems,
-  } = usePricingForm('USD');
 
   // Prevent hydration mismatch for time-sensitive content
   useEffect(() => {
@@ -156,17 +146,20 @@ export default function AgencyInboxClient() {
 
   const clearSelection = () => {
     setSelectedRequestIds([]);
-    setShowPricingModal(false);
-    setPricingTitle('');
-    resetPricingForm();
+    setIsSelectionMode(false);
+  };
+
+  const toggleSelectionMode = () => {
+    if (isSelectionMode) {
+      clearSelection();
+    } else {
+      setIsSelectionMode(true);
+    }
   };
 
   // Create pricing offer handler
-  const handleCreatePricingOffer = async () => {
-    if (!userData || selectedRequestIds.length === 0) return;
-    if (!pricingTitle.trim()) return;
-
-    if (validItems.length === 0) return;
+  const handleGoToPricing = async () => {
+    if (selectedRequestIds.length === 0) return;
 
     const selectedReqs = requests.filter(r => selectedRequestIds.includes(r.id));
     const uniqueOrgIds = [...new Set(selectedReqs.map(r => r.orgId))];
@@ -186,29 +179,9 @@ export default function AgencyInboxClient() {
     const orgId = uniqueOrgIds[0];
     if (!orgId) return;
 
-    setIsCreatingPricing(true);
-    try {
-      const pricingOffer = await createPricingRequest(
-        orgId,
-        userData.id,
-        userData.name || t('portal.common.unknown' as any),
-        {
-          title: pricingTitle.trim(),
-          lineItems: validItems,
-          currency: pricingCurrency,
-          requestIds: selectedRequestIds,
-        }
-      );
-
-      await sendPricingRequest(pricingOffer.id);
-      clearSelection();
-
-      await refetchRequests();
-    } catch (error) {
-      console.error('Failed to create pricing offer:', error);
-    } finally {
-      setIsCreatingPricing(false);
-    }
+    // Switch context and navigate to full page form
+    switchOrg(orgId);
+    router.push(`/portal/pricing/new?requestIds=${selectedRequestIds.join(',')}`);
   };
 
   const selectedRequests = requests.filter(r => selectedRequestIds.includes(r.id));
@@ -258,6 +231,15 @@ export default function AgencyInboxClient() {
             >
               <Filter size={16} /> {t('common.filter')}
             </PortalButton>
+            <PortalButton
+              variant={isSelectionMode ? "secondary" : "primary"}
+              size="sm"
+              onClick={toggleSelectionMode}
+              className="hidden md:flex items-center gap-2"
+            >
+              <MousePointer2 size={16} />
+              {isSelectionMode ? t('common.cancel') : t('requests.createPricingOffer')}
+            </PortalButton>
           </div>
           <div className="flex items-center gap-2 text-xs font-bold text-surface-400 uppercase tracking-widest px-2 shrink-0">
             {filteredRequests.length}{' '}
@@ -268,8 +250,8 @@ export default function AgencyInboxClient() {
         </div>
 
         {/* Selection Bar */}
-        {selectedRequestIds.length > 0 && (
-          <div className="p-4 border-b border-surface-100 dark:border-surface-800 bg-blue-50 dark:bg-blue-900/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        {isSelectionMode && (
+          <div className="p-4 border-b border-surface-100 dark:border-surface-800 bg-blue-50 dark:bg-blue-900/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in slide-in-from-top-2">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold shrink-0">
                 {selectedRequestIds.length}
@@ -290,8 +272,9 @@ export default function AgencyInboxClient() {
               </PortalButton>
               <PortalButton
                 size="sm"
-                onClick={() => setShowPricingModal(true)}
-                className="bg-green-600 hover:bg-green-700 text-white min-h-[40px] touch-manipulation"
+                onClick={handleGoToPricing}
+                disabled={selectedRequestIds.length === 0}
+                className="bg-green-600 hover:bg-green-700 text-white min-h-[40px] touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <DollarSign size={14} className="me-1" />
                 <span className="hidden sm:inline">{t('requests.createPricingOffer')}</span>
@@ -353,41 +336,54 @@ export default function AgencyInboxClient() {
                   >
                     {/* Mobile: Top row with checkbox, avatar, org name */}
                     <div className="flex items-center gap-3">
-                      {/* Checkbox */}
-                      <div className="shrink-0">
-                        {canSelect ? (
-                          <button
-                            type="button"
-                            onClick={e => {
-                              e.stopPropagation();
-                              toggleRequestSelection(req.id);
-                            }}
-                            className={cn(
-                              'w-5 h-5 rounded flex items-center justify-center transition-all border-2 touch-manipulation',
-                              isSelected
-                                ? 'bg-blue-600 border-blue-600 text-white'
-                                : 'border-surface-300 dark:border-surface-600 hover:border-blue-400'
-                            )}
-                          >
-                            {isSelected && <Check size={14} />}
-                          </button>
-                        ) : req.pricingOfferId ? (
-                          <PortalBadge variant="green" className="text-[9px]">
-                            {t('requests.hasPricing')}
-                          </PortalBadge>
-                        ) : (
-                          <div className="w-5 h-5" />
-                        )}
-                      </div>
+                      {/* Checkbox - Only in selection mode */}
+                      {isSelectionMode && (
+                        <div className="shrink-0 animate-in fade-in zoom-in duration-200">
+                          {canSelect ? (
+                            <button
+                              type="button"
+                              onClick={e => {
+                                e.stopPropagation();
+                                toggleRequestSelection(req.id);
+                              }}
+                              className={cn(
+                                'w-5 h-5 rounded flex items-center justify-center transition-all border-2 touch-manipulation',
+                                isSelected
+                                  ? 'bg-blue-600 border-blue-600 text-white'
+                                  : 'border-surface-300 dark:border-surface-600 hover:border-blue-400'
+                              )}
+                            >
+                              {isSelected && <Check size={14} />}
+                            </button>
+                          ) : req.pricingOfferId ? (
+                             <div
+                               className="w-5 h-5 rounded border-2 border-surface-200 dark:border-surface-700 bg-surface-100 dark:bg-surface-800 cursor-not-allowed flex items-center justify-center"
+                               title={t('requests.hasPricing')}
+                             >
+                               {/* Disabled checkbox look */}
+                             </div>
+                          ) : (
+                            <div className="w-5 h-5" />
+                          )}
+                        </div>
+                      )}
 
                       {/* Star and Avatar - hidden on mobile to save space */}
                       <div className="hidden sm:flex items-center gap-3 shrink-0">
                         <button
                           type="button"
-                          onClick={e => e.stopPropagation()}
-                          className="p-1 text-surface-300 group-hover:text-amber-400 transition-colors"
+                          onClick={e => {
+                            e.stopPropagation();
+                            togglePin(req.id);
+                          }}
+                          className={cn(
+                            'p-1 transition-colors hover:bg-surface-100 dark:hover:bg-surface-800 rounded-full',
+                            isPinned(req.id)
+                              ? 'text-blue-600 dark:text-blue-400 transform rotate-45'
+                              : 'text-surface-300 group-hover:text-blue-600'
+                          )}
                         >
-                          <Star size={18} />
+                          <Pin size={18} className={cn(isPinned(req.id) && 'fill-current')} />
                         </button>
                         <PortalAvatar
                           name={req.createdByName || t('consultations.userFallback')}
@@ -415,12 +411,22 @@ export default function AgencyInboxClient() {
                     </div>
 
                     {/* Main content link */}
-                    <button
+                    {/* Main content link */}
+                    <div
+                      role="button"
+                      tabIndex={0}
                       onClick={() => {
                         switchOrg(req.orgId);
                         router.push(`/portal/requests/${req.id}/`);
                       }}
-                      className="flex-1 min-w-0 touch-manipulation text-start"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          switchOrg(req.orgId);
+                          router.push(`/portal/requests/${req.id}/`);
+                        }
+                      }}
+                      className="flex-1 min-w-0 touch-manipulation text-start cursor-pointer focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded-lg"
                     >
                       {/* Desktop layout */}
                       <div className="hidden sm:grid grid-cols-4 gap-4 items-center">
@@ -441,7 +447,7 @@ export default function AgencyInboxClient() {
                               variant={getStatusBadgeVariant(req.status)}
                               className="text-[9px] h-4 shrink-0"
                             >
-                              {req.status}
+                              {t(`requests.status.${req.status.toLowerCase()}` as any)}
                             </PortalBadge>
                           </div>
                           <p className="text-xs text-surface-500 truncate mt-0.5">
@@ -459,20 +465,34 @@ export default function AgencyInboxClient() {
                                 : '—'}
                             </span>
                           </div>
-                          <div
-                            role="button"
-                            tabIndex={0}
-                            onClick={e => e.stopPropagation()}
-                            onKeyDown={e => {
-                              if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault();
-                                e.stopPropagation();
-                              }
-                            }}
-                            className="opacity-0 group-hover:opacity-100 p-2 text-surface-400 hover:text-surface-900 dark:hover:text-white transition-all rounded-full hover:bg-surface-100 dark:hover:bg-surface-800 cursor-pointer"
-                          >
-                            <MoreVertical size={16} />
-                          </div>
+                          <Dropdown
+                            trigger={
+                              <button
+                                type="button"
+                                onClick={e => e.stopPropagation()}
+                                className="opacity-0 group-hover:opacity-100 p-2 text-surface-400 hover:text-surface-900 dark:hover:text-white transition-all rounded-full hover:bg-surface-100 dark:hover:bg-surface-800 outline-none focus:opacity-100"
+                              >
+                                <MoreVertical size={16} />
+                              </button>
+                            }
+                            items={[
+                              {
+                                label: t('common.viewDetails'),
+                                icon: <Eye size={14} />,
+                                onClick: () => {
+                                  switchOrg(req.orgId);
+                                  router.push(`/portal/requests/${req.id}/`);
+                                },
+                              },
+                              {
+                                label: isPinned(req.id) ? t('common.unpin') : t('common.pin'),
+                                icon: <Pin size={14} className={cn(isPinned(req.id) && 'fill-blue-600 text-blue-600')} />,
+                                onClick: () => {
+                                  togglePin(req.id);
+                                },
+                              },
+                            ]}
+                          />
                         </div>
                       </div>
 
@@ -486,7 +506,7 @@ export default function AgencyInboxClient() {
                             variant={getStatusBadgeVariant(req.status)}
                             className="text-[9px] h-4 shrink-0"
                           >
-                            {req.status}
+                            {t(`requests.status.${req.status.toLowerCase()}` as any)}
                           </PortalBadge>
                         </div>
                         <p className="text-xs text-surface-500 line-clamp-2">
@@ -496,7 +516,7 @@ export default function AgencyInboxClient() {
                           {req.createdByName || t('consultations.userFallback')}
                         </p>
                       </div>
-                    </button>
+                    </div>
                   </div>
                 );
               })
@@ -515,194 +535,7 @@ export default function AgencyInboxClient() {
         </div>
       </PortalCard>
 
-      {/* Pricing Modal */}
-      {showPricingModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-surface-200 dark:border-surface-800 flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold text-surface-900 dark:text-white font-outfit">
-                  {t('requests.createPricingOffer')}
-                </h2>
-                <p className="text-sm text-surface-500 mt-1">
-                  {selectedRequests.length} {t('requests.requestsIncluded')}
-                </p>
-              </div>
-              <button
-                onClick={clearSelection}
-                className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-xl transition-colors"
-              >
-                <X size={20} className="text-surface-500" />
-              </button>
-            </div>
 
-            <div className="p-6 space-y-6">
-              {/* Selected Requests Preview */}
-              <div>
-                <label className="block text-xs font-bold text-surface-500 mb-2 uppercase tracking-widest">
-                  {t('requests.selectedRequests')}
-                </label>
-                <div className="space-y-2 max-h-32 overflow-y-auto">
-                  {selectedRequests.map(req => (
-                    <div
-                      key={req.id}
-                      className="flex items-center gap-2 p-2 bg-surface-50 dark:bg-surface-800 rounded-lg"
-                    >
-                      <span className="font-medium text-surface-900 dark:text-white text-sm truncate">
-                        {req.title}
-                      </span>
-                      <PortalBadge variant="gray" className="text-[9px] ms-auto shrink-0">
-                        {req.type}
-                      </PortalBadge>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Pricing Title */}
-              <div>
-                <label className="block text-xs font-bold text-surface-500 mb-2 uppercase tracking-widest">
-                  {t('pricing.form.titleLabel')} *
-                </label>
-                <input
-                  type="text"
-                  value={pricingTitle}
-                  onChange={e => setPricingTitle(e.target.value)}
-                  placeholder={t('pricing.form.titlePlaceholder')}
-                  className="portal-input w-full"
-                />
-              </div>
-
-              {/* Currency */}
-              <div>
-                <label className="block text-xs font-bold text-surface-500 mb-2 uppercase tracking-widest">
-                  {t('pricing.form.currency')}
-                </label>
-                <select
-                  value={pricingCurrency}
-                  onChange={e => setPricingCurrency(e.target.value as Currency)}
-                  className="portal-input w-full"
-                >
-                  {Object.entries(CURRENCY_CONFIG).map(([key, config]) => (
-                    <option key={key} value={key}>
-                      {config.symbol} {config.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Line Items */}
-              <div>
-                <label className="block text-xs font-bold text-surface-500 mb-2 uppercase tracking-widest">
-                  {t('pricing.form.lineItems')} *
-                </label>
-                <div className="space-y-3">
-                  {pricingLineItems.map(item => (
-                    <div
-                      key={item.id}
-                      className="p-3 bg-surface-50 dark:bg-surface-800 rounded-xl space-y-2"
-                    >
-                      <input
-                        type="text"
-                        placeholder={t('pricing.form.itemDescription')}
-                        value={item.description}
-                        onChange={e => updateLineItem(item.id, 'description', e.target.value)}
-                        className="portal-input w-full h-9 text-sm"
-                      />
-                      <div className="flex gap-2 items-center">
-                        <input
-                          type="number"
-                          min="1"
-                          placeholder={t('pricing.form.quantity')}
-                          value={item.quantity || ''}
-                          onChange={e =>
-                            updateLineItem(item.id, 'quantity', parseInt(e.target.value) || 0)
-                          }
-                          className="portal-input h-9 text-sm w-20"
-                        />
-                        <span className="text-surface-400">×</span>
-                        <div className="relative flex-1">
-                          <span className="absolute start-3 top-1/2 -translate-y-1/2 text-surface-400 text-sm">
-                            $
-                          </span>
-                          <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            placeholder={t('pricing.form.unitPrice')}
-                            value={item.unitPrice ? (item.unitPrice / 100).toFixed(2) : ''}
-                            onChange={e =>
-                              updateLineItem(
-                                item.id,
-                                'unitPrice',
-                                Math.round(parseFloat(e.target.value || '0') * 100)
-                              )
-                            }
-                            className="portal-input h-9 text-sm ps-7 w-full"
-                          />
-                        </div>
-                        {pricingLineItems.length > 1 && (
-                          <button
-                            onClick={() => removeLineItem(item.id)}
-                            className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        )}
-                      </div>
-                      {item.quantity > 0 && item.unitPrice > 0 && (
-                        <div className="text-end text-xs font-bold text-surface-500">
-                          = {formatCurrency(item.unitPrice * item.quantity, pricingCurrency)}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                <button
-                  type="button"
-                  onClick={addLineItem}
-                  className="mt-3 w-full p-2 border-2 border-dashed border-surface-200 dark:border-surface-700 rounded-xl text-surface-500 hover:border-blue-400 hover:text-blue-600 transition-colors text-sm font-medium"
-                >
-                  <Plus size={16} className="inline me-1" />
-                  {t('pricing.form.addItem')}
-                </button>
-              </div>
-
-              {/* Total */}
-              <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl flex items-center justify-between">
-                <span className="text-sm font-bold text-surface-600 dark:text-surface-300">
-                  {t('pricing.form.total')}
-                </span>
-                <span className="text-2xl font-black text-green-600 font-outfit">
-                  {formatCurrency(totalAmount, pricingCurrency)}
-                </span>
-              </div>
-            </div>
-
-            <div className="p-6 border-t border-surface-200 dark:border-surface-800 flex items-center justify-end gap-3">
-              <PortalButton variant="outline" onClick={clearSelection}>
-                {t('common.cancel')}
-              </PortalButton>
-              <PortalButton
-                onClick={handleCreatePricingOffer}
-                disabled={
-                  isCreatingPricing ||
-                  !pricingTitle.trim() ||
-                  !pricingLineItems.some(i => i.description && i.unitPrice > 0)
-                }
-                className="bg-green-600 hover:bg-green-700"
-              >
-                {isCreatingPricing ? (
-                  <Loader2 size={16} className="animate-spin me-2" />
-                ) : (
-                  <DollarSign size={16} className="me-2" />
-                )}
-                {t('requests.createAndSend')}
-              </PortalButton>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
