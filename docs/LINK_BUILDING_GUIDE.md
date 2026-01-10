@@ -260,7 +260,7 @@ thank you for the shout-out!
 [Link to their article]
 
 Would you be open to adding a link to our site so readers can learn more? 
-Our URL is: https://cartshiftstudio.com
+Our URL is: https://cart-shift.com
 
 I'd be happy to share your article on our social channels as well!
 
@@ -360,7 +360,7 @@ I'd love to provide a testimonial for your website. Here's what I wrote:
 - [Your Name], Founder, CartShift Studio
 
 Feel free to use this on your site. If you could link back to our website 
-(https://cartshiftstudio.com) in the attribution, that would be great!
+(https://cart-shift.com) in the attribution, that would be great!
 
 Let me know if you need anything else.
 

@@ -311,10 +311,10 @@ export default function TermsContent() {
                   <div>
                     <span className="text-sm text-surface-500 dark:text-surface-500">{t('sections.contact.email')}:</span>
                     <a
-                      href="mailto:hello@cartshiftstudio.com"
+                      href="mailto:hello@cart-shift.com"
                       className="block text-purple-600 dark:text-purple-400 font-medium hover:underline"
                     >
-                      hello@cartshiftstudio.com
+                      hello@cart-shift.com
                     </a>
                   </div>
                 </div>

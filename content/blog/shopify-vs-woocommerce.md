@@ -83,7 +83,7 @@ At CartShift Studio, we specialize in Shopify development because it offers the 
 
 Shopify is ideal for most businesses that want simplicity, reliability, and the ability to scale without technical headaches. While self-hosted solutions offer more control, they require significant technical resources and ongoing maintenance.
 
-Still not sure? Contact us at hello@cartshift.studio or visit https://cartshift.studio/contact for a free consultation. We'll help you choose the platform that's right for your business and goals.
+Still not sure? Contact us at hello@cart-shift.com or visit https://cart-shift.com/contact for a free consultation. We'll help you choose the platform that's right for your business and goals.
 
 ---he---
 

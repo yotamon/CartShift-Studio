@@ -108,7 +108,7 @@ This error occurs when the Google OAuth consent screen is in "Testing" mode and 
 3. Navigate to **APIs & Services** → **OAuth consent screen**
 4. Scroll down to **Test users** section
 5. Click **+ ADD USERS**
-6. Add your email address: `hello@cartshift.studio` (and any other emails that need access)
+6. Add your email address: `hello@cart-shift.com` (and any other emails that need access)
 7. Click **ADD**
 8. The users will now be able to authenticate with Google
 
@@ -158,7 +158,7 @@ echo "your-client-secret" | firebase functions:secrets:set GOOGLE_CLIENT_SECRET
 firebase deploy --only functions:googleCalendarOAuthCallback
 ```
 
-**Important**: The redirect URI in Google Cloud Console must match exactly: `https://cartshiftstudio.web.app/portal/oauth-callback`
+**Important**: The redirect URI in Google Cloud Console must match exactly: `https://cart-shift.com/portal/oauth-callback`
 
 **Troubleshooting 400 Bad Request Error:**
 
@@ -167,7 +167,7 @@ If you get a 400 error when connecting Google Calendar, check:
 1. **Redirect URI Mismatch** (Most Common):
    - The redirect URI in Google Cloud Console OAuth credentials must match EXACTLY
    - Check: [Google Cloud Console → APIs & Services → Credentials → OAuth 2.0 Client IDs]
-   - Authorized redirect URIs should include: `https://cartshiftstudio.web.app/portal/oauth-callback`
+   - Authorized redirect URIs should include: `https://cart-shift.com/portal/oauth-callback`
    - Must match exactly (including `https://`, no trailing slash unless specified)
 
 2. **Missing Secrets in Firebase Functions**:
@@ -202,7 +202,7 @@ If you get a 400 error when connecting Google Calendar, check:
 
 5. **Check Redirect URI in Google Cloud Console**:
    - In the OAuth client details, check "Authorized redirect URIs"
-   - Must include exactly: `https://cartshiftstudio.web.app/portal/oauth-callback`
+   - Must include exactly: `https://cart-shift.com/portal/oauth-callback`
    - The redirect URI used in the OAuth flow must match EXACTLY (including https://, no trailing slash)
 
 ## 📚 Additional Resources

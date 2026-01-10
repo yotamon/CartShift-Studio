@@ -15,7 +15,8 @@ import {
   arrayUnion,
   arrayRemove,
 } from 'firebase/firestore';
-import { getFirestoreDb, waitForAuth } from '@/lib/firebase';
+import { getFirestoreDb, waitForAuth, getFirebaseAuth } from '@/lib/firebase';
+import { isLoggingOut } from './auth';
 import { Comment, CreateCommentData } from '@/lib/types/portal';
 
 
@@ -358,15 +359,21 @@ export function subscribeToRequestComments(
       callback(comments);
     },
     error => {
-      console.error('Error in comments snapshot:', error);
       const firestoreError = error as { code?: string };
-       if (firestoreError.code === 'permission-denied') {
+
+      // Suppress permission errors during logout
+      if (firestoreError.code === 'permission-denied') {
+        const auth = getFirebaseAuth();
+        if (isLoggingOut() || !auth.currentUser) return;
+
         console.error(
           'Permission denied accessing comments. User may not have access to this request.'
         );
+      } else {
+        console.error('Error in comments snapshot:', error);
       }
       callback([]);
-        }
+    }
       );
     })
     .catch(error => {

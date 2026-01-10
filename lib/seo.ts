@@ -12,7 +12,7 @@ export interface SEOConfig {
 }
 
 export function generateMetadata(config: SEOConfig, language?: "en" | "he"): Metadata {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cartshiftstudio.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cart-shift.com";
   const imageUrl = config.image;
 
   const alternates: Metadata["alternates"] = {
@@ -61,8 +61,8 @@ export function generateOrganizationSchema() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "CartShift Studio",
-    url: process.env.NEXT_PUBLIC_SITE_URL || "https://cartshiftstudio.com",
-    logo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://cartshiftstudio.com"}/logo.png`,
+    url: process.env.NEXT_PUBLIC_SITE_URL || "https://cart-shift.com",
+    logo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://cart-shift.com"}/logo.png`,
     description: "Bold eCommerce solutions built for your unique vision. We design, develop, and optimize Shopify and WordPress websites.",
     sameAs: [],
   };
@@ -91,7 +91,7 @@ export function generateArticleSchema(post: {
   category?: string;
   image?: string;
 }) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cartshiftstudio.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cart-shift.com";
 
 
   return {
@@ -137,12 +137,12 @@ export function generateLocalBusinessSchema() {
     "@type": "LocalBusiness",
     name: "CartShift Studio",
     description: "E-commerce development agency specializing in Shopify and WordPress solutions",
-    url: process.env.NEXT_PUBLIC_SITE_URL || "https://cartshiftstudio.com",
+    url: process.env.NEXT_PUBLIC_SITE_URL || "https://cart-shift.com",
   };
 }
 
 export function generateWebSiteSchema() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cartshiftstudio.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cart-shift.com";
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -161,7 +161,7 @@ export function generateWebSiteSchema() {
 }
 
 export function generateBreadcrumbSchema(items: Array<{ name: string; url: string }>) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cartshiftstudio.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cart-shift.com";
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -232,7 +232,7 @@ export function generatePersonSchema(person: {
   image?: string;
   sameAs?: string[];
 }) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cartshiftstudio.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cart-shift.com";
 
   return {
     "@context": "https://schema.org",

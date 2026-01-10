@@ -290,10 +290,10 @@ export default function PrivacyContent() {
                   <div>
                     <span className="text-sm text-surface-500 dark:text-surface-500">{t('sections.contact.email')}:</span>
                     <a
-                      href="mailto:hello@cartshiftstudio.com"
+                      href="mailto:hello@cart-shift.com"
                       className="block text-accent-600 dark:text-accent-400 font-medium hover:underline"
                     >
-                      hello@cartshiftstudio.com
+                      hello@cart-shift.com
                     </a>
                   </div>
                 </div>

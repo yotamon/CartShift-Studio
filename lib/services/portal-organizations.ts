@@ -16,6 +16,7 @@ import {
   arrayRemove,
 } from 'firebase/firestore';
 import { getFirestoreDb, getFirebaseAuth } from '@/lib/firebase';
+import { isLoggingOut } from './auth';
 import { getPortalUser } from './portal-users';
 import {
   Organization,
@@ -84,18 +85,27 @@ export async function createOrganization(
 }
 
 export async function getOrganization(orgId: string): Promise<Organization | null> {
-  const db = getFirestoreDb();
-  const docRef = doc(db, ORGS_COLLECTION, orgId);
-  const docSnap = await getDoc(docRef);
+  try {
+    const db = getFirestoreDb();
+    const docRef = doc(db, ORGS_COLLECTION, orgId);
+    const docSnap = await getDoc(docRef);
 
-  if (!docSnap.exists()) {
-    return null;
+    if (!docSnap.exists()) {
+      return null;
+    }
+
+    return {
+      id: docSnap.id,
+      ...docSnap.data(),
+    } as Organization;
+  } catch (error) {
+    const firestoreError = error as { code?: string };
+    if (firestoreError.code === 'permission-denied') {
+      const auth = getFirebaseAuth();
+      if (isLoggingOut() || !auth.currentUser) return null;
+    }
+    throw error;
   }
-
-  return {
-    id: docSnap.id,
-    ...docSnap.data(),
-  } as Organization;
 }
 
 export async function getUserOrganizations(userId: string): Promise<Organization[]> {
@@ -645,6 +655,10 @@ export function subscribeToInvites(
       callback(invites);
     },
     error => {
+      if (error.code === 'permission-denied') {
+        const auth = getFirebaseAuth();
+        if (isLoggingOut() || !auth.currentUser) return;
+      }
       console.error('Error in invites snapshot:', error);
       callback([]);
     }
@@ -670,6 +684,10 @@ export function subscribeToAgencyInvites(callback: (invites: Invite[]) => void):
       callback(invites);
     },
     error => {
+      if (error.code === 'permission-denied') {
+        const auth = getFirebaseAuth();
+        if (isLoggingOut() || !auth.currentUser) return;
+      }
       console.error('Error in agency invites snapshot:', error);
       callback([]);
     }
@@ -697,6 +715,10 @@ export function subscribeToMembers(
       callback(members);
     },
     error => {
+      if (error.code === 'permission-denied') {
+        const auth = getFirebaseAuth();
+        if (isLoggingOut() || !auth.currentUser) return;
+      }
       console.error('Error in members snapshot:', error);
       callback([]);
     }
@@ -722,6 +744,10 @@ export function subscribeToOrganization(
       }
     },
     error => {
+      if (error.code === 'permission-denied') {
+        const auth = getFirebaseAuth();
+        if (isLoggingOut() || !auth.currentUser) return;
+      }
       console.error('Error in organization snapshot:', error);
       callback(null);
     }

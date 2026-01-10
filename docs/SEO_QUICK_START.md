@@ -8,9 +8,9 @@ This guide provides immediate actions you can take to start improving your SEO t
 
 **Google Search Console:**
 1. Go to [search.google.com/search-console](https://search.google.com/search-console)
-2. Add your property (cartshiftstudio.com)
+2. Add your property (cart-shift.com)
 3. Verify ownership (DNS or HTML file)
-4. Submit sitemap: `https://cartshiftstudio.com/sitemap.xml`
+4. Submit sitemap: `https://cart-shift.com/sitemap.xml`
 
 **Google Analytics 4:**
 1. Verify GA4 is tracking (check `NEXT_PUBLIC_GA_ID` in environment)

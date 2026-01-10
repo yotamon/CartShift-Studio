@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { getAuthInstance } from '@/lib/services/auth';
+import { usePathname } from 'next/navigation';
+import { getAuthInstance, isLoggingOut } from '@/lib/services/auth';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -34,6 +35,7 @@ export function usePortalAuth() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<PortalErrorCode | null>(null);
   const isMountedRef = useRef(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -70,6 +72,15 @@ export function usePortalAuth() {
       // Listen to auth state changes
       unsubscribeAuth = onAuthStateChanged(auth, async (currentUser) => {
         if (!isMountedRef.current) return;
+
+        // CRITICAL: Unsubscribe from previous user data listener to prevent
+        // "Missing or insufficient permissions" errors when the user logs out.
+        if (unsubscribeUserData) {
+          console.log('[usePortalAuth] Cleaning up previous userData listener');
+          unsubscribeUserData();
+          unsubscribeUserData = undefined;
+        }
+
         setUser(currentUser);
 
         if (currentUser) {
@@ -145,9 +156,31 @@ export function usePortalAuth() {
             setLoading(false);
           }, (err) => {
             if (!isMountedRef.current) return;
+
+            const isLoggingOutActive = isLoggingOut();
+            const hasCurrentUser = !!getAuthInstance().currentUser;
+            const isLoginPage = pathname?.includes('/login');
+
+            // Check if this is a permission error during logout
+            if (err.code === 'permission-denied') {
+              // If we are logging out OR the user is already cleared OR we are on login page, ignore the error
+              if (isLoggingOutActive || !hasCurrentUser || isLoginPage) {
+                console.log('[usePortalAuth] Suppressing permission error during logout transition');
+                return;
+              }
+            }
+
             console.error('Error fetching user data:', err);
+            console.debug('[usePortalAuth] Permission error details:', {
+              code: err.code,
+              isLoggingOut: isLoggingOutActive,
+              hasCurrentUser,
+              isLoginPage,
+              uid: getAuthInstance().currentUser?.uid,
+              pathname
+            });
+
             setError(getPortalError(err));
-            // Keep existing userData if available (from cache), otherwise set basic
             setLoading(false);
           });
         } else {

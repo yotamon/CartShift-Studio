@@ -9,7 +9,8 @@ import {
   limit,
   onSnapshot,
 } from 'firebase/firestore';
-import { getFirestoreDb, waitForAuth } from '@/lib/firebase';
+import { getFirestoreDb, waitForAuth, getFirebaseAuth } from '@/lib/firebase';
+import { isLoggingOut } from './auth';
 import { Notification } from '@/lib/types/portal';
 
 const NOTIFICATIONS_COLLECTION = 'portal_notifications';
@@ -96,6 +97,13 @@ export function subscribeToNotifications(
         })) as Notification[];
         callback(notifications);
       }, (error) => {
+        // Suppress permission errors during logout
+        if (error.code === 'permission-denied') {
+          const auth = getFirebaseAuth();
+          if (isLoggingOut() || !auth.currentUser) {
+            return;
+          }
+        }
         console.error('Error in notifications snapshot:', error);
         callback([]);
       });
@@ -133,6 +141,12 @@ export function subscribeToUnreadCount(
       unsubscribe = onSnapshot(q, (snapshot) => {
         callback(snapshot.size);
       }, (error) => {
+        if (error.code === 'permission-denied') {
+          const auth = getFirebaseAuth();
+          if (isLoggingOut() || !auth.currentUser) {
+            return;
+          }
+        }
         console.error('Error in unread count snapshot:', error);
         callback(0);
       });

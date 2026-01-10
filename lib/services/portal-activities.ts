@@ -10,6 +10,7 @@ import {
   getDocs,
 } from 'firebase/firestore';
 import { getFirestoreDb, waitForAuth, getFirebaseAuth } from '@/lib/firebase';
+import { isLoggingOut } from './auth';
 import { ActivityLog } from '@/lib/types/portal';
 
 const ACTIVITIES_COLLECTION = 'portal_activities';
@@ -130,14 +131,19 @@ export function subscribeToOrgActivities(
           callback(activities);
         },
         (error) => {
-          console.error('[portal-activities] Error in activities snapshot:', error);
+          // Suppress permission errors during logout
           if (error.code === 'permission-denied') {
+            const auth = getFirebaseAuth();
+            if (isLoggingOut() || !auth.currentUser) return;
+
             console.error('[portal-activities] Permission denied for orgId:', orgId);
             console.error('[portal-activities] Error details:', {
               code: error.code,
               message: error.message,
               orgId,
             });
+          } else {
+            console.error('[portal-activities] Error in activities snapshot:', error);
           }
           callback([]);
         }
@@ -195,6 +201,11 @@ export function subscribeToRequestActivities(
           callback(activities);
         },
         (error) => {
+          // Suppress permission errors during logout
+          if (error.code === 'permission-denied') {
+            const auth = getFirebaseAuth();
+            if (isLoggingOut() || !auth.currentUser) return;
+          }
           console.error('Error in request activities snapshot:', error);
           callback([]);
         }

@@ -18,6 +18,7 @@ import {
   arrayRemove,
 } from 'firebase/firestore';
 import { getFirestoreDb, getFirebaseAuth, waitForAuth } from '@/lib/firebase';
+import { isLoggingOut } from './auth';
 import { getPortalUser } from './portal-users';
 import {
   Request,
@@ -321,8 +322,15 @@ export function subscribeToRequest(
           } as Request);
         },
         error => {
-          console.error('Error in request snapshot:', error);
           const firestoreError = error as { code?: string; message?: string };
+
+          // Suppress permission errors during logout
+          if (firestoreError.code === 'permission-denied') {
+            const auth = getFirebaseAuth();
+            if (isLoggingOut() || !auth.currentUser) return;
+          }
+
+          console.error('Error in request snapshot:', error);
           if (firestoreError.code === 'permission-denied') {
             callback(null, {
               code: 'permission-denied',
@@ -380,8 +388,11 @@ export function subscribeToOrgRequests(
           callback(requests);
         },
         error => {
-          console.error('[portal-requests] Error in org requests snapshot:', error);
+          // Suppress permission errors during logout
           if (error.code === 'permission-denied') {
+            const auth = getFirebaseAuth();
+            if (isLoggingOut() || !auth.currentUser) return;
+
             console.error('[portal-requests] Permission denied for orgId:', orgId);
             console.error('[portal-requests] Error details:', {
               code: error.code,
@@ -391,6 +402,8 @@ export function subscribeToOrgRequests(
             console.error(
               '[portal-requests] User may not be a member of this organization or rules may not have propagated yet.'
             );
+          } else {
+            console.error('[portal-requests] Error in org requests snapshot:', error);
           }
           callback([]);
         }
@@ -434,12 +447,18 @@ export function subscribeToAllRequests(
           callback(requests);
         },
         error => {
-          console.error('[portal-requests] Error in all requests snapshot:', error);
           const firestoreError = error as { code?: string; message?: string };
+
+          // Suppress permission errors during logout
           if (firestoreError.code === 'permission-denied') {
+            const auth = getFirebaseAuth();
+            if (isLoggingOut() || !auth.currentUser) return;
+
             console.error('[portal-requests] Permission denied. This query requires agency permissions.', {
               error: firestoreError.message,
             });
+          } else {
+            console.error('[portal-requests] Error in all requests snapshot:', error);
           }
           callback([]);
         }

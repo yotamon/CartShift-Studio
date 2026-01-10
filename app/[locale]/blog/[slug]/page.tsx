@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     };
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cartshiftstudio.com";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cart-shift.com";
 
   return genMeta({
     title: `${post.title} | CartShift Studio Blog`,
@@ -49,7 +49,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
     notFound();
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cartshiftstudio.com";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cart-shift.com";
   const articleUrl = `${baseUrl}/blog/${post.slug}`;
 
   const articleSchema = generateArticleSchema({

@@ -108,7 +108,7 @@ export function sanitizeHtml(html: string): string {
         const href = attribs.href || '';
         if (
           href.startsWith('http') &&
-          !href.includes(process.env.NEXT_PUBLIC_SITE_URL || 'cartshift.studio')
+          !href.includes(process.env.NEXT_PUBLIC_SITE_URL || 'cart-shift.com')
         ) {
           return {
             tagName: 'a',

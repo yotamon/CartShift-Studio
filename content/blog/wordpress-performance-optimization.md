@@ -217,7 +217,7 @@ A slow server can make a perfectly optimized front-end feel sluggish.
 A fast WordPress site is not a one-time project. It’s a system. Measure, fix the biggest bottlenecks, and keep a simple routine so things don’t regress.
 
 **Want a quick performance audit?** We'll review your Core Web Vitals, pinpoint the biggest bottlenecks, and give you a prioritized fix plan (not a vague "optimize everything" list).
-Start here: [WordPress development & optimization](/solutions/wordpress) or contact us at hello@cartshift.studio.
+Start here: [WordPress development & optimization](/solutions/wordpress) or contact us at hello@cart-shift.com.
 Related: [Ecommerce conversion rate optimization](/blog/ecommerce-conversion-rate-optimization) and [Shopify speed optimization](/blog/shopify-speed-optimization).
 
 [^1]: According to Google's research, 53% of mobile site visits are abandoned if pages take longer than 3 seconds to load. The probability of bounce increases 32% as page load time goes from 1 second to 3 seconds.

@@ -87,10 +87,10 @@ export const ContactPageContent: React.FC = () => {
                     {t('contact.emailLabel')}
                   </h3>
                   <a
-                    href="mailto:hello@cartshiftstudio.com"
+                    href="mailto:hello@cart-shift.com"
                     className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors text-base md:text-lg"
                   >
-                    hello@cartshiftstudio.com
+                    hello@cart-shift.com
                   </a>
                 </div>
               </div>

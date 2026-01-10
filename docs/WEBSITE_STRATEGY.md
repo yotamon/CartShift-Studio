@@ -3208,9 +3208,9 @@ Price: {{price_maintenance_premium}}/month
 Since the site uses client-side language switching (not URL-based), implement hreflang with x-default:
 
 ```html
-<link rel="alternate" hreflang="en" href="https://cartshiftstudio.com/" />
-<link rel="alternate" hreflang="he" href="https://cartshiftstudio.com/" />
-<link rel="alternate" hreflang="x-default" href="https://cartshiftstudio.com/" />
+<link rel="alternate" hreflang="en" href="https://cart-shift.com/" />
+<link rel="alternate" hreflang="he" href="https://cart-shift.com/" />
+<link rel="alternate" hreflang="x-default" href="https://cart-shift.com/" />
 ```
 
 **Future Consideration:** If moving to URL-based locales (/en/, /he/), update hreflang accordingly.
@@ -3220,7 +3220,7 @@ Since the site uses client-side language switching (not URL-based), implement hr
 Every page should have a self-referencing canonical tag:
 
 ```html
-<link rel="canonical" href="https://cartshiftstudio.com/solutions/shopify" />
+<link rel="canonical" href="https://cart-shift.com/solutions/shopify" />
 ```
 
 ## 6.6 Schema Implementation Plan

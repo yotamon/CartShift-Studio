@@ -77,7 +77,7 @@ If you want email notifications from the contact form:
 ```bash
 firebase functions:secrets:set GMAIL_USER="your-email@gmail.com"
 firebase functions:secrets:set GMAIL_APP_PASSWORD="your-app-password"
-firebase functions:secrets:set CONTACT_EMAIL="hello@cartshiftstudio.com"
+firebase functions:secrets:set CONTACT_EMAIL="hello@cart-shift.com"
 ```
 
 ## 📋 Deployment Steps (After Upgrades)
@@ -93,7 +93,7 @@ After deployment, you'll get a function URL like:
 ### Step 2: Create Environment Variables File
 Create `.env.local` in the project root:
 ```env
-NEXT_PUBLIC_SITE_URL=https://cartshiftstudio.web.app
+NEXT_PUBLIC_SITE_URL=https://cart-shift.com
 NEXT_PUBLIC_FIREBASE_FUNCTION_URL=https://us-central1-cartshiftstudio.cloudfunctions.net/contactForm
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 ```
@@ -137,13 +137,16 @@ firebase deploy
 
 - Firebase Console: https://console.firebase.google.com/project/cartshiftstudio/overview
 - Upgrade to Blaze: https://console.firebase.google.com/project/cartshiftstudio/usage/details
-- Firestore Setup: https://console.firebase.google.com/project/cartshiftstudio/firestore
-- Hosting: https://console.firebase.google.com/project/cartshiftstudio/hosting
-- Functions: https://console.firebase.google.com/project/cartshiftstudio/functions
+-   Firebase Console: https://console.firebase.google.com/project/cartshiftstudio/overview
+-   Upgrade to Blaze: https://console.firebase.google.com/project/cartshiftstudio/usage/details
+-   Firestore Setup: https://console.firebase.google.com/project/cartshiftstudio/firestore
+-   Hosting: https://console.firebase.google.com/project/cartshiftstudio/hosting
+-   Functions: https://console.firebase.google.com/project/cartshiftstudio/functions
 
 ## 📝 Notes
 
-- The site will be available at: `https://cartshiftstudio.web.app` (or your custom domain)
-- Functions are deployed to: `us-central1` region
-- Static export is configured, so the site is fully static (no SSR)
-- Contact form submissions are stored in Firestore collection: `contact_submissions`
+-   The site will be available at: `https://cart-shift.com` (or your custom domain)
+    -   Must match exactly: `https://cart-shift.com/portal/oauth-callback`
+-   Functions are deployed to: `us-central1` region
+-   Static export is configured, so the site is fully static (no SSR)
+-   Contact form submissions are stored in Firestore collection: `contact_submissions`

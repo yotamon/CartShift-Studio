@@ -72,7 +72,7 @@ Update `.firebaserc` with your project ID:
 ```bash
 firebase functions:secrets:set GMAIL_USER="your-email@gmail.com"
 firebase functions:secrets:set GMAIL_APP_PASSWORD="your-app-password"
-firebase functions:secrets:set CONTACT_EMAIL="hello@cartshiftstudio.com"
+firebase functions:secrets:set CONTACT_EMAIL="hello@cart-shift.com"
 ```
 
 ## Deployment Steps
@@ -92,13 +92,13 @@ firebase firestore:databases:create --location us-central1
 ```bash
 firebase deploy --only functions
 ```
-After deployment, note the function URL (e.g., `https://us-central1-cartshiftstudio.cloudfunctions.net/contactForm`)
+After deployment, note the function URL (e.g., `https://us-central1-cart-shift.cloudfunctions.net/contactForm`)
 
 ### 3. Set Environment Variables
 Create a `.env.local` file in the root directory:
 ```env
-NEXT_PUBLIC_SITE_URL=https://cartshiftstudio.web.app
-NEXT_PUBLIC_FIREBASE_FUNCTION_URL=https://us-central1-cartshiftstudio.cloudfunctions.net/contactForm
+NEXT_PUBLIC_SITE_URL=https://cart-shift.com
+NEXT_PUBLIC_FIREBASE_FUNCTION_URL=https://us-central1-cart-shift.cloudfunctions.net/contactForm
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 ```
 Replace the function URL with your actual deployed function URL.

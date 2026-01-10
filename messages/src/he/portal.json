@@ -425,7 +425,7 @@
         "replyingTo": "מגיב ל",
         "mentionMember": "תיוג חבר צוות",
         "unknownUser": "משתמש לא ידוע",
-        "unassigned": "טרם הוקצה",
+        "unassigned": "לא הוקצה",
         "waitingForAssignment": "ממתין להקצאה"
       },
       "milestones": {
@@ -888,7 +888,7 @@
     },
     "sidebar": {
       "title": "CartShift",
-      "subtitle": "פורטל סטודיו",
+      "subtitle": "Studio Portal",
       "collapse": "כווץ",
       "close": "סגור",
       "signOut": "התנתק",
@@ -911,7 +911,7 @@
       "authorizedMember": "חבר מורשה",
       "agencyPartner": "שותף סוכנות",
       "enterprise": "ארגון",
-      "level": "רמה 2",
+      "level": "Level 2",
       "notifications": "התראות",
       "noNotifications": "אין התראות",
       "markAllRead": "סמן הכל כנקרא"
@@ -1458,8 +1458,7 @@
         "deleteConfirm": "האם אתם בטוחים שברצונכם למחוק את הצעת המחיר הזו?",
         "deleteFailed": "המחיקה נכשלה. אנא נסו שוב.",
         "itemDescriptionPlaceholder": "שירות או מוצר...",
-        "agencyNotesPlaceholder": "הערות פנימיות (לא נראות ללקוח)...",
-        "createOffer": "צרו הצעה"
+        "agencyNotesPlaceholder": "הערות פנימיות (לא נראות ללקוח)..."
       },
       "detail": {
         "breakdown": "פירוט המחיר",

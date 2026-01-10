@@ -14,6 +14,7 @@ import { loginWithEmail } from '@/lib/services/auth';
 import { Suspense, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
+import Image from 'next/image';
 import { Mail, Lock } from 'lucide-react';
 
 type LoginData = z.infer<ReturnType<typeof getLoginSchema>>;
@@ -75,8 +76,14 @@ function LoginForm() {
     <div className="w-full max-w-[400px] space-y-6">
       {/* Logo */}
       <div className="flex flex-col items-center justify-center space-y-4">
-        <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-blue-500/20">
-          C
+        <div className="w-12 h-12 relative">
+          <Image
+            src="/images/CarShift-Icon-Colored.png"
+            alt="CartShift Studio"
+            fill
+            className="object-contain"
+            priority
+          />
         </div>
         <div className="text-center">
           <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white">

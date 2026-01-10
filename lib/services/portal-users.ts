@@ -4,24 +4,34 @@ import {
   updateDoc,
   serverTimestamp,
 } from 'firebase/firestore';
-import { getFirestoreDb } from '@/lib/firebase';
+import { getFirestoreDb, getFirebaseAuth } from '@/lib/firebase';
+import { isLoggingOut } from './auth';
 import { PortalUser } from '@/lib/types/portal';
 
 const USERS_COLLECTION = 'portal_users';
 
 export async function getPortalUser(userId: string): Promise<PortalUser | null> {
-  const db = getFirestoreDb();
-  const docRef = doc(db, USERS_COLLECTION, userId);
-  const docSnap = await getDoc(docRef);
+  try {
+    const db = getFirestoreDb();
+    const docRef = doc(db, USERS_COLLECTION, userId);
+    const docSnap = await getDoc(docRef);
 
-  if (!docSnap.exists()) {
-    return null;
+    if (!docSnap.exists()) {
+      return null;
+    }
+
+    return {
+      id: docSnap.id,
+      ...docSnap.data(),
+    } as PortalUser;
+  } catch (error) {
+    const firestoreError = error as { code?: string };
+    if (firestoreError.code === 'permission-denied') {
+      const auth = getFirebaseAuth();
+      if (isLoggingOut() || !auth.currentUser) return null;
+    }
+    throw error;
   }
-
-  return {
-    id: docSnap.id,
-    ...docSnap.data(),
-  } as PortalUser;
 }
 
 export async function updatePortalUser(

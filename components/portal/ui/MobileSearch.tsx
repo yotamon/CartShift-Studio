@@ -107,7 +107,6 @@ export function MobileSearch({ isOpen, onClose, className }: MobileSearchProps) 
   const quickLinks = [
     { label: t('portal.sidebar.nav.dashboard' as any), href: '/portal/dashboard/', icon: '📊' },
     { label: t('portal.sidebar.nav.requests' as any), href: '/portal/requests/', icon: '📋' },
-    { label: t('portal.sidebar.nav.settings' as any), href: '/portal/settings/', icon: '⚙️' },
   ];
 
   return (

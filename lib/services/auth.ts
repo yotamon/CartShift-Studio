@@ -136,14 +136,43 @@ export async function signUpWithEmail(
   }
 }
 
+// Flag to indicate if a logout process is currently in progress
+// This helps suppress spurious "permission-denied" errors from Firestore listeners
+// that may trigger after the auth token is invalidated but before the listeners are detached.
+// Flag to indicate if a logout process is currently in progress
+// This helps suppress spurious "permission-denied" errors from Firestore listeners
+// that may trigger after the auth token is invalidated but before the listeners are detached.
+// We use globalThis to ensure the state is shared across all module instances in a Next.js environment.
+const LOGGING_OUT_KEY = '__cartshift_logging_out';
+
+export function isLoggingOut(): boolean {
+  if (typeof window === 'undefined') return false;
+  return (globalThis as any)[LOGGING_OUT_KEY] === true;
+}
+
+export function setLoggingOut(value: boolean): void {
+  if (typeof window !== 'undefined') {
+    (globalThis as any)[LOGGING_OUT_KEY] = value;
+  }
+}
+
 export async function logout(): Promise<void> {
   try {
     const authInstance = getAuthInstance();
     if (!authInstance) {
       throw new Error('Firebase Auth is not properly initialized');
     }
+
+    setLoggingOut(true);
+    // Give a small grace period for the flag to propagate and for UI to react
+    // before the auth token is actually invalidated.
+    await new Promise(resolve => setTimeout(resolve, 50));
     await signOut(authInstance);
+    // Note: We don't set loggingOut back to false here because the page
+    // usually redirects/reloads, and we want to keep suppressing errors
+    // until the app state is completely reset.
   } catch (error: unknown) {
+    setLoggingOut(false);
     console.error('Logout error:', error);
     throw error;
   }

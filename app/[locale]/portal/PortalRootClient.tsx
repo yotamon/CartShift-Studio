@@ -5,6 +5,7 @@ import { useRouter } from '@/i18n/navigation';
 import { Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
+import { isLoggingOut } from '@/lib/services/auth';
 import { OnboardingWizard } from '@/components/portal/onboarding/OnboardingWizard';
 
 export default function PortalRootClient() {
@@ -16,7 +17,9 @@ export default function PortalRootClient() {
     if (loading) return;
 
     if (!isAuthenticated) {
-      router.push('/portal/login/');
+      if (!isLoggingOut()) {
+        router.push('/portal/login/');
+      }
       return;
     }
 

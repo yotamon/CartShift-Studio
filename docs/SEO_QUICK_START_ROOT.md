@@ -10,9 +10,9 @@ This is your actionable checklist for implementing the most critical SEO improve
 ### Day 1-2: Analytics & Monitoring Setup
 - [ ] **Google Search Console**
   - Go to https://search.google.com/search-console
-  - Add property: cartshiftstudio.com
+  - Add property: cart-shift.com
   - Verify ownership (DNS or HTML file method)
-  - Submit sitemap: https://cartshiftstudio.com/sitemap.xml
+  - Submit sitemap: https://cart-shift.com/sitemap.xml
   
 - [ ] **Bing Webmaster Tools**
   - Go to https://www.bing.com/webmasters
@@ -298,9 +298,9 @@ Just need to use it on pages. Example for Shopify page:
 import { generateBreadcrumbSchema } from "@/lib/seo";
 
 const breadcrumbSchema = generateBreadcrumbSchema([
-  { name: "Home", url: "https://cartshiftstudio.com" },
-  { name: "Solutions", url: "https://cartshiftstudio.com/solutions" },
-  { name: "Shopify Development", url: "https://cartshiftstudio.com/solutions/shopify" }
+  { name: "Home", url: "https://cart-shift.com" },
+  { name: "Solutions", url: "https://cart-shift.com/solutions" },
+  { name: "Shopify Development", url: "https://cart-shift.com/solutions/shopify" }
 ]);
 ```
 
@@ -332,7 +332,7 @@ Create `.env.local` file in root:
 
 ```bash
 # Site URL
-NEXT_PUBLIC_SITE_URL=https://cartshiftstudio.com
+NEXT_PUBLIC_SITE_URL=https://cart-shift.com
 
 # Google Analytics
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX

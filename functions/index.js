@@ -153,7 +153,7 @@ async function saveInvoicePDF(request) {
       doc.fillColor('#6b7280').fontSize(10).text('FROM', 50, y1);
       doc.fillColor('#1a1a1a').text('CartShift Studio', 50, y1 + 15);
       doc.text('Tel Aviv, Israel', 50, y1 + 30);
-      doc.text('support@cartshift.studio', 50, y1 + 45);
+      doc.text('support@cart-shift.com', 50, y1 + 45);
 
       doc.fillColor('#6b7280').text('BILL TO', 350, y1);
       doc.fillColor('#1a1a1a').text(organization.name, 350, y1 + 15);
@@ -312,7 +312,7 @@ ${message ? `Message: ${message}` : ''}
 
         const mailOptions = {
           from: gmailUser.value(),
-          to: contactEmail.value() || 'hello@cartshift.studio',
+          to: contactEmail.value() || 'hello@cart-shift.com',
           subject: `New Contact Form Submission from ${name}`,
           text: emailContent,
         };
@@ -397,7 +397,7 @@ exports.newsletterSubscription = onRequest(
 // PORTAL NOTIFICATION TRIGGERS
 // ============================================
 
-const PORTAL_BASE_URL = 'https://cartshift.studio/portal';
+const PORTAL_BASE_URL = 'https://cart-shift.com/portal';
 
 // 1. New Request Trigger (Notify Admin)
 exports.onPortalRequestCreated = onDocumentCreated(
@@ -412,7 +412,7 @@ exports.onPortalRequestCreated = onDocumentCreated(
     const orgName = orgSnap.exists ? orgSnap.data().name : 'Unknown Organization';
 
     await sendPortalEmail(
-      contactEmail.value() || 'hello@cartshift.studio',
+      contactEmail.value() || 'hello@cart-shift.com',
       `New Request: ${requestData.title}`,
       'new_request',
       {
@@ -530,7 +530,7 @@ exports.onPortalCommentCreated = onDocumentCreated(
 
     const targetEmail = isAgency
       ? await getUserEmail(requestData.createdBy) // Agency commented -> Notify client
-      : contactEmail.value() || 'hello@cartshift.studio'; // Client commented -> Notify admin
+      : contactEmail.value() || 'hello@cart-shift.com'; // Client commented -> Notify admin
 
     if (!targetEmail) return;
 

@@ -16,7 +16,7 @@ import { routing } from '@/i18n/routing';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cartshiftstudio.com';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cart-shift.com';
 
 function loadMessages(locale: 'en' | 'he') {
   try {

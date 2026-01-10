@@ -61,228 +61,200 @@
         "destination": "/en/solutions/wordpress/index.html"
       },
       {
-        "source": "/portal/login",
-        "destination": "/en/portal/login/index.html"
-      },
-      {
         "source": "/portal/login/**",
         "destination": "/en/portal/login/index.html"
-      },
-      {
-        "source": "/portal/signup",
-        "destination": "/en/portal/signup/index.html"
       },
       {
         "source": "/portal/signup/**",
         "destination": "/en/portal/signup/index.html"
       },
       {
-        "source": "/portal/oauth-callback",
-        "destination": "/en/portal/oauth-callback/index.html"
-      },
-      {
         "source": "/portal/oauth-callback/**",
         "destination": "/en/portal/oauth-callback/index.html"
-      },
-      {
-        "source": "/portal/org",
-        "destination": "/en/portal/org/template/dashboard/index.html"
-      },
-      {
-        "source": "/portal/org/**",
-        "destination": "/en/portal/org/template/dashboard/index.html"
-      },
-      {
-        "source": "/portal/invite",
-        "destination": "/en/portal/invite/template/index.html"
       },
       {
         "source": "/portal/invite/**",
         "destination": "/en/portal/invite/template/index.html"
       },
       {
-        "source": "/en/portal/org/*/dashboard",
-        "destination": "/en/portal/org/template/dashboard/index.html"
+        "source": "/en/portal/dashboard/**",
+        "destination": "/en/portal/dashboard/index.html"
       },
       {
-        "source": "/en/portal/org/*/dashboard/**",
-        "destination": "/en/portal/org/template/dashboard/index.html"
+        "source": "/en/portal/requests/new/**",
+        "destination": "/en/portal/requests/new/index.html"
       },
       {
-        "source": "/en/portal/org/*/requests/new",
-        "destination": "/en/portal/org/template/requests/new/index.html"
+        "source": "/en/portal/requests/request/**",
+        "destination": "/en/portal/requests/request/index.html"
       },
       {
-        "source": "/en/portal/org/*/requests/new/**",
-        "destination": "/en/portal/org/template/requests/new/index.html"
+        "source": "/en/portal/requests/:requestId",
+        "destination": "/en/portal/requests/request/index.html"
       },
       {
-        "source": "/en/portal/org/*/requests/*",
-        "destination": "/en/portal/org/template/requests/request/index.html"
+        "source": "/en/portal/requests/:requestId/**",
+        "destination": "/en/portal/requests/request/index.html"
       },
       {
-        "source": "/en/portal/org/*/requests/*/*",
-        "destination": "/en/portal/org/template/requests/request/index.html"
+        "source": "/en/portal/requests/**",
+        "destination": "/en/portal/requests/index.html"
       },
       {
-        "source": "/en/portal/org/*/requests",
-        "destination": "/en/portal/org/template/requests/index.html"
+        "source": "/en/portal/consultations/**",
+        "destination": "/en/portal/consultations/index.html"
       },
       {
-        "source": "/en/portal/org/*/team",
-        "destination": "/en/portal/org/template/team/index.html"
+        "source": "/en/portal/team/**",
+        "destination": "/en/portal/team/index.html"
       },
       {
-        "source": "/en/portal/org/*/team/**",
-        "destination": "/en/portal/org/template/team/index.html"
+        "source": "/en/portal/files/**",
+        "destination": "/en/portal/files/index.html"
       },
       {
-        "source": "/en/portal/org/*/files",
-        "destination": "/en/portal/org/template/files/index.html"
+        "source": "/en/portal/pricing/new/**",
+        "destination": "/en/portal/pricing/new/index.html"
       },
       {
-        "source": "/en/portal/org/*/files/**",
-        "destination": "/en/portal/org/template/files/index.html"
+        "source": "/en/portal/pricing/pricing/**",
+        "destination": "/en/portal/pricing/pricing/index.html"
       },
       {
-        "source": "/en/portal/org/*/settings",
-        "destination": "/en/portal/org/template/settings/index.html"
+        "source": "/en/portal/pricing/:pricingId",
+        "destination": "/en/portal/pricing/pricing/index.html"
       },
       {
-        "source": "/en/portal/org/*/settings/**",
-        "destination": "/en/portal/org/template/settings/index.html"
+        "source": "/en/portal/pricing/:pricingId/**",
+        "destination": "/en/portal/pricing/pricing/index.html"
       },
       {
-        "source": "/en/portal/org/*/consultations",
-        "destination": "/en/portal/org/template/consultations/index.html"
+        "source": "/en/portal/pricing/**",
+        "destination": "/en/portal/pricing/index.html"
       },
       {
-        "source": "/en/portal/org/*/consultations/**",
-        "destination": "/en/portal/org/template/consultations/index.html"
+        "source": "/en/portal/settings/**",
+        "destination": "/en/portal/settings/index.html"
       },
       {
-        "source": "/en/portal/org/*/pricing/new",
-        "destination": "/en/portal/org/template/pricing/new/index.html"
+        "source": "/en/portal/agency/inbox/**",
+        "destination": "/en/portal/agency/inbox/index.html"
       },
       {
-        "source": "/en/portal/org/*/pricing/new/**",
-        "destination": "/en/portal/org/template/pricing/new/index.html"
+        "source": "/en/portal/agency/workboard/**",
+        "destination": "/en/portal/agency/workboard/index.html"
       },
       {
-        "source": "/en/portal/org/*/pricing/*",
-        "destination": "/en/portal/org/template/pricing/pricing/index.html"
+        "source": "/en/portal/agency/clients/new/**",
+        "destination": "/en/portal/agency/clients/new/index.html"
       },
       {
-        "source": "/en/portal/org/*/pricing/*/*",
-        "destination": "/en/portal/org/template/pricing/pricing/index.html"
+        "source": "/en/portal/agency/clients/*/**",
+        "destination": "/en/portal/agency/clients/template/index.html"
       },
       {
-        "source": "/en/portal/org/*/pricing",
-        "destination": "/en/portal/org/template/pricing/index.html"
+        "source": "/en/portal/agency/clients/**",
+        "destination": "/en/portal/agency/clients/index.html"
       },
       {
-        "source": "/en/portal/org/*",
-        "destination": "/en/portal/org/template/dashboard/index.html"
+        "source": "/en/portal/agency/consultations/**",
+        "destination": "/en/portal/agency/consultations/index.html"
       },
       {
-        "source": "/en/portal/invite/*",
-        "destination": "/en/portal/invite/template/index.html"
+        "source": "/en/portal/agency/pricing/**",
+        "destination": "/en/portal/agency/pricing/index.html"
       },
       {
-        "source": "/en/portal/invite/**",
-        "destination": "/en/portal/invite/template/index.html"
+        "source": "/en/portal/agency/settings/**",
+        "destination": "/en/portal/agency/settings/index.html"
       },
       {
-        "source": "/he/portal/org/*/dashboard",
-        "destination": "/he/portal/org/template/dashboard/index.html"
+        "source": "/he/portal/dashboard/**",
+        "destination": "/he/portal/dashboard/index.html"
       },
       {
-        "source": "/he/portal/org/*/dashboard/**",
-        "destination": "/he/portal/org/template/dashboard/index.html"
+        "source": "/he/portal/requests/new/**",
+        "destination": "/he/portal/requests/new/index.html"
       },
       {
-        "source": "/he/portal/org/*/requests/new",
-        "destination": "/he/portal/org/template/requests/new/index.html"
+        "source": "/he/portal/requests/request/**",
+        "destination": "/he/portal/requests/request/index.html"
       },
       {
-        "source": "/he/portal/org/*/requests/new/**",
-        "destination": "/he/portal/org/template/requests/new/index.html"
+        "source": "/he/portal/requests/:requestId",
+        "destination": "/he/portal/requests/request/index.html"
       },
       {
-        "source": "/he/portal/org/*/requests/*",
-        "destination": "/he/portal/org/template/requests/request/index.html"
+        "source": "/he/portal/requests/:requestId/**",
+        "destination": "/he/portal/requests/request/index.html"
       },
       {
-        "source": "/he/portal/org/*/requests/*/*",
-        "destination": "/he/portal/org/template/requests/request/index.html"
+        "source": "/he/portal/requests/**",
+        "destination": "/he/portal/requests/index.html"
       },
       {
-        "source": "/he/portal/org/*/requests",
-        "destination": "/he/portal/org/template/requests/index.html"
+        "source": "/he/portal/consultations/**",
+        "destination": "/he/portal/consultations/index.html"
       },
       {
-        "source": "/he/portal/org/*/team",
-        "destination": "/he/portal/org/template/team/index.html"
+        "source": "/he/portal/team/**",
+        "destination": "/he/portal/team/index.html"
       },
       {
-        "source": "/he/portal/org/*/team/**",
-        "destination": "/he/portal/org/template/team/index.html"
+        "source": "/he/portal/files/**",
+        "destination": "/he/portal/files/index.html"
       },
       {
-        "source": "/he/portal/org/*/files",
-        "destination": "/he/portal/org/template/files/index.html"
+        "source": "/he/portal/pricing/new/**",
+        "destination": "/he/portal/pricing/new/index.html"
       },
       {
-        "source": "/he/portal/org/*/files/**",
-        "destination": "/he/portal/org/template/files/index.html"
+        "source": "/he/portal/pricing/pricing/**",
+        "destination": "/he/portal/pricing/pricing/index.html"
       },
       {
-        "source": "/he/portal/org/*/settings",
-        "destination": "/he/portal/org/template/settings/index.html"
+        "source": "/he/portal/pricing/:pricingId",
+        "destination": "/he/portal/pricing/pricing/index.html"
       },
       {
-        "source": "/he/portal/org/*/settings/**",
-        "destination": "/he/portal/org/template/settings/index.html"
+        "source": "/he/portal/pricing/:pricingId/**",
+        "destination": "/he/portal/pricing/pricing/index.html"
       },
       {
-        "source": "/he/portal/org/*/consultations",
-        "destination": "/he/portal/org/template/consultations/index.html"
+        "source": "/he/portal/pricing/**",
+        "destination": "/he/portal/pricing/index.html"
       },
       {
-        "source": "/he/portal/org/*/consultations/**",
-        "destination": "/he/portal/org/template/consultations/index.html"
+        "source": "/he/portal/settings/**",
+        "destination": "/he/portal/settings/index.html"
       },
       {
-        "source": "/he/portal/org/*/pricing/new",
-        "destination": "/he/portal/org/template/pricing/new/index.html"
+        "source": "/he/portal/agency/inbox/**",
+        "destination": "/he/portal/agency/inbox/index.html"
       },
       {
-        "source": "/he/portal/org/*/pricing/new/**",
-        "destination": "/he/portal/org/template/pricing/new/index.html"
+        "source": "/he/portal/agency/workboard/**",
+        "destination": "/he/portal/agency/workboard/index.html"
       },
       {
-        "source": "/he/portal/org/*/pricing/*",
-        "destination": "/he/portal/org/template/pricing/pricing/index.html"
+        "source": "/he/portal/agency/clients/**",
+        "destination": "/he/portal/agency/clients/index.html"
       },
       {
-        "source": "/he/portal/org/*/pricing/*/*",
-        "destination": "/he/portal/org/template/pricing/pricing/index.html"
+        "source": "/he/portal/agency/consultations/**",
+        "destination": "/he/portal/agency/consultations/index.html"
       },
       {
-        "source": "/he/portal/org/*/pricing",
-        "destination": "/he/portal/org/template/pricing/index.html"
+        "source": "/he/portal/agency/pricing/**",
+        "destination": "/he/portal/agency/pricing/index.html"
       },
       {
-        "source": "/he/portal/org/*",
-        "destination": "/he/portal/org/template/dashboard/index.html"
+        "source": "/he/portal/agency/settings/**",
+        "destination": "/he/portal/agency/settings/index.html"
       },
       {
-        "source": "/he/portal/invite/*",
-        "destination": "/he/portal/invite/template/index.html"
-      },
-      {
-        "source": "/he/portal/invite/**",
-        "destination": "/he/portal/invite/template/index.html"
+        "source": "/portal/**",
+        "destination": "/en/portal/index.html"
       },
       {
         "source": "**",

@@ -98,6 +98,7 @@ const iconComponents: Record<string, React.ComponentType<LucideProps>> = {
   zap: Zap,
   layers: Layers,
   box: Package,
+  layout: Layers,
   mail: Mail,
   phone: Phone,
   'map-pin': MapPin,

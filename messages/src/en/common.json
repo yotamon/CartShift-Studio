@@ -11,7 +11,8 @@
     "industries": "Industries",
     "company": "Company",
     "login": "Login",
-    "portal": "Portal"
+    "portal": "Portal",
+    "settings": "Settings"
   },
   "floatingActions": {
     "bookCall": "Book a Call",
@@ -32,11 +33,11 @@
     "getStarted": "Get Started",
     "viewWork": "View Our Work",
     "exitIntent": {
-      "title": "Wait—Don't Launch Blind",
-      "subtitle": "Get our free 15-point store audit checklist",
-      "description": "Find the hidden leaks costing you sales. 2,000+ store owners already have it.",
-      "cta": "Send Me the Checklist →",
-      "dismiss": "No thanks, I'm good"
+      "title": "Before you go...",
+      "subtitle": "Get a free consultation for your project",
+      "description": "We'd love to hear about what you're building and see how we can help.",
+      "cta": "Book a Free Call",
+      "dismiss": "Not now"
     }
   },
   "navigation": {
