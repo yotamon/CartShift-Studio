@@ -270,9 +270,9 @@ export default function AgencyWorkboardClient() {
     return (
       <div className="min-h-[400px] flex flex-col items-center justify-center p-10 text-center">
         <ShieldCheck className="w-16 h-16 text-red-500 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-surface-900 dark:text-white mb-2">{t('agency.inbox.accessDeniedTitle')}</h2>
+        <h2 className="text-2xl font-bold text-surface-900 dark:text-white mb-2">{t('portal.agency.accessDeniedTitle')}</h2>
         <p className="text-surface-500 max-w-sm mx-auto mb-8">
-          {t('agency.inbox.notRegisteredAsAdmin', { email: user?.email || '' })}
+          {t('portal.agency.notRegisteredAsAdmin', { email: user?.email || '' })}
         </p>
         <PortalButton
           onClick={handleRepair}

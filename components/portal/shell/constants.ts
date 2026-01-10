@@ -4,7 +4,6 @@ import {
   ClipboardList,
   Users,
   FolderOpen,
-  Inbox,
   Kanban,
   DollarSign,
   Calendar,
@@ -35,11 +34,6 @@ export function getAgencyNavGroups(t: (key: string) => string): NavGroup[] {
   return [
     {
       items: [
-        {
-          label: t('portal.sidebar.nav.inbox'),
-          icon: Inbox,
-          href: '/portal/agency/inbox/',
-        },
         {
           label: t('portal.sidebar.nav.workboard'),
           icon: Kanban,

@@ -151,7 +151,6 @@ export const translations = {
         collapse: 'Collapse',
         signOut: 'Sign Out',
         nav: {
-          inbox: 'Inbox',
           workboard: 'Workboard',
           clients: 'Clients',
           settings: 'Settings',
@@ -1746,7 +1745,6 @@ export const translations = {
         collapse: 'כווץ',
         signOut: 'התנתק',
         nav: {
-          inbox: 'תיבת דואר',
           workboard: 'לוח עבודה',
           clients: 'לקוחות',
           settings: 'הגדרות',

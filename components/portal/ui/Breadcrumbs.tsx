@@ -149,7 +149,6 @@ export function Breadcrumbs({
       pricing: t('portal.breadcrumbs.pricing'),
       consultations: t('portal.breadcrumbs.consultations'),
       agency: t('portal.breadcrumbs.agency'),
-      inbox: t('portal.breadcrumbs.inbox'),
       workboard: t('portal.breadcrumbs.workboard'),
       clients: t('portal.breadcrumbs.clients'),
       new: t('portal.breadcrumbs.new'),

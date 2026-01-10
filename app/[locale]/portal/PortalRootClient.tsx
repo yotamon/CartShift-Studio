@@ -25,7 +25,7 @@ export default function PortalRootClient() {
 
     if (userData) {
       if (userData.isAgency) {
-        router.replace('/portal/agency/inbox/');
+        router.replace('/portal/requests/');
         return;
       }
 

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from '@/lib/motion';
-import { skeletonToContent } from '@/lib/animation-variants';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { motion, AnimatePresence, LayoutGroup } from '@/lib/motion';
+import { skeletonToContent, pinnedItemHighlight } from '@/lib/animation-variants';
 import {
   Plus,
   Search,
@@ -16,6 +16,8 @@ import {
   Trash2,
   Edit,
   Archive,
+  MousePointer2,
+  Building2,
 } from 'lucide-react';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
 import { PortalButton } from '@/components/portal/ui/PortalButton';
@@ -23,23 +25,21 @@ import { PortalBadge } from '@/components/portal/ui/PortalBadge';
 import { SkeletonTable } from '@/components/portal/ui/Skeleton';
 import { PortalEmptyState } from '@/components/portal/ui/PortalEmptyState';
 import { Dropdown } from '@/components/ui/Dropdown';
-import { createPricingRequest, sendPricingRequest } from '@/lib/services/pricing-requests';
 import { useRequests } from '@/lib/hooks/useRequests';
+import { useAgencyClients } from '@/lib/hooks/useAgencyClients';
 import {
-  Currency,
-  CURRENCY_CONFIG,
-  formatCurrency,
   CLIENT_STATUS_MAP,
   ClientStatus,
+  Organization,
 } from '@/lib/types/portal';
 import { format } from 'date-fns';
 import { getDateLocale } from '@/lib/locale-config';
 import { cn } from '@/lib/utils';
 import { useTranslations, useLocale } from 'next-intl';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
-import { usePricingForm } from '@/lib/hooks/usePricingForm';
 import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
 import { Link, useRouter } from '@/i18n/navigation';
+import { useOrg } from '@/lib/context/OrgContext';
 // Centralized utilities - no more duplicate mapStatusColor!
 import { getStatusBadgeVariant, getClientStatusBadgeVariant } from '@/lib/utils/portal-helpers';
 import { PinButton } from '@/components/portal/PinnedRequests';
@@ -51,6 +51,25 @@ export default function RequestsClient() {
   const { userData, loading: authLoading, isAgency } = usePortalAuth();
   const { requests, loading: requestsLoading, error: requestsError } = useRequests();
   const { pinnedIds } = usePinnedRequests(orgId as string);
+  const { switchOrg } = useOrg();
+  const prevPinnedIdsRef = useRef<string[]>([]);
+  const [newlyPinnedIds, setNewlyPinnedIds] = useState<Set<string>>(new Set());
+
+  // Agency: fetch all organizations to display client names
+  const {
+    organizations: organizationsList,
+    loading: clientsLoading,
+  } = useAgencyClients();
+
+  // Build org lookup map for agency users
+  const organizations = useMemo(() => {
+    if (!organizationsList || !isAgency) return {};
+    const map: Record<string, Organization> = {};
+    organizationsList.forEach(org => {
+      map[org.id] = org;
+    });
+    return map;
+  }, [organizationsList, isAgency]);
 
   const [isMobile, setIsMobile] = useState(false);
   const [activeFilter, setActiveFilter] = useState<string>('All');
@@ -62,22 +81,10 @@ export default function RequestsClient() {
 
   // Multi-select for pricing offers (agency only)
   const [selectedRequestIds, setSelectedRequestIds] = useState<string[]>([]);
-  const [showPricingModal, setShowPricingModal] = useState(false);
-  const [pricingTitle, setPricingTitle] = useState('');
-  const [isCreatingPricing, setIsCreatingPricing] = useState(false);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
 
-  // Use centralized pricing form hook
-  const {
-    lineItems: pricingLineItems,
-    currency: pricingCurrency,
-    setCurrency: setPricingCurrency,
-    addLineItem,
-    removeLineItem,
-    updateLineItem,
-    resetForm: resetPricingForm,
-    totalAmount,
-    validItems,
-  } = usePricingForm('USD');
+  // Organization filter (agency only)
+  const [selectedOrgFilter, setSelectedOrgFilter] = useState<string>('all');
 
   const clientFilters: ClientStatus[] = ['SUBMITTED', 'IN_PROGRESS', 'IN_REVIEW', 'COMPLETED'];
   const filters = isAgency
@@ -99,9 +106,50 @@ export default function RequestsClient() {
     setCurrentPage(1);
   }, [activeFilter, searchQuery]);
 
+  // Track newly pinned items for animation
+  useEffect(() => {
+    const prevPinned = prevPinnedIdsRef.current;
+
+    // Initialize on first render
+    if (prevPinned.length === 0 && pinnedIds.length > 0) {
+      prevPinnedIdsRef.current = pinnedIds;
+      return;
+    }
+
+    const newlyPinned = pinnedIds.filter(id => !prevPinned.includes(id));
+    const newlyUnpinned = prevPinned.filter(id => !pinnedIds.includes(id));
+
+    if (newlyPinned.length > 0 || newlyUnpinned.length > 0) {
+      setNewlyPinnedIds(prev => {
+        const updated = new Set(prev);
+        newlyPinned.forEach(id => updated.add(id));
+        newlyUnpinned.forEach(id => updated.delete(id));
+        return updated;
+      });
+
+      // Clear the highlight after animation completes
+      if (newlyPinned.length > 0) {
+        setTimeout(() => {
+          setNewlyPinnedIds(prev => {
+            const updated = new Set(prev);
+            newlyPinned.forEach(id => updated.delete(id));
+            return updated;
+          });
+        }, 1200);
+      }
+    }
+
+    prevPinnedIdsRef.current = pinnedIds;
+  }, [pinnedIds]);
+
   // Filter and sort requests - pinned items appear at the top
   const filteredRequests = requests
     .filter(req => {
+      // Organization filter (agency only)
+      if (isAgency && selectedOrgFilter !== 'all' && req.orgId !== selectedOrgFilter) {
+        return false;
+      }
+
       let matchesFilter = activeFilter === 'All';
       if (!matchesFilter) {
         if (isAgency) {
@@ -118,7 +166,9 @@ export default function RequestsClient() {
         (req.id?.toLowerCase() || '').includes(query) ||
         (req.description?.toLowerCase() || '').includes(query) ||
         (req.type?.toLowerCase() || '').includes(query) ||
-        (req.createdByName?.toLowerCase() || '').includes(query);
+        (req.createdByName?.toLowerCase() || '').includes(query) ||
+        // Also search org name for agency users
+        (isAgency && organizations[req.orgId]?.name?.toLowerCase().includes(query));
       return matchesFilter && matchesSearch;
     })
     .sort((a, b) => {
@@ -148,45 +198,44 @@ export default function RequestsClient() {
 
   const clearSelection = () => {
     setSelectedRequestIds([]);
-    setShowPricingModal(false);
-    setPricingTitle('');
-    resetPricingForm();
+    setIsSelectionMode(false);
   };
 
-  // Create pricing offer handler
-  const handleCreatePricingOffer = async () => {
-    if (!userData || !orgId || typeof orgId !== 'string') return;
-    if (selectedRequestIds.length === 0) return;
-    if (!pricingTitle.trim()) return;
-
-    if (validItems.length === 0) return;
-
-    setIsCreatingPricing(true);
-    try {
-      const pricingOffer = await createPricingRequest(
-        orgId,
-        userData.id,
-        userData.name || t('portal.common.unknown'),
-        {
-          title: pricingTitle.trim(),
-          lineItems: validItems,
-          currency: pricingCurrency,
-          requestIds: selectedRequestIds,
-        }
-      );
-
-      // Optionally send immediately
-      await sendPricingRequest(pricingOffer.id);
-
+  const toggleSelectionMode = () => {
+    if (isSelectionMode) {
       clearSelection();
-    } catch (error) {
-      console.error('Failed to create pricing offer:', error);
-    } finally {
-      setIsCreatingPricing(false);
+    } else {
+      setIsSelectionMode(true);
     }
   };
 
-  const selectedRequests = requests.filter(r => selectedRequestIds.includes(r.id));
+  // Navigate to dedicated pricing form with selected request IDs
+  const handleGoToPricing = () => {
+    if (selectedRequestIds.length === 0) return;
+
+    const selectedReqs = requests.filter(r => selectedRequestIds.includes(r.id));
+    const uniqueOrgIds = [...new Set(selectedReqs.map(r => r.orgId))];
+
+    if (uniqueOrgIds.length > 1) {
+      const orgNames = uniqueOrgIds
+        .map(id => organizations[id]?.name || t('portal.common.unknown'))
+        .join(', ');
+      alert(
+        `${t('portal.agency.errors.sameOrgRequired' as any) || 'All selected requests must belong to the same organization.'}\n\n` +
+          `Selected requests are from: ${orgNames}`
+      );
+      return;
+    }
+
+    const targetOrgId = uniqueOrgIds[0] || orgId;
+    if (!targetOrgId) return;
+
+    // Switch org context if agency and navigate to pricing form
+    if (isAgency) {
+      switchOrg(targetOrgId);
+    }
+    router.push(`/portal/pricing/new?requestIds=${selectedRequestIds.join(',')}`);
+  };
 
   if (error) {
     return (
@@ -267,19 +316,48 @@ export default function RequestsClient() {
                     : t(`portal.requests.clientStatus.${filter.toLowerCase()}` as any)}
               </button>
             ))}
+            {/* Organization Filter - Agency Only */}
+            {isAgency && organizationsList && organizationsList.length > 0 && (
+              <div className="shrink-0 flex items-center gap-1.5">
+                <Building2 size={14} className="text-surface-400" />
+                <select
+                  value={selectedOrgFilter}
+                  onChange={e => setSelectedOrgFilter(e.target.value)}
+                  className="portal-input h-10 px-3 pr-8 text-sm font-bold bg-white dark:bg-surface-950 border-surface-200 dark:border-surface-700 min-w-[140px] max-w-[200px] truncate"
+                >
+                  <option value="all">{t('portal.common.all')} ({organizationsList.length})</option>
+                  {organizationsList.map(org => (
+                    <option key={org.id} value={org.id}>
+                      {org.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            {/* Selection Mode Toggle - Agency Only */}
+            {isAgency && (
+              <PortalButton
+                variant={isSelectionMode ? "secondary" : "outline"}
+                size="sm"
+                onClick={toggleSelectionMode}
+                className="shrink-0 min-h-[40px] touch-manipulation"
+              >
+                <MousePointer2 size={16} className="me-1.5" />
+                {isSelectionMode ? t('portal.common.cancel') : t('portal.requests.createPricingOffer')}
+              </PortalButton>
+            )}
           </div>
         </div>
 
-        {/* Selection Bar - Agency Only */}
-        {isAgency && selectedRequestIds.length > 0 && (
-          <div className="p-4 border-b border-surface-100 dark:border-surface-800 bg-blue-50 dark:bg-blue-900/20 flex items-center justify-between gap-4">
+        {/* Selection Bar - Agency Only, shown when in selection mode */}
+        {isAgency && isSelectionMode && (
+          <div className="p-4 border-b border-surface-100 dark:border-surface-800 bg-blue-50 dark:bg-blue-900/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in slide-in-from-top-2">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
                 {selectedRequestIds.length}
               </div>
               <span className="text-sm font-bold text-blue-800 dark:text-blue-200">
-                {t('portal.requests.selected' as never) ||
-                  `${selectedRequestIds.length} requests selected`}
+                {selectedRequestIds.length} {t('portal.requests.selected')}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -287,15 +365,16 @@ export default function RequestsClient() {
                 variant="outline"
                 size="sm"
                 onClick={clearSelection}
-                className="text-surface-600 dark:text-surface-300"
+                className="text-surface-600 dark:text-surface-300 min-h-[40px] touch-manipulation"
               >
                 <X size={14} className="me-1" />
                 {t('portal.common.cancel')}
               </PortalButton>
               <PortalButton
                 size="sm"
-                onClick={() => setShowPricingModal(true)}
-                className="bg-green-600 hover:bg-green-700 text-white"
+                onClick={handleGoToPricing}
+                disabled={selectedRequestIds.length === 0}
+                className="bg-green-600 hover:bg-green-700 text-white min-h-[40px] touch-manipulation disabled:opacity-50"
               >
                 <DollarSign size={14} className="me-1" />
                 {t('portal.requests.createPricingOffer')}
@@ -326,14 +405,38 @@ export default function RequestsClient() {
                 animate="visible"
               >
                 {/* Mobile Card View */}
-                <div className="md:hidden space-y-4 p-4">
-                  {paginatedRequests.map(req => (
-                    <motion.div
-                      layoutId={isMobile ? `request-container-${req.id}` : undefined}
-                      key={req.id}
-                      onClick={() => router.push(`/portal/requests/${req.id}/`)}
-                      className="bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-xl p-4 shadow-sm active:scale-[0.98] transition-all cursor-pointer"
-                    >
+                <LayoutGroup>
+                  <div className="md:hidden space-y-4 p-4">
+                    {paginatedRequests.map(req => {
+                      const isNewlyPinned = newlyPinnedIds.has(req.id);
+                      const isPinned = pinnedIds.includes(req.id);
+                      return (
+                        <motion.div
+                          layout
+                          layoutId={`request-container-${req.id}`}
+                          key={req.id}
+                          initial="normal"
+                          animate={isNewlyPinned ? 'pinned' : 'normal'}
+                          variants={pinnedItemHighlight}
+                          transition={{
+                            layout: {
+                              type: 'spring',
+                              stiffness: 400,
+                              damping: 35,
+                              mass: 0.8,
+                            },
+                          }}
+                          onLayoutAnimationStart={() => {
+                            if (isNewlyPinned) {
+                              // Layout animation started
+                            }
+                          }}
+                          className={cn(
+                            "bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-xl p-4 shadow-sm active:scale-[0.98] cursor-pointer relative",
+                            isNewlyPinned && "border-amber-400 dark:border-amber-500 bg-amber-50/30 dark:bg-amber-500/5 ring-4 ring-amber-400/20 dark:ring-amber-500/20",
+                            isPinned && "ring-1 ring-amber-300/30 dark:ring-amber-500/20"
+                          )}
+                        >
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex flex-col min-w-0 me-2">
                           <motion.span
@@ -412,54 +515,78 @@ export default function RequestsClient() {
                         </span>
                       </div>
                     </motion.div>
-                  ))}
-                </div>
+                      );
+                    })}
+                  </div>
+                </LayoutGroup>
 
                 {/* Desktop Table View */}
-                <table className="hidden md:table w-full text-start border-collapse min-w-[600px]">
-                  <thead>
-                    <tr className="bg-surface-50/50 dark:bg-surface-900/50 cursor-default">
-                      {isAgency && (
-                        <th className="px-3 py-4 w-12">{/* Select All - could add later */}</th>
-                      )}
-                      <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest min-w-[200px]">
-                        {t('portal.requests.table.title')}
-                      </th>
-                      <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-center whitespace-nowrap">
-                        {t('portal.requests.table.status')}
-                      </th>
-                      <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-center whitespace-nowrap">
-                        {t('portal.requests.table.priority')}
-                      </th>
-                      <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-center whitespace-nowrap hidden md:table-cell">
-                        {t('portal.requests.table.created')}
-                      </th>
-                      <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-end whitespace-nowrap">
-                        {t('portal.common.actions')}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
-                    {paginatedRequests.map(req => {
-                      const isSelected = selectedRequestIds.includes(req.id);
-                      const canSelect =
-                        isAgency &&
-                        !req.pricingOfferId &&
-                        req.status !== 'PAID' &&
-                        req.status !== 'CLOSED';
-                      return (
-                        <motion.tr
-                          layoutId={!isMobile ? `request-container-${req.id}` : undefined}
-                          key={req.id}
-                          onClick={() => router.push(`/portal/requests/${req.id}/`)}
-                          className={cn(
-                            'hover:bg-surface-50/50 dark:hover:bg-surface-800/30 transition-all group cursor-pointer',
-                            isSelected && 'bg-blue-50 dark:bg-blue-900/10'
-                          )}
-                        >
-                          {isAgency && (
+                <LayoutGroup>
+                  <table className="hidden md:table w-full text-start border-collapse min-w-[600px]">
+                    <thead>
+                      <tr className="bg-surface-50/50 dark:bg-surface-900/50 cursor-default">
+                        {isAgency && isSelectionMode && (
+                          <th className="px-3 py-4 w-12">{/* Selection column */}</th>
+                        )}
+                        <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest min-w-[200px]">
+                          {t('portal.requests.table.title')}
+                        </th>
+                        <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-center whitespace-nowrap">
+                          {t('portal.requests.table.status')}
+                        </th>
+                        <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-center whitespace-nowrap">
+                          {t('portal.requests.table.priority')}
+                        </th>
+                        <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-center whitespace-nowrap hidden md:table-cell">
+                          {t('portal.requests.table.created')}
+                        </th>
+                        <th className="px-3 md:px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-end whitespace-nowrap">
+                          {t('portal.common.actions')}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
+                      {paginatedRequests.map(req => {
+                        const isSelected = selectedRequestIds.includes(req.id);
+                        const isNewlyPinned = newlyPinnedIds.has(req.id);
+                        const isPinned = pinnedIds.includes(req.id);
+                        const canSelect =
+                          isAgency &&
+                          !req.pricingOfferId &&
+                          req.status !== 'PAID' &&
+                          req.status !== 'CLOSED';
+                        return (
+                          <motion.tr
+                            layout
+                            layoutId={`request-container-${req.id}`}
+                            key={req.id}
+                            initial="normal"
+                            animate={isNewlyPinned ? 'pinned' : 'normal'}
+                            variants={pinnedItemHighlight}
+                            transition={{
+                              layout: {
+                                type: 'spring',
+                                stiffness: 400,
+                                damping: 35,
+                                mass: 0.8,
+                              },
+                            }}
+                            onLayoutAnimationStart={() => {
+                              if (isNewlyPinned) {
+                                // Layout animation started
+                              }
+                            }}
+                            className={cn(
+                              'hover:bg-surface-50/50 dark:hover:bg-surface-800/30 group cursor-pointer relative',
+                              isSelected && 'bg-blue-50 dark:bg-blue-900/10',
+                              isNewlyPinned && 'border-s-4 border-amber-400 dark:border-amber-500 bg-amber-50/30 dark:bg-amber-500/5 ring-4 ring-amber-400/20 dark:ring-amber-500/20',
+                              isPinned && 'ring-1 ring-amber-300/30 dark:ring-amber-500/20'
+                            )}
+                          >
+                          {/* Checkbox column - only visible in selection mode */}
+                          {isAgency && isSelectionMode && (
                             <td className="px-3 py-4">
-                              {canSelect && (
+                              {canSelect ? (
                                 <button
                                   type="button"
                                   onClick={e => {
@@ -475,16 +602,21 @@ export default function RequestsClient() {
                                 >
                                   {isSelected && <Check size={12} />}
                                 </button>
-                              )}
-                              {req.pricingOfferId && (
+                              ) : req.pricingOfferId ? (
                                 <PortalBadge variant="green" className="text-[9px]">
                                   {t('portal.requests.hasPricing')}
                                 </PortalBadge>
-                              )}
+                              ) : null}
                             </td>
                           )}
                           <td className="px-3 md:px-6 py-4 min-w-0">
                             <div className="flex flex-col min-w-0">
+                              {/* Organization name for agency users */}
+                              {isAgency && req.orgId && (
+                                <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider truncate mb-0.5">
+                                  {organizations[req.orgId]?.name || t('portal.common.unknown')}
+                                </span>
+                              )}
                               <motion.span
                                 layoutId={!isMobile ? `request-title-${req.id}` : undefined}
                                 className="font-bold text-surface-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate font-outfit"
@@ -610,10 +742,11 @@ export default function RequestsClient() {
                             </div>
                           </td>
                         </motion.tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </LayoutGroup>
               </motion.div>
             ) : (
               <PortalEmptyState
@@ -672,188 +805,6 @@ export default function RequestsClient() {
           </div>
         )}
       </PortalCard>
-
-      {/* Pricing Modal */}
-      {showPricingModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-surface-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-surface-200 dark:border-surface-800 flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold text-surface-900 dark:text-white font-outfit">
-                  {t('portal.requests.createPricingOffer')}
-                </h2>
-                <p className="text-sm text-surface-500 mt-1">
-                  {selectedRequests.length} {t('portal.requests.requestsIncluded')}
-                </p>
-              </div>
-              <button
-                onClick={clearSelection}
-                className="p-2 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-xl transition-colors"
-              >
-                <X size={20} className="text-surface-500" />
-              </button>
-            </div>
-
-            <div className="p-6 space-y-6">
-              {/* Selected Requests Preview */}
-              <div>
-                <label className="block text-xs font-bold text-surface-500 mb-2 uppercase tracking-widest">
-                  {t('portal.requests.selectedRequests')}
-                </label>
-                <div className="space-y-2 max-h-32 overflow-y-auto">
-                  {selectedRequests.map(req => (
-                    <div
-                      key={req.id}
-                      className="flex items-center gap-2 p-2 bg-surface-50 dark:bg-surface-800 rounded-lg"
-                    >
-                      <span className="font-medium text-surface-900 dark:text-white text-sm truncate">
-                        {req.title}
-                      </span>
-                      <PortalBadge variant="gray" className="text-[9px] ms-auto shrink-0">
-                        {req.type}
-                      </PortalBadge>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Pricing Title */}
-              <div>
-                <label className="block text-xs font-bold text-surface-500 mb-2 uppercase tracking-widest">
-                  {t('portal.pricing.form.titleLabel')} *
-                </label>
-                <input
-                  type="text"
-                  value={pricingTitle}
-                  onChange={e => setPricingTitle(e.target.value)}
-                  placeholder={
-                    t('portal.pricing.form.titlePlaceholder' as never) ||
-                    'e.g., Website Redesign Package'
-                  }
-                  className="portal-input w-full"
-                />
-              </div>
-
-              {/* Currency */}
-              <div>
-                <label className="block text-xs font-bold text-surface-500 mb-2 uppercase tracking-widest">
-                  {t('portal.pricing.form.currency')}
-                </label>
-                <select
-                  value={pricingCurrency}
-                  onChange={e => setPricingCurrency(e.target.value as Currency)}
-                  className="portal-input w-full"
-                >
-                  {Object.entries(CURRENCY_CONFIG).map(([key, config]) => (
-                    <option key={key} value={key}>
-                      {config.symbol} {config.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Line Items */}
-              <div>
-                <label className="block text-xs font-bold text-surface-500 mb-2 uppercase tracking-widest">
-                  {t('portal.pricing.form.lineItems')} *
-                </label>
-                <div className="space-y-3">
-                  {pricingLineItems.map(item => (
-                    <div
-                      key={item.id}
-                      className="p-3 bg-surface-50 dark:bg-surface-800 rounded-xl space-y-2"
-                    >
-                      <input
-                        type="text"
-                        placeholder={t('portal.pricing.form.itemDescription')}
-                        value={item.description}
-                        onChange={e => updateLineItem(item.id, 'description', e.target.value)}
-                        className="portal-input w-full h-9 text-sm"
-                      />
-                      <div className="flex gap-2 items-center">
-                        <input
-                          type="number"
-                          min="1"
-                          placeholder={t('portal.pricing.form.quantity')}
-                          value={item.quantity || ''}
-                          onChange={e =>
-                            updateLineItem(item.id, 'quantity', parseInt(e.target.value) || 0)
-                          }
-                          className="portal-input h-9 text-sm w-20"
-                        />
-                        <span className="text-surface-400">×</span>
-                        <div className="relative flex-1">
-                          <span className="absolute start-3 top-1/2 -translate-y-1/2 text-surface-400 text-sm">
-                            $
-                          </span>
-                          <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            placeholder={t('portal.pricing.form.unitPrice')}
-                            value={item.unitPrice ? (item.unitPrice / 100).toFixed(2) : ''}
-                            onChange={e =>
-                              updateLineItem(
-                                item.id,
-                                'unitPrice',
-                                Math.round(parseFloat(e.target.value || '0') * 100)
-                              )
-                            }
-                            className="portal-input h-9 text-sm w-full ps-6"
-                          />
-                        </div>
-                        {pricingLineItems.length > 1 && (
-                          <button
-                            onClick={() => removeLineItem(item.id)}
-                            className="p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg transition-colors"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                  <button
-                    onClick={addLineItem}
-                    className="text-sm font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 flex items-center gap-1"
-                  >
-                    <Plus size={16} />
-                    {t('portal.pricing.form.addItem')}
-                  </button>
-                </div>
-              </div>
-
-              {/* Total */}
-              <div className="flex items-center justify-between p-4 bg-surface-50 dark:bg-surface-800 rounded-xl">
-                <span className="font-bold text-surface-900 dark:text-white uppercase tracking-wider text-sm">
-                  {t('portal.pricing.form.total')}
-                </span>
-                <span className="text-xl font-black text-blue-600 dark:text-blue-400 font-outfit">
-                  {formatCurrency(totalAmount, pricingCurrency)}
-                </span>
-              </div>
-            </div>
-
-            <div className="p-6 border-t border-surface-200 dark:border-surface-800 flex justify-end gap-3">
-              <PortalButton
-                variant="outline"
-                onClick={() => setShowPricingModal(false)}
-                disabled={isCreatingPricing}
-              >
-                {t('portal.common.cancel')}
-              </PortalButton>
-              <PortalButton
-                onClick={handleCreatePricingOffer}
-                isLoading={isCreatingPricing}
-                disabled={!pricingTitle.trim() || validItems.length === 0}
-              >
-                <Check size={18} className="me-2" />
-                {t('portal.pricing.form.createOffer')}
-              </PortalButton>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

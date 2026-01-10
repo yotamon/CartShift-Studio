@@ -392,3 +392,43 @@ export const kanbanCard: Variants = {
     transition: { duration: 0.2 },
   },
 };
+
+export const pinnedItemHighlight: Variants = {
+  normal: {
+    scale: 1,
+    opacity: 1,
+    transition: { duration: 0.3, ease: 'easeOut' },
+  },
+  pinned: {
+    scale: [1, 1.03, 1],
+    opacity: [1, 1, 1],
+    transition: {
+      duration: 1,
+      ease: [0.16, 1, 0.3, 1],
+      times: [0, 0.5, 1],
+    },
+  },
+};
+
+export const listItemLayout: Variants = {
+  initial: { opacity: 0, y: 20 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 300,
+      damping: 30,
+      mass: 0.8,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -20,
+    scale: 0.95,
+    transition: {
+      duration: 0.2,
+      ease: 'easeIn',
+    },
+  },
+};

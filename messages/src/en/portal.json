@@ -137,7 +137,8 @@
       "defaultInitial": "S",
       "viewDetails": "View Details",
       "pin": "Pin",
-      "unpin": "Unpin"
+      "unpin": "Unpin",
+      "search": "Search"
     },
     "access": {
       "restrictedTitle": "Access Restricted",
@@ -888,7 +889,6 @@
       "close": "Close",
       "signOut": "Sign Out",
       "nav": {
-        "inbox": "Inbox",
         "workboard": "Workboard",
         "clients": "Clients",
         "settings": "Settings",
@@ -943,7 +943,6 @@
       "pricing": "Pricing",
       "consultations": "Consultations",
       "agency": "Agency",
-      "inbox": "Inbox",
       "workboard": "Workboard",
       "clients": "Clients",
       "new": "New"
@@ -976,10 +975,6 @@
       "notifications": {
         "title": "All caught up!",
         "description": "You have no new notifications at this time."
-      },
-      "inbox": {
-        "title": "Inbox is empty",
-        "description": "New messages and updates will appear here."
       },
       "calendar": {
         "title": "No consultations scheduled",
@@ -1056,24 +1051,13 @@
       }
     },
     "agency": {
-      "inbox": {
-        "title": "Agency Inbox",
-        "subtitle": "Global view of all client requests and communications.",
-        "searchPlaceholder": "Search requests...",
-        "activeItems": "Active Items",
-        "loading": "Loading agency inbox...",
-        "emptyTitle": "Your inbox is clear",
-        "emptyDesc": "All client requests have been processed or sorted.",
-        "clientOrg": "Client Org",
-        "accessRequired": "Agency Access Required",
-        "accessDenied": "Your account ({email}) does not have permissions to access the Agency Inbox.",
-        "accessDeniedTitle": "Access Denied",
-        "notRegisteredAsAdmin": "Your account ({email}) is not registered as an Agency Administrator.",
-        "repairPermissions": "Repair Permissions",
-        "repairFailed": "Permission repair failed. Check console for details.",
-        "errors": {
-          "sameOrgRequired": "Please select requests from the same client organization."
-        }
+      "clientOrg": "Client Org",
+      "accessDeniedTitle": "Access Denied",
+      "notRegisteredAsAdmin": "Your account ({email}) is not registered as an Agency Administrator.",
+      "repairPermissions": "Repair Permissions",
+      "repairFailed": "Permission repair failed. Check console for details.",
+      "errors": {
+        "sameOrgRequired": "Please select requests from the same client organization."
       },
       "pricing": {
         "subtitle": "Manage pricing offers across all client organizations.",

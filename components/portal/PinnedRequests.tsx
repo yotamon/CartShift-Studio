@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from '@/lib/motion';
 import { cn } from '@/lib/utils';
-import { Pin, ExternalLink, X } from 'lucide-react';
+import { Pin, ExternalLink, X, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { Request } from '@/lib/types/portal';
@@ -132,8 +132,9 @@ export const PinButton: React.FC<PinButtonProps> = ({
   className,
 }) => {
   const t = useTranslations();
-  const { isPinned, togglePin } = usePinnedRequests(orgId);
+  const { isPinned, isPinning, togglePin, loadingRequestIds } = usePinnedRequests(orgId);
   const pinned = isPinned(requestId);
+  const loading = loadingRequestIds?.has(requestId) ?? isPinning(requestId);
 
   return (
     <button
@@ -142,18 +143,27 @@ export const PinButton: React.FC<PinButtonProps> = ({
         e.stopPropagation();
         togglePin(requestId);
       }}
+      disabled={loading}
       className={cn(
-        'transition-all',
+        'transition-all relative',
         size === 'sm' ? 'p-1.5 rounded-lg' : 'p-2.5 rounded-xl',
         pinned
           ? 'text-amber-500 bg-amber-100 dark:bg-amber-500/20 hover:bg-amber-200 dark:hover:bg-amber-500/30'
           : 'text-surface-400 hover:text-amber-500 hover:bg-surface-100 dark:hover:bg-surface-800',
+        loading && 'opacity-70 cursor-wait',
         className
       )}
       aria-label={pinned ? t('portal.dashboard.pinned.unpin') : t('portal.dashboard.pinned.pin')}
       title={pinned ? t('portal.dashboard.pinned.unpin') : t('portal.dashboard.pinned.pin')}
     >
-      <Pin size={size === 'sm' ? 14 : 18} className={cn(pinned && 'fill-current')} />
+      {loading ? (
+        <Loader2
+          size={size === 'sm' ? 14 : 18}
+          className="animate-spin"
+        />
+      ) : (
+        <Pin size={size === 'sm' ? 14 : 18} className={cn(pinned && 'fill-current')} />
+      )}
     </button>
   );
 };

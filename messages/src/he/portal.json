@@ -137,7 +137,8 @@
       "defaultInitial": "ש",
       "viewDetails": "צפה בפרטים",
       "pin": "הצמד",
-      "unpin": "בטל הצמדה"
+      "unpin": "בטל הצמדה",
+      "search": "חיפוש"
     },
     "access": {
       "restrictedTitle": "הגישה מוגבלת",
@@ -901,7 +902,6 @@
       "close": "סגור",
       "signOut": "התנתק",
       "nav": {
-        "inbox": "תיבת דואר",
         "workboard": "לוח עבודה",
         "clients": "לקוחות",
         "settings": "הגדרות",
@@ -956,7 +956,6 @@
       "pricing": "תמחור",
       "consultations": "פגישות ייעוץ",
       "agency": "סוכנות",
-      "inbox": "תיבת דואר",
       "workboard": "לוח עבודה",
       "clients": "לקוחות",
       "new": "חדש"
@@ -989,10 +988,6 @@
       "notifications": {
         "title": "הכל מעודכן!",
         "description": "אין לך התראות חדשות כרגע."
-      },
-      "inbox": {
-        "title": "תיבת הדואר ריקה",
-        "description": "הודעות ועדכונים חדשים יופיעו כאן."
       },
       "calendar": {
         "title": "אין פגישות מתוכננות",
@@ -1069,24 +1064,13 @@
       }
     },
     "agency": {
-      "inbox": {
-        "title": "תיבת דואר סוכנות",
-        "subtitle": "מבט גלובלי על כל בקשות הלקוחות והתקשורת.",
-        "searchPlaceholder": "חיפוש בקשות...",
-        "activeItems": "פריטים פעילים",
-        "loading": "טוען תיבת דואר סוכנות...",
-        "emptyTitle": "תיבת הדואר שלך ריקה",
-        "emptyDesc": "כל בקשות הלקוחות טופלו או מוינו.",
-        "clientOrg": "ארגון לקוח",
-        "accessRequired": "נדרש גישה לסוכנות",
-        "accessDenied": "לחשבון שלכם ({email}) אין הרשאות לגשת לתיבת הדואר של הסוכנות.",
-        "accessDeniedTitle": "גישה נדחתה",
-        "notRegisteredAsAdmin": "החשבון שלכם ({email}) לא רשום כמנהל סוכנות.",
-        "repairPermissions": "תיקון הרשאות",
-        "repairFailed": "תיקון ההרשאות נכשל. בדקו את הקונסולה לפרטים.",
-        "errors": {
-          "sameOrgRequired": "אנא בחרו בקשות מאותו ארגון לקוח."
-        }
+      "clientOrg": "ארגון לקוח",
+      "accessDeniedTitle": "גישה נדחתה",
+      "notRegisteredAsAdmin": "החשבון שלכם ({email}) לא רשום כמנהל סוכנות.",
+      "repairPermissions": "תיקון הרשאות",
+      "repairFailed": "תיקון ההרשאות נכשל. בדקו את הקונסולה לפרטים.",
+      "errors": {
+        "sameOrgRequired": "אנא בחרו בקשות מאותו ארגון לקוח."
       },
       "pricing": {
         "subtitle": "ניהול הצעות מחיר בכל ארגוני הלקוחות.",

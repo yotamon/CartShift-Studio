@@ -137,10 +137,6 @@
         "destination": "/en/portal/settings/index.html"
       },
       {
-        "source": "/en/portal/agency/inbox/**",
-        "destination": "/en/portal/agency/inbox/index.html"
-      },
-      {
         "source": "/en/portal/agency/workboard/**",
         "destination": "/en/portal/agency/workboard/index.html"
       },
@@ -227,10 +223,6 @@
       {
         "source": "/he/portal/settings/**",
         "destination": "/he/portal/settings/index.html"
-      },
-      {
-        "source": "/he/portal/agency/inbox/**",
-        "destination": "/he/portal/agency/inbox/index.html"
       },
       {
         "source": "/he/portal/agency/workboard/**",

@@ -312,7 +312,7 @@ export default function AgencyPricingClient() {
                     {t('portal.pricing.form.titleLabel')}
                   </th>
                   <th className="px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest">
-                    {t('portal.agency.inbox.clientOrg')}
+                    {t('portal.agency.clientOrg')}
                   </th>
                   <th className="px-6 py-4 text-[11px] font-black text-surface-400 uppercase tracking-widest text-center">
                     {t('portal.common.status')}
