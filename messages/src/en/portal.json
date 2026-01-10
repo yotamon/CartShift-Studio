@@ -423,7 +423,12 @@
         "mentionMember": "Mention Member",
         "unknownUser": "Unknown",
         "unassigned": "Unassigned",
-        "waitingForAssignment": "Waiting for Assignment"
+        "waitingForAssignment": "Waiting for Assignment",
+        "assetsTitle": "Assets & Deliverables",
+        "assetsSubtitle": "Browse files and design iterations",
+        "versionHistory": "Version History",
+        "noAttachments": "No attachments found",
+        "noAttachmentsDesc": "Files shared in discussion will appear here."
       },
       "types": {
         "audit": "Strategic Audit",
@@ -889,7 +894,9 @@
         "pricing": "Pricing Offers",
         "team": "Team",
         "files": "Files",
-        "consultations": "Consultations"
+        "consultations": "Consultations",
+        "review": "Leave a Review",
+        "testimonials": "Testimonials"
       }
     },
     "header": {
@@ -1069,6 +1076,58 @@
         "subtitle": "Manage pricing offers across all client organizations.",
         "revenue": "Revenue"
       },
+      "testimonials": {
+        "title": "Client Testimonials",
+        "subtitle": "Review and manage testimonial submissions from your clients.",
+        "loading": "Loading testimonials...",
+        "empty": "No testimonials yet",
+        "emptyDesc": "Client testimonials will appear here once submitted.",
+        "filters": {
+          "all": "All",
+          "pending": "Pending Review",
+          "approved": "Approved",
+          "rejected": "Rejected"
+        },
+        "status": {
+          "pending": "Pending",
+          "approved": "Approved",
+          "rejected": "Rejected"
+        },
+        "card": {
+          "rating": "Rating",
+          "submitted": "Submitted",
+          "company": "Company",
+          "recommends": "Recommends",
+          "viewDetails": "View Details",
+          "approve": "Approve",
+          "reject": "Reject",
+          "aspects": "Aspect Ratings",
+          "communication": "Communication",
+          "quality": "Work Quality",
+          "timeliness": "Timeliness",
+          "value": "Value"
+        },
+        "modal": {
+          "title": "Testimonial Details",
+          "adminNotes": "Admin Notes",
+          "adminNotesPlaceholder": "Add internal notes about this testimonial...",
+          "approve": "Approve Testimonial",
+          "reject": "Reject Testimonial",
+          "approving": "Approving...",
+          "rejecting": "Rejecting..."
+        },
+        "toast": {
+          "approved": "Testimonial approved successfully",
+          "rejected": "Testimonial rejected",
+          "error": "Failed to update testimonial status"
+        },
+        "stats": {
+          "total": "Total",
+          "pending": "Pending",
+          "approved": "Approved",
+          "avgRating": "Avg Rating"
+        }
+      },
       "workboard": {
         "title": "Project Workboard",
         "subtitle": "Real-time status of all active client projects across the agency.",
@@ -1216,10 +1275,14 @@
         },
         "services": {
           "title": "Service Catalog",
-          "subtitle": "Define and manage the services your agency offers.",
+          "subtitle": "Configure your service offerings and pricing tiers.",
           "add": "Add Service",
           "empty": "No services defined yet",
-          "emptyDesc": "Create your first service to start offering it to clients.",
+          "emptyTitle": "Your Catalog is Empty",
+          "emptyDesc": "Add services to your catalog to quickly create pricing offers for client requests.",
+          "createFirst": "Create Your First Service",
+          "basePriceLabel": "Base Price",
+          "inactive": "Inactive",
           "form": {
             "addTitle": "Add New Service",
             "addSubtitle": "Create a new service offering for your clients.",
@@ -1472,22 +1535,114 @@
         "accepted": "Ready to Pay",
         "paid": "Completed"
       }
+    },
+    "googleCalendar": {
+      "title": "Google Calendar",
+      "description": "Sync consultations with your Google Calendar and get automatic Meet links.",
+      "connect": "Connect Google Calendar",
+      "connecting": "Connecting...",
+      "disconnect": "Disconnect",
+      "disconnectConfirm": "Are you sure you want to disconnect Google Calendar?",
+      "syncNow": "Sync Now",
+      "syncing": "Syncing...",
+      "account": "Account",
+      "lastSync": "Last synced",
+      "calendars": "Calendars",
+      "feature1": "Auto-create calendar events for consultations",
+      "feature2": "Get Google Meet links automatically",
+      "feature3": "View your availability in the portal"
+    },
+    "testimonial": {
+      "pageTitle": "Share Your Experience",
+      "pageSubtitle": "Help us improve and help others discover our services",
+      "submitSuccess": "Thank you! Your testimonial has been submitted for review.",
+      "submitError": "Failed to submit testimonial. Please try again.",
+      "updateSuccess": "Your testimonial has been updated.",
+      "updateError": "Failed to update testimonial. Please try again.",
+      "ratings": {
+        "1": "Poor",
+        "2": "Fair",
+        "3": "Good",
+        "4": "Great",
+        "5": "Excellent"
+      },
+      "steps": {
+        "rating": {
+          "title": "How was your experience?",
+          "subtitle": "Rate your overall satisfaction working with us"
+        },
+        "details": {
+          "title": "Tell us more",
+          "subtitle": "Share what made your experience stand out"
+        },
+        "aspects": {
+          "title": "Rate specific areas",
+          "subtitle": "Optional: Help us understand what we do best"
+        },
+        "confirm": {
+          "title": "Review your testimonial",
+          "subtitle": "Make sure everything looks good before submitting"
+        }
+      },
+      "fields": {
+        "role": "Your Role",
+        "headline": "Headline",
+        "content": "Your Review",
+        "projectHighlight": "Project Highlight"
+      },
+      "placeholders": {
+        "role": "e.g., CEO, Marketing Director",
+        "headline": "Summarize your experience in one sentence",
+        "content": "Share details about what we did well, results you achieved, and why you'd recommend us...",
+        "projectHighlight": "e.g., E-commerce Migration, Brand Redesign"
+      },
+      "hints": {
+        "projectHighlight": "Optional: Mention a specific project or achievement"
+      },
+      "aspects": {
+        "communication": "Communication",
+        "quality": "Work Quality",
+        "timeliness": "Timeliness",
+        "value": "Value for Money"
+      },
+      "wouldRecommend": "Would you recommend us?",
+      "wouldRecommendYes": "Yes, I would recommend!",
+      "wouldRecommendNo": "Click to recommend us",
+      "wouldRecommendBadge": "Recommends",
+      "noRole": "Client",
+      "actions": {
+        "back": "Back",
+        "next": "Continue",
+        "submit": "Submit Testimonial",
+        "submitting": "Submitting..."
+      },
+      "errors": {
+        "ratingRequired": "Please select a rating",
+        "headlineRequired": "Please add a headline",
+        "contentRequired": "Please share your experience",
+        "contentTooShort": "Please write at least 20 characters"
+      },
+      "alreadySubmitted": {
+        "title": "Thank you for your feedback!",
+        "description": "You've already submitted a testimonial. We appreciate you taking the time to share your experience."
+      },
+      "whyShare": {
+        "title": "Why share your experience?",
+        "items": [
+          {
+            "title": "Help Others Decide",
+            "description": "Your review helps potential clients make informed decisions"
+          },
+          {
+            "title": "Shape Our Services",
+            "description": "Your feedback helps us improve and grow"
+          },
+          {
+            "title": "Get Featured",
+            "description": "Top testimonials may be featured on our website"
+          }
+        ]
+      }
     }
-  },
-  "googleCalendar": {
-    "title": "Google Calendar",
-    "description": "Sync consultations with your Google Calendar and get automatic Meet links.",
-    "connect": "Connect Google Calendar",
-    "connecting": "Connecting...",
-    "disconnect": "Disconnect",
-    "disconnectConfirm": "Are you sure you want to disconnect Google Calendar?",
-    "syncNow": "Sync Now",
-    "syncing": "Syncing...",
-    "account": "Account",
-    "lastSync": "Last synced",
-    "calendars": "Calendars",
-    "feature1": "Auto-create calendar events for consultations",
-    "feature2": "Get Google Meet links automatically",
-    "feature3": "View your availability in the portal"
   }
 }

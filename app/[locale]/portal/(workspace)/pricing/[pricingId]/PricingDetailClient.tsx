@@ -14,7 +14,7 @@ import {
   PRICING_STATUS_CONFIG,
   formatCurrency,
 } from '@/lib/types/pricing';
-import { Request, STATUS_CONFIG } from '@/lib/types/portal';
+import { Request } from '@/lib/types/portal';
 import { useTranslations } from 'next-intl';
 import { usePortalAuth } from '@/lib/hooks/usePortalAuth';
 import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
@@ -25,7 +25,9 @@ import { PayPalCheckoutButton } from '@/components/portal/PayPalCheckoutButton';
 import {
   getPricingStatusBadgeVariant,
   getStatusBadgeVariant,
+  getClientStatusBadgeVariant,
 } from '@/lib/utils/portal-helpers';
+import { CLIENT_STATUS_MAP } from '@/lib/types/portal';
 
 // mapStatusColor moved to lib/utils/portal-helpers.ts
 
@@ -131,7 +133,9 @@ export default function PricingDetailClient() {
                 <p className="text-surface-600 dark:text-surface-400">{pricingRequest.description}</p>
               )}
             </div>
-            <PortalBadge variant={statusColor}>{statusConfig.label}</PortalBadge>
+            <PortalBadge variant={statusColor}>
+              {t(`portal.pricing.status.${pricingRequest.status.toLowerCase()}` as never)}
+            </PortalBadge>
           </div>
 
           <div className="space-y-4 mb-6">
@@ -148,7 +152,9 @@ export default function PricingDetailClient() {
                 <p className="text-xs font-black text-surface-400 uppercase tracking-widest mb-1">
                   {t('portal.common.status' as any)}
                 </p>
-                <PortalBadge variant={statusColor}>{statusConfig.label}</PortalBadge>
+                <PortalBadge variant={statusColor}>
+                  {t(`portal.pricing.status.${pricingRequest.status.toLowerCase()}` as never)}
+                </PortalBadge>
               </div>
             </div>
           </div>
@@ -209,13 +215,19 @@ export default function PricingDetailClient() {
                             {request.title}
                           </h4>
                           <PortalBadge variant="gray" className="text-xs">
-                            {request.type}
+                            {request.type ? t(`portal.requests.type.${request.type.toLowerCase()}` as any) : t('portal.requests.type.design')}
                           </PortalBadge>
                           <PortalBadge
-                            variant={getStatusBadgeVariant(request.status)}
+                            variant={isAgency
+                              ? getStatusBadgeVariant(request.status)
+                              : getClientStatusBadgeVariant(request.status)
+                            }
                             className="text-xs"
                           >
-                            {STATUS_CONFIG[request.status]?.label || request.status}
+                            {isAgency
+                              ? t(`portal.requests.status.${request.status.toLowerCase()}` as any)
+                              : t(`portal.requests.clientStatus.${CLIENT_STATUS_MAP[request.status].toLowerCase()}` as any)
+                            }
                           </PortalBadge>
                         </div>
                         {request.description && (

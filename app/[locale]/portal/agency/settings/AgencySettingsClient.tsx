@@ -578,7 +578,7 @@ export default function AgencySettingsClient() {
                     {t('agency.settings.tabs.services')}
                   </h3>
                   <p className="text-sm text-surface-500 dark:text-surface-400">
-                    Configure your service offerings and pricing tiers.
+                    {t('agency.settings.services.subtitle')}
                   </p>
                 </div>
                 <PortalButton
@@ -590,7 +590,7 @@ export default function AgencySettingsClient() {
                   }}
                 >
                   <Plus size={18} className="me-2" />
-                  Add Service
+                  {t('agency.settings.services.add')}
                 </PortalButton>
               </div>
 
@@ -638,7 +638,7 @@ export default function AgencySettingsClient() {
                           {service.name}
                           {!service.isActive && (
                             <span className="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-surface-200 dark:bg-surface-800 text-surface-500">
-                              Inactive
+                              {t('agency.settings.services.inactive')}
                             </span>
                           )}
                         </h4>
@@ -650,7 +650,7 @@ export default function AgencySettingsClient() {
                       <div className="mt-6 pt-4 border-t border-surface-100 dark:border-surface-800 flex items-center justify-between">
                         <div className="flex flex-col">
                           <span className="text-[9px] font-black text-surface-400 uppercase tracking-widest">
-                            Base Price
+                            {t('agency.settings.services.basePriceLabel')}
                           </span>
                           <span className="text-sm font-black text-surface-900 dark:text-white font-outfit">
                             {formatCurrency(service.basePrice, service.currency)}
@@ -669,11 +669,10 @@ export default function AgencySettingsClient() {
                 <div className="py-20 text-center bg-surface-50/50 dark:bg-surface-900/30 rounded-3xl border-2 border-dashed border-surface-200 dark:border-surface-800">
                   <Tag className="w-12 h-12 text-surface-300 dark:text-surface-700 mx-auto mb-4 opacity-20" />
                   <h4 className="text-lg font-bold text-surface-900 dark:text-white font-outfit mb-1">
-                    Your Catalog is Empty
+                    {t('agency.settings.services.emptyTitle')}
                   </h4>
                   <p className="text-sm text-surface-500 dark:text-surface-400 max-w-sm mx-auto mb-8">
-                    Add services to your catalog to quickly create pricing offers for client
-                    requests.
+                    {t('agency.settings.services.emptyDesc')}
                   </p>
                   <PortalButton
                     variant="outline"
@@ -682,7 +681,7 @@ export default function AgencySettingsClient() {
                       setIsServiceModalOpen(true);
                     }}
                   >
-                    Create Your First Service
+                    {t('agency.settings.services.createFirst')}
                   </PortalButton>
                 </div>
               )}

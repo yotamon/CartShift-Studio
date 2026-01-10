@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from "@/lib/motion";
+import { motion, AnimatePresence } from '@/lib/motion';
 import { useTranslations } from 'next-intl';
 import {
   Calendar,
@@ -18,7 +18,7 @@ import { PortalButton } from '@/components/portal/ui/PortalButton';
 import {
   CalendarInfo,
   listCalendars,
-  updateCalendarSettings
+  updateCalendarSettings,
 } from '@/lib/services/portal-google-calendar';
 
 export interface CalendarConnection {
@@ -43,7 +43,7 @@ export default function GoogleCalendarIntegration({
   onDisconnect,
   onSync,
 }: GoogleCalendarIntegrationProps) {
-  const t = useTranslations();
+  const t = useTranslations('portal');
   const [connecting, setConnecting] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
   const [syncing, setSyncing] = useState(false);
@@ -125,27 +125,25 @@ export default function GoogleCalendarIntegration({
     }
   };
 
-
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
-        "relative p-6 rounded-2xl border-2 transition-all",
+        'relative p-6 rounded-2xl border-2 transition-all',
         isConnected
-          ? "bg-gradient-to-br from-green-50 to-emerald-50/50 dark:from-green-900/20 dark:to-emerald-900/10 border-green-200 dark:border-green-800/50"
-          : "bg-white dark:bg-surface-900 border-surface-200 dark:border-surface-800 hover:border-blue-300 dark:hover:border-blue-700"
+          ? 'bg-gradient-to-br from-green-50 to-emerald-50/50 dark:from-green-900/20 dark:to-emerald-900/10 border-green-200 dark:border-green-800/50'
+          : 'bg-white dark:bg-surface-900 border-surface-200 dark:border-surface-800 hover:border-blue-300 dark:hover:border-blue-700'
       )}
     >
       {/* Header */}
       <div className="flex items-start gap-4 mb-6">
         <div
           className={cn(
-            "w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg",
+            'w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg',
             isConnected
-              ? "bg-gradient-to-br from-green-500 to-emerald-600"
-              : "bg-gradient-to-br from-blue-500 to-indigo-600"
+              ? 'bg-gradient-to-br from-green-500 to-emerald-600'
+              : 'bg-gradient-to-br from-blue-500 to-indigo-600'
           )}
         >
           <Calendar className="w-7 h-7 text-white" />
@@ -193,38 +191,42 @@ export default function GoogleCalendarIntegration({
               {/* Calendar Selection */}
               <div>
                 <span className="text-xs font-bold text-surface-500 uppercase tracking-wider block mb-2">
-                    Target Calendar
+                  Target Calendar
                 </span>
                 {loadingCalendars ? (
-                    <div className="flex items-center gap-2 text-sm text-surface-500">
-                        <Loader2 size={14} className="animate-spin" />
-                        Loading calendars...
-                    </div>
+                  <div className="flex items-center gap-2 text-sm text-surface-500">
+                    <Loader2 size={14} className="animate-spin" />
+                    Loading calendars...
+                  </div>
                 ) : (
-                    <div className="relative">
-                        <select
-                            value={selectedCalendarId || 'primary'}
-                            onChange={(e) => handleCalendarChange(e.target.value)}
-                            disabled={updatingSettings}
-                            className={cn(
-                                "w-full appearance-none bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-700 rounded-lg py-2 ps-3 pe-8 text-sm text-surface-700 dark:text-surface-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20",
-                                updatingSettings && "opacity-50 cursor-wait"
-                            )}
-                        >
-                            <option value="primary">Primary Calendar</option>
-                            {calendars
-                                .filter(cal => cal.id !== 'primary' && cal.id !== connection.email) // Avoid duplicates if primary is same as email
-                                .map(cal => (
-                                <option key={cal.id} value={cal.id}>
-                                    {cal.summary} {cal.primary ? '(Primary)' : ''}
-                                </option>
-                            ))}
-                        </select>
-                        <ChevronDown size={14} className="absolute end-3 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none" />
-                    </div>
+                  <div className="relative">
+                    <select
+                      value={selectedCalendarId || 'primary'}
+                      onChange={e => handleCalendarChange(e.target.value)}
+                      disabled={updatingSettings}
+                      className={cn(
+                        'w-full appearance-none bg-surface-50 dark:bg-surface-900 border border-surface-200 dark:border-surface-700 rounded-lg py-2 ps-3 pe-8 text-sm text-surface-700 dark:text-surface-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20',
+                        updatingSettings && 'opacity-50 cursor-wait'
+                      )}
+                    >
+                      <option value="primary">Primary Calendar</option>
+                      {calendars
+                        .filter(cal => cal.id !== 'primary' && cal.id !== connection.email) // Avoid duplicates if primary is same as email
+                        .map(cal => (
+                          <option key={cal.id} value={cal.id}>
+                            {cal.summary} {cal.primary ? '(Primary)' : ''}
+                          </option>
+                        ))}
+                    </select>
+                    <ChevronDown
+                      size={14}
+                      className="absolute end-3 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none"
+                    />
+                  </div>
                 )}
                 <p className="text-[10px] text-surface-400 mt-1">
-                    Events will be created in this calendar, and availability checks will check against it.
+                  Events will be created in this calendar, and availability checks will check
+                  against it.
                 </p>
               </div>
               {connection.lastSynced && (
@@ -259,11 +261,7 @@ export default function GoogleCalendarIntegration({
             )}
           </motion.div>
         ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mb-6"
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6">
             <div className="p-4 rounded-xl bg-surface-50/80 dark:bg-surface-800/30 border border-dashed border-surface-200 dark:border-surface-700">
               <ul className="space-y-2 text-sm text-surface-600 dark:text-surface-400">
                 <li className="flex items-center gap-2">
@@ -296,10 +294,8 @@ export default function GoogleCalendarIntegration({
                 disabled={syncing}
                 className="gap-2 border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20"
               >
-                <RefreshCw size={16} className={cn(syncing && "animate-spin")} />
-                {syncing
-                  ? t('googleCalendar.syncing')
-                  : t('googleCalendar.syncNow')}
+                <RefreshCw size={16} className={cn(syncing && 'animate-spin')} />
+                {syncing ? t('googleCalendar.syncing') : t('googleCalendar.syncNow')}
               </PortalButton>
             )}
             <PortalButton
@@ -309,11 +305,7 @@ export default function GoogleCalendarIntegration({
               disabled={disconnecting}
               className="gap-2 text-surface-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20"
             >
-              {disconnecting ? (
-                <Loader2 size={16} className="animate-spin" />
-              ) : (
-                <X size={16} />
-              )}
+              {disconnecting ? <Loader2 size={16} className="animate-spin" /> : <X size={16} />}
               {t('googleCalendar.disconnect')}
             </PortalButton>
           </>
@@ -325,14 +317,8 @@ export default function GoogleCalendarIntegration({
             disabled={connecting}
             className="gap-2 shadow-lg shadow-blue-500/20"
           >
-            {connecting ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              <Calendar size={16} />
-            )}
-            {connecting
-              ? t('googleCalendar.connecting')
-              : t('googleCalendar.connect')}
+            {connecting ? <Loader2 size={16} className="animate-spin" /> : <Calendar size={16} />}
+            {connecting ? t('googleCalendar.connecting') : t('googleCalendar.connect')}
             {!connecting && <ExternalLink size={12} className="opacity-60" />}
           </PortalButton>
         )}

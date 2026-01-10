@@ -863,19 +863,19 @@
         "rating": 5
       },
       {
-        "quote": "They handled our migration from WooCommerce flawlessly. The new Shopify store is 60% faster and our checkout completion rate improved by 38%. Best investment we made this year.",
-        "author": "Michael Chen",
-        "company": "CloudSync Pro",
-        "role": "CTO",
-        "industry": "Tech & SaaS",
-        "rating": 5
-      },
-      {
         "quote": "They don't just ship a site. They stick around, iterate, and help us grow month after month. Our online reservations doubled within 90 days of the new website launch.",
         "author": "Emily Rodriguez",
         "company": "Terra Kitchen Group",
         "role": "Operations Director",
         "industry": "Food & Beverage",
+        "rating": 5
+      },
+      {
+        "quote": "CartShift Studio understood our mission from day one. They built us a store that educates customers while making the shopping experience effortless. Our product quiz alone transformed how customers find their perfect products.",
+        "author": "Danielle Shamir",
+        "company": "I Love My Honeypot",
+        "role": "Founder",
+        "industry": "Health & Wellness",
         "rating": 5
       }
     ]

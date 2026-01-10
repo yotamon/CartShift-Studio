@@ -7,10 +7,10 @@ import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { FileText, ChevronRight, Search } from 'lucide-react';
 import { motion, AnimatePresence } from '@/lib/motion';
-import { Request } from '@/lib/types/portal';
+import { Request, CLIENT_STATUS_MAP } from '@/lib/types/portal';
 import { subscribeToOrgRequests, subscribeToAllRequests } from '@/lib/services/portal-requests';
 import { PortalBadge } from './PortalBadge';
-import { getStatusBadgeVariant } from '@/lib/utils/portal-helpers';
+import { getStatusBadgeVariant, getClientStatusBadgeVariant } from '@/lib/utils/portal-helpers';
 
 const searchInputVariants = cva(
   "w-full h-10 ps-12 pe-12 bg-surface-50/50 dark:bg-surface-900/50 border border-surface-200/50 dark:border-surface-800/30 rounded-xl focus:outline-none focus:ring-2 transition-all group-hover:bg-surface-100/50 dark:group-hover:bg-surface-800/50 text-sm font-medium",
@@ -243,8 +243,17 @@ export function GlobalSearch({ orgId, isAgency = false, className }: GlobalSearc
                           )}>
                             {req.title}
                           </span>
-                          <PortalBadge variant={getStatusBadgeVariant(req.status)} className="text-[9px] h-4 px-1.5">
-                              {req.status}
+                          <PortalBadge
+                            variant={isAgency
+                              ? getStatusBadgeVariant(req.status)
+                              : getClientStatusBadgeVariant(req.status)
+                            }
+                            className="text-[9px] h-4 px-1.5"
+                          >
+                            {isAgency
+                              ? t(`portal.requests.status.${req.status.toLowerCase()}` as any)
+                              : t(`portal.requests.clientStatus.${CLIENT_STATUS_MAP[req.status].toLowerCase()}` as any)
+                            }
                           </PortalBadge>
                         </div>
                         <div className="flex items-center gap-2 text-xs text-surface-500">

@@ -277,11 +277,7 @@ export default function RequestDetailClient() {
           </div>
           <div className="flex items-center gap-3 mt-1 underline-offset-4">
             <p className="text-xs font-black text-surface-400 uppercase tracking-widest">
-              {request.id.slice(0, 8)}
-            </p>
-            <span className="w-1 h-1 rounded-full bg-surface-300" />
-            <p className="text-xs font-black text-surface-400 uppercase tracking-widest">
-              {request.type || t('requests.detail.designRequest')}
+              {request.type ? t(`requests.type.${request.type.toLowerCase()}` as any) : t('requests.type.design')}
             </p>
           </div>
         </div>

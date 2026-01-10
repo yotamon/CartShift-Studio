@@ -27,6 +27,7 @@ import { getDateLocale } from '@/lib/locale-config';
 import { UploadFileForm } from '@/components/portal/forms/UploadFileForm';
 import { useTranslations, useLocale } from 'next-intl';
 import { useResolvedOrgId } from '@/lib/hooks/useResolvedOrgId';
+import { ImagePreviewModal } from '@/components/portal/ui/ImagePreviewModal';
 
 export default function FilesClient() {
   const orgId = useResolvedOrgId();
@@ -36,6 +37,7 @@ export default function FilesClient() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [deletingFile, setDeletingFile] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<{ url: string; name: string } | null>(null);
   const t = useTranslations();
   const locale = useLocale();
 
@@ -212,9 +214,23 @@ export default function FilesClient() {
                   >
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-surface-100 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 flex items-center justify-center text-surface-400 group-hover:text-blue-500 transition-all shadow-sm">
-                          {getIcon(file.mimeType)}
-                        </div>
+                        {file.mimeType.startsWith('image/') ? (
+                          <button
+                            onClick={() => setPreviewImage({ url: file.url, name: file.originalName })}
+                            className="w-12 h-12 rounded-2xl overflow-hidden bg-surface-100 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 flex-shrink-0 shadow-sm hover:scale-105 transition-all cursor-pointer"
+                            title="Click to preview"
+                          >
+                            <img
+                              src={file.url}
+                              alt={file.originalName}
+                              className="w-full h-full object-cover"
+                            />
+                          </button>
+                        ) : (
+                          <div className="w-12 h-12 rounded-2xl bg-surface-100 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 flex items-center justify-center text-surface-400 group-hover:text-blue-500 transition-all shadow-sm">
+                            {getIcon(file.mimeType)}
+                          </div>
+                        )}
                         <div className="flex flex-col min-w-0">
                           <span className="font-bold text-surface-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate max-w-[200px] md:max-w-xs font-outfit leading-tight">
                             {file.originalName}
@@ -315,6 +331,14 @@ export default function FilesClient() {
           onCancel={() => setShowUploadModal(false)}
         />
       )}
+
+      {/* Image Preview Modal */}
+      <ImagePreviewModal
+        imageUrl={previewImage?.url || ''}
+        imageName={previewImage?.name || ''}
+        isOpen={!!previewImage}
+        onClose={() => setPreviewImage(null)}
+      />
     </div>
   );
 }

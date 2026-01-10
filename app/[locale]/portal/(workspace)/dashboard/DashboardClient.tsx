@@ -153,7 +153,7 @@ function DashboardClientContent() {
         {/* Sidebar Info */}
         <div className="space-y-6">
           {/* Pinned Requests */}
-          <PinnedRequests requests={requests} orgId={orgId ?? ''} locale={locale} />
+          <PinnedRequests requests={requests} orgId={orgId ?? ''} locale={locale} isAgency={userData?.isAgency ?? false} />
 
           {/* Tips Card */}
           <TipsCard />

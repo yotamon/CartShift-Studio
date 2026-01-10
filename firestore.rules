@@ -247,6 +247,25 @@ service cloud.firestore {
       allow delete: if isAuthenticated() && isAgencyUser();
     }
 
+    // Testimonials - clients can create/read their own, agency can read/update all
+    match /portal_testimonials/{testimonialId} {
+      allow read: if isAuthenticated() && (
+        isAgencyUser() ||
+        resource == null ||
+        resource.data.get('userId', '') == getUserId() ||
+        canAccessOrg(resource.data.get('orgId', ''))
+      );
+      allow create: if isAuthenticated() && (
+        isMemberOfOrg(request.resource.data.get('orgId', '')) ||
+        isOrgOwner(request.resource.data.get('orgId', ''))
+      );
+      allow update: if isAuthenticated() && (
+        isAgencyUser() ||
+        (resource.data.get('userId', '') == getUserId() && resource.data.get('status', '') == 'pending')
+      );
+      allow delete: if isAuthenticated() && isAgencyUser();
+    }
+
     match /agencies/{agencyId} {
       allow read: if isAuthenticated();
       allow write: if isAuthenticated() && getUserId() == agencyId;
@@ -261,6 +280,11 @@ service cloud.firestore {
         isAgencyUser() || // Allow agency users to manage their own OR shared integrations
         integrationId.matches("^" + request.auth.uid + "(_.*|$)")
       );
+    }
+
+    match /portal_services/{serviceId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated() && isAgencyUser();
     }
 
     match /{document=**} {

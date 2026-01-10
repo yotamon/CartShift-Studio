@@ -9,13 +9,15 @@ import Link from 'next/link';
 import { Request } from '@/lib/types/portal';
 import { PortalBadge } from '@/components/portal/ui/PortalBadge';
 import { PortalCard } from '@/components/portal/ui/PortalCard';
-import { getStatusBadgeVariant } from '@/lib/utils/portal-helpers';
+import { getStatusBadgeVariant, getClientStatusBadgeVariant } from '@/lib/utils/portal-helpers';
 import { usePinnedRequests } from '@/lib/hooks/usePinnedRequests';
+import { CLIENT_STATUS_MAP } from '@/lib/types/portal';
 
 interface PinnedRequestsProps {
   requests: Request[];
   orgId: string;
   locale: string;
+  isAgency?: boolean;
   className?: string;
 }
 
@@ -23,6 +25,7 @@ export const PinnedRequests: React.FC<PinnedRequestsProps> = ({
   requests,
   orgId,
   locale,
+  isAgency = false,
   className,
 }) => {
   const t = useTranslations();
@@ -79,11 +82,17 @@ export const PinnedRequests: React.FC<PinnedRequestsProps> = ({
                 </Link>
                 <div className="mt-1 flex items-center gap-2">
                   <PortalBadge
-                    variant={getStatusBadgeVariant(request.status)}
+                    variant={isAgency
+                      ? getStatusBadgeVariant(request.status)
+                      : getClientStatusBadgeVariant(request.status)
+                    }
                     size="xs"
                     dot
                   >
-                    {request.status}
+                    {isAgency
+                      ? t(`portal.requests.status.${request.status.toLowerCase()}` as any)
+                      : t(`portal.requests.clientStatus.${CLIENT_STATUS_MAP[request.status].toLowerCase()}` as any)
+                    }
                   </PortalBadge>
                   <span className="text-[10px] text-surface-400 font-mono">
                     #{request.id.slice(-6).toUpperCase()}

@@ -459,13 +459,20 @@ export default function AgencyInboxClient() {
                                 : '—'}
                             </span>
                           </div>
-                          <button
-                            type="button"
+                          <div
+                            role="button"
+                            tabIndex={0}
                             onClick={e => e.stopPropagation()}
-                            className="opacity-0 group-hover:opacity-100 p-2 text-surface-400 hover:text-surface-900 dark:hover:text-white transition-all rounded-full hover:bg-surface-100 dark:hover:bg-surface-800"
+                            onKeyDown={e => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                e.stopPropagation();
+                              }
+                            }}
+                            className="opacity-0 group-hover:opacity-100 p-2 text-surface-400 hover:text-surface-900 dark:hover:text-white transition-all rounded-full hover:bg-surface-100 dark:hover:bg-surface-800 cursor-pointer"
                           >
                             <MoreVertical size={16} />
-                          </button>
+                          </div>
                         </div>
                       </div>
 

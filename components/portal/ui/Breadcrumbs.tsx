@@ -9,6 +9,7 @@ import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { isRTLLocale } from '@/lib/locale-config';
 import { getRequest } from '@/lib/services/portal-requests';
+import { getPricingRequest } from '@/lib/services/pricing-requests';
 
 const breadcrumbItemVariants = cva(
   "truncate max-w-[200px] transition-colors",
@@ -63,6 +64,13 @@ export function Breadcrumbs({
     return match ? match[1] : null;
   }, [pathname]);
 
+  // Extract pricing ID from path if on a pricing detail page
+  const pricingId = useMemo(() => {
+    if (!pathname) return null;
+    const match = pathname.match(/\/pricing\/([^/]+)(?:\/|$)/);
+    return match ? match[1] : null;
+  }, [pathname]);
+
   // Fetch request title when on a request detail page
   useEffect(() => {
     if (!requestId) {
@@ -89,6 +97,32 @@ export function Breadcrumbs({
       cancelled = true;
     };
   }, [requestId]);
+
+  // Fetch pricing offer title when on a pricing detail page
+  useEffect(() => {
+    if (!pricingId) {
+      return;
+    }
+
+    let cancelled = false;
+
+    async function fetchPricingTitle() {
+      try {
+        const pricing = await getPricingRequest(pricingId!);
+        if (!cancelled && pricing?.title) {
+          setDynamicLabels((prev) => ({ ...prev, [pricingId!]: pricing.title }));
+        }
+      } catch (error) {
+        console.error('[Breadcrumbs] Error fetching pricing offer title:', error);
+      }
+    }
+
+    fetchPricingTitle();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [pricingId]);
 
   const breadcrumbs = useMemo((): BreadcrumbItem[] => {
     if (!pathname) return [];

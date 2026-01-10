@@ -347,7 +347,7 @@ export default function RequestsClient() {
                               {req.id.slice(0, 8)}
                             </span>
                             <span className="text-[10px] font-black text-surface-400 uppercase tracking-widest truncate">
-                              {req.type || t('portal.common.general')}
+                              {req.type ? t(`portal.requests.type.${req.type.toLowerCase()}` as any) : t('portal.requests.type.design')}
                             </span>
                           </div>
                         </div>
@@ -506,7 +506,7 @@ export default function RequestsClient() {
                                 </span>
                                 <span className="w-1 h-1 rounded-full bg-surface-300 shrink-0" />
                                 <span className="uppercase tracking-wider text-[10px] truncate">
-                                  {req.type || t('portal.common.general')}
+                                  {req.type ? t(`portal.requests.type.${req.type.toLowerCase()}` as any) : t('portal.requests.type.design')}
                                 </span>
                               </span>
                             </div>

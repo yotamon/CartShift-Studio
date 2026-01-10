@@ -160,25 +160,39 @@ export function usePortalAuth() {
             const isLoggingOutActive = isLoggingOut();
             const hasCurrentUser = !!getAuthInstance().currentUser;
             const isLoginPage = pathname?.includes('/login');
+            const isPermissionError = err.code === 'permission-denied' ||
+                                     err.message?.includes('Missing or insufficient permissions') ||
+                                     err.message?.includes('permission');
 
-            // Check if this is a permission error during logout
-            if (err.code === 'permission-denied') {
-              // If we are logging out OR the user is already cleared OR we are on login page, ignore the error
+            // Suppress permission errors during auth transitions
+            if (isPermissionError) {
               if (isLoggingOutActive || !hasCurrentUser || isLoginPage) {
-                console.log('[usePortalAuth] Suppressing permission error during logout transition');
+                return;
+              }
+
+              // If user is authenticated but gets permission error, they might not have a user document yet
+              // This is expected for new users - handle gracefully
+              if (hasCurrentUser) {
+                const fallbackData: UserData = {
+                  id: currentUser.uid,
+                  email: currentUser.email || '',
+                  name: currentUser.displayName || undefined,
+                  photoUrl: currentUser.photoURL || undefined,
+                  accountType: ACCOUNT_TYPE.CLIENT,
+                  isAgency: false,
+                  organizations: [],
+                  onboardingComplete: false,
+                };
+                setUserData(fallbackData);
+                setLoading(false);
                 return;
               }
             }
 
-            console.error('Error fetching user data:', err);
-            console.debug('[usePortalAuth] Permission error details:', {
-              code: err.code,
-              isLoggingOut: isLoggingOutActive,
-              hasCurrentUser,
-              isLoginPage,
-              uid: getAuthInstance().currentUser?.uid,
-              pathname
-            });
+            // Only log non-permission errors or permission errors that aren't during transitions
+            if (!isPermissionError || (isPermissionError && hasCurrentUser && !isLoggingOutActive && !isLoginPage)) {
+              console.error('[usePortalAuth] Error fetching user data:', err);
+            }
 
             setError(getPortalError(err));
             setLoading(false);
